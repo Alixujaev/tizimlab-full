@@ -1,0 +1,65 @@
+{
+  "app": { "name": "TizimLab" },
+  "nav": {
+    "label": "Main menu",
+    "dashboard": "Dashboard",
+    "samples": "Samples",
+    "registry": "Registry",
+    "temperature": "Temperature",
+    "users": "Users",
+    "activity": "Activity",
+    "companies": "Companies",
+    "auditLog": "Audit log"
+  },
+  "pages": {
+    "dashboard": "Dashboard",
+    "samples": "Samples",
+    "sampleDetail": "Sample",
+    "registry": "Registry",
+    "registryDetail": "Registry — sample",
+    "substances": "Substances",
+    "substanceDetail": "Substance",
+    "reagents": "Reagents",
+    "reagentJournal": "Expense journal",
+    "expenses": "Expenses",
+    "temperature": "Temperature monitoring",
+    "stability": "Stability",
+    "stabilityDetail": "Stability study",
+    "users": "Users",
+    "activity": "Activity log",
+    "profile": "Profile",
+    "companies": "Companies",
+    "auditLog": "Audit log",
+    "login": "Sign in"
+  },
+  "common": {
+    "loading": "Loading…",
+    "comingSoon": "This page is under construction.",
+    "close": "Close",
+    "noData": "No data"
+  },
+  "auth": {
+    "loginComingSoon": "The sign-in form will be added in the next phase."
+  },
+  "topbar": {
+    "language": "Language",
+    "notifications": "Notifications",
+    "noNotifications": "No new notifications",
+    "profile": "Profile"
+  },
+  "languages": { "uz": "O'zbekcha", "ru": "Русский", "en": "English" },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "{{page}} / {{pages}}"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "forbiddenTitle": "Access denied",
+    "forbiddenText": "You do not have permission to view this page.",
+    "notFoundTitle": "Page not found",
+    "notFoundText": "The page you are looking for does not exist.",
+    "backHome": "Back to dashboard"
+  }
+}

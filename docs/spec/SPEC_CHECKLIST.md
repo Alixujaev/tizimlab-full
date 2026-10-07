@@ -187,8 +187,8 @@
 | R-REG-08 | Reyestr qatoridan protokol faylini to'g'ridan-to'g'ri yuklab olish (Q-23). | 03-samples §3 | P5 | [ ] |
 | R-REG-09 | Lab_head namunani reyestrdan o'chira oladi (semantika — Q-22). | 03-samples §3 | P4 | [ ] |
 | R-REG-10 | Lab_head bo'lmagan rol reyestrdan o'chira olmaydi. | 03-samples §3 | P4 | [ ] |
-| R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [ ] |
-| R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [ ] |
+| R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
+| R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [ ] |
 | R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [ ] |
 
@@ -437,14 +437,14 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-I18N-01 | Uch til: o'zbek, rus, ingliz — `i18next` + `react-i18next`. | 14-i18n §14 | P1 | [ ] |
-| R-I18N-02 | Standart til — o'zbek. | 14-i18n §14 | P1 | [ ] |
-| R-I18N-03 | Tarjima fayllari `src/i18n/locales/` da: `uz.json`, `ru.json`, `en.json`. | 14-i18n §14, 16 §16 | P1 | [ ] |
-| R-I18N-04 | Har sahifada `useTranslation()` dan `t('key')` ishlatiladi. | 14-i18n §14 | P1 | [ ] |
-| R-I18N-05 | JSX ichida qattiq yozilgan matn yo'q (lint/test bilan tekshiriladi). | 14-i18n §14 | P12 | [ ] |
-| R-I18N-06 | Uchala tilda kalitlar to'liq — bir tilda bor kalit qolgan ikkitasida ham bor (avtomatik test). | 14-i18n §14 | P12 | [ ] |
-| R-I18N-07 | Tanlangan til `localStorage` da saqlanadi. | 14-i18n §14 | P1 | [ ] |
-| R-I18N-08 | Til top bar'dagi til almashtirgichi orqali tanlanadi. | 14-i18n §14 | P1 | [ ] |
+| R-I18N-01 | Uch til: o'zbek, rus, ingliz — `i18next` + `react-i18next`. | 14-i18n §14 | P1 | [x] |
+| R-I18N-02 | Standart til — o'zbek. | 14-i18n §14 | P1 | [x] |
+| R-I18N-03 | Tarjima fayllari `src/i18n/locales/` da: `uz.json`, `ru.json`, `en.json`. | 14-i18n §14, 16 §16 | P1 | [x] |
+| R-I18N-04 | Har sahifada `useTranslation()` dan `t('key')` ishlatiladi. | 14-i18n §14 | P1 | [x] |
+| R-I18N-05 | JSX ichida qattiq yozilgan matn yo'q (lint/test bilan tekshiriladi). | 14-i18n §14 | P12 | [~] |
+| R-I18N-06 | Uchala tilda kalitlar to'liq — bir tilda bor kalit qolgan ikkitasida ham bor (avtomatik test). | 14-i18n §14 | P12 | [x] |
+| R-I18N-07 | Tanlangan til `localStorage` da saqlanadi. | 14-i18n §14 | P1 | [x] |
+| R-I18N-08 | Til top bar'dagi til almashtirgichi orqali tanlanadi. | 14-i18n §14 | P1 | [x] |
 | R-I18N-09 | Modda nomi joriy tilga mos `name_uz`/`name_ru`/`name_en` dan ko'rsatiladi. | 05-substances §5 | P3 | [ ] |
 
 ## AUTH — Autentifikatsiya va xavfsizlik
@@ -468,19 +468,19 @@
 | R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [ ] |
 | R-AUTH-16 | Parol bcrypt 10 round bilan xeshlanadi. | 15-auth §15 | P2 | [ ] |
 | R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [ ] |
-| R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [ ] |
+| R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [~] |
+| R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [~] |
 | R-AUTH-20 | Nofaol kompaniya foydalanuvchisi kirishi (Q-08 javobiga ko'ra). | 02-multitenancy §2 | P2 | [ ] |
 
 ## SEC — Xavfsizlik choralari
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-SEC-01 | `helmet` HTTP xavfsizlik sarlavhalarini qo'yadi. | 15-auth §15 | P1 | [ ] |
-| R-SEC-02 | Global rate-limit: IP boshiga 15 daqiqada 2000 so'rov. | 15-auth §15 | P1 | [ ] |
-| R-SEC-03 | Rate-limit faqat `NODE_ENV=production` da yoqiladi. | 15-auth §15 | P1 | [ ] |
-| R-SEC-04 | Barcha kiruvchi ma'lumotlar Zod bilan validatsiya qilinadi. | 15-auth §15 | P1 | [ ] |
-| R-SEC-05 | Muhit o'zgaruvchilari Zod bilan validatsiya qilinadi; noto'g'ri env'da server ishga tushmaydi. | 15-auth §15, 16 §16 | P1 | [ ] |
+| R-SEC-01 | `helmet` HTTP xavfsizlik sarlavhalarini qo'yadi. | 15-auth §15 | P1 | [x] |
+| R-SEC-02 | Global rate-limit: IP boshiga 15 daqiqada 2000 so'rov. | 15-auth §15 | P1 | [x] |
+| R-SEC-03 | Rate-limit faqat `NODE_ENV=production` da yoqiladi. | 15-auth §15 | P1 | [x] |
+| R-SEC-04 | Barcha kiruvchi ma'lumotlar Zod bilan validatsiya qilinadi. | 15-auth §15 | P1 | [~] |
+| R-SEC-05 | Muhit o'zgaruvchilari Zod bilan validatsiya qilinadi; noto'g'ri env'da server ishga tushmaydi. | 15-auth §15, 16 §16 | P1 | [x] |
 | R-SEC-06 | SQL faqat parametrlashtirilgan (`$1`), string konkatenatsiya yo'q. | 16-architecture §16 | P12 | [ ] |
 | R-SEC-07 | Sirlar (token, parol, kalitlar) logga yozilmaydi. | 15-auth §15 | P12 | [ ] |
 
@@ -488,27 +488,27 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-ARCH-01 | Backend: Express.js + TypeScript + PostgreSQL, raw `pg`, ORM yo'q. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-02 | `src/app.ts` — entry point: middleware, router ulash, Socket.IO va botni ishga tushirish. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-03 | `config/database.ts` — pg pool, `query()` va `withTransaction()`. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-04 | Ko'p-bosqichli yozuvlar `withTransaction()` ichida. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-05 | `config/env.ts` — Zod env validatsiyasi (cloud yoki lokal DB, R2, Telegram). | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-06 | `config/swagger.ts` — API hujjatlari. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-07 | Swagger UI faqat `development` muhitida, login formasi bilan (Q-63). | 16-architecture §16 | P1 | [ ] |
+| R-ARCH-01 | Backend: Express.js + TypeScript + PostgreSQL, raw `pg`, ORM yo'q. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-02 | `src/app.ts` — entry point: middleware, router ulash, Socket.IO va botni ishga tushirish. | 16-architecture §16 | P1 | [~] |
+| R-ARCH-03 | `config/database.ts` — pg pool, `query()` va `withTransaction()`. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-04 | Ko'p-bosqichli yozuvlar `withTransaction()` ichida. | 16-architecture §16 | P1 | [~] |
+| R-ARCH-05 | `config/env.ts` — Zod env validatsiyasi (cloud yoki lokal DB, R2, Telegram). | 16-architecture §16 | P1 | [x] |
+| R-ARCH-06 | `config/swagger.ts` — API hujjatlari. | 16-architecture §16 | P1 | [~] |
+| R-ARCH-07 | Swagger UI faqat `development` muhitida, login formasi bilan (Q-63). | 16-architecture §16 | P1 | [~] |
 | R-ARCH-08 | Middleware `authenticate.ts`: JWT tekshiruv. | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-09 | Middleware `requireRole()`. | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-10 | Middleware `requireCompany()`. | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-11 | Middleware `requirePermission()`. | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-12 | Middleware `sessionTimeout.ts`: harakatsizlikda sessiyani tugatish. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-13 | Middleware `errorHandler.ts`: markazlashtirilgan xato handler (domen xatolari → HTTP kod). | 16-architecture §16 | P1 | [ ] |
+| R-ARCH-13 | Middleware `errorHandler.ts`: markazlashtirilgan xato handler (domen xatolari → HTTP kod). | 16-architecture §16 | P1 | [x] |
 | R-ARCH-14 | Har modul naqshi: `*.router.ts` (Router + Swagger annotatsiya), `*.controller.ts`, `*.service.ts` (SQL + logika + domen xato klassi), `*.schemas.ts` (Zod). | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-15 | Backend modullari: auth, admin, companies, substances, protocols, samples, reagents, temperature, stability, notifications, dashboard, files, audit, telegram. | 16-architecture §16 | P1 | [ ] |
+| R-ARCH-15 | Backend modullari: auth, admin, companies, substances, protocols, samples, reagents, temperature, stability, notifications, dashboard, files, audit, telegram. | 16-architecture §16 | P1 | [~] |
 | R-ARCH-16 | `realtime/socket.ts` — Socket.IO server bir xil HTTP server ustida, JWT handshake, `user:<id>` xonalar. | 16-architecture §16 | P6 | [ ] |
 | R-ARCH-17 | `jobs/stabilityAlertJob.ts` — 6 soatlik fon jarayoni. | 16-architecture §16 | P9 | [ ] |
-| R-ARCH-18 | `utils/logger.ts` — Winston logger. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-19 | Migratsiyalar `db/migrations/` da raqamlangan SQL fayllar, `npm run migrate` bilan qo'llaniladi. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-20 | Qo'llangan migratsiyalar `schema_migrations` jadvalida kuzatiladi; qayta qo'llanmaydi. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-21 | Toza baseline schema (eski 038 migratsiya ko'chirilmaydi). | DECISIONS.md D-01 | P1 | [ ] |
+| R-ARCH-18 | `utils/logger.ts` — Winston logger. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-19 | Migratsiyalar `db/migrations/` da raqamlangan SQL fayllar, `npm run migrate` bilan qo'llaniladi. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-20 | Qo'llangan migratsiyalar `schema_migrations` jadvalida kuzatiladi; qayta qo'llanmaydi. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-21 | Toza baseline schema (eski 038 migratsiya ko'chirilmaydi). | DECISIONS.md D-01 | P1 | [~] |
 | R-ARCH-22 | Jadval `companies`. | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-23 | Jadval `users` (`company_id`, Telegram bog'lanish maydonlari bilan). | 16-architecture §16 | P2 | [ ] |
 | R-ARCH-24 | Jadval `sessions` (refresh token hash). | 16-architecture §16 | P2 | [ ] |
@@ -533,41 +533,51 @@
 | R-ARCH-43 | Jadval `notifications`. | 16-architecture §16 | P6 | [ ] |
 | R-ARCH-44 | Jadval `files`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-45 | Jadval `audit_log`. | 16-architecture §16 | P10 | [ ] |
-| R-ARCH-46 | Jadval `schema_migrations`. | 16-architecture §16 | P1 | [ ] |
-| R-ARCH-47 | Env `DATABASE_URL` — cloud (Neon/Railway/Supabase) yoki lokal PostgreSQL. | 16-architecture §16 | P1 | [ ] |
+| R-ARCH-46 | Jadval `schema_migrations`. | 16-architecture §16 | P1 | [x] |
+| R-ARCH-47 | Env `DATABASE_URL` — cloud (Neon/Railway/Supabase) yoki lokal PostgreSQL. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-48 | Env `SESSION_IDLE_TIMEOUT_MINUTES` (standart 30). | 15-auth §15 | P2 | [ ] |
 | R-ARCH-49 | Env `R2_*` (R2 sozlamalari; aniq nomlar — Q-62). | 12-files §12 | P5 | [ ] |
 | R-ARCH-50 | Env `TELEGRAM_BOT_TOKEN`. | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-51 | Env `TELEGRAM_BOT_USERNAME`. | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-52 | Env `TELEGRAM_WEBHOOK_URL` (production). | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-53 | Env `TELEGRAM_WEBHOOK_SECRET` (production). | 13-telegram §13 | P11 | [ ] |
-| R-ARCH-54 | Env `NODE_ENV` (development/production — Swagger, rate-limit, Telegram rejimi unga bog'liq). | 15 §15, 16 §16 | P1 | [ ] |
+| R-ARCH-54 | Env `NODE_ENV` (development/production — Swagger, rate-limit, Telegram rejimi unga bog'liq). | 15 §15, 16 §16 | P1 | [x] |
 | R-ARCH-55 | Env JWT sirlari (access/refresh; nomlar — Q-62). | 15-auth §15 | P2 | [ ] |
 | R-ARCH-56 | Hosting-agnostik: hammasi `.env` orqali, `npm run build` + `npm start`; Docker yo'q. | DECISIONS.md D-11 | P12 | [ ] |
 | R-ARCH-57 | Eski bazadan ma'lumot ko'chirish ETL skripti. | DECISIONS.md D-01 | P12 | [ ] |
 | R-ARCH-58 | `Dockerfile` ixtiyoriy (faqat P12 da, kerak bo'lsa). | DECISIONS.md D-11 | P12 | [ ] |
+| R-ARCH-59 | Node 24 LTS: `.nvmrc`, `engines` va CI workflow Node 24 da. | DECISIONS.md D-20 | P1 | [x] |
+| R-ARCH-60 | Backend ESM (`NodeNext`, nisbiy importlarda `.js`); dev `tsx watch`; build `tsc` + SQL migratsiyalarni `dist` ga ko'chirish. | DECISIONS.md D-21 | P1 | [x] |
+| R-ARCH-61 | `src/app.ts` faqat `createApp()` ni eksport qiladi; `src/server.ts` serverni ishga tushiradi va SIGINT/SIGTERM da graceful shutdown qiladi. | DECISIONS.md D-21 | P1 | [~] |
+| R-ARCH-62 | Muvaffaqiyatli javob `{ data, meta? }`, ro'yxatda `meta: { page, limit, total }`. | DECISIONS.md D-22 | P1 | [x] |
+| R-ARCH-63 | Xato javobi `{ error: { code, message, details?, requestId } }`. | DECISIONS.md D-22 | P1 | [x] |
+| R-ARCH-64 | API prefiksi `/api/v1`. | DECISIONS.md D-22 | P1 | [x] |
+| R-ARCH-65 | Pagination: `page` (default 1), `limit` (default 20, max 100); chegaradan tashqari qiymat 400. | DECISIONS.md D-22 | P1 | [x] |
+| R-ARCH-66 | Migratsiyalar faqat oldinga (down yo'q). | DECISIONS.md D-24 | P1 | [x] |
+| R-ARCH-67 | Qo'llangan migratsiya fayli checksum'i o'zgarsa runner xato beradi. | DECISIONS.md D-24 | P1 | [x] |
+| R-ARCH-68 | Env qoidalari: JWT sirlari ≥32, production'da R2_* va FRONTEND_URL majburiy, Telegram token → username (+ production'da webhook URL/secret). | DECISIONS.md D-25, D-26 | P1 | [x] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-FE-01 | Frontend: React + TypeScript + Vite + Tailwind CSS. | 16-architecture §16 | P1 | [ ] |
-| R-FE-02 | `src/api/client.ts` — axios instance (401 interceptor bilan, R-AUTH-18). | 16-architecture §16 | P1 | [ ] |
-| R-FE-03 | `src/api/` da har modul uchun API funksiyalari (companies, admin, auditLogs, dashboard, notifications, telegram, ...). | 16-architecture §16 | P1 | [ ] |
-| R-FE-04 | `src/hooks/` da har modul uchun React Query hooklari. | 16-architecture §16 | P1 | [ ] |
+| R-FE-01 | Frontend: React + TypeScript + Vite + Tailwind CSS. | 16-architecture §16 | P1 | [x] |
+| R-FE-02 | `src/api/client.ts` — axios instance (401 interceptor bilan, R-AUTH-18). | 16-architecture §16 | P1 | [x] |
+| R-FE-03 | `src/api/` da har modul uchun API funksiyalari (companies, admin, auditLogs, dashboard, notifications, telegram, ...). | 16-architecture §16 | P1 | [~] |
+| R-FE-04 | `src/hooks/` da har modul uchun React Query hooklari. | 16-architecture §16 | P1 | [~] |
 | R-FE-05 | `hooks/useNotificationSocket.ts` — Socket.IO ulanishi va real vaqtli yangilash. | 16-architecture §16 | P6 | [ ] |
 | R-FE-06 | `lib/socket.ts` — Socket.IO client ulanish/uzish (logout'da uziladi). | 16-architecture §16 | P6 | [ ] |
-| R-FE-07 | `types/index.ts` — TypeScript interfeyslari. | 16-architecture §16 | P1 | [ ] |
-| R-FE-08 | UI komponentlari: Table, Modal, Spinner, Pagination, NotificationBell. | 16-architecture §16 | P1 | [ ] |
-| R-FE-09 | Layout: `AppLayout`, `Sidebar` (rol bo'yicha; super_admin uchun alohida menyu). | 16-architecture §16 | P1 | [ ] |
-| R-FE-10 | Sidebar elementi: Dashboard (Q-64). | 16-architecture §16 | P1 | [ ] |
-| R-FE-11 | Sidebar elementi: Namunalar. | 16-architecture §16 | P4 | [ ] |
-| R-FE-12 | Sidebar elementi: Reyestr. | 16-architecture §16 | P4 | [ ] |
-| R-FE-13 | Sidebar elementi: Harorat. | 16-architecture §16 | P8 | [ ] |
-| R-FE-14 | Sidebar elementi: Foydalanuvchilar (faqat lab_head/director/admin). | 16 §16, 10 §10 | P2 | [ ] |
-| R-FE-15 | Sidebar elementi: Faoliyat (faqat lab_head/director/admin). | 16 §16, 11 §11 | P10 | [ ] |
-| R-FE-16 | Sidebar'da Moddalar, Reaktivlar, Stabilizatsiya elementlari YO'Q. | 16-architecture §16 | P1 | [ ] |
-| R-FE-17 | super_admin Sidebar'i faqat Kompaniyalar va Audit jurnali. | 01 §1, 16 §16 | P2 | [ ] |
+| R-FE-07 | `types/index.ts` — TypeScript interfeyslari. | 16-architecture §16 | P1 | [~] |
+| R-FE-08 | UI komponentlari: Table, Modal, Spinner, Pagination, NotificationBell. | 16-architecture §16 | P1 | [~] |
+| R-FE-09 | Layout: `AppLayout`, `Sidebar` (rol bo'yicha; super_admin uchun alohida menyu). | 16-architecture §16 | P1 | [x] |
+| R-FE-10 | Sidebar elementi: Dashboard (Q-64). | 16-architecture §16 | P1 | [x] |
+| R-FE-11 | Sidebar elementi: Namunalar. | 16-architecture §16 | P4 | [x] |
+| R-FE-12 | Sidebar elementi: Reyestr. | 16-architecture §16 | P4 | [x] |
+| R-FE-13 | Sidebar elementi: Harorat. | 16-architecture §16 | P8 | [x] |
+| R-FE-14 | Sidebar elementi: Foydalanuvchilar (faqat lab_head/director/admin). | 16 §16, 10 §10 | P2 | [x] |
+| R-FE-15 | Sidebar elementi: Faoliyat (faqat lab_head/director/admin). | 16 §16, 11 §11 | P10 | [x] |
+| R-FE-16 | Sidebar'da Moddalar, Reaktivlar, Stabilizatsiya elementlari YO'Q. | 16-architecture §16 | P1 | [x] |
+| R-FE-17 | super_admin Sidebar'i faqat Kompaniyalar va Audit jurnali. | 01 §1, 16 §16 | P2 | [x] |
 | R-FE-18 | Sahifa: auth (login). | 16-architecture §16 | P2 | [ ] |
 | R-FE-19 | Sahifa: Dashboard — `ChemistDashboard`. | 16-architecture §16 | P6 | [ ] |
 | R-FE-20 | Sahifa: Dashboard — `DirectorDashboard`. | 16-architecture §16 | P6 | [ ] |
@@ -589,8 +599,10 @@
 | R-FE-36 | Sahifa: `/activity` (lab_head/director/admin). | 11 §11, 16 §16 | P10 | [ ] |
 | R-FE-37 | Sahifa: `/users`. | 10 §10, 16 §16 | P2 | [ ] |
 | R-FE-38 | Sahifa: `/profile` (parol o'zgartirish, Telegram ulash/uzish). | 10 §10 | P2 | [ ] |
-| R-FE-39 | Ruxsatsiz rol himoyalangan yo'lga to'g'ridan-to'g'ri kirsa sahifa ochilmaydi. | 01 §1, 16 §16 | P2 | [ ] |
-| R-FE-40 | Top bar'da til almashtirgichi va NotificationBell. | 09 §9, 14 §14 | P1 | [ ] |
+| R-FE-39 | Ruxsatsiz rol himoyalangan yo'lga to'g'ridan-to'g'ri kirsa sahifa ochilmaydi. | 01 §1, 16 §16 | P2 | [~] |
+| R-FE-40 | Top bar'da til almashtirgichi va NotificationBell. | 09 §9, 14 §14 | P1 | [x] |
+| R-FE-41 | Access token faqat xotirada (Zustand, localStorage'ga yozilmaydi); sahifa yangilanganda refresh cookie orqali tiklanadi. | DECISIONS.md D-23 | P1 | [~] |
+| R-FE-42 | Spec'da nomlanmagan yo'llar: `/samples(/:id)`, `/substances(/:id)`, `/reagents`, `/stability(/:id)`; kompaniya sahifalari super_admin'ga yopiq. | DECISIONS.md D-29 | P1 | [x] |
 
 ## FLOW — Asosiy ish oqimi (E2E)
 
@@ -608,76 +620,79 @@
 | R-FLOW-10 | E2E: rad etish oqimi — rad → protokol draft (sabab saqlangan), namuna `in_progress` → qayta yuborish → tasdiq. | DECISIONS.md D-02 | P12 | [ ] |
 | R-FLOW-11 | E2E: `reagent`/`standard_substance` namunasi lab_head pasporti bilan protokolsiz `approved` bo'ladi. | 03-samples §3 | P12 | [ ] |
 
+## Holat izohlari
+
+`[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
+
+### P1
+- R-SEC-04 `[~]` — `validate()` middleware va Zod tayyor; har endpoint'da qo'llanishi modullar bilan (P2+).
+- R-ARCH-02 `[~]` — middleware va router ulash bor; Socket.IO (P6) va bot (P11) keyin. D-21: entry point `server.ts`.
+- R-ARCH-04 `[~]` — `withTransaction()` bor va test qilingan; qoida har modulda qo'llanadi.
+- R-ARCH-06 `[~]` — swagger konfiguratsiyasi bor; endpoint annotatsiyalari modullar bilan.
+- R-ARCH-07 `[~]` — `/docs` faqat development'da (testlangan); login formasi P2 da (Q-63 ochiq).
+- R-ARCH-14 `[ ]` — hali birorta modul yo'q (birinchisi P2).
+- R-ARCH-15 `[~]` — 14 modul papkasi bor; kod tegishli fazalarda.
+- R-ARCH-21 `[~]` — migratsiya runner tayyor; baseline schema fayllari P2 dan.
+- R-ARCH-61 `[~]` — `createApp()` testlangan; graceful shutdown uchun avtomatik test yo'q (qo'lda tekshirildi).
+- R-FE-03, R-FE-04 `[~]` — `client.ts` va `useBootstrapAuth` bor; modul API/hook'lari tegishli fazalarda.
+- R-FE-07 `[~]` — umumiy tiplar (`Role`, `User`, `ApiError`, `Paginated`); modul tiplari keyin.
+- R-FE-08 `[~]` — Table, Modal, Spinner, Pagination tayyor; NotificationBell — stub (P6).
+- R-FE-41 `[~]` — xotirada saqlash va tiklash mock bilan testlangan; `/auth/refresh` endpointi P2 da.
+
+### Boshqa fazalar (P1 da oldindan qisman bajarilgan)
+- R-FE-11/12/13/14/15/17 `[x]` — Sidebar elementlari va rol bo'yicha ko'rinishi (D-28) testlangan; sahifalarning o'zi tegishli fazada.
+- R-REG-11/12 `[x]` — `/protocols`, `/protocols/:id` → `/registry` redirect testlangan.
+- R-FE-39 `[~]` — frontend RoleRoute testlangan; backend ruxsatlari P2 da.
+- R-AUTH-18 `[~]` — 401 interceptor + single-flight refresh mock bilan testlangan; endpoint P2.
+- R-AUTH-19 `[~]` — Zustand authStore bor; login oqimi P2.
+- R-I18N-05 `[~]` — ESLint `i18next/no-literal-string` pages/components'da error (testlangan); P12 da to'liq audit.
+- R-I18N-06 `[x]` — uz/ru/en kalitlari parity testi har `npm run check` da ishlaydi.
+
 ## Statistika
 
-_Skript bilan hisoblangan (qo'lda tahrirlamang; checklist o'zgarsa qayta hisoblang)._
+_`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 ### Bo'limlar bo'yicha
 
-| Bo'lim | Qatorlar |
-|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 |
-| TENANT — Ko'p-kompaniyalilik | 13 |
-| SAMPLE — Namunalar | 32 |
-| PASS — Namuna pasporti | 21 |
-| REG — Reyestr | 14 |
-| PROTO — Protokollar | 51 |
-| SUBST — Moddalar | 9 |
-| REAG — Reaktivlar va Xarajat jurnali | 19 |
-| TEMP — Harorat monitoringi | 12 |
-| STAB — Stabilizatsiya | 29 |
-| NOTIF — Xabarnomalar | 21 |
-| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 14 |
-| AUDIT — Audit va Faoliyat jurnali | 8 |
-| FILE — Fayllarni saqlash | 11 |
-| TG — Telegram | 17 |
-| I18N — Ko'p tillilik | 9 |
-| AUTH — Autentifikatsiya va xavfsizlik | 20 |
-| SEC — Xavfsizlik choralari | 7 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 58 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 40 |
-| FLOW — Asosiy ish oqimi (E2E) | 11 |
-| **Jami** | **495** |
+| Bo'lim | Jami | [x] | [~] | [ ] |
+|---|---|---|---|---|
+| ROLE — Rollar va ruxsat matritsasi | 79 | 0 | 0 | 79 |
+| TENANT — Ko'p-kompaniyalilik | 13 | 0 | 0 | 13 |
+| SAMPLE — Namunalar | 32 | 0 | 0 | 32 |
+| PASS — Namuna pasporti | 21 | 0 | 0 | 21 |
+| REG — Reyestr | 14 | 2 | 0 | 12 |
+| PROTO — Protokollar | 51 | 0 | 0 | 51 |
+| SUBST — Moddalar | 9 | 0 | 0 | 9 |
+| REAG — Reaktivlar va Xarajat jurnali | 19 | 0 | 0 | 19 |
+| TEMP — Harorat monitoringi | 12 | 0 | 0 | 12 |
+| STAB — Stabilizatsiya | 29 | 0 | 0 | 29 |
+| NOTIF — Xabarnomalar | 21 | 0 | 0 | 21 |
+| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 14 | 0 | 0 | 14 |
+| AUDIT — Audit va Faoliyat jurnali | 8 | 0 | 0 | 8 |
+| FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
+| TG — Telegram | 17 | 0 | 0 | 17 |
+| I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
+| AUTH — Autentifikatsiya va xavfsizlik | 20 | 0 | 2 | 18 |
+| SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 68 | 19 | 7 | 42 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 42 | 13 | 6 | 23 |
+| FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
+| **Jami** | 507 | 45 | 17 | 445 |
 
 ### Fazalar bo'yicha
 
-| Faza | Qatorlar |
-|---|---|
-| P1 | 38 |
-| P2 | 71 |
-| P3 | 17 |
-| P4 | 64 |
-| P5 | 109 |
-| P6 | 30 |
-| P7 | 31 |
-| P8 | 23 |
-| P9 | 46 |
-| P10 | 19 |
-| P11 | 25 |
-| P12 | 22 |
-| **Jami** | **495** |
-
-### Spec fayllarining qamrovi (manba ustunida eslatilgan qatorlar; bir qator bir nechta faylga havola qilishi mumkin)
-
-| Spec fayl | Qatorlar |
-|---|---|
-| 00-overview.md | 2 |
-| 01-roles.md | 83 |
-| 02-multitenancy.md | 13 |
-| 03-samples-registry.md | 70 |
-| 04-protocols.md | 43 |
-| 05-substances.md | 11 |
-| 06-reagents.md | 16 |
-| 07-temperature.md | 7 |
-| 08-stability.md | 28 |
-| 09-notifications.md | 28 |
-| 10-users-admin-permissions.md | 16 |
-| 11-audit-activity.md | 9 |
-| 12-files.md | 12 |
-| 13-telegram.md | 22 |
-| 14-i18n.md | 9 |
-| 15-auth-security.md | 26 |
-| 16-architecture.md | 105 |
-| 17-workflow.md | 10 |
-| 18-changelog.md | 6 |
-| DECISIONS.md | 36 |
+| Faza | Jami | [x] | [~] | [ ] |
+|---|---|---|---|---|
+| P1 | 50 | 36 | 13 | 1 |
+| P2 | 71 | 2 | 3 | 66 |
+| P3 | 17 | 0 | 0 | 17 |
+| P4 | 64 | 4 | 0 | 60 |
+| P5 | 109 | 0 | 0 | 109 |
+| P6 | 30 | 0 | 0 | 30 |
+| P7 | 31 | 0 | 0 | 31 |
+| P8 | 23 | 1 | 0 | 22 |
+| P9 | 46 | 0 | 0 | 46 |
+| P10 | 19 | 1 | 0 | 18 |
+| P11 | 25 | 0 | 0 | 25 |
+| P12 | 22 | 1 | 1 | 20 |
+| **Jami** | 507 | 45 | 17 | 445 |

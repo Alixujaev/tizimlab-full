@@ -9,93 +9,99 @@ real vaqtli va Telegram xabarnomalari. Loyiha noldan qayta quriladi. Yagona haqi
 
 ## Stack (o'zgartirilmaydi)
 
-- **Backend:** Node.js 22 + Express + TypeScript, PostgreSQL (raw `pg`, ORM YO'Q), Zod, Socket.IO, grammy,
+- **Backend:** Node.js 24 + Express 5 + TypeScript (ESM), PostgreSQL (raw `pg`, ORM YO'Q), Zod, Socket.IO, grammy,
   Cloudflare R2 (`@aws-sdk/client-s3`), multer, docx, winston, helmet, bcrypt, jsonwebtoken.
-- **Frontend:** React + TypeScript + Vite + Tailwind, React Query, Zustand, axios, i18next (uz/ru/en).
-- **Tooling:** npm workspaces, Vitest, ESLint (flat), Prettier, GitHub Actions.
+- **Frontend:** React + TypeScript + Vite + Tailwind, React Router, React Query, Zustand, axios, i18next (uz/ru/en), sonner.
+- **Tooling:** npm workspaces, Vitest (+ supertest, Testing Library), ESLint (flat), Prettier, GitHub Actions.
 - Docker YO'Q. Hosting-agnostik: hammasi `.env` orqali, `npm run build` + `npm start`.
-- Muhit Windows: skriptlar cross-platform (bash-only buyruq yo'q; env uchun `cross-env`).
+- Muhit Windows: skriptlar cross-platform (bash-only buyruq yo'q; env uchun `cross-env`, fayl ishlari node skriptda).
 
 ## Repo tuzilmasi
 
 ```
 backend/src/
-  app.ts                 # entry: middleware, routerlar, Socket.IO, bot
-  config/                # database.ts (pool, query, withTransaction), env.ts (Zod), swagger.ts
-  middleware/            # authenticate.ts (requireRole/Company/Permission), sessionTimeout.ts, errorHandler.ts
+  app.ts                 # createApp() — faqat ilovani yig'adi (D-21)
+  server.ts              # loadEnv → initDb → listen, graceful shutdown
+  config/                # env.ts (Zod), database.ts (pool, query, withTransaction), swagger.ts
+  middleware/            # validate, requestId, notFound, errorHandler (+ P2: authenticate, sessionTimeout)
   modules/<modul>/       # auth admin companies substances protocols samples reagents temperature
                          # stability notifications dashboard files audit telegram
-  realtime/socket.ts     # Socket.IO, JWT handshake, user:<id> xonalar
-  jobs/                  # stabilityAlertJob.ts (6 soat)
-  db/migrations/         # 001_*.sql, 002_*.sql ...
-  utils/                 # logger.ts (winston), docxExport.ts
-backend/tests/           # unit + integration testlar
-frontend/src/            # api/ hooks/ lib/ pages/ store/ i18n/locales/ components/ types/
-docs/LOYIHA.md           # to'liq spec (o'zgartirilmaydi)
+  db/migrator.ts, cli.ts # migratsiya runner; db/migrations/NNN_nom.sql
+  utils/                 # errors.ts, http.ts (sendOk/sendPaginated), pagination.ts, logger.ts
+backend/tests/           # Vitest + supertest; helpers/db.ts (describeDb, createIsolatedDb)
+frontend/src/            # api/ hooks/ lib/ store/ i18n/ config/ components/{ui,layout,routing} pages/ types/ router.tsx
 docs/spec/               # bo'limlar, DECISIONS, OPEN_QUESTIONS, SPEC_CHECKLIST
+scripts/                 # checklist-stats.mjs
 ```
 
 ## Buyruqlar (ildizdan)
 
 ```
-npm run dev        # backend + frontend parallel
-npm run build      # ikkala workspace
-npm run lint       # ESLint
-npm run typecheck  # tsc --noEmit
-npm run test       # Vitest
-npm run check      # lint + typecheck + test — har ish oxirida YASHIL bo'lishi shart
+npm run dev              # backend (tsx watch) + frontend (vite) parallel
+npm run build            # backend: tsc + migratsiyalarni dist'ga; frontend: vite build
+npm start                # backend dist'dan
+npm run lint | typecheck | test
+npm run check            # lint + typecheck + test — har ish oxirida YASHIL bo'lishi shart
+npm run migrate -w backend          # migratsiyalarni qo'llash (migrate:status — holat)
+npm run test -w backend -- tests/app.test.ts   # bitta fayl
+npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 ```
-
-Bitta workspace: `npm run test -w backend`.
 
 ## Kod konvensiyalari
 
 ### Backend
 
-- Har modul to'rt fayl:
-  - `*.router.ts` — Express Router + Swagger annotatsiya, middleware zanjiri;
-  - `*.controller.ts` — so'rovni parse/validate (Zod) qiladi va service'ni chaqiradi; SQL yo'q;
-  - `*.service.ts` — BARCHA SQL va biznes-logika, domen xato klassi (masalan `SampleError`) bilan;
-  - `*.schemas.ts` — Zod sxemalar (body, params, query).
+- ESM: nisbiy importlarda `.js` kengaytma (`import { query } from '../config/database.js'`); `import type` tiplar uchun.
+- Har modul to'rt fayl: `*.router.ts` (Router + `@openapi` annotatsiya, middleware zanjiri),
+  `*.controller.ts` (`validate()` natijasi `req.validated` dan, service chaqiradi, SQL yo'q),
+  `*.service.ts` (BARCHA SQL va biznes-logika, `AppError` dan meros domen xatolari), `*.schemas.ts` (Zod).
 - Raw SQL faqat service'da, faqat parametrlashtirilgan (`$1, $2`). String konkatenatsiya/interpolatsiya bilan SQL YO'Q.
-- Ko'p-bosqichli yozuvlar (status + tracking + notification va h.k.) `withTransaction()` ichida.
+- Ko'p-bosqichli yozuvlar `withTransaction()` ichida.
 - Multi-tenancy: HAR BIR tenant jadvaliga so'rov `company_id` bo'yicha filtrlanadi (`company_id` tokendan, body'dan emas).
-- Himoya: `authenticate` → `requireCompany` → `requireRole(...)` / `requirePermission(resource, action)`.
+- Himoya (P2 dan): `authenticate` → `requireCompany` → `requireRole(...)` / `requirePermission(resource, action)`.
   Ruxsat backend'da majburlanadi; UI'da yashirish yetarli emas.
-- Xatolar domen xato klassi orqali `errorHandler` ga; javobda ichki tafsilot/stack yo'q.
-- Migratsiyalar: raqamlangan SQL (`NNN_nom.sql`), `schema_migrations` orqali kuzatiladi.
-  Qo'llangan migratsiya faylini HECH QACHON o'zgartirma — yangi migratsiya qo'sh.
+- **API formati (D-22):** prefiks `/api/v1`; muvaffaqiyat `sendOk(res, data)` → `{ data }`,
+  ro'yxat `sendPaginated(res, items, { page, limit, total })` → `{ data, meta }`; xato — `AppError` tashlanadi,
+  `errorHandler` → `{ error: { code, message, details?, requestId } }`. Ro'yxat query'si `paginationQuerySchema` ni kengaytiradi.
+- Migratsiyalar (D-24): `NNN_nom.sql`, faqat oldinga, `schema_migrations` da checksum bilan.
+  Qo'llangan faylni HECH QACHON o'zgartirma — yangi migratsiya qo'sh.
+- Logger: `utils/logger.ts`; sezgir kalitlar (password, token, secret, cookie, authorization) avtomatik yashiriladi,
+  lekin baribir body/sarlavhalarni loglama.
 
 ### Frontend
 
-- API funksiyalari `src/api/<modul>.ts`, axios instance `src/api/client.ts`.
-- Har modul uchun React Query hook `src/hooks/`.
-- Barcha foydalanuvchiga ko'rinadigan matn `t('key')` orqali; kalit `uz.json`, `ru.json`, `en.json` uchalasiga qo'shiladi.
-  JSX ichida qattiq yozilgan matn YO'Q.
-- Global holat — Zustand (`store/`), server holati — React Query.
+- Import alias `@/` (`src/`). API funksiyalari `src/api/<modul>.ts`, faqat `apiClient` orqali.
+- Har modul uchun React Query hook `src/hooks/`. Xatolar global toast orqali (`lib/queryClient.ts`).
+- Access token faqat Zustand'da (D-23) — `localStorage`/`sessionStorage` ga sir yozilmaydi.
+- Barcha ko'rinadigan matn `t('key')`; kalit `uz.json`, `ru.json`, `en.json` UCHALASIGA qo'shiladi (parity testi bor).
+  ESLint `i18next/no-literal-string` pages/components'da xato beradi.
+- Yangi sahifa: `router.tsx` dagi to'g'ri `RoleRoute` guruhiga; menyu elementi bo'lsa — `config/navigation.ts`.
 
 ### Umumiy
 
 - TypeScript `strict`; `any` faqat asoslangan holda.
 - Kod izohlari asosan o'zbek tilida, faqat foyda bersa (nima emas — nega).
-- Xavfsizlik: sirlarni (token, parol, kalit) logga yozma; `.env` ni commit qilma; yangi env o'zgaruvchi
-  `backend/.env.example` va `config/env.ts` ga qo'shiladi.
+- Sirlarni logga yozma; `.env` ni commit qilma; yangi env o'zgaruvchi `backend/.env.example` va `config/env.ts` ga birga.
 
 ## Testlar
 
 - Har yangi funksiya uchun Vitest testlari: service logikasi, validatsiya chegaralari, status o'tishlari,
-  rol ruxsatlari (ruxsat VA taqiq), kompaniyalararo izolyatsiya (DECISIONS D-12).
-- Integration testlar `TEST_DATABASE_URL` bazasida ishlaydi.
+  rol ruxsatlari (ruxsat VA taqiq), kompaniyalararo izolyatsiya (D-12).
+- DB testlari `describeDb` + `createIsolatedDb()` (har test alohida sxemada) bilan; `TEST_DATABASE_URL`
+  (`backend/.env`) yo'q bo'lsa lokal'da skip, CI'da majburiy.
+- HTTP testlari: `testApp()` / `miniApp()` (`backend/tests/helpers/app.ts`) + supertest.
+- Frontend: Testing Library, `renderAt(path)` / `loginAs(role)` (`frontend/tests/helpers.tsx`), axios uchun `axios-mock-adapter`.
 
 ## Ish tartibi (har faza)
 
-1. Avval o'qi: tegishli `docs/spec/*` fayllari, `DECISIONS.md`, `OPEN_QUESTIONS.md` va
-   `SPEC_CHECKLIST.md` dagi shu faza (`| Pn |`) qatorlari.
-2. Reja tuz (qaysi checklist ID'lar yopiladi, qaysi fayllar, qaysi testlar).
+1. Avval o'qi: tegishli `docs/spec/*`, `DECISIONS.md`, `OPEN_QUESTIONS.md` va `SPEC_CHECKLIST.md` dagi shu faza qatorlari.
+2. Reja tuz (qaysi checklist ID'lar, fayllar, testlar) va tasdiqlat.
 3. Kod + testlar. Har checklist qatori uchun kamida bitta test.
 4. Oxirida `npm run check` YASHIL bo'lsin.
-5. `SPEC_CHECKLIST.md` holatini yangila: `[x]` faqat kod + test bo'lsa; qisman bo'lsa `[~]`. Statistikani qayta hisobla.
-6. Spec'da yo'q narsani o'zingdan qo'shma. Noaniqlik bo'lsa — `OPEN_QUESTIONS.md` ga yoz va to'xta / so'ra.
+5. `SPEC_CHECKLIST.md`: `[x]` faqat kod + test bo'lsa, qisman — `[~]` (sababi "Holat izohlari" da);
+   `npm run checklist:stats`. Mavjud qatorlar matni/ID'si o'zgartirilmaydi.
+6. Gate (D-19): ochiq savol NON-BLOCKING bo'lsa — default qo'lla, D-xx yoz, savolni `✅ D-xx` qil;
+   BLOCKING bo'lsa — to'xta va so'ra. Spec'da yo'q narsani o'zingdan qo'shma.
 7. Commit: `<tur>(pN): <qisqa tavsif>` (masalan `feat(p4): sample status machine`).
 
 ## Qilma

@@ -29,6 +29,6 @@ Yagona haqiqat manbai: [`../LOYIHA.md`](../LOYIHA.md). Quyidagi fayllar undan **
 
 | Fayl | Maqsad |
 |---|---|
-| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-12) — spec bilan teng kuchli |
+| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-29; D-13…D-18 zaxira) — spec bilan teng kuchli |
 | [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Ziddiyatlar, noaniqliklar, yetishmayotgan joylar — javob kutilmoqda |
 | [SPEC_CHECKLIST.md](SPEC_CHECKLIST.md) | Har bir tekshiriladigan talab, faza va holat bilan |

@@ -1,0 +1,65 @@
+{
+  "app": { "name": "TizimLab" },
+  "nav": {
+    "label": "Asosiy menyu",
+    "dashboard": "Bosh sahifa",
+    "samples": "Namunalar",
+    "registry": "Reyestr",
+    "temperature": "Harorat",
+    "users": "Foydalanuvchilar",
+    "activity": "Faoliyat",
+    "companies": "Kompaniyalar",
+    "auditLog": "Audit jurnali"
+  },
+  "pages": {
+    "dashboard": "Bosh sahifa",
+    "samples": "Namunalar",
+    "sampleDetail": "Namuna",
+    "registry": "Reyestr",
+    "registryDetail": "Reyestr — namuna",
+    "substances": "Moddalar",
+    "substanceDetail": "Modda",
+    "reagents": "Reaktivlar",
+    "reagentJournal": "Xarajat jurnali",
+    "expenses": "Xarajatlar ro'yxati",
+    "temperature": "Harorat monitoringi",
+    "stability": "Stabilizatsiya",
+    "stabilityDetail": "Stabilizatsiya tekshiruvi",
+    "users": "Foydalanuvchilar",
+    "activity": "Faoliyat jurnali",
+    "profile": "Profil",
+    "companies": "Kompaniyalar",
+    "auditLog": "Audit jurnali",
+    "login": "Tizimga kirish"
+  },
+  "common": {
+    "loading": "Yuklanmoqda…",
+    "comingSoon": "Bu sahifa hali tayyorlanmoqda.",
+    "close": "Yopish",
+    "noData": "Ma'lumot yo'q"
+  },
+  "auth": {
+    "loginComingSoon": "Kirish formasi keyingi bosqichda qo'shiladi."
+  },
+  "topbar": {
+    "language": "Til",
+    "notifications": "Bildirishnomalar",
+    "noNotifications": "Yangi bildirishnoma yo'q",
+    "profile": "Profil"
+  },
+  "languages": { "uz": "O'zbekcha", "ru": "Русский", "en": "English" },
+  "pagination": {
+    "label": "Sahifalash",
+    "previous": "Oldingi",
+    "next": "Keyingi",
+    "pageOf": "{{page}} / {{pages}}"
+  },
+  "errors": {
+    "generic": "Xatolik yuz berdi. Qaytadan urinib ko'ring.",
+    "forbiddenTitle": "Ruxsat yo'q",
+    "forbiddenText": "Bu sahifani ko'rish uchun huquqingiz yo'q.",
+    "notFoundTitle": "Sahifa topilmadi",
+    "notFoundText": "Siz qidirgan sahifa mavjud emas.",
+    "backHome": "Bosh sahifaga qaytish"
+  }
+}

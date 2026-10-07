@@ -43,7 +43,7 @@ Manba formati: `spec fayl §` + `LOYIHA.md:<qator>`.
 | Q-21 | Pasport orqali avtomatik tasdiqlanganda "ochiq protokollar avtomatik yopiladi" — qaysi statusga (approved? yangi status?) va bunda imzo/xabarnoma bo'ladimi? | 03-samples §3 — LOYIHA.md:143 | P5 |
 | Q-22 | Reyestrdan "o'chirish" (lab_head) semantikasi: namunani jismoniy o'chirishmi, soft-delete'mi, yoki faqat reyestrdan yashirishmi? Protokol, fayllar, stabilizatsiya bog'lanishlari nima bo'ladi? `admin` o'chira oladimi? | 03-samples §3 — LOYIHA.md:155 | P4 |
 | Q-23 | Reyestr qatoridan "protokol faylini yuklab olish" — `finished_product` ning ikki protokoli (`final`/`in_process`) bo'lsa, qaysi fayl? Pasport orqali tasdiqlangan (protokolsiz) namunada nima yuklab olinadi? | 03-samples §3, 04 §4 — LOYIHA.md:154,185 | P4/P5 |
-| Q-24 | `/registry/:id` namuna tafsilot sahifasi va namunalar bo'limidagi namuna sahifasi (`ProtocolSection` joylashgan) — bitta sahifami yoki ikki alohida? Namuna sahifasining yo'li (`/samples/:id`?) spec'da yo'q. | 03-samples §3 — LOYIHA.md:153,157 | P4 |
+| Q-24 ✅ D-29 | `/registry/:id` namuna tafsilot sahifasi va namunalar bo'limidagi namuna sahifasi (`ProtocolSection` joylashgan) — bitta sahifami yoki ikki alohida? Namuna sahifasining yo'li (`/samples/:id`?) spec'da yo'q. | 03-samples §3 — LOYIHA.md:153,157 | P4 |
 | Q-25 | `sample_tracking` ("voqealar tarixi") qaysi hodisalarni yozadi va UI'da qayerda ko'rsatiladi? | 16-architecture §16 — LOYIHA.md:476 | P4 |
 | Q-26 | Sana formati DD.MM.YYYY faqat reyestr filtri uchunmi yoki butun UI uchunmi? Sahifalash (page size), saralash standartlari yo'q. | 03-samples §3 — LOYIHA.md:152 | P4 |
 
@@ -65,7 +65,7 @@ Manba formati: `spec fayl §` + `LOYIHA.md:<qator>`.
 | ID | Savol | Manba | Faza |
 |---|---|---|---|
 | Q-35 | Farmakopiya (EP, BP, UzDSt, USP, OTHER) moddaga bittami yoki parametr darajasidami? Parametr nomi ham uch tildami? Parametr "metod" — erkin matnmi? | 05-substances §5 — LOYIHA.md:224-226 | P3 |
-| Q-36 | Moddalar sahifasi "asosiy navigatsiyada emas" — `lab_head`/`admin` moddalar ro'yxatiga (yaratish uchun) qaysi kirish nuqtasidan boradi? Reaktivlar, Stabilizatsiya, Xarajat sahifalari uchun ham xuddi shu savol. | 05 §5, 16 §16 — LOYIHA.md:228,463 | P3/P7/P9 |
+| Q-36 ✅ D-29 | Moddalar sahifasi "asosiy navigatsiyada emas" — `lab_head`/`admin` moddalar ro'yxatiga (yaratish uchun) qaysi kirish nuqtasidan boradi? Reaktivlar, Stabilizatsiya, Xarajat sahifalari uchun ham xuddi shu savol. | 05 §5, 16 §16 — LOYIHA.md:228,463 | P3/P7/P9 |
 | Q-37 | `low_stock` xabarnomasi qachon yuboriladi (har `out` tranzaksiyadan keyin chegaradan pastga tushganda, bir marta yoki har safar)? `is_expired` uchun xabarnoma yo'q — kerakmi? | 06-reagents §6, 09 §9 — LOYIHA.md:239,245,309 | P7 |
 | Q-38 | Reaktivlar ro'yxati, zaxira tranzaksiyalari (`in`/`out`/`adjustment`/`disposal`) va hujjat yuklashni kim bajaradi? Matritsada "Ko'rish" rollar (masalan kimyogar) sarf (`out`) yoza oladimi? Xarajat sahifalariga kim kiradi? | 01-roles §1, 06 §6 — LOYIHA.md:70,243 | P7 |
 | Q-39 | Reaktiv maydonlari to'liq emas (nomi, o'lchov birligi, lot, ishlab chiqaruvchi va h.k.); `reagent_documents` turlari (passport / tahlil natijasi) fayl limiti 20MB yoki 50MB? | 06-reagents §6, D-06 — LOYIHA.md:236-243 | P7 |
@@ -121,13 +121,13 @@ Manba formati: `spec fayl §` + `LOYIHA.md:<qator>`.
 | Q-59 | Idle timeout qanday o'lchanadi: har API so'rov sessiyaning `last_activity` ni yangilaydimi yoki faqat refresh? Idle'da serverdan qaysi xato kodi qaytadi va frontend nima qiladi? | 15-auth §15, 16 §16 — LOYIHA.md:380,410 | P2 |
 | Q-60 | Parol siyosati (minimal uzunlik, murakkablik) va login identifikatori (email? username? kompaniya slug bilan?) aniqlanmagan. Login urinishlariga alohida rate-limit kerakmi? | 15-auth §15 — LOYIHA.md:384-386 | P2 |
 | Q-61 | Refresh cookie atributlari (`SameSite`, `Secure`, `path=/api/v1/auth/refresh`?) va CORS siyosati spec'da yo'q. | 15-auth §15 — LOYIHA.md:378 | P2 |
-| Q-62 | JWT sirlari va R2 uchun aniq env o'zgaruvchi nomlari spec'da berilmagan (faqat `R2_*`). `.env.example` da `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT` deb nomlandi — tasdiqlash kerak. | 15 §15, 12 §12, 16 §16 — LOYIHA.md:345,406 | P1/P2 |
+| Q-62 ✅ D-25 | JWT sirlari va R2 uchun aniq env o'zgaruvchi nomlari spec'da berilmagan (faqat `R2_*`). `.env.example` da `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT` deb nomlandi — tasdiqlash kerak. | 15 §15, 12 §12, 16 §16 — LOYIHA.md:345,406 | P1/P2 |
 | Q-63 | Swagger UI "login formasi bilan" — Swagger'ga kirish uchun alohida login (basic auth?) yoki Swagger ichida JWT olish formasi? | 16-architecture §16 — LOYIHA.md:494 | P1 |
 
 ## Frontend
 
 | ID | Savol | Manba | Faza |
 |---|---|---|---|
-| Q-64 | Sidebar elementlari (Dashboard, Namunalar, Reyestr, Harorat, Foydalanuvchilar, Faoliyat) rol bo'yicha qanday ko'rinadi? Masalan kontrolyor/chemist "Foydalanuvchilar" va "Faoliyat" ni ko'rmaydi (matritsa bo'yicha), lekin bu sidebar uchun aniq yozilmagan. Profil sahifasiga kirish joyi? | 16-architecture §16, 01 §1 — LOYIHA.md:458,463 | P1/P6 |
+| Q-64 ✅ D-28 | Sidebar elementlari (Dashboard, Namunalar, Reyestr, Harorat, Foydalanuvchilar, Faoliyat) rol bo'yicha qanday ko'rinadi? Masalan kontrolyor/chemist "Foydalanuvchilar" va "Faoliyat" ni ko'rmaydi (matritsa bo'yicha), lekin bu sidebar uchun aniq yozilmagan. Profil sahifasiga kirish joyi? | 16-architecture §16, 01 §1 — LOYIHA.md:458,463 | P1/P6 |
 | Q-65 | Frontend'da "Inspector" dashboardi — bu `kontrolyor` rolimi? (Nomlash farqi.) | 16-architecture §16 — LOYIHA.md:451 | P6 |
-| Q-66 | Til almashtirgichi — foydalanuvchi profilida (bazada) ham saqlanadimi yoki faqat `localStorage`? (Q-50 bilan bog'liq.) | 14-i18n §14 — LOYIHA.md:367 | P1 |
+| Q-66 ✅ D-27 | Til almashtirgichi — foydalanuvchi profilida (bazada) ham saqlanadimi yoki faqat `localStorage`? (Q-50 bilan bog'liq.) | 14-i18n §14 — LOYIHA.md:367 | P1 |
