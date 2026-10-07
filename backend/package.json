@@ -1,0 +1,12 @@
+{
+  "name": "@tizimlab/backend",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"console.log('backend dev: P1 fazasida yoziladi')\"",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  }
+}
