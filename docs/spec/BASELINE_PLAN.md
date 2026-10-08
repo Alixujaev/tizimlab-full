@@ -95,3 +95,13 @@ Natija: 24 jadval (26 legacy − `protocol_values` − `schema_migrations` − `
 - `audit_log` P2 da yaratiladi (D-64: har servis audit yozuvini o'zgartirish bilan bir tranzaksiyada yozadi — P2 dan
   boshlab kerak), jurnal sahifalari P10 da.
 - Faza boshida shu fazaga tegishli OPEN_QUESTIONS (D-19 gate) ko'riladi; SCHEMA_DIFF da ochiq U-band yo'q.
+
+## Amalga oshirish: og'ishlar va aniqlashtirishlar
+
+| Faza | Joy | Reja / sxema | Amalda | Sabab |
+|---|---|---|---|---|
+| P2a | `users` | `users_email_key UNIQUE(email)` | + CHECK `users_email_lower_check (email = lower(email))` | D-91: email kichik harfda saqlanadi; registr bo'yicha dublikatlar DB darajasida yopiladi. ETL (P12) emaillarni kichik harfga keltiradi va to'qnashuvlarni tekshiradi (R-ARCH-85). |
+| P2a | `users` | CHECK super_admin ⇔ `company_id IS NULL` | nomi `users_super_admin_company_check`: `(role = 'super_admin') = (company_id IS NULL)` | — |
+| P2a | `audit_log` | `record_id` NULL faqat auth hodisalari uchun (D-80) | CHECK `audit_log_record_id_check (record_id IS NOT NULL OR table_name = 'auth')`; indekslar `idx_audit_log_*` (jadval nomi bilan) | Auth hodisasi `table_name = 'auth'` bilan belgilanadi (D-92). |
+| P2a | `user_permissions` | + `company_id` | + `idx_user_permissions_company_id` indeksi | Tenant filtri (`requirePermission`) shu ustun bo'yicha. |
+| P2a | Migratsiya fayli | `NNN_core.sql` | `001_core.sql` | Birinchi baseline fayli. |

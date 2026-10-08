@@ -59,14 +59,28 @@ describe('createApp', () => {
     }
   });
 
-  it("swagger /docs faqat development'da", async () => {
-    const dev = testApp({
-      env: { NODE_ENV: 'development', FRONTEND_URL: undefined, TRUST_PROXY: false },
-    }).app;
-    expect((await request(dev).get('/docs/')).status).toBe(200);
+  it("swagger /docs faqat development'da va HTTP Basic bilan (D-93)", async () => {
+    const creds = { SWAGGER_USER: 'docs', SWAGGER_PASSWORD: 'docs-pass-1' };
+    const dev = testApp({ env: { NODE_ENV: 'development', ...creds } }).app;
+    const anon = await request(dev).get('/docs/');
+    expect(anon.status).toBe(401);
+    expect(anon.headers['www-authenticate']).toMatch(/^Basic/);
+    expect((await request(dev).get('/docs/').auth('docs', 'xato')).status).toBe(401);
+    expect((await request(dev).get('/docs/').auth('docs', 'docs-pass-1')).status).toBe(200);
+    // Login/parol berilmagan bo'lsa — /docs umuman o'chiq
+    const devNoCreds = testApp({ env: { NODE_ENV: 'development' } }).app;
+    expect((await request(devNoCreds).get('/docs/')).status).toBe(404);
     const prod = testApp({
-      env: { NODE_ENV: 'production', FRONTEND_URL: 'https://a.example', TRUST_PROXY: false },
+      env: { NODE_ENV: 'production', FRONTEND_URL: 'https://a.example', ...creds },
     }).app;
-    expect((await request(prod).get('/docs/')).status).toBe(404);
+    expect((await request(prod).get('/docs/').auth('docs', 'docs-pass-1')).status).toBe(404);
+  });
+
+  it("OpenAPI spec auth endpointlarini o'z ichiga oladi", async () => {
+    const { buildOpenApiSpec } = await import('../src/config/swagger.js');
+    const spec = buildOpenApiSpec() as { paths: Record<string, unknown> };
+    expect(Object.keys(spec.paths)).toEqual(
+      expect.arrayContaining(['/auth/login', '/auth/refresh', '/auth/logout', '/auth/me']),
+    );
   });
 });

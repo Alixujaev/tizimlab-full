@@ -4,7 +4,14 @@ import { apiClient, refreshClient, setAuthFailureHandler, toApiError } from '@/a
 import { useAuthStore } from '@/store/authStore';
 import type { User } from '@/types';
 
-const user: User = { id: 'u1', fullName: 'Ali', role: 'chemist', companyId: 'c1' };
+const user: User = {
+  id: 'u1',
+  email: 'ali@test.uz',
+  fullName: 'Ali',
+  role: 'chemist',
+  companyId: 'c1',
+  company: { id: 'c1', name: 'Lab', slug: 'lab' },
+};
 
 let api: MockAdapter;
 let refresh: MockAdapter;
@@ -49,7 +56,7 @@ describe('apiClient', () => {
     refresh.onPost('/auth/refresh').reply(async () => {
       refreshCalls++;
       await new Promise((r) => setTimeout(r, 20));
-      return [200, { data: { accessToken: 'new', user } }];
+      return [200, { data: { accessToken: 'new' } }];
     });
     const [a, b] = await Promise.all([apiClient.get('/a'), apiClient.get('/b')]);
     expect(a.data).toEqual({ data: '/a' });
@@ -89,7 +96,7 @@ describe('apiClient', () => {
 
   it("qayta yuborilgan so'rov yana 401 bersa — ikkinchi refresh yo'q", async () => {
     api.onGet('/always401').reply(401, {});
-    refresh.onPost('/auth/refresh').reply(200, { data: { accessToken: 'new', user } });
+    refresh.onPost('/auth/refresh').reply(200, { data: { accessToken: 'new' } });
     await expect(apiClient.get('/always401')).rejects.toMatchObject({ response: { status: 401 } });
     expect(refresh.history.post).toHaveLength(1);
   });

@@ -15,21 +15,6 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 
 "Taklif" — faqat taklif, qaror emas. Savol ko'p fazaga tegishli bo'lsa, eng birinchi fazasida turadi.
 
-## P1
-
-| ID | Savol | Manba | Faza | Taklif (default) | Turi |
-|---|---|---|---|---|---|
-| Q-63 | Swagger UI "login formasi bilan" — Swagger'ga kirish uchun alohida login (basic auth?) yoki Swagger ichida JWT olish formasi? | 16-architecture §16 — LOYIHA.md:494 | P1 | Alohida basic auth yo'q: Swagger UI (faqat development) ichidagi "Authorize" (Bearer) orqali — token `/api/v1/auth/login` dan olinadi. | NON-BLOCKING |
-
-## P2
-
-| ID | Savol | Manba | Faza | Taklif (default) | Turi |
-|---|---|---|---|---|---|
-| Q-10 | `slug` qoidalari (format, unikallik, o'zgartirsa bo'ladimi) va u nimada ishlatiladi (login, URL)? | 02-multitenancy §2 — LOYIHA.md:88 | P2 | Format `^[a-z0-9-]{3,50}$`, global unikal, yaratilgandan keyin o'zgarmaydi; hozircha faqat identifikator (login'da ishlatilishi — Q-60 ga bog'liq). | NON-BLOCKING |
-| Q-58 | 3 sessiya limitida "eskisi" — eng eski yaratilganmi yoki eng uzoq ishlatilmaganmi? | 15-auth §15 — LOYIHA.md:380 | P2 | Eng uzoq ishlatilmagan (`last_activity` eng eski) sessiya bekor qilinadi. | NON-BLOCKING |
-| Q-59 | Idle timeout qanday o'lchanadi: har API so'rov sessiyaning `last_activity` ni yangilaydimi yoki faqat refresh? Idle'da serverdan qaysi xato kodi qaytadi va frontend nima qiladi? | 15-auth §15, 16 §16 — LOYIHA.md:380,410 | P2 | Har autentifikatsiyalangan so'rov `last_activity` ni yangilaydi (≤1 daqiqada bir marta yoziladi); idle'da 401 `SESSION_EXPIRED`, frontend holatni tozalab login sahifasiga yo'naltiradi. | NON-BLOCKING |
-| Q-61 | Refresh cookie atributlari (`SameSite`, `Secure`, `path=/api/v1/auth/refresh`?) va CORS siyosati spec'da yo'q. | 15-auth §15 — LOYIHA.md:378 | P2 | Refresh cookie: `HttpOnly`, `Secure` (production), `SameSite=Strict`, `path=/api/v1/auth`; CORS faqat `FRONTEND_URL` (D-26) dan, `credentials: true`. | NON-BLOCKING |
-
 ## P4
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
@@ -91,6 +76,7 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-07 | `director` dashboard'da "umumiy statistika" — qaysi ko'rsatkichlar? Umuman har rol dashboardi tarkibi spec'da yo'q; frontend'da `Chemist/Director/LabHead/Inspector/SuperAdmin` dashboardlari bor, lekin `admin` uchun dashboard nomlanmagan — admin qaysi dashboardni ko'radi? | 01-roles §1, 16 §16 — LOYIHA.md:53,451 | P6 | ✅ RESOLVED → D-33 |
 | Q-08 | Kompaniyani "o'chirish" — jismoniy o'chirishmi yoki nofaollashtirish (`is_active=false`)? Nofaol kompaniya foydalanuvchilari login qila oladimi, faol sessiyalari/tokenlari nima bo'ladi? | 02-multitenancy §2 — LOYIHA.md:88 | P2 | ✅ RESOLVED → D-34 |
 | Q-09 | Kompaniya yaratilganda uning birinchi foydalanuvchisini (masalan `admin`) kim yaratadi? `super_admin` kompaniya ichida foydalanuvchi yarata oladimi? `super_admin` qanday paydo bo'ladi (seed/CLI)? | 02-multitenancy §2, 01 §1 — LOYIHA.md:49,56,88 | P2 | ✅ RESOLVED → D-35 |
+| Q-10 | `slug` qoidalari (format, unikallik, o'zgartirsa bo'ladimi) va u nimada ishlatiladi (login, URL)? | 02-multitenancy §2 — LOYIHA.md:88 | P2 | ✅ D-95 |
 | Q-11 | §0 "muddati o'tayotgan namunalar" uchun avtomatik eslatma va'da qilingan, lekin namunada muddat maydoni ham, bunga mos xabarnoma turi ham (§9) yo'q. Bu funksiya kerakmi? Qaysi maydon va qaysi tur? | 00-overview §0, 09 §9 — LOYIHA.md:15,302-310 | P4/P6 | ✅ RESOLVED → D-17 |
 | Q-12 | Namunaning to'liq maydonlari ro'yxati yo'q: spec faqat tur, modda, lot, seriya raqam, miqdor nomlaydi. O'lchov birligi, ishlab chiqaruvchi, yetkazib beruvchi, ishlab chiqarilgan/yaroqlilik sanasi, namuna kodi/raqami (avtomatik?) kerakmi? | 03-samples §3, 17 §17 — LOYIHA.md:130,501 | P4 | ✅ RESOLVED → D-68 (qisman; `expires_at`/`deadline` — SCHEMA_DIFF U-1) |
 | Q-13 | D-02 dan keyin namuna `rejected` statusi (§3 diagramma) hali ishlatiladimi? Namuna hech qachon `rejected` holatida qolmaydimi yoki (masalan pasport rad etilganda) bo'ladimi? `sample_rejected` xabarnomasi qachon yuboriladi? | 03-samples §3, 09 §9, D-02 — LOYIHA.md:125,306 | P4/P5 | ✅ RESOLVED → D-14 |
@@ -126,7 +112,11 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-49 | Xabarnomalarni o'qilgan deb belgilash, "hammasini o'qish", o'chirish, saqlash muddati bormi? Bell ikonasida o'qilmaganlar soni? | 09-notifications §9 — LOYIHA.md:314 | P6 | ✅ RESOLVED → D-59 |
 | Q-51 | Qaysi hodisalar audit/faoliyat jurnaliga yoziladi (login, CRUD, status o'tishlari, fayl yuklash...)? Ikkala jurnal bitta `audit_log` jadvalidanmi? Saqlash muddati, filtrlar, eksport? | 11-audit §11, 16 §16 — LOYIHA.md:336-339,482 | P10 | ✅ RESOLVED → D-60 |
 | Q-53 | Generic `files` moduli qaysi ob'ektlarga (protokol/pasport/reaktiv hujjatlari o'z ustunlari bilanmi yoki `files` jadvali orqalimi) xizmat qiladi va qaysi endpoint/UI uni ishlatadi? Imzolangan URL amal qilish muddati? | 12-files §12 — LOYIHA.md:345 | P5 | ✅ RESOLVED → D-61 |
+| Q-58 | 3 sessiya limitida "eskisi" — eng eski yaratilganmi yoki eng uzoq ishlatilmaganmi? | 15-auth §15 — LOYIHA.md:380 | P2 | ✅ D-89 |
+| Q-59 | Idle timeout qanday o'lchanadi: har API so'rov sessiyaning `last_activity` ni yangilaydimi yoki faqat refresh? Idle'da serverdan qaysi xato kodi qaytadi va frontend nima qiladi? | 15-auth §15, 16 §16 — LOYIHA.md:380,410 | P2 | ✅ D-90 |
 | Q-60 | Parol siyosati (minimal uzunlik, murakkablik) va login identifikatori (email? username? kompaniya slug bilan?) aniqlanmagan. Login urinishlariga alohida rate-limit kerakmi? | 15-auth §15 — LOYIHA.md:384-386 | P2 | ✅ RESOLVED → D-66 |
+| Q-61 | Refresh cookie atributlari (`SameSite`, `Secure`, `path=/api/v1/auth/refresh`?) va CORS siyosati spec'da yo'q. | 15-auth §15 — LOYIHA.md:378 | P2 | ✅ D-88 |
 | Q-62 | JWT sirlari va R2 uchun aniq env o'zgaruvchi nomlari spec'da berilmagan (faqat `R2_*`). `.env.example` da `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT` deb nomlandi — tasdiqlash kerak. | 15 §15, 12 §12, 16 §16 — LOYIHA.md:345,406 | P1/P2 | ✅ D-25 (foydalanuvchi tasdig'i: D-18) |
+| Q-63 | Swagger UI "login formasi bilan" — Swagger'ga kirish uchun alohida login (basic auth?) yoki Swagger ichida JWT olish formasi? | 16-architecture §16 — LOYIHA.md:494 | P1 | ✅ D-93 |
 | Q-64 | Sidebar elementlari (Dashboard, Namunalar, Reyestr, Harorat, Foydalanuvchilar, Faoliyat) rol bo'yicha qanday ko'rinadi? Masalan kontrolyor/chemist "Foydalanuvchilar" va "Faoliyat" ni ko'rmaydi (matritsa bo'yicha), lekin bu sidebar uchun aniq yozilmagan. Profil sahifasiga kirish joyi? | 16-architecture §16, 01 §1 — LOYIHA.md:458,463 | P1/P6 | ✅ D-28 |
 | Q-66 | Til almashtirgichi — foydalanuvchi profilida (bazada) ham saqlanadimi yoki faqat `localStorage`? (Q-50 bilan bog'liq.) | 14-i18n §14 — LOYIHA.md:367 | P1 | ✅ D-27 |

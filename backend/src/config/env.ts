@@ -52,6 +52,12 @@ export const envSchema = z
       .enum(['true', 'false'])
       .default('false')
       .transform((v) => v === 'true'),
+    // Token muddatlari (spec §15: access 30 daqiqa, refresh 7 kun) — env nomi spec'da yo'q, biz qo'shdik
+    JWT_ACCESS_TTL_MINUTES: z.coerce.number().int().positive().default(30),
+    JWT_REFRESH_TTL_DAYS: z.coerce.number().int().positive().default(7),
+    // Swagger HTTP Basic (D-93) — spec'da yo'q, biz qo'shdik; ikkalasi berilmasa /docs o'chiq
+    SWAGGER_USER: optionalString,
+    SWAGGER_PASSWORD: optionalString,
   })
   .superRefine((env, ctx) => {
     const require = (key: keyof typeof env, why: string) => {
@@ -61,6 +67,10 @@ export const envSchema = z
       for (const key of R2_KEYS) require(key, "production'da majburiy");
       require('FRONTEND_URL', "production'da majburiy");
     }
+    if (env.SWAGGER_USER && !env.SWAGGER_PASSWORD)
+      require('SWAGGER_PASSWORD', 'SWAGGER_USER berilganda majburiy');
+    if (env.SWAGGER_PASSWORD && !env.SWAGGER_USER)
+      require('SWAGGER_USER', 'SWAGGER_PASSWORD berilganda majburiy');
     if (env.TELEGRAM_BOT_TOKEN) {
       require('TELEGRAM_BOT_USERNAME', 'TELEGRAM_BOT_TOKEN berilganda majburiy');
       if (env.NODE_ENV === 'production') {

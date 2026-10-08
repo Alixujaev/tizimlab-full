@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import type { Express } from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import { swaggerBasicAuth } from '../middleware/swaggerAuth.js';
 
 const srcDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -21,8 +22,12 @@ export function buildOpenApiSpec(): object {
   });
 }
 
-/** Swagger UI faqat development muhitida ulanadi (spec §16). */
-export function mountSwagger(app: Express): void {
-  // P2: `/docs` login formasi bilan himoyalanadi (auth tayyor bo'lgach; OPEN_QUESTIONS Q-63)
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(buildOpenApiSpec()));
+/** Swagger UI faqat development muhitida ulanadi (spec §16), HTTP Basic bilan himoyalangan (D-93). */
+export function mountSwagger(app: Express, credentials: { user: string; password: string }): void {
+  app.use(
+    '/docs',
+    swaggerBasicAuth(credentials),
+    swaggerUi.serve,
+    swaggerUi.setup(buildOpenApiSpec()),
+  );
 }

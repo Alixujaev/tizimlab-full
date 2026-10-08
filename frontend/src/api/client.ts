@@ -1,14 +1,13 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig, isAxiosError } from 'axios';
 import { useAuthStore } from '@/store/authStore';
-import type { ApiError, ApiErrorResponse, ApiResponse, User } from '@/types';
+import type { ApiError, ApiErrorResponse, ApiResponse } from '@/types';
 
 export const API_BASE_URL = '/api/v1';
 const REFRESH_PATH = '/auth/refresh';
 
-/** Refresh javobi (D-22 formatida). Endpoint P2 da yoziladi. */
+/** `POST /auth/refresh` javobi (D-22). Foydalanuvchi ma'lumoti alohida `GET /auth/me` dan. */
 export interface RefreshPayload {
   accessToken: string;
-  user: User;
 }
 
 type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
@@ -40,7 +39,7 @@ export function refreshAccessToken(): Promise<string> {
   refreshPromise ??= refreshClient
     .post<ApiResponse<RefreshPayload>>(REFRESH_PATH)
     .then(({ data }) => {
-      useAuthStore.getState().setSession(data.data);
+      useAuthStore.getState().setAccessToken(data.data.accessToken);
       return data.data.accessToken;
     })
     .finally(() => {

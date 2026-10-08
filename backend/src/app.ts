@@ -6,23 +6,41 @@ import helmet from 'helmet';
 import type { Logger } from 'winston';
 import type { Env } from './config/env.js';
 import { mountSwagger } from './config/swagger.js';
+import { createAuthMiddleware } from './middleware/authenticate.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 import { requestId } from './middleware/requestId.js';
+import { createAuthRouter } from './modules/auth/auth.router.js';
+import { authConfigFromEnv, type AuthEnv } from './modules/auth/auth.types.js';
+import {
+  createLoginLimiter,
+  LOGIN_LIMIT,
+  type LoginLimitOptions,
+} from './modules/auth/loginLimiter.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
 export const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 export const RATE_LIMIT_MAX = 2000;
 
+export type AppEnv = AuthEnv &
+  Pick<Env, 'FRONTEND_URL' | 'TRUST_PROXY' | 'SWAGGER_USER' | 'SWAGGER_PASSWORD'>;
+
 export interface AppDeps {
-  env: Pick<Env, 'NODE_ENV' | 'FRONTEND_URL' | 'TRUST_PROXY'>;
+  env: AppEnv;
   /** DB holatini tekshiradi (`/health` uchun) — testlarda almashtiriladi. */
   pingDb: () => Promise<boolean>;
   logger?: Logger;
+  /** Login rate-limit (D-66) — testlarda kichik/katta qiymat bilan almashtiriladi. */
+  loginLimit?: LoginLimitOptions;
 }
 
 /** Express ilovasini yig'adi. Server ishga tushirish `server.ts` da (D-21). */
-export function createApp({ env, pingDb, logger = defaultLogger }: AppDeps): Express {
+export function createApp({
+  env,
+  pingDb,
+  logger = defaultLogger,
+  loginLimit = LOGIN_LIMIT,
+}: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', env.TRUST_PROXY);
@@ -66,11 +84,19 @@ export function createApp({ env, pingDb, logger = defaultLogger }: AppDeps): Exp
     });
   });
 
-  // Modul routerlari P2 dan boshlab shu yerga ulanadi
+  // Modul routerlari: himoyalanganlari `auth.requireAuth` → `requireCompany` → `requireRole`/`requirePermission`
+  const authConfig = authConfigFromEnv(env);
+  const auth = createAuthMiddleware(authConfig);
   const api = Router();
+  api.use(
+    '/auth',
+    createAuthRouter({ config: authConfig, auth, loginLimiter: createLoginLimiter(loginLimit) }),
+  );
   app.use('/api/v1', api);
 
-  if (env.NODE_ENV === 'development') mountSwagger(app);
+  if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {
+    mountSwagger(app, { user: env.SWAGGER_USER, password: env.SWAGGER_PASSWORD });
+  }
 
   app.use(notFound);
   app.use(errorHandler(logger));

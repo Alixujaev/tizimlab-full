@@ -81,7 +81,8 @@ to'ldirilgan namuna — 1. ETL bu "0" larni boshida tekshiradi (D-82).
 - `user_role` enum: `chemist`, `lab_head`, `director`, `kontrolyor`, `admin`, `super_admin` — §1 bilan to'liq mos.
 - Cheklovlar: `users_pkey`, `users_email_key UNIQUE(email)`, `users_telegram_chat_id_key UNIQUE(telegram_chat_id)`.
 - Indekslar: `idx_users_active`, `idx_users_company_id`, `idx_users_created_by`, `idx_users_email` (UNIQUE bilan takror), `idx_users_role`, `idx_users_telegram_chat_id`.
-- ETL: to'g'ridan-to'g'ri (`password_hash` bcrypt — §15 bilan mos, qayta xeshlash shart emas). CHECK qo'shilishidan oldin
+- Amalda (P2a, `001_core.sql`): qo'shimcha CHECK `email = lower(email)` (D-91) — og'ish, BASELINE_PLAN "Amalga oshirish" bo'limida.
+- ETL: to'g'ridan-to'g'ri (`password_hash` bcrypt — §15 bilan mos, qayta xeshlash shart emas). Emaillar kichik harfga keltiriladi (to'qnashuv — ETL hisobotiga); CHECK'lar qo'shilishidan oldin
   `super_admin`/`company_id` mosligi ETL'da tekshiriladi.
 
 ### `sessions` (`:483`) — MATCH · KEEP

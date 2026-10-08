@@ -19,12 +19,21 @@ export const COMPANY_ROLES = [
   'admin',
 ] as const satisfies readonly Role[];
 
+export interface Company {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+/** `GET /auth/me` javobi (parol xeshi/token hech qachon yo'q). */
 export interface User {
   id: string;
+  email: string;
   fullName: string;
   role: Role;
   /** super_admin uchun `null` (spec §2). */
   companyId: string | null;
+  company: Company | null;
 }
 
 export interface PageMeta {

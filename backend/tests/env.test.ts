@@ -138,6 +138,24 @@ describe('parseEnv', () => {
       'SESSION_IDLE_TIMEOUT_MINUTES',
     );
   });
+
+  it('token muddatlari standart: access 30 daqiqa, refresh 7 kun (spec §15)', () => {
+    const env = parseEnv(base);
+    expect(env.JWT_ACCESS_TTL_MINUTES).toBe(30);
+    expect(env.JWT_REFRESH_TTL_DAYS).toBe(7);
+    expect(env.SESSION_IDLE_TIMEOUT_MINUTES).toBe(30);
+  });
+
+  it('SWAGGER_USER va SWAGGER_PASSWORD faqat birga (D-93)', () => {
+    expect(parseEnv(base).SWAGGER_USER).toBeUndefined();
+    expect(problemsOf({ ...base, SWAGGER_USER: 'docs' }).problems[0]?.name).toBe(
+      'SWAGGER_PASSWORD',
+    );
+    expect(problemsOf({ ...base, SWAGGER_PASSWORD: 'p' }).problems[0]?.name).toBe('SWAGGER_USER');
+    expect(parseEnv({ ...base, SWAGGER_USER: 'docs', SWAGGER_PASSWORD: 'p' }).SWAGGER_USER).toBe(
+      'docs',
+    );
+  });
 });
 
 describe('loadEnv', () => {

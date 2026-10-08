@@ -1,5 +1,7 @@
 {
-  "app": { "name": "TizimLab" },
+  "app": {
+    "name": "TizimLab"
+  },
   "nav": {
     "label": "Asosiy menyu",
     "dashboard": "Bosh sahifa",
@@ -39,15 +41,33 @@
     "noData": "Ma'lumot yo'q"
   },
   "auth": {
-    "loginComingSoon": "Kirish formasi keyingi bosqichda qo'shiladi."
+    "email": "Email",
+    "password": "Parol",
+    "submit": "Kirish",
+    "submitting": "Kirilmoqda…",
+    "errors": {
+      "INVALID_CREDENTIALS": "Email yoki parol noto'g'ri.",
+      "ACCOUNT_INACTIVE": "Hisobingiz yoki kompaniyangiz faol emas. Administratorga murojaat qiling.",
+      "RATE_LIMITED": "Urinishlar soni juda ko'p. 15 daqiqadan keyin qayta urinib ko'ring."
+    },
+    "validation": {
+      "emailRequired": "Email kiriting.",
+      "emailInvalid": "Email formati noto'g'ri.",
+      "passwordRequired": "Parol kiriting."
+    }
   },
   "topbar": {
     "language": "Til",
     "notifications": "Bildirishnomalar",
     "noNotifications": "Yangi bildirishnoma yo'q",
-    "profile": "Profil"
+    "profile": "Profil",
+    "logout": "Chiqish"
   },
-  "languages": { "uz": "O'zbekcha", "ru": "Русский", "en": "English" },
+  "languages": {
+    "uz": "O'zbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
   "pagination": {
     "label": "Sahifalash",
     "previous": "Oldingi",

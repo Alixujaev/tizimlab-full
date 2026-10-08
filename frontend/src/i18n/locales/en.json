@@ -1,5 +1,7 @@
 {
-  "app": { "name": "TizimLab" },
+  "app": {
+    "name": "TizimLab"
+  },
   "nav": {
     "label": "Main menu",
     "dashboard": "Dashboard",
@@ -39,15 +41,33 @@
     "noData": "No data"
   },
   "auth": {
-    "loginComingSoon": "The sign-in form will be added in the next phase."
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "errors": {
+      "INVALID_CREDENTIALS": "Incorrect email or password.",
+      "ACCOUNT_INACTIVE": "Your account or company is inactive. Contact your administrator.",
+      "RATE_LIMITED": "Too many attempts. Try again in 15 minutes."
+    },
+    "validation": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Invalid email format.",
+      "passwordRequired": "Enter your password."
+    }
   },
   "topbar": {
     "language": "Language",
     "notifications": "Notifications",
     "noNotifications": "No new notifications",
-    "profile": "Profile"
+    "profile": "Profile",
+    "logout": "Sign out"
   },
-  "languages": { "uz": "O'zbekcha", "ru": "Русский", "en": "English" },
+  "languages": {
+    "uz": "O'zbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
   "pagination": {
     "label": "Pagination",
     "previous": "Previous",

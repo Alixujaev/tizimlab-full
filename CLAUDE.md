@@ -43,6 +43,7 @@ npm start                # backend dist'dan
 npm run lint | typecheck | test
 npm run check            # lint + typecheck + test — har ish oxirida YASHIL bo'lishi shart
 npm run migrate -w backend          # migratsiyalarni qo'llash (migrate:status — holat)
+npm run create-super-admin -w backend  # super_admin (interaktiv, parol yashirin; D-94)
 npm run test -w backend -- tests/app.test.ts   # bitta fayl
 npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 ```
@@ -90,6 +91,8 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 - DB testlari `describeDb` + `createIsolatedDb()` (har test alohida sxemada) bilan; `TEST_DATABASE_URL`
   (`backend/.env`) yo'q bo'lsa lokal'da skip, CI'da majburiy.
 - HTTP testlari: `testApp()` / `miniApp()` (`backend/tests/helpers/app.ts`) + supertest.
+- Auth/DB testlari: `setupAuthDb()` (sxema + migratsiyalar + `setPool`), `createCompany`, `createUser({role, company})`,
+  `loginAs(app, user)` (`backend/tests/helpers/auth.ts`). Himoyalangan route: `auth.requireAuth` → `requireCompany` → `requireRole`/`requirePermission`.
 - Frontend: Testing Library, `renderAt(path)` / `loginAs(role)` (`frontend/tests/helpers.tsx`), axios uchun `axios-mock-adapter`.
 
 ## Ish tartibi (har faza)

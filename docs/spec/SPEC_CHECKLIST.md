@@ -12,10 +12,10 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-ROLE-01 | Tizimda aynan 6 ta rol mavjud: `super_admin`, `kontrolyor`, `chemist`, `lab_head`, `director`, `admin`. | 01-roles §1 | P2 | [ ] |
-| R-ROLE-02 | `super_admin` hech qaysi kompaniyaga bog'lanmagan (`company_id = null`). | 01-roles §1 | P2 | [ ] |
-| R-ROLE-03 | `super_admin` dan boshqa barcha rollar bitta kompaniyaga bog'langan (`company_id` majburiy). | 01-roles §1, 02 §2 | P2 | [ ] |
-| R-ROLE-04 | `super_admin` oddiy ish oqimlarida (namuna, protokol va h.k.) qatnashmaydi — kompaniya ichidagi modul endpointlari unga yopiq. | 01-roles §1 | P2 | [ ] |
+| R-ROLE-01 | Tizimda aynan 6 ta rol mavjud: `super_admin`, `kontrolyor`, `chemist`, `lab_head`, `director`, `admin`. | 01-roles §1 | P2 | [x] |
+| R-ROLE-02 | `super_admin` hech qaysi kompaniyaga bog'lanmagan (`company_id = null`). | 01-roles §1 | P2 | [x] |
+| R-ROLE-03 | `super_admin` dan boshqa barcha rollar bitta kompaniyaga bog'langan (`company_id` majburiy). | 01-roles §1, 02 §2 | P2 | [x] |
+| R-ROLE-04 | `super_admin` oddiy ish oqimlarida (namuna, protokol va h.k.) qatnashmaydi — kompaniya ichidagi modul endpointlari unga yopiq. | 01-roles §1 | P2 | [~] |
 | R-ROLE-05 | `super_admin` interfeysi butunlay boshqacha: faqat **Kompaniyalar** va **Audit jurnali** sahifalarini ko'radi (`SuperAdminDashboard`). | 01-roles §1 | P2 | [ ] |
 | R-ROLE-06 | `super_admin` kompaniyalarni yaratadi/faollashtiradi. | 01-roles §1 | P2 | [ ] |
 | R-ROLE-07 | `super_admin` barcha kompaniyalar bo'yicha audit jurnalini ko'radi. | 01-roles §1 | P10 | [ ] |
@@ -89,18 +89,18 @@
 | R-ROLE-75 | Faoliyat jurnali: `lab_head` — RUXSAT. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-76 | Faoliyat jurnali: `director` — RUXSAT. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-77 | Faoliyat jurnali: `admin` — RUXSAT. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-78 | Rol ruxsatlaridan tashqari `user_permissions` orqali individual ruxsat berish mumkin, `requirePermission(resource, action)` bilan tekshiriladi. | 01-roles §1 | P2 | [ ] |
+| R-ROLE-78 | Rol ruxsatlaridan tashqari `user_permissions` orqali individual ruxsat berish mumkin, `requirePermission(resource, action)` bilan tekshiriladi. | 01-roles §1 | P2 | [~] |
 | R-ROLE-79 | Matritsadagi har bir TAQIQ backend'da (403) majburlanadi — faqat UI'da yashirish yetarli emas. | 01-roles §1, 16 §16 | P12 | [ ] |
 
 ## TENANT — Ko'p-kompaniyalilik
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-TENANT-01 | `companies` jadvali mavjud (nomi + `slug`, faollik holati). | 02-multitenancy §2, 16 §16 | P2 | [ ] |
-| R-TENANT-02 | Har bir `users` yozuvi `company_id` ga ega (super_admin uchun `null`). | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-03 | Har bir asosiy jadval (`samples`, `substances`, `protocols`, `reagents`, ...) kompaniya bo'yicha ajratilgan (`company_id`). | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-04 | JWT access tokenida `company_id` bor. | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-05 | `requireCompany` middleware kompaniya kontekstisiz so'rovlarni bloklaydi. | 02-multitenancy §2 | P2 | [ ] |
+| R-TENANT-01 | `companies` jadvali mavjud (nomi + `slug`, faollik holati). | 02-multitenancy §2, 16 §16 | P2 | [x] |
+| R-TENANT-02 | Har bir `users` yozuvi `company_id` ga ega (super_admin uchun `null`). | 02-multitenancy §2 | P2 | [x] |
+| R-TENANT-03 | Har bir asosiy jadval (`samples`, `substances`, `protocols`, `reagents`, ...) kompaniya bo'yicha ajratilgan (`company_id`). | 02-multitenancy §2 | P2 | [~] |
+| R-TENANT-04 | JWT access tokenida `company_id` bor. | 02-multitenancy §2 | P2 | [x] |
+| R-TENANT-05 | `requireCompany` middleware kompaniya kontekstisiz so'rovlarni bloklaydi. | 02-multitenancy §2 | P2 | [x] |
 | R-TENANT-06 | Kompaniyalar sahifasi `/companies` faqat `super_admin` uchun. | 02-multitenancy §2 | P2 | [ ] |
 | R-TENANT-07 | `super_admin` yangi kompaniya yaratadi (nomi + `slug`). | 02-multitenancy §2 | P2 | [ ] |
 | R-TENANT-08 | `super_admin` kompaniyani faollashtiradi/nofaollashtiradi (`is_active`); jismoniy o'chirish yo'q. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
@@ -109,7 +109,7 @@
 | R-TENANT-11 | HAR BIR tenant jadvaliga so'rov service'da `company_id` bo'yicha filtrlanadi (ilova darajasida). | DECISIONS.md D-12 | P12 | [ ] |
 | R-TENANT-12 | Har fazada yangi tenant endpointlar uchun kompaniyalararo izolyatsiya integration testi yoziladi. | DECISIONS.md D-12 | P2 | [ ] |
 | R-TENANT-13 | Barcha tenant endpointlarini qamrab oluvchi yakuniy izolyatsiya integration testi. | DECISIONS.md D-12 | P12 | [ ] |
-| R-TENANT-14 | `super_admin` CLI skript bilan yaratiladi (`npm run` buyrug'i). | DECISIONS.md D-35 | P2 | [ ] |
+| R-TENANT-14 | `super_admin` CLI skript bilan yaratiladi (`npm run` buyrug'i). | DECISIONS.md D-35 | P2 | [x] |
 | R-TENANT-15 | Kompaniya yaratishda `super_admin` shu kompaniyaning birinchi `admin` foydalanuvchisini yaratadi; boshqa foydalanuvchilarni yarata olmaydi. | DECISIONS.md D-35 | P2 | [ ] |
 | R-TENANT-16 | Nofaollashtirilgan kompaniyani qayta faollashtirish mumkin. | DECISIONS.md D-34 | P2 | [ ] |
 
@@ -431,9 +431,9 @@
 | R-USER-05 | Admin panelda yangi foydalanuvchi yaratish: `admin` — istalgan kompaniya roli; `lab_head` — faqat `kontrolyor`/`chemist`. | 10-users §10, DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-06 | `admin` istalgan foydalanuvchi parolini, `lab_head` faqat `kontrolyor`/`chemist` parolini tiklay oladi. | 10-users §10, 15 §15, DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-07 | Admin panelda foydalanuvchi loglarini ko'rish (Q-52). | 10-users §10 | P10 | [ ] |
-| R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [ ] |
+| R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [~] |
 | R-USER-09 | `user_permissions` dan ruxsatni olib tashlash = individual grant'ni o'chirish (rol ruxsatini deny qilib bo'lmaydi). | 10-users §10, DECISIONS.md D-32 | P2 | [ ] |
-| R-USER-10 | `requirePermission` natijasi so'rov davomida keshlanadi (bitta so'rovda takroriy DB so'rovi yo'q). | 10-users §10 | P2 | [ ] |
+| R-USER-10 | `requirePermission` natijasi so'rov davomida keshlanadi (bitta so'rovda takroriy DB so'rovi yo'q). | 10-users §10 | P2 | [x] |
 | R-USER-11 | `resource:action` katalogi P2 da tuziladi va foydalanuvchiga tasdiqlatiladi. | DECISIONS.md D-10 | P2 | [ ] |
 | R-USER-12 | Har foydalanuvchi `/profile` da o'z parolini o'zgartira oladi. | 10-users §10, 15 §15 | P2 | [ ] |
 | R-USER-13 | Har foydalanuvchi `/profile` da Telegram akkauntini ulay oladi. | 10-users §10 | P11 | [ ] |
@@ -441,7 +441,7 @@
 | R-USER-15 | `lab_head` `admin`/`lab_head`/`director` rolidagi foydalanuvchini yarata, tahrirlay va parolini tiklay olmaydi (403). | DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-16 | `user_permissions` ni faqat `admin` boshqaradi; `lab_head`/`director` urinishi rad etiladi. | DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-17 | `director` foydalanuvchilarni faqat ko'radi (yaratish/tahrirlash/parol tiklash — 403). | DECISIONS.md D-16, 01 §1 | P2 | [ ] |
-| R-USER-18 | Effektiv ruxsat = rol ruxsatlari ∪ individual (`user_permissions`) ruxsatlar. | DECISIONS.md D-32 | P2 | [ ] |
+| R-USER-18 | Effektiv ruxsat = rol ruxsatlari ∪ individual (`user_permissions`) ruxsatlar. | DECISIONS.md D-32 | P2 | [x] |
 
 ## AUDIT — Audit va Faoliyat jurnali
 
@@ -453,15 +453,15 @@
 | R-AUDIT-04 | Faoliyat jurnali faqat o'z kompaniyasi ichidagi foydalanuvchi harakatlarini ko'rsatadi. | 11-audit §11 | P10 | [ ] |
 | R-AUDIT-05 | `super_admin` `/activity` ga, kompaniya rollari `/logs` ga kira olmaydi. | 11-audit §11 | P10 | [ ] |
 | R-AUDIT-06 | Ikkala jurnal backend'da bitta `audit` modulida: `audit.router.ts` (global), `activity.router.ts` (kompaniya bo'yicha). | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-07 | Audit yozuvlari bitta `audit_log` jadvalida: login/logout/muvaffaqiyatsiz login, CRUD, status o'tishlari, fayl yuklash/o'chirish, ruxsat o'zgarishlari. | 16-architecture §16, DECISIONS.md D-60 | P10 | [ ] |
+| R-AUDIT-07 | Audit yozuvlari bitta `audit_log` jadvalida: login/logout/muvaffaqiyatsiz login, CRUD, status o'tishlari, fayl yuklash/o'chirish, ruxsat o'zgarishlari. | 16-architecture §16, DECISIONS.md D-60 | P10 | [~] |
 | R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [ ] |
-| R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [ ] |
+| R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [~] |
 | R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [ ] |
-| R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62, D-64 | P10 | [ ] |
-| R-AUDIT-12 | Audit yozuvi ilova (servis) qatlamida yoziladi; audit uchun DB trigger yo'q. | DECISIONS.md D-64 | P10 | [ ] |
-| R-AUDIT-13 | Audit yozuvi o'zgartirish bilan bitta tranzaksiyada yoziladi — o'zgarish rollback bo'lsa audit yozuvi ham qolmaydi. | DECISIONS.md D-64 | P10 | [ ] |
-| R-AUDIT-14 | Audit yozuvida `user_id`, `company_id`, `ip_address`, `user_agent` to'ldiriladi. | DECISIONS.md D-64 | P10 | [ ] |
-| R-AUDIT-15 | `audit_log.record_id` NULL faqat auth hodisalari (login/logout/muvaffaqiyatsiz login) uchun — DB CHECK boshqa hodisada NULL ni rad etadi. | DECISIONS.md D-80 | P2 | [ ] |
+| R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62, D-64 | P10 | [x] |
+| R-AUDIT-12 | Audit yozuvi ilova (servis) qatlamida yoziladi; audit uchun DB trigger yo'q. | DECISIONS.md D-64 | P10 | [x] |
+| R-AUDIT-13 | Audit yozuvi o'zgartirish bilan bitta tranzaksiyada yoziladi — o'zgarish rollback bo'lsa audit yozuvi ham qolmaydi. | DECISIONS.md D-64 | P10 | [x] |
+| R-AUDIT-14 | Audit yozuvida `user_id`, `company_id`, `ip_address`, `user_agent` to'ldiriladi. | DECISIONS.md D-64 | P10 | [x] |
+| R-AUDIT-15 | `audit_log.record_id` NULL faqat auth hodisalari (login/logout/muvaffaqiyatsiz login) uchun — DB CHECK boshqa hodisada NULL ni rad etadi. | DECISIONS.md D-80 | P2 | [x] |
 
 ## FILE — Fayllarni saqlash
 
@@ -520,29 +520,32 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-AUTH-01 | Auth moduli: login. | 16-architecture §16 | P2 | [ ] |
-| R-AUTH-02 | Auth moduli: logout (sessiyani bekor qiladi). | 16-architecture §16 | P2 | [ ] |
-| R-AUTH-03 | Auth moduli: refresh (`/auth/refresh`). | 15-auth §15 | P2 | [ ] |
-| R-AUTH-04 | Auth moduli: me (joriy foydalanuvchi). | 16-architecture §16 | P2 | [ ] |
-| R-AUTH-05 | Access token — JWT, 30 daqiqa amal qiladi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-06 | Access token `Authorization: Bearer ...` sarlavhasida har so'rovda yuboriladi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-07 | Refresh token — JWT, 7 kun amal qiladi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-08 | Refresh token HTTP-only cookie'da, faqat `/auth/refresh` da ishlatiladi (Q-61). | 15-auth §15 | P2 | [ ] |
-| R-AUTH-09 | Bazada refresh token xom holda emas, faqat SHA-256 xeshi saqlanadi (`sessions`). | 15-auth §15 | P2 | [ ] |
-| R-AUTH-10 | Har refresh'da refresh token rotatsiya qilinadi; eski token qayta ishlatilmaydi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-11 | Bir foydalanuvchi bir vaqtda ko'pi bilan 3 ta aktiv sessiyaga ega. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-12 | 4-sessiya ochilganda eng eskisi avtomatik o'chiriladi (Q-58). | 15-auth §15 | P2 | [ ] |
-| R-AUTH-13 | Harakatsizlik `SESSION_IDLE_TIMEOUT_MINUTES` dan oshsa sessiya avtomatik tugaydi (Q-59). | 15-auth §15 | P2 | [ ] |
-| R-AUTH-14 | `SESSION_IDLE_TIMEOUT_MINUTES` standart qiymati 30 daqiqa. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [ ] |
-| R-AUTH-16 | Parol bcrypt 10 round bilan xeshlanadi. | 15-auth §15 | P2 | [ ] |
+| R-AUTH-01 | Auth moduli: login. | 16-architecture §16 | P2 | [x] |
+| R-AUTH-02 | Auth moduli: logout (sessiyani bekor qiladi). | 16-architecture §16 | P2 | [x] |
+| R-AUTH-03 | Auth moduli: refresh (`/auth/refresh`). | 15-auth §15 | P2 | [x] |
+| R-AUTH-04 | Auth moduli: me (joriy foydalanuvchi). | 16-architecture §16 | P2 | [x] |
+| R-AUTH-05 | Access token — JWT, 30 daqiqa amal qiladi. | 15-auth §15 | P2 | [x] |
+| R-AUTH-06 | Access token `Authorization: Bearer ...` sarlavhasida har so'rovda yuboriladi. | 15-auth §15 | P2 | [x] |
+| R-AUTH-07 | Refresh token — JWT, 7 kun amal qiladi. | 15-auth §15 | P2 | [x] |
+| R-AUTH-08 | Refresh token HTTP-only cookie'da, faqat `/auth/refresh` da ishlatiladi (Q-61). | 15-auth §15 | P2 | [x] |
+| R-AUTH-09 | Bazada refresh token xom holda emas, faqat SHA-256 xeshi saqlanadi (`sessions`). | 15-auth §15 | P2 | [x] |
+| R-AUTH-10 | Har refresh'da refresh token rotatsiya qilinadi; eski token qayta ishlatilmaydi. | 15-auth §15 | P2 | [x] |
+| R-AUTH-11 | Bir foydalanuvchi bir vaqtda ko'pi bilan 3 ta aktiv sessiyaga ega. | 15-auth §15 | P2 | [x] |
+| R-AUTH-12 | 4-sessiya ochilganda eng eskisi avtomatik o'chiriladi (Q-58). | 15-auth §15 | P2 | [x] |
+| R-AUTH-13 | Harakatsizlik `SESSION_IDLE_TIMEOUT_MINUTES` dan oshsa sessiya avtomatik tugaydi (Q-59). | 15-auth §15 | P2 | [x] |
+| R-AUTH-14 | `SESSION_IDLE_TIMEOUT_MINUTES` standart qiymati 30 daqiqa. | 15-auth §15 | P2 | [x] |
+| R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [~] |
+| R-AUTH-16 | Parol bcrypt 10 round bilan xeshlanadi. | 15-auth §15 | P2 | [x] |
 | R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [ ] |
-| R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [~] |
-| R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [~] |
-| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
-| R-AUTH-21 | Login identifikatori — `users.email`, butun platforma bo'yicha unikal; takroriy email bilan foydalanuvchi yaratish rad etiladi. | DECISIONS.md D-66 | P2 | [ ] |
-| R-AUTH-22 | Parol siyosati: kamida 8 belgi, kamida bitta harf va bitta raqam; mos kelmasa 400. | DECISIONS.md D-66 | P2 | [ ] |
-| R-AUTH-23 | Login endpointiga alohida rate-limit: bitta IP'dan 15 daqiqada 10 urinish, keyingisi 429. | DECISIONS.md D-66 | P2 | [ ] |
+| R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [x] |
+| R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [x] |
+| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [~] |
+| R-AUTH-21 | Login identifikatori — `users.email`, butun platforma bo'yicha unikal; takroriy email bilan foydalanuvchi yaratish rad etiladi. | DECISIONS.md D-66 | P2 | [x] |
+| R-AUTH-22 | Parol siyosati: kamida 8 belgi, kamida bitta harf va bitta raqam; mos kelmasa 400. | DECISIONS.md D-66 | P2 | [~] |
+| R-AUTH-23 | Login endpointiga alohida rate-limit: bitta IP'dan 15 daqiqada 10 urinish, keyingisi 429. | DECISIONS.md D-66 | P2 | [x] |
+| R-AUTH-24 | Almashtirilgan (eski) refresh token qayta ishlatilsa — 401 `TOKEN_REUSED` va o'sha sessiya bekor qilinadi. | DECISIONS.md D-88 | P2 | [x] |
+| R-AUTH-25 | Noma'lum email va noto'g'ri parol uchun bir xil javob (401 `INVALID_CREDENTIALS`); nofaol hisob holati faqat to'g'ri paroldan keyin (403 `ACCOUNT_INACTIVE`). | DECISIONS.md D-91 | P2 | [x] |
+| R-AUTH-26 | Email trim + kichik harf bilan saqlanadi va solishtiriladi (DB CHECK `email = lower(email)`). | DECISIONS.md D-91 | P2 | [x] |
 
 ## SEC — Xavfsizlik choralari
 
@@ -566,14 +569,14 @@
 | R-ARCH-04 | Ko'p-bosqichli yozuvlar `withTransaction()` ichida. | 16-architecture §16 | P1 | [~] |
 | R-ARCH-05 | `config/env.ts` — Zod env validatsiyasi (cloud yoki lokal DB, R2, Telegram). | 16-architecture §16 | P1 | [x] |
 | R-ARCH-06 | `config/swagger.ts` — API hujjatlari. | 16-architecture §16 | P1 | [~] |
-| R-ARCH-07 | Swagger UI faqat `development` muhitida, login formasi bilan (Q-63). | 16-architecture §16 | P1 | [~] |
-| R-ARCH-08 | Middleware `authenticate.ts`: JWT tekshiruv. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-09 | Middleware `requireRole()`. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-10 | Middleware `requireCompany()`. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-11 | Middleware `requirePermission()`. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-12 | Middleware `sessionTimeout.ts`: harakatsizlikda sessiyani tugatish. | 16-architecture §16 | P2 | [ ] |
+| R-ARCH-07 | Swagger UI faqat `development` muhitida, login formasi bilan (Q-63). | 16-architecture §16 | P1 | [x] |
+| R-ARCH-08 | Middleware `authenticate.ts`: JWT tekshiruv. | 16-architecture §16 | P2 | [x] |
+| R-ARCH-09 | Middleware `requireRole()`. | 16-architecture §16 | P2 | [x] |
+| R-ARCH-10 | Middleware `requireCompany()`. | 16-architecture §16 | P2 | [x] |
+| R-ARCH-11 | Middleware `requirePermission()`. | 16-architecture §16 | P2 | [x] |
+| R-ARCH-12 | Middleware `sessionTimeout.ts`: harakatsizlikda sessiyani tugatish. | 16-architecture §16 | P2 | [x] |
 | R-ARCH-13 | Middleware `errorHandler.ts`: markazlashtirilgan xato handler (domen xatolari → HTTP kod). | 16-architecture §16 | P1 | [x] |
-| R-ARCH-14 | Har modul naqshi: `*.router.ts` (Router + Swagger annotatsiya), `*.controller.ts`, `*.service.ts` (SQL + logika + domen xato klassi), `*.schemas.ts` (Zod). | 16-architecture §16 | P1 | [ ] |
+| R-ARCH-14 | Har modul naqshi: `*.router.ts` (Router + Swagger annotatsiya), `*.controller.ts`, `*.service.ts` (SQL + logika + domen xato klassi), `*.schemas.ts` (Zod). | 16-architecture §16 | P1 | [~] |
 | R-ARCH-15 | Backend modullari: auth, admin, companies, substances, protocols, samples, reagents, temperature, stability, notifications, dashboard, files, audit, telegram. | 16-architecture §16 | P1 | [~] |
 | R-ARCH-16 | `realtime/socket.ts` — Socket.IO server bir xil HTTP server ustida, JWT handshake, `user:<id>` xonalar. | 16-architecture §16 | P6 | [ ] |
 | R-ARCH-17 | `jobs/stabilityAlertJob.ts` — 6 soatlik fon jarayoni. | 16-architecture §16 | P9 | [ ] |
@@ -581,10 +584,10 @@
 | R-ARCH-19 | Migratsiyalar `db/migrations/` da raqamlangan SQL fayllar, `npm run migrate` bilan qo'llaniladi. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-20 | Qo'llangan migratsiyalar `schema_migrations` jadvalida kuzatiladi; qayta qo'llanmaydi. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-21 | Toza baseline schema (eski 038 migratsiya ko'chirilmaydi). | DECISIONS.md D-01 | P1 | [~] |
-| R-ARCH-22 | Jadval `companies`. | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-23 | Jadval `users` (`company_id`, Telegram bog'lanish maydonlari bilan). | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-24 | Jadval `sessions` (refresh token hash). | 16-architecture §16 | P2 | [ ] |
-| R-ARCH-25 | Jadval `user_permissions`. | 16-architecture §16 | P2 | [ ] |
+| R-ARCH-22 | Jadval `companies`. | 16-architecture §16 | P2 | [x] |
+| R-ARCH-23 | Jadval `users` (`company_id`, Telegram bog'lanish maydonlari bilan). | 16-architecture §16 | P2 | [x] |
+| R-ARCH-24 | Jadval `sessions` (refresh token hash). | 16-architecture §16 | P2 | [x] |
+| R-ARCH-25 | Jadval `user_permissions`. | 16-architecture §16 | P2 | [x] |
 | R-ARCH-26 | Jadval `telegram_link_tokens`. | 16-architecture §16 | P11 | [ ] |
 | R-ARCH-27 | Jadval `substances`. | 16-architecture §16 | P3 | [ ] |
 | R-ARCH-28 | Jadval `substance_parameters`. | 16-architecture §16 | P3 | [ ] |
@@ -604,17 +607,17 @@
 | R-ARCH-42 | Jadval `stability_results`. | 16-architecture §16 | P9 | [ ] |
 | R-ARCH-43 | Jadval `notifications`. | 16-architecture §16 | P6 | [ ] |
 | R-ARCH-44 | Jadval `files`. | 16-architecture §16 | P5 | [ ] |
-| R-ARCH-45 | Jadval `audit_log`. | 16-architecture §16 | P10 | [ ] |
+| R-ARCH-45 | Jadval `audit_log`. | 16-architecture §16 | P10 | [x] |
 | R-ARCH-46 | Jadval `schema_migrations`. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-47 | Env `DATABASE_URL` — cloud (Neon/Railway/Supabase) yoki lokal PostgreSQL. | 16-architecture §16 | P1 | [x] |
-| R-ARCH-48 | Env `SESSION_IDLE_TIMEOUT_MINUTES` (standart 30). | 15-auth §15 | P2 | [ ] |
+| R-ARCH-48 | Env `SESSION_IDLE_TIMEOUT_MINUTES` (standart 30). | 15-auth §15 | P2 | [x] |
 | R-ARCH-49 | Env `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT`. | 12-files §12, DECISIONS.md D-18, D-25 | P5 | [ ] |
 | R-ARCH-50 | Env `TELEGRAM_BOT_TOKEN`. | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-51 | Env `TELEGRAM_BOT_USERNAME`. | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-52 | Env `TELEGRAM_WEBHOOK_URL` (production). | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-53 | Env `TELEGRAM_WEBHOOK_SECRET` (production). | 13-telegram §13 | P11 | [ ] |
 | R-ARCH-54 | Env `NODE_ENV` (development/production — Swagger, rate-limit, Telegram rejimi unga bog'liq). | 15 §15, 16 §16 | P1 | [x] |
-| R-ARCH-55 | Env `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`. | 15-auth §15, DECISIONS.md D-18, D-25 | P2 | [ ] |
+| R-ARCH-55 | Env `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`. | 15-auth §15, DECISIONS.md D-18, D-25 | P2 | [x] |
 | R-ARCH-56 | Hosting-agnostik: hammasi `.env` orqali, `npm run build` + `npm start`; Docker yo'q. | DECISIONS.md D-11 | P12 | [ ] |
 | R-ARCH-57 | Eski bazadan ma'lumot ko'chirish ETL skripti. | DECISIONS.md D-01 | P12 | [ ] |
 | R-ARCH-58 | `Dockerfile` ixtiyoriy (faqat P12 da, kerak bo'lsa). | DECISIONS.md D-11 | P12 | [ ] |
@@ -630,19 +633,21 @@
 | R-ARCH-68 | Env qoidalari: JWT sirlari ≥32, production'da R2_* va FRONTEND_URL majburiy, Telegram token → username (+ production'da webhook URL/secret). | DECISIONS.md D-25, D-26 | P1 | [x] |
 | R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [ ] |
 | R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [ ] |
-| R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [ ] |
+| R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [ ] |
 | R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [ ] |
 | R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
 | R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [ ] |
-| R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [ ] |
+| R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [ ] |
 | R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
 | R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [ ] |
 | R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [ ] |
+| R-ARCH-84 | ETL `users.password_hash` ni o'zgarishsiz ko'chiradi — foydalanuvchilar eski parollari bilan kira oladi (bcrypt `$2a$`/`$2b$` mos). | DECISIONS.md D-86 | P12 | [ ] |
+| R-ARCH-85 | ETL `users.email` ni kichik harfga keltiradi; registr bo'yicha to'qnashuvlar bo'lsa ETL to'xtaydi va hisobot beradi. | DECISIONS.md D-91 | P12 | [ ] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
@@ -665,7 +670,7 @@
 | R-FE-15 | Sidebar elementi: Faoliyat (faqat lab_head/director/admin). | 16 §16, 11 §11 | P10 | [x] |
 | R-FE-16 | Sidebar'da Moddalar, Reaktivlar, Stabilizatsiya elementlari YO'Q. | 16-architecture §16 | P1 | [x] |
 | R-FE-17 | super_admin Sidebar'i faqat Kompaniyalar va Audit jurnali. | 01 §1, 16 §16 | P2 | [x] |
-| R-FE-18 | Sahifa: auth (login). | 16-architecture §16 | P2 | [ ] |
+| R-FE-18 | Sahifa: auth (login). | 16-architecture §16 | P2 | [x] |
 | R-FE-19 | Sahifa: Dashboard — `ChemistDashboard`. | 16-architecture §16 | P6 | [ ] |
 | R-FE-20 | Sahifa: Dashboard — `DirectorDashboard`. | 16-architecture §16 | P6 | [ ] |
 | R-FE-21 | Sahifa: Dashboard — `LabHeadDashboard`. | 16-architecture §16 | P6 | [ ] |
@@ -688,7 +693,7 @@
 | R-FE-38 | Sahifa: `/profile` (parol o'zgartirish, Telegram ulash/uzish). | 10 §10 | P2 | [ ] |
 | R-FE-39 | Ruxsatsiz rol himoyalangan yo'lga to'g'ridan-to'g'ri kirsa sahifa ochilmaydi. | 01 §1, 16 §16 | P2 | [~] |
 | R-FE-40 | Top bar'da til almashtirgichi va NotificationBell. | 09 §9, 14 §14 | P1 | [x] |
-| R-FE-41 | Access token faqat xotirada (Zustand, localStorage'ga yozilmaydi); sahifa yangilanganda refresh cookie orqali tiklanadi. | DECISIONS.md D-23 | P1 | [~] |
+| R-FE-41 | Access token faqat xotirada (Zustand, localStorage'ga yozilmaydi); sahifa yangilanganda refresh cookie orqali tiklanadi. | DECISIONS.md D-23 | P1 | [x] |
 | R-FE-42 | Spec'da nomlanmagan yo'llar: `/samples(/:id)`, `/substances(/:id)`, `/reagents`, `/stability(/:id)`; kompaniya sahifalari super_admin'ga yopiq. | DECISIONS.md D-29 | P1 | [x] |
 | R-FE-43 | Dashboard tarkibi: chemist — biriktirilgan namunalar statuslar bo'yicha; kontrolyor — o'z namunalari. | DECISIONS.md D-33 | P6 | [ ] |
 | R-FE-44 | Dashboard tarkibi: lab_head — biriktirish/tasdiq kutayotganlar, harorat alertlari, `low_stock`, `is_expired`, stabilizatsiya muddatlari; `admin` — LabHead dashboardi. | DECISIONS.md D-33 | P6 | [ ] |
@@ -719,22 +724,27 @@
 - R-ARCH-02 `[~]` — middleware va router ulash bor; Socket.IO (P6) va bot (P11) keyin. D-21: entry point `server.ts`.
 - R-ARCH-04 `[~]` — `withTransaction()` bor va test qilingan; qoida har modulda qo'llanadi.
 - R-ARCH-06 `[~]` — swagger konfiguratsiyasi bor; endpoint annotatsiyalari modullar bilan.
-- R-ARCH-07 `[~]` — `/docs` faqat development'da (testlangan); login formasi P2 da (Q-63 ochiq).
-- R-ARCH-14 `[ ]` — hali birorta modul yo'q (birinchisi P2).
 - R-ARCH-15 `[~]` — 14 modul papkasi bor; kod tegishli fazalarda.
 - R-ARCH-21 `[~]` — migratsiya runner tayyor; baseline schema fayllari P2 dan.
 - R-ARCH-61 `[~]` — `createApp()` testlangan; graceful shutdown uchun avtomatik test yo'q (qo'lda tekshirildi).
 - R-FE-03, R-FE-04 `[~]` — `client.ts` va `useBootstrapAuth` bor; modul API/hook'lari tegishli fazalarda.
 - R-FE-07 `[~]` — umumiy tiplar (`Role`, `User`, `ApiError`, `Paginated`); modul tiplari keyin.
 - R-FE-08 `[~]` — Table, Modal, Spinner, Pagination tayyor; NotificationBell — stub (P6).
-- R-FE-41 `[~]` — xotirada saqlash va tiklash mock bilan testlangan; `/auth/refresh` endpointi P2 da.
+
+### P2a
+- R-ROLE-04 `[~]` — `requireCompany` (super_admin → 403 `COMPANY_REQUIRED`) testlangan; modul endpointlariga ulanishi har fazada.
+- R-ROLE-78, R-USER-08 `[~]` — `requirePermission` (rol katalogi ∪ `user_permissions`) testlangan; grant berish/olish UI va API, katalog — P2b (D-10).
+- R-TENANT-03 `[~]` — P2 jadvallarida `company_id` bor; qolgan jadvallar o'z fazalarida.
+- R-AUTH-15 `[~]` — yagona `verifyAccessToken` bor va testlangan; Socket.IO handshake P6 da.
+- R-AUTH-20 `[~]` — nofaol kompaniya foydalanuvchisi login qila olmaydi, mavjud sessiya keyingi so'rovda bekor qilinadi (testlangan); kompaniyani nofaollashtirish amali P2b.
+- R-AUTH-22 `[~]` — siyosat `assertPasswordPolicy` da (CLI'da qo'llanadi, testlangan); foydalanuvchi yaratish/parol o'zgartirish P2b.
+- R-AUDIT-07, R-AUDIT-09 `[~]` — bitta `audit_log` va auth hodisalari yoziladi; CRUD/status/fayl hodisalari tegishli fazalarda, jurnal sahifalari P10.
+- R-ARCH-14 `[~]` — birinchi modul (`auth`) to'rt fayl naqshida; qoida keyingi modullarga ham qo'llanadi.
 
 ### Boshqa fazalar (P1 da oldindan qisman bajarilgan)
 - R-FE-11/12/13/14/15/17 `[x]` — Sidebar elementlari va rol bo'yicha ko'rinishi (D-28) testlangan; sahifalarning o'zi tegishli fazada.
 - R-REG-11/12 `[x]` — `/protocols`, `/protocols/:id` → `/registry` redirect testlangan.
-- R-FE-39 `[~]` — frontend RoleRoute testlangan; backend ruxsatlari P2 da.
-- R-AUTH-18 `[~]` — 401 interceptor + single-flight refresh mock bilan testlangan; endpoint P2.
-- R-AUTH-19 `[~]` — Zustand authStore bor; login oqimi P2.
+- R-FE-39 `[~]` — frontend RoleRoute va backend `requireRole`/`requireCompany` testlangan; har sahifaning backend endpointlari tegishli fazalarda.
 - R-I18N-05 `[~]` — ESLint `i18next/no-literal-string` pages/components'da error (testlangan); P12 da to'liq audit.
 - R-I18N-06 `[x]` — uz/ru/en kalitlari parity testi har `npm run check` da ishlaydi.
 
@@ -746,8 +756,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 0 | 0 | 79 |
-| TENANT — Ko'p-kompaniyalilik | 16 | 0 | 0 | 16 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 3 | 2 | 74 |
+| TENANT — Ko'p-kompaniyalilik | 16 | 5 | 1 | 10 |
 | SAMPLE — Namunalar | 41 | 0 | 0 | 41 |
 | PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
 | REG — Reyestr | 17 | 2 | 0 | 15 |
@@ -757,32 +767,32 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
-| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 0 | 0 | 18 |
-| AUDIT — Audit va Faoliyat jurnali | 15 | 0 | 0 | 15 |
+| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 2 | 1 | 15 |
+| AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
-| AUTH — Autentifikatsiya va xavfsizlik | 23 | 0 | 2 | 21 |
+| AUTH — Autentifikatsiya va xavfsizlik | 26 | 22 | 3 | 1 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 83 | 19 | 7 | 57 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 34 | 7 | 44 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 15 | 5 | 25 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 597 | 45 | 17 | 535 |
+| **Jami** | 602 | 99 | 23 | 480 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| P1 | 50 | 36 | 13 | 1 |
-| P2 | 84 | 2 | 3 | 79 |
+| P1 | 50 | 38 | 12 | 0 |
+| P2 | 87 | 49 | 7 | 31 |
 | P3 | 20 | 0 | 0 | 20 |
 | P4 | 71 | 4 | 0 | 67 |
 | P5 | 131 | 0 | 0 | 131 |
-| P6 | 40 | 0 | 0 | 40 |
+| P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
 | P9 | 58 | 0 | 0 | 58 |
-| P10 | 25 | 1 | 0 | 24 |
+| P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
-| P12 | 26 | 1 | 1 | 24 |
-| **Jami** | 597 | 45 | 17 | 535 |
+| P12 | 28 | 1 | 1 | 26 |
+| **Jami** | 602 | 99 | 23 | 480 |

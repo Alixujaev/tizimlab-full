@@ -1,5 +1,7 @@
 {
-  "app": { "name": "TizimLab" },
+  "app": {
+    "name": "TizimLab"
+  },
   "nav": {
     "label": "Главное меню",
     "dashboard": "Главная",
@@ -39,15 +41,33 @@
     "noData": "Нет данных"
   },
   "auth": {
-    "loginComingSoon": "Форма входа будет добавлена на следующем этапе."
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Войти",
+    "submitting": "Вход…",
+    "errors": {
+      "INVALID_CREDENTIALS": "Неверный email или пароль.",
+      "ACCOUNT_INACTIVE": "Ваша учётная запись или компания неактивна. Обратитесь к администратору.",
+      "RATE_LIMITED": "Слишком много попыток. Повторите через 15 минут."
+    },
+    "validation": {
+      "emailRequired": "Введите email.",
+      "emailInvalid": "Неверный формат email.",
+      "passwordRequired": "Введите пароль."
+    }
   },
   "topbar": {
     "language": "Язык",
     "notifications": "Уведомления",
     "noNotifications": "Новых уведомлений нет",
-    "profile": "Профиль"
+    "profile": "Профиль",
+    "logout": "Выйти"
   },
-  "languages": { "uz": "O'zbekcha", "ru": "Русский", "en": "English" },
+  "languages": {
+    "uz": "O'zbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
   "pagination": {
     "label": "Пагинация",
     "previous": "Назад",

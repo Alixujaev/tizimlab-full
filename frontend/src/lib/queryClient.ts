@@ -16,7 +16,13 @@ const isClientError = (error: unknown) =>
 export function createQueryClient(): QueryClient {
   return new QueryClient({
     queryCache: new QueryCache({ onError: (error) => toast.error(errorMessage(error)) }),
-    mutationCache: new MutationCache({ onError: (error) => toast.error(errorMessage(error)) }),
+    // `meta.silentError` — xatoni komponentning o'zi ko'rsatadi (masalan, login formasi)
+    mutationCache: new MutationCache({
+      onError: (error, _vars, _ctx, mutation) => {
+        if (mutation.meta?.silentError) return;
+        toast.error(errorMessage(error));
+      },
+    }),
     defaultOptions: {
       queries: {
         staleTime: 30_000,
