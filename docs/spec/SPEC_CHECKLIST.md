@@ -156,6 +156,7 @@
 | R-SAMPLE-37 | To'xtatish/davom ettirishni faqat biriktirilgan kimyogar qiladi (`lab_head` ham — taqiq). | DECISIONS.md D-38 | P4 | [ ] |
 | R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [ ] |
 | R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [ ] |
+| R-SAMPLE-40 | Namuna maydonlari — D-68 ro'yxati (sxemadagi `samples` ustunlari); avtomatik namuna kodi yo'q. | DECISIONS.md D-68 | P4 | [ ] |
 
 ## PASS — Namuna pasporti
 
@@ -281,9 +282,9 @@
 |---|---|---|---|---|
 | R-SUBST-01 | Modda nomi uch tilda: `name_uz`, `name_ru`, `name_en`. | 05-substances §5 | P3 | [ ] |
 | R-SUBST-02 | `substances` jadvalida yagona `name` ustuni yo'q. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-03 | Farmakopiya qiymatlari: EP, BP, UzDSt, USP, OTHER; boshqasi rad etiladi (Q-35). | 05-substances §5 | P3 | [ ] |
+| R-SUBST-03 | Farmakopiya — modda darajasidagi `substances.pharmacopoeia`: EP, BP, UzDSt, USP, OTHER; boshqasi rad etiladi. | 05-substances §5, DECISIONS.md D-67 | P3 | [ ] |
 | R-SUBST-04 | CAS raqami ixtiyoriy. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-05 | Modda parametrlari (`substance_parameters`): nomi, o'lchov birligi, min/max chegara, metod. | 05-substances §5, 16 §16 | P3 | [ ] |
+| R-SUBST-05 | Modda parametrlari (`substance_parameters`): nomi (bitta `parameter_name` ustuni), o'lchov birligi, min/max chegara, metod (erkin matn). | 05-substances §5, 16 §16, DECISIONS.md D-67 | P3 | [ ] |
 | R-SUBST-06 | Moddani yaratish/tahrirlash: faqat `lab_head` va `admin`. | 05-substances §5 | P3 | [ ] |
 | R-SUBST-07 | Moddalarni barcha (kompaniya) rollari ko'radi. | 05-substances §5 | P3 | [ ] |
 | R-SUBST-08 | Moddalar sahifasi asosiy navigatsiyada (Sidebar) yo'q — namuna yaratishda va modda havolalari orqali ochiladi. | 05-substances §5, 16 §16 | P3 | [ ] |
@@ -307,7 +308,7 @@
 | R-REAG-10 | Xarajat = `out` turidagi `reagent_transactions`; narx maydoni yo'q. | DECISIONS.md D-08 | P7 | [ ] |
 | R-REAG-11 | Xarajat jurnali sahifasi `/reagents/journal` — sarfni kalendar ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [ ] |
 | R-REAG-12 | Xarajatlar ro'yxati sahifasi `/expenses` — sarfni ro'yxat ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [ ] |
-| R-REAG-13 | Reaktivga hujjatlar (passport, tahlil natijasi) `reagent_documents` orqali biriktiriladi. | 06-reagents §6 | P7 | [ ] |
+| R-REAG-13 | Reaktivga hujjatlar `reagent_documents` orqali biriktiriladi; turi `reagent_doc_type`: `passport`, `analysis`. | 06-reagents §6, DECISIONS.md D-69 | P7 | [ ] |
 | R-REAG-14 | Reaktiv hujjatlari Cloudflare R2'da saqlanadi. | 12-files §12 | P7 | [ ] |
 | R-REAG-15 | `is_low_stock` bayrog'i (`quantity < low_stock_threshold`) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6 | P7 | [ ] |
 | R-REAG-16 | `is_expired` bayrog'i (`expires_at` o'tgan) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6, DECISIONS.md D-17 | P7 | [ ] |
@@ -316,6 +317,7 @@
 | R-REAG-19 | Reaktivlar sahifasi asosiy Sidebar'da yo'q. | 16-architecture §16 | P7 | [ ] |
 | R-REAG-20 | Reaktiv, barcha tranzaksiyalar va hujjatlarni faqat "To'liq" rollar (`lab_head`, `admin`) boshqaradi; "Ko'rish" rollari `out` yozolmaydi (403). | DECISIONS.md D-51 | P7 | [ ] |
 | R-REAG-21 | Xarajat sahifalari reaktivlarni ko'ra oladigan barcha rollarga faqat o'qish uchun ochiq. | DECISIONS.md D-51 | P7 | [ ] |
+| R-REAG-22 | Reaktiv maydonlari — D-69 ro'yxati (`name`, `cas_number`, `unit`, `quantity`, `low_stock_threshold`, `expires_at`, `supplier`, `storage_conditions`, `is_hazardous`). | DECISIONS.md D-69 | P7 | [ ] |
 
 ## TEMP — Harorat monitoringi
 
@@ -393,7 +395,7 @@
 | R-NOTIF-08 | Xabarnoma turi `low_stock` — reaktiv zaxirasi kam qolganda. | 09-notifications §9 | P7 | [ ] |
 | R-NOTIF-09 | Xabarnoma turi `stability_due_soon` — checkpoint muddati yaqinlashganda. | 09-notifications §9 | P9 | [ ] |
 | R-NOTIF-10 | Xabarnoma turi `stability_overdue` — checkpoint muddati o'tganda. | 09-notifications §9 | P9 | [ ] |
-| R-NOTIF-11 | Ro'yxatdan tashqari xabarnoma turi yaratib bo'lmaydi (DB CHECK/enum). | 09-notifications §9 | P6 | [ ] |
+| R-NOTIF-11 | Ilova faqat §9 dagi xabarnoma turlarini yaratadi; `notification_type` enum'idagi legacy `sample_created`, `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70 | P6 | [ ] |
 | R-NOTIF-12 | Kanal 1: xabarnoma `notifications` jadvaliga yoziladi. | 09-notifications §9 | P6 | [ ] |
 | R-NOTIF-13 | Bazadagi xabarnomalar yuqori o'ng burchakdagi bell ikonasi (`NotificationBell`) orqali ko'rinadi. | 09-notifications §9, 16 §16 | P6 | [ ] |
 | R-NOTIF-14 | Kanal 2: Socket.IO real vaqtli push. | 09-notifications §9 | P6 | [ ] |
@@ -531,6 +533,9 @@
 | R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [~] |
 | R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [~] |
 | R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
+| R-AUTH-21 | Login identifikatori — `users.email`, butun platforma bo'yicha unikal; takroriy email bilan foydalanuvchi yaratish rad etiladi. | DECISIONS.md D-66 | P2 | [ ] |
+| R-AUTH-22 | Parol siyosati: kamida 8 belgi, kamida bitta harf va bitta raqam; mos kelmasa 400. | DECISIONS.md D-66 | P2 | [ ] |
+| R-AUTH-23 | Login endpointiga alohida rate-limit: bitta IP'dan 15 daqiqada 10 urinish, keyingisi 429. | DECISIONS.md D-66 | P2 | [ ] |
 
 ## SEC — Xavfsizlik choralari
 
@@ -618,6 +623,17 @@
 | R-ARCH-68 | Env qoidalari: JWT sirlari ≥32, production'da R2_* va FRONTEND_URL majburiy, Telegram token → username (+ production'da webhook URL/secret). | DECISIONS.md D-25, D-26 | P1 | [x] |
 | R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [ ] |
 | R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [ ] |
+| R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [ ] |
+| R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [ ] |
+| R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [ ] |
+| R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
+| R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [ ] |
+| R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [ ] |
+| R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [ ] |
+| R-ARCH-81 | `stability_studies`: unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin); ilova `cancelled` ga o'tkazmaydi. | DECISIONS.md D-56, DECISIONS.md D-58, DECISIONS.md D-70 | P9 | [ ] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
@@ -723,12 +739,12 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 |---|---|---|---|---|
 | ROLE — Rollar va ruxsat matritsasi | 79 | 0 | 0 | 79 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 0 | 0 | 16 |
-| SAMPLE — Namunalar | 39 | 0 | 0 | 39 |
+| SAMPLE — Namunalar | 40 | 0 | 0 | 40 |
 | PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
 | REG — Reyestr | 17 | 2 | 0 | 15 |
 | PROTO — Protokollar | 61 | 0 | 0 | 61 |
 | SUBST — Moddalar | 11 | 0 | 0 | 11 |
-| REAG — Reaktivlar va Xarajat jurnali | 21 | 0 | 0 | 21 |
+| REAG — Reaktivlar va Xarajat jurnali | 22 | 0 | 0 | 22 |
 | TEMP — Harorat monitoringi | 16 | 0 | 0 | 16 |
 | STAB — Stabilizatsiya | 36 | 0 | 0 | 36 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
@@ -737,27 +753,27 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
-| AUTH — Autentifikatsiya va xavfsizlik | 20 | 0 | 2 | 18 |
+| AUTH — Autentifikatsiya va xavfsizlik | 23 | 0 | 2 | 21 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 70 | 19 | 7 | 44 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 81 | 19 | 7 | 55 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 572 | 45 | 17 | 510 |
+| **Jami** | 588 | 45 | 17 | 526 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
 | P1 | 50 | 36 | 13 | 1 |
-| P2 | 78 | 2 | 3 | 73 |
-| P3 | 19 | 0 | 0 | 19 |
-| P4 | 69 | 4 | 0 | 65 |
-| P5 | 127 | 0 | 0 | 127 |
-| P6 | 39 | 0 | 0 | 39 |
-| P7 | 33 | 0 | 0 | 33 |
-| P8 | 27 | 1 | 0 | 26 |
-| P9 | 55 | 0 | 0 | 55 |
+| P2 | 83 | 2 | 3 | 78 |
+| P3 | 20 | 0 | 0 | 20 |
+| P4 | 70 | 4 | 0 | 66 |
+| P5 | 130 | 0 | 0 | 130 |
+| P6 | 40 | 0 | 0 | 40 |
+| P7 | 35 | 0 | 0 | 35 |
+| P8 | 28 | 1 | 0 | 27 |
+| P9 | 57 | 0 | 0 | 57 |
 | P10 | 25 | 1 | 0 | 24 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 24 | 1 | 1 | 22 |
-| **Jami** | 572 | 45 | 17 | 510 |
+| **Jami** | 588 | 45 | 17 | 526 |
