@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { apiClient, refreshClient } from '@/api/client';
 import { useBootstrapAuth } from '@/hooks/useBootstrapAuth';
 import { useAuthStore } from '@/store/authStore';
-import { resetAuth, userWith } from './helpers';
+import { loginAs, resetAuth, userWith } from './helpers';
 
 let refresh: MockAdapter;
 let api: MockAdapter;
@@ -57,5 +57,30 @@ describe('D-23: access token faqat xotirada', () => {
     renderHook(() => useBootstrapAuth());
     await waitFor(() => expect(useAuthStore.getState().status).toBe('anonymous'));
     expect(useAuthStore.getState().accessToken).toBeNull();
+  });
+
+  it('parallel chaqirilgan restoreSession so’rovlarni birlashtiradi (faqat 1 refresh, 1 /auth/me)', async () => {
+    refresh.onPost('/auth/refresh').reply(async () => {
+      await new Promise((r) => setTimeout(r, 20));
+      return [200, { data: { accessToken: 'dedup-token' } }];
+    });
+    api.onGet('/auth/me').reply(200, { data: userWith('admin') });
+
+    const { restoreSession } = await import('@/hooks/useBootstrapAuth');
+    await Promise.all([restoreSession(), restoreSession()]);
+
+    expect(refresh.history.post).toHaveLength(1);
+    expect(api.history.get).toHaveLength(1);
+    expect(useAuthStore.getState().status).toBe('authenticated');
+  });
+
+  it("status 'anonymous' yoki 'authenticated' bo'lsa useBootstrapAuth hech qanday so'rov yubormaydi", async () => {
+    loginAs('admin');
+    renderHook(() => useBootstrapAuth());
+    expect(refresh.history.post).toHaveLength(0);
+
+    resetAuth('anonymous');
+    renderHook(() => useBootstrapAuth());
+    expect(refresh.history.post).toHaveLength(0);
   });
 });

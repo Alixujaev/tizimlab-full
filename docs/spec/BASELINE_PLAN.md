@@ -105,3 +105,4 @@ Natija: 24 jadval (26 legacy − `protocol_values` − `schema_migrations` − `
 | P2a | `audit_log` | `record_id` NULL faqat auth hodisalari uchun (D-80) | CHECK `audit_log_record_id_check (record_id IS NOT NULL OR table_name = 'auth')`; indekslar `idx_audit_log_*` (jadval nomi bilan) | Auth hodisasi `table_name = 'auth'` bilan belgilanadi (D-92). |
 | P2a | `user_permissions` | + `company_id` | + `idx_user_permissions_company_id` indeksi | Tenant filtri (`requirePermission`) shu ustun bo'yicha. |
 | P2a | Migratsiya fayli | `NNN_core.sql` | `001_core.sql` | Birinchi baseline fayli. |
+| P2a | Frontend routing | `'/'` bosh sahifasi | `super_admin` uchun `/companies` ga yo'naltirish, kompaniya rollari uchun `'/'` (Dashboard) | D-28: super_admin alohida interfeysga ega, uning bosh sahifasi `/companies`. |

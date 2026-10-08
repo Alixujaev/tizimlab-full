@@ -1,7 +1,11 @@
 import request from 'supertest';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { query } from '../src/config/database.js';
-import { createSuperAdmin } from '../src/cli/createSuperAdmin.js';
+import {
+  assertRawModeSupported,
+  createSuperAdmin,
+  readInputs,
+} from '../src/cli/createSuperAdmin.js';
 import { testApp } from './helpers/app.js';
 import { setupAuthDb } from './helpers/auth.js';
 import { describeDb } from './helpers/db.js';
@@ -66,5 +70,29 @@ describeDb('createSuperAdmin CLI funksiyasi (D-35, D-94)', () => {
     await expect(
       createSuperAdmin(db.pool, { email: 'ok@t.uz', fullName: '  ', password: 'Kuchli12345' }),
     ).rejects.toMatchObject({ code: 'VALIDATION_ERROR' });
+  });
+
+  it("raw mode yo'q bo'lsa — aniq xato xabari ('PowerShell yoki cmd'da ishga tushiring')", () => {
+    const nonTtyStream = { isTTY: false } as unknown as NodeJS.ReadStream;
+    expect(() => assertRawModeSupported(nonTtyStream)).toThrowError(
+      /PowerShell yoki cmd'da ishga tushiring/,
+    );
+  });
+
+  it("readInputs raw mode mavjud bo'lmasa parolni so'ramaydi va ekranga chiqarmaydi", async () => {
+    const nonTtyStdin = { isTTY: false } as unknown as NodeJS.ReadStream;
+    const stdoutChunks: string[] = [];
+    const mockStdout = {
+      write: (chunk: string) => {
+        stdoutChunks.push(chunk);
+        return true;
+      },
+    } as unknown as NodeJS.WriteStream;
+
+    await expect(readInputs(nonTtyStdin, mockStdout)).rejects.toThrowError(
+      /PowerShell yoki cmd'da ishga tushiring/,
+    );
+    // Parol hech qachon so'ralmagan va chiqarilmagan
+    expect(stdoutChunks.join('')).not.toContain('Parol:');
   });
 });

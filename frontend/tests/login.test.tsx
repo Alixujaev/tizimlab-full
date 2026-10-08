@@ -1,7 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { toast } from 'sonner';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { apiClient } from '@/api/client';
 import i18n from '@/i18n';
 import { useAuthStore } from '@/store/authStore';
@@ -12,8 +13,12 @@ beforeEach(async () => {
   await i18n.changeLanguage('uz');
   api = new MockAdapter(apiClient);
   resetAuth('anonymous');
+  vi.spyOn(toast, 'error');
 });
-afterEach(() => api.restore());
+afterEach(() => {
+  api.restore();
+  vi.restoreAllMocks();
+});
 
 const fill = async (email: string, password: string) => {
   const user = userEvent.setup();
@@ -23,6 +28,12 @@ const fill = async (email: string, password: string) => {
 };
 
 describe('LoginPage', () => {
+  it("status 'unknown' paytida spinner ko'rsatiladi", () => {
+    resetAuth('unknown');
+    renderAt('/login');
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
   it("bo'sh va noto'g'ri formatdagi maydonlar — so'rov yuborilmaydi", async () => {
     renderAt('/login');
     await fill('', '');
@@ -33,7 +44,7 @@ describe('LoginPage', () => {
     expect(api.history.post).toHaveLength(0);
   });
 
-  it("server xatosi tarjima qilingan xabar bilan ko'rsatiladi (INVALID_CREDENTIALS, RATE_LIMITED)", async () => {
+  it("server xatosi tarjima qilingan xabar bilan ko'rsatiladi, global toast chiqmaydi (INVALID_CREDENTIALS, RATE_LIMITED)", async () => {
     api
       .onPost('/auth/login')
       .replyOnce(401, { error: { code: 'INVALID_CREDENTIALS', message: 'server matni' } })
@@ -42,13 +53,29 @@ describe('LoginPage', () => {
     renderAt('/login');
     await fill('a@test.uz', 'Parol123');
     expect(await screen.findByRole('alert')).toHaveTextContent("Email yoki parol noto'g'ri.");
+    // Global toast chiqmasligi shart (forma ichida ko'rsatiladi)
+    expect(toast.error).not.toHaveBeenCalled();
+
     await userEvent.setup().click(screen.getByRole('button', { name: 'Kirish' }));
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent("Urinishlar soni juda ko'p."),
     );
+    expect(toast.error).not.toHaveBeenCalled();
     expect(useAuthStore.getState().status).toBe('anonymous');
     // Login so'rovidagi 401 refresh'ni ishga tushirmaydi
     expect(api.history.post.every((r) => r.url === '/auth/login')).toBe(true);
+  });
+
+  it("ACCOUNT_INACTIVE xatosi aniq xabar bilan ko'rsatiladi", async () => {
+    api
+      .onPost('/auth/login')
+      .reply(403, { error: { code: 'ACCOUNT_INACTIVE', message: 'nofaol' } });
+    renderAt('/login');
+    await fill('inactive@test.uz', 'Parol123');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Hisobingiz yoki kompaniyangiz faol emas. Administratorga murojaat qiling.',
+    );
+    expect(toast.error).not.toHaveBeenCalled();
   });
 
   it("noma'lum kod — umumiy xabar; boshqa tilda ham tarjima", async () => {
@@ -102,6 +129,32 @@ describe('LoginPage', () => {
     loginAs('admin');
     const { router } = renderAt('/login');
     await waitFor(() => expect(router.state.location.pathname).toBe('/'));
+  });
+
+  it("so'rov kutilayotganda inputlar va tugma disabled bo'ladi (loading holati)", async () => {
+    let finishResponse!: () => void;
+    api.onPost('/auth/login').reply(
+      () =>
+        new Promise((resolve) => {
+          finishResponse = () =>
+            resolve([200, { data: { accessToken: 't', user: userWith('chemist') } }]);
+        }),
+    );
+    renderAt('/login');
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Email'), 'a@test.uz');
+    await user.type(screen.getByLabelText('Parol'), 'Parol123');
+    await user.click(screen.getByRole('button', { name: 'Kirish' }));
+
+    const submitBtn = screen.getByRole('button', { name: 'Kirilmoqda…' });
+    expect(submitBtn).toBeDisabled();
+    expect(screen.getByLabelText('Email')).toBeDisabled();
+    expect(screen.getByLabelText('Parol')).toBeDisabled();
+
+    finishResponse();
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: 'Kirilmoqda…' })).not.toBeInTheDocument(),
+    );
   });
 });
 

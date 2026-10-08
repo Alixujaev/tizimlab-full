@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import { toApiError } from '@/api/client';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { Spinner } from '@/components/ui/Spinner';
 import { useLogin } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
 
@@ -31,6 +32,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
+  if (status === 'unknown') return <Spinner className="min-h-screen" />;
   if (status === 'authenticated') return <Navigate to={redirectTarget(location.state)} replace />;
 
   const serverError = (() => {

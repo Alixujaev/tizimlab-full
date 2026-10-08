@@ -107,4 +107,17 @@ describe('apiClient', () => {
     expect(toApiError(err)).toEqual({ code: 'FORBIDDEN', message: "Ruxsat yo'q" });
     expect(refresh.history.post).toHaveLength(0);
   });
+
+  it("accessToken bo'lmaganda Authorization header yuborilmaydi", async () => {
+    useAuthStore.setState({ accessToken: null });
+    api.onGet('/public').reply((config) => [200, { auth: config.headers?.Authorization }]);
+    const res = await apiClient.get('/public');
+    expect(res.data.auth).toBeUndefined();
+  });
+
+  it("toApiError standart bo'lmagan xato yoki axios bo'lmagan holda null qaytaradi", () => {
+    expect(toApiError(new Error('oddiy xato'))).toBeNull();
+    expect(toApiError(null)).toBeNull();
+    expect(toApiError({ response: { data: {} } })).toBeNull();
+  });
 });

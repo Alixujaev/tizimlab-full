@@ -3,15 +3,23 @@ import { fetchMe } from '@/api/auth';
 import { refreshAccessToken } from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 
+let restorePromise: Promise<void> | null = null;
+
 /** Refresh cookie → access token → `/auth/me`. Xatoda store tozalanadi (`anonymous`). */
-export async function restoreSession(): Promise<void> {
-  try {
-    const accessToken = await refreshAccessToken();
-    const user = await fetchMe();
-    useAuthStore.getState().setSession({ user, accessToken });
-  } catch {
-    useAuthStore.getState().clear();
-  }
+export function restoreSession(): Promise<void> {
+  if (restorePromise) return restorePromise;
+  restorePromise = (async () => {
+    try {
+      const accessToken = await refreshAccessToken();
+      const user = await fetchMe();
+      useAuthStore.getState().setSession({ user, accessToken });
+    } catch {
+      useAuthStore.getState().clear();
+    } finally {
+      restorePromise = null;
+    }
+  })();
+  return restorePromise;
 }
 
 /**

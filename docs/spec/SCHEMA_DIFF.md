@@ -82,6 +82,8 @@ to'ldirilgan namuna — 1. ETL bu "0" larni boshida tekshiradi (D-82).
 - Cheklovlar: `users_pkey`, `users_email_key UNIQUE(email)`, `users_telegram_chat_id_key UNIQUE(telegram_chat_id)`.
 - Indekslar: `idx_users_active`, `idx_users_company_id`, `idx_users_created_by`, `idx_users_email` (UNIQUE bilan takror), `idx_users_role`, `idx_users_telegram_chat_id`.
 - Amalda (P2a, `001_core.sql`): qo'shimcha CHECK `email = lower(email)` (D-91) — og'ish, BASELINE_PLAN "Amalga oshirish" bo'limida.
+- Amalda (P2a, `001_core.sql`): `audit_log.record_id` CHECK `(record_id IS NOT NULL OR table_name = 'auth')` (D-80, D-92) — auth hodisalari uchun `record_id` NULL bo'lishi mumkin.
+- Amalda (P2a frontend): `'/'` bosh sahifasi `super_admin` uchun `/companies` ga yo'naltiriladi, kompaniya rollari uchun `'/'` dashboard (D-28).
 - ETL: to'g'ridan-to'g'ri (`password_hash` bcrypt — §15 bilan mos, qayta xeshlash shart emas). Emaillar kichik harfga keltiriladi (to'qnashuv — ETL hisobotiga); CHECK'lar qo'shilishidan oldin
   `super_admin`/`company_id` mosligi ETL'da tekshiriladi.
 

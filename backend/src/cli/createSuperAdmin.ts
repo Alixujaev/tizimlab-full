@@ -51,25 +51,46 @@ const KEY_ENTER = new Set(['\r', '\n']);
 const KEY_CTRL_C = '\u0003';
 const KEY_BACKSPACE = new Set(['\u007f', '\b']);
 
+export const RAW_MODE_ERROR_MESSAGE =
+  "Terminalda yashirin kiritish (raw mode) qo'llab-quvvatlanmaydi. Iltimos, PowerShell yoki cmd'da ishga tushiring.";
+
+export function assertRawModeSupported(stdin: NodeJS.ReadStream = process.stdin): void {
+  if (!stdin.isTTY || typeof stdin.setRawMode !== 'function') {
+    throw new Error(RAW_MODE_ERROR_MESSAGE);
+  }
+}
+
 /** TTY'da (raw mode) belgilarni ko'rsatmasdan bir qator o'qiydi. */
-function readHiddenTty(prompt: string): Promise<string> {
-  const stdin = process.stdin;
-  process.stdout.write(prompt);
-  stdin.setRawMode(true);
+export function readHiddenTty(
+  prompt: string,
+  stdin: NodeJS.ReadStream = process.stdin,
+  stdout: NodeJS.WriteStream = process.stdout,
+): Promise<string> {
+  assertRawModeSupported(stdin);
+  stdout.write(prompt);
+  try {
+    stdin.setRawMode(true);
+  } catch {
+    throw new Error(RAW_MODE_ERROR_MESSAGE);
+  }
   stdin.resume();
   stdin.setEncoding('utf8');
   return new Promise((resolve, reject) => {
     let value = '';
     const cleanup = () => {
       stdin.off('data', onData);
-      stdin.setRawMode(false);
+      try {
+        stdin.setRawMode(false);
+      } catch {
+        // e'tiborsiz qoldirish
+      }
       stdin.pause();
     };
     function onData(chunk: string) {
       for (const ch of chunk) {
         if (KEY_ENTER.has(ch)) {
           cleanup();
-          process.stdout.write(NEWLINE);
+          stdout.write(NEWLINE);
           resolve(value);
           return;
         }
@@ -86,13 +107,16 @@ function readHiddenTty(prompt: string): Promise<string> {
   });
 }
 
-/** Bitta readline o'quvchisi — pipe'dan kelgan barcha qatorlar ketma-ket o'qiladi (bufer yo'qolmaydi). */
-async function readInputs(): Promise<SuperAdminInput & { confirm: string }> {
-  const tty = !!process.stdin.isTTY;
-  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: tty });
+/** Interaktiv ma'lumotlarni o'qiydi. Raw mode bo'lmasa parolni ekranga chiqarmasdan to'xtaydi. */
+export async function readInputs(
+  stdin: NodeJS.ReadStream = process.stdin,
+  stdout: NodeJS.WriteStream = process.stdout,
+): Promise<SuperAdminInput & { confirm: string }> {
+  assertRawModeSupported(stdin);
+  const rl = createInterface({ input: stdin, output: stdout, terminal: true });
   const lines = rl[Symbol.asyncIterator]();
   const ask = async (prompt: string) => {
-    process.stdout.write(prompt);
+    stdout.write(prompt);
     const next = await lines.next();
     if (next.done) throw new ValidationError("Kiritish to'liq emas");
     return next.value;
@@ -100,18 +124,9 @@ async function readInputs(): Promise<SuperAdminInput & { confirm: string }> {
   try {
     const email = await ask('Email: ');
     const fullName = await ask("To'liq ism: ");
-    if (tty) {
-      rl.close();
-      const password = await readHiddenTty('Parol: ');
-      const confirm = await readHiddenTty('Parolni takrorlang: ');
-      return { email, fullName, password, confirm };
-    }
-    process.stderr.write(
-      "Ogohlantirish: terminal TTY emas — parol yashirilmaydi (Git Bash'da winpty orqali yoki PowerShell'dan ishga tushiring)." +
-        NEWLINE,
-    );
-    const password = await ask('Parol: ');
-    const confirm = await ask('Parolni takrorlang: ');
+    rl.close();
+    const password = await readHiddenTty('Parol: ', stdin, stdout);
+    const confirm = await readHiddenTty('Parolni takrorlang: ', stdin, stdout);
     return { email, fullName, password, confirm };
   } finally {
     rl.close();

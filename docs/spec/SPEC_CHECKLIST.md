@@ -740,6 +740,8 @@
 - R-AUTH-22 `[~]` — siyosat `assertPasswordPolicy` da (CLI'da qo'llanadi, testlangan); foydalanuvchi yaratish/parol o'zgartirish P2b.
 - R-AUDIT-07, R-AUDIT-09 `[~]` — bitta `audit_log` va auth hodisalari yoziladi; CRUD/status/fayl hodisalari tegishli fazalarda, jurnal sahifalari P10.
 - R-ARCH-14 `[~]` — birinchi modul (`auth`) to'rt fayl naqshida; qoida keyingi modullarga ham qo'llanadi.
+- R-FE-18 `[x]` — LoginPage (forma, validatsiya, xatolar t() orqali, loading) testlangan; `useLogin`/`useLogout`, `TopBar` logout tugmasi tayyor.
+- R-AUTH-01..04, R-AUTH-18, R-AUTH-19 `[x]` — login/logout/refresh/me, interceptor, Zustand authStore frontend va backend bilan to'liq ishlaydi va testlangan.
 
 ### Boshqa fazalar (P1 da oldindan qisman bajarilgan)
 - R-FE-11/12/13/14/15/17 `[x]` — Sidebar elementlari va rol bo'yicha ko'rinishi (D-28) testlangan; sahifalarning o'zi tegishli fazada.
