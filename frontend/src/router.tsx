@@ -5,8 +5,11 @@ import { RoleRoute } from '@/components/routing/RoleRoute';
 import { MANAGER_ROLES } from '@/config/navigation';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { ComingSoonPage } from '@/pages/common/ComingSoonPage';
+import { CompaniesPage } from '@/pages/companies/CompaniesPage';
 import { NotFoundPage } from '@/pages/errors/NotFoundPage';
 import { HomePage } from '@/pages/HomePage';
+import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { UsersPage } from '@/pages/users/UsersPage';
 import { COMPANY_ROLES } from '@/types';
 
 const stub = (path: string, titleKey: string): RouteObject => ({
@@ -28,7 +31,7 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <HomePage /> },
           // Barcha autentifikatsiyalangan foydalanuvchilar (super_admin ham)
-          stub('/profile', 'pages.profile'),
+          { path: '/profile', element: <ProfilePage /> },
           {
             // Kompaniya ichidagi ish oqimlari — super_admin qatnashmaydi (spec §1)
             element: <RoleRoute roles={COMPANY_ROLES} />,
@@ -52,11 +55,17 @@ export const routes: RouteObject[] = [
           },
           {
             element: <RoleRoute roles={MANAGER_ROLES} />,
-            children: [stub('/users', 'pages.users'), stub('/activity', 'pages.activity')],
+            children: [
+              { path: '/users', element: <UsersPage /> },
+              stub('/activity', 'pages.activity'),
+            ],
           },
           {
             element: <RoleRoute roles={['super_admin']} />,
-            children: [stub('/companies', 'pages.companies'), stub('/logs', 'pages.auditLog')],
+            children: [
+              { path: '/companies', element: <CompaniesPage /> },
+              stub('/logs', 'pages.auditLog'),
+            ],
           },
           { path: '*', element: <NotFoundPage /> },
         ],

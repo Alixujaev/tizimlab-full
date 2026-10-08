@@ -106,3 +106,7 @@ Natija: 24 jadval (26 legacy − `protocol_values` − `schema_migrations` − `
 | P2a | `user_permissions` | + `company_id` | + `idx_user_permissions_company_id` indeksi | Tenant filtri (`requirePermission`) shu ustun bo'yicha. |
 | P2a | Migratsiya fayli | `NNN_core.sql` | `001_core.sql` | Birinchi baseline fayli. |
 | P2a | Frontend routing | `'/'` bosh sahifasi | `super_admin` uchun `/companies` ga yo'naltirish, kompaniya rollari uchun `'/'` (Dashboard) | D-28: super_admin alohida interfeysga ega, uning bosh sahifasi `/companies`. |
+| P2b | `companies` | `slug` unikal | `companies_slug_key UNIQUE(slug)` + CHECK format `^[a-z0-9]+(?:-[a-z0-9]+)*$` | Q-10, D-95: slug formati faqat kichik lotin harflari, raqamlar va defis; DB va Zod sxemada tekshiriladi. |
+| P2b | `/profile` | Telegram sozlamalari | Telegram qismi profil sahifasidan olib tashlandi (stubsiz) | D-107: Telegram integratsiyasi P11 da to'liq bot bilan birga kiritiladi; xom/ishlamaydigan stub ko'rsatilmaydi. |
+| P2b | `/admin/permissions` | Matritsa tahrirlash | Rol bo'yicha standart ruxsatlar disabled badge, faqat qo'shimcha grantlar checkbox orqali tahrirlanadi | D-105, Q-05: grant-only model; rol ruxsatlari bazaviy bo'lib, revoke qilinmaydi. |
+

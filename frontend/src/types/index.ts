@@ -18,6 +18,7 @@ export const COMPANY_ROLES = [
   'director',
   'admin',
 ] as const satisfies readonly Role[];
+export type CompanyUserRole = (typeof COMPANY_ROLES)[number];
 
 export interface Company {
   id: string;
@@ -64,3 +65,117 @@ export interface ApiError {
 export interface ApiErrorResponse {
   error: ApiError;
 }
+
+// ---------------------------------------------------- Companies
+export interface CompanyDto {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  usersCount?: number;
+}
+
+export interface CreateCompanyInput {
+  name: string;
+  slug: string;
+  admin: {
+    email: string;
+    fullName: string;
+    password: string;
+  };
+}
+
+export interface UpdateCompanyInput {
+  name?: string;
+  slug?: string;
+}
+
+export interface CompanyListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isActive?: boolean;
+}
+
+// ---------------------------------------------------- Admin Users & Permissions
+export interface AdminUserDto {
+  id: string;
+  email: string;
+  fullName: string;
+  role: Role;
+  isActive: boolean;
+  companyId: string;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt: string | null;
+}
+
+export interface UserListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: Role;
+  isActive?: boolean;
+}
+
+export interface CreateUserInput {
+  email: string;
+  password: string;
+  fullName: string;
+  role: Role;
+}
+
+export interface UpdateUserInput {
+  fullName?: string;
+  role?: Role;
+  isActive?: boolean;
+}
+
+export interface ResetPasswordInput {
+  newPassword: string;
+}
+
+export interface UserStatsDto {
+  total: number;
+  active: number;
+  inactive: number;
+  byRole: Record<string, number>;
+}
+
+export interface PermissionsCatalogDto {
+  catalog: readonly string[];
+  roleDefaults: Record<Role, readonly string[]>;
+}
+
+export interface UserPermissionsDto {
+  userId: string;
+  role: Role;
+  rolePermissions: readonly string[];
+  individualPermissions: readonly string[];
+  effectivePermissions: readonly string[];
+}
+
+export interface UserAuditLogDto {
+  id: string;
+  action: string;
+  tableName: string;
+  recordId: string | null;
+  oldValues: unknown;
+  newValues: unknown;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+}
+
+// ---------------------------------------------------- Profile
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UpdateProfileInput {
+  fullName: string;
+}
+

@@ -1,12 +1,24 @@
 import { useTranslation } from 'react-i18next';
 
-export function Spinner({ className = '' }: { className?: string }) {
+interface SpinnerProps {
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function Spinner({ className = '', size = 'md' }: SpinnerProps) {
   const { t } = useTranslation();
+  const sizeClasses = {
+    sm: 'h-4 w-4 border-2',
+    md: 'h-6 w-6 border-2',
+    lg: 'h-8 w-8 border-2',
+  }[size];
+  const padding = size === 'sm' ? 'p-0' : 'p-6';
+
   return (
-    <div role="status" className={`flex items-center justify-center p-6 ${className}`}>
+    <div role="status" className={`flex items-center justify-center ${padding} ${className}`}>
       <span
         aria-hidden="true"
-        className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600"
+        className={`animate-spin rounded-full border-slate-300 border-t-current ${sizeClasses}`}
       />
       <span className="sr-only">{t('common.loading')}</span>
     </div>
