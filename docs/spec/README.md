@@ -29,8 +29,8 @@ Yagona haqiqat manbai: [`../LOYIHA.md`](../LOYIHA.md). Quyidagi fayllar undan **
 
 | Fayl | Maqsad |
 |---|---|
-| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-70) — spec bilan teng kuchli |
-| [SCHEMA_DIFF.md](SCHEMA_DIFF.md) | Eski production sxemasi (`docs/legacy/schema.sql`) ↔ spec/DECISIONS farqlari, foydalanuvchi qarori kutilayotgan bandlar (U-xx) |
+| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-85) — spec bilan teng kuchli |
+| [SCHEMA_DIFF.md](SCHEMA_DIFF.md) | Eski production sxemasi (`docs/legacy/schema.sql`) ↔ spec/DECISIONS farqlari, foydalanuvchi qarori bandlari (U-xx — hal qilingan, D-71…D-80) |
 | [BASELINE_PLAN.md](BASELINE_PLAN.md) | Yangi baseline sxema: jadvallar (KEEP/RENAME/DROP/ADD) va faza bo'yicha migratsiya fayllari |
 | [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Ziddiyatlar, noaniqliklar, yetishmayotgan joylar — faza bo'yicha, taklif (default) va BLOCKING/NON-BLOCKING bilan (gate — D-19) |
 | [SPEC_CHECKLIST.md](SPEC_CHECKLIST.md) | Har bir tekshiriladigan talab, faza va holat bilan |

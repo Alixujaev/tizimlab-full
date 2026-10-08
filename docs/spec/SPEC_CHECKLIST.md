@@ -122,7 +122,7 @@
 | R-SAMPLE-03 | Namuna turi `reagent` qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-04 | Namuna turi `standard_substance` (Standart namuna) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-05 | Namuna turi `other` (Boshqa) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-06 | Ro'yxatdan tashqari namuna turi rad etiladi (validatsiya). | 03-samples §3 | P4 | [ ] |
+| R-SAMPLE-06 | Ro'yxatdan tashqari namuna turi rad etiladi (validatsiya); `sample_type` da faqat §3 dagi 5 tur (`in_process` yo'q). | 03-samples §3, DECISIONS.md D-72 | P4 | [ ] |
 | R-SAMPLE-07 | Namuna statusi `pending_assignment` mavjud. | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-08 | Namuna statusi `in_progress` mavjud. | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-09 | Namuna statusi `stopped` mavjud. | 03-samples §3 | P4 | [ ] |
@@ -157,6 +157,7 @@
 | R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [ ] |
 | R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [ ] |
 | R-SAMPLE-40 | Namuna maydonlari — D-68 ro'yxati (sxemadagi `samples` ustunlari); avtomatik namuna kodi yo'q. | DECISIONS.md D-68 | P4 | [ ] |
+| R-SAMPLE-41 | `samples` da `expires_at` va `deadline` ustunlari yo'q. | DECISIONS.md D-17, DECISIONS.md D-71 | P4 | [ ] |
 
 ## PASS — Namuna pasporti
 
@@ -172,7 +173,7 @@
 | R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [ ] |
 | R-PASS-09 | `reagent`/`standard_substance`: kontrolyor (yoki boshqa oddiy foydalanuvchi) yuklasa pasport `pending` holatda qoladi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-10 | `pending` pasportni lab_head yoki admin `reviewPassport` bilan tasdiqlaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi), namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39 | P5 | [ ] |
+| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi) va `sample_tracking` voqeasida saqlanadi, namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39, DECISIONS.md D-85 | P5 | [ ] |
 | R-PASS-12 | NOTO'G'RI HOLAT: foydalanuvchi o'zi yuklagan pasportni o'zi tasdiqlay olmaydi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-13 | `pending` pasportni lab_head/admin bo'lmagan foydalanuvchi ko'rib chiqa olmaydi (403). | 03-samples §3 | P5 | [ ] |
 | R-PASS-14 | `raw_material`/`finished_product` uchun pasport faqat qo'shimcha hujjat — namuna statusini o'zgartirmaydi, oddiy oqimni bypass qilmaydi. | 03-samples §3 | P5 | [ ] |
@@ -252,7 +253,7 @@
 | R-PROTO-36 | Qo'shimcha faylni alohida yuklab olish mumkin. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-37 | Qo'shimcha faylni alohida o'chirish mumkin. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-38 | Endpoint `GET /api/v1/protocols/:id/file` — asosiy faylni yuklab olish. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya, kod), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-48 | P5 | [ ] |
+| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-84 | P5 | [ ] |
 | R-PROTO-40 | DOCX eksport `docx` kutubxonasi bilan `src/utils/docxExport.ts` da generatsiya qilinadi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-41 | Kimyogar protokolga kira oladi, agar `protocol.created_by === kimyogar.id`. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-42 | Kimyogar protokolga kira oladi, agar `sample.assigned_to === kimyogar.id`. | 04-protocols §4, 18 §18 | P5 | [ ] |
@@ -274,7 +275,8 @@
 | R-PROTO-58 | `submitted`/`approved`/`finalized` holatida protokolning barcha fayllari (asosiy, pasport, qo'shimcha) qulflangan. | DECISIONS.md D-47 | P5 | [ ] |
 | R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [ ] |
 | R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [ ] |
-| R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi. | DECISIONS.md D-49 | P5 | [ ] |
+| R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi (legacy istisno yo'q). | DECISIONS.md D-49, DECISIONS.md D-76 | P5 | [ ] |
+| R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [ ] |
 
 ## SUBST — Moddalar
 
@@ -318,6 +320,7 @@
 | R-REAG-20 | Reaktiv, barcha tranzaksiyalar va hujjatlarni faqat "To'liq" rollar (`lab_head`, `admin`) boshqaradi; "Ko'rish" rollari `out` yozolmaydi (403). | DECISIONS.md D-51 | P7 | [ ] |
 | R-REAG-21 | Xarajat sahifalari reaktivlarni ko'ra oladigan barcha rollarga faqat o'qish uchun ochiq. | DECISIONS.md D-51 | P7 | [ ] |
 | R-REAG-22 | Reaktiv maydonlari — D-69 ro'yxati (`name`, `cas_number`, `unit`, `quantity`, `low_stock_threshold`, `expires_at`, `supplier`, `storage_conditions`, `is_hazardous`). | DECISIONS.md D-69 | P7 | [ ] |
+| R-REAG-23 | Reaktiv hujjati maksimal 20MB va faqat PDF, .doc, .docx, JPEG, PNG; boshqasi rad etiladi. | DECISIONS.md D-79 | P7 | [ ] |
 
 ## TEMP — Harorat monitoringi
 
@@ -335,10 +338,12 @@
 | R-TEMP-10 | Sensor avtomatik ingest endpointi / API key bu versiyada YO'Q. | DECISIONS.md D-03 | P8 | [ ] |
 | R-TEMP-11 | Schema keyinchalik sensor ingest qo'shishga tayyor (o'qishda manba/`is_manual` farqlanadi). | DECISIONS.md D-03 | P8 | [ ] |
 | R-TEMP-12 | Harorat sahifasi (`temperature/`) asosiy Sidebar'da bor. | 16-architecture §16 | P8 | [ ] |
-| R-TEMP-13 | Sensor maydonlari: nomi, joyi (xona). | DECISIONS.md D-52 | P8 | [ ] |
+| R-TEMP-13 | Sensor maydonlari: `sensor_id` (identifikator), `location_name` (joyi, xona). | DECISIONS.md D-83 | P8 | [ ] |
 | R-TEMP-14 | Harorat o'qishini faqat `lab_head`/`admin` kiritadi; "Ko'rish" rollari — 403. | DECISIONS.md D-52 | P8 | [ ] |
 | R-TEMP-15 | Namlik uchun ixtiyoriy alohida min/max chegara. | DECISIONS.md D-52 | P8 | [ ] |
 | R-TEMP-16 | Chegaradan chiqqan har o'qish uchun alert yaratiladi; alertni yopish/"ko'rildi" belgisi yo'q. | DECISIONS.md D-52 | P8 | [ ] |
+| R-TEMP-17 | `sensor_id` kompaniya ichida unikal (`UNIQUE(company_id, sensor_id)`): ikki kompaniya bir xil `sensor_id` ishlata oladi, bitta kompaniyada takror rad etiladi. | DECISIONS.md D-78 | P8 | [ ] |
+| R-TEMP-18 | `temperature_readings` va `temperature_alerts` sensorga `sensor_config_id` (uuid FK) orqali bog'lanadi. | DECISIONS.md D-78 | P8 | [ ] |
 
 ## STAB — Stabilizatsiya
 
@@ -377,9 +382,10 @@
 | R-STAB-31 | Natijasi bor checkpointni o'chirib bo'lmaydi. | DECISIONS.md D-54 | P9 | [ ] |
 | R-STAB-32 | Checkpoint `completed` — barcha parametrlar to'ldirilgach "Yakunlash" tugmasi bilan; to'ldirilmagan bo'lsa rad etiladi. | DECISIONS.md D-55 | P9 | [ ] |
 | R-STAB-33 | `pending` checkpoint ham muddat o'tganda `overdue` bo'ladi. | DECISIONS.md D-55 | P9 | [ ] |
-| R-STAB-34 | Study statuslari `active` / `completed`; barcha checkpointlar `completed` bo'lganda study avtomatik `completed`; bekor qilish yo'q. | DECISIONS.md D-56 | P9 | [ ] |
+| R-STAB-34 | Study statuslari `active` / `completed`; barcha checkpointlar `completed` bo'lganda study avtomatik `completed`; bekor qilish yo'q. | DECISIONS.md D-56, DECISIONS.md D-81 | P9 | [ ] |
 | R-STAB-35 | `initial_value` (T0) study yaratishda parametr bo'yicha qo'lda kiritiladi va checkpointlarga ko'chadi. | DECISIONS.md D-57 | P9 | [ ] |
 | R-STAB-36 | Bitta namunada bir vaqtda ko'pi bilan bitta `active` study; ikkinchisi rad etiladi. | DECISIONS.md D-58 | P9 | [ ] |
+| R-STAB-37 | Study yaratilganda har checkpoint uchun parametr qatorlari (`stability_results`) oldindan yaratiladi: `initial_value` = T0, `current_value` NULL. | DECISIONS.md D-77 | P9 | [ ] |
 
 ## NOTIF — Xabarnomalar
 
@@ -455,6 +461,7 @@
 | R-AUDIT-12 | Audit yozuvi ilova (servis) qatlamida yoziladi; audit uchun DB trigger yo'q. | DECISIONS.md D-64 | P10 | [ ] |
 | R-AUDIT-13 | Audit yozuvi o'zgartirish bilan bitta tranzaksiyada yoziladi — o'zgarish rollback bo'lsa audit yozuvi ham qolmaydi. | DECISIONS.md D-64 | P10 | [ ] |
 | R-AUDIT-14 | Audit yozuvida `user_id`, `company_id`, `ip_address`, `user_agent` to'ldiriladi. | DECISIONS.md D-64 | P10 | [ ] |
+| R-AUDIT-15 | `audit_log.record_id` NULL faqat auth hodisalari (login/logout/muvaffaqiyatsiz login) uchun — DB CHECK boshqa hodisada NULL ni rad etadi. | DECISIONS.md D-80 | P2 | [ ] |
 
 ## FILE — Fayllarni saqlash
 
@@ -633,7 +640,9 @@
 | R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [ ] |
-| R-ARCH-81 | `stability_studies`: unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin); ilova `cancelled` ga o'tkazmaydi. | DECISIONS.md D-56, DECISIONS.md D-58, DECISIONS.md D-70 | P9 | [ ] |
+| R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
+| R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [ ] |
+| R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [ ] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
@@ -739,41 +748,41 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 |---|---|---|---|---|
 | ROLE — Rollar va ruxsat matritsasi | 79 | 0 | 0 | 79 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 0 | 0 | 16 |
-| SAMPLE — Namunalar | 40 | 0 | 0 | 40 |
+| SAMPLE — Namunalar | 41 | 0 | 0 | 41 |
 | PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
 | REG — Reyestr | 17 | 2 | 0 | 15 |
-| PROTO — Protokollar | 61 | 0 | 0 | 61 |
+| PROTO — Protokollar | 62 | 0 | 0 | 62 |
 | SUBST — Moddalar | 11 | 0 | 0 | 11 |
-| REAG — Reaktivlar va Xarajat jurnali | 22 | 0 | 0 | 22 |
-| TEMP — Harorat monitoringi | 16 | 0 | 0 | 16 |
-| STAB — Stabilizatsiya | 36 | 0 | 0 | 36 |
+| REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
+| TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
+| STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 0 | 0 | 18 |
-| AUDIT — Audit va Faoliyat jurnali | 14 | 0 | 0 | 14 |
+| AUDIT — Audit va Faoliyat jurnali | 15 | 0 | 0 | 15 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
 | AUTH — Autentifikatsiya va xavfsizlik | 23 | 0 | 2 | 21 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 81 | 19 | 7 | 55 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 83 | 19 | 7 | 57 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 588 | 45 | 17 | 526 |
+| **Jami** | 597 | 45 | 17 | 535 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
 | P1 | 50 | 36 | 13 | 1 |
-| P2 | 83 | 2 | 3 | 78 |
+| P2 | 84 | 2 | 3 | 79 |
 | P3 | 20 | 0 | 0 | 20 |
-| P4 | 70 | 4 | 0 | 66 |
-| P5 | 130 | 0 | 0 | 130 |
+| P4 | 71 | 4 | 0 | 67 |
+| P5 | 131 | 0 | 0 | 131 |
 | P6 | 40 | 0 | 0 | 40 |
-| P7 | 35 | 0 | 0 | 35 |
-| P8 | 28 | 1 | 0 | 27 |
-| P9 | 57 | 0 | 0 | 57 |
+| P7 | 36 | 0 | 0 | 36 |
+| P8 | 30 | 1 | 0 | 29 |
+| P9 | 58 | 0 | 0 | 58 |
 | P10 | 25 | 1 | 0 | 24 |
 | P11 | 26 | 0 | 0 | 26 |
-| P12 | 24 | 1 | 1 | 22 |
-| **Jami** | 588 | 45 | 17 | 526 |
+| P12 | 26 | 1 | 1 | 24 |
+| **Jami** | 597 | 45 | 17 | 535 |

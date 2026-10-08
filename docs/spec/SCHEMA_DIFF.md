@@ -1,5 +1,5 @@
 # SCHEMA_DIFF — eski production sxemasi ↔ spec/DECISIONS
-
+ ✅ Qo'llandi → D-83 | ✅ Qo'llandi → D-84 | ✅ Qo'llandi → D-81 (`cancelled` umuman olib tashlandi — legacy izoh kerak emas) | ✅ Qo'llandi → D-85 | ✅ Checklist'da (P0.9) | ✅ D-67 | ✅ D-69, checklist |
 Eski (production) sxema va yangi tizim talablari (`LOYIHA.md` → `docs/spec/*`, `DECISIONS.md`) orasidagi farqlar.
 Manba: [`docs/legacy/schema.sql`](../legacy/schema.sql) (pg_dump 18, faqat DDL). `:NNN` — shu fayldagi qator raqami.
 Yangi baseline rejasi — [`BASELINE_PLAN.md`](BASELINE_PLAN.md).
@@ -11,12 +11,16 @@ Yangi baseline rejasi — [`BASELINE_PLAN.md`](BASELINE_PLAN.md).
 | **R1** | Ma'lumot saqlovchi ustun, ustun turi, enum/CHECK qiymatlari — **sxema** ustun (ETL osonligi uchun). |
 | **R2** | Xatti-harakat, ruxsatlar, status o'tishlari — **spec va DECISIONS** ustun; sxema moslashtiriladi, ETL konvertatsiya qiladi. |
 | **R3** | Sxemada yo'q, lekin spec/DECISIONS talab qiladigan element — spec bo'yicha **qo'shiladi**. |
-| **R4** | R1–R3 hal qila olmagan farq — **⚠ FOYDALANUVCHI QARORI KERAK** (pastda U-xx ro'yxati). |
+| **R4** | R1–R3 hal qila olmagan farq — **⚠ FOYDALANUVCHI QARORI KERAK** (pastda U-xx ro'yxati; hammasi hal qilingan — D-71…D-80). |
 | **B** | Baseline: UUID PK (`gen_random_uuid()`), `timestamptz`, har tenant jadvalida `company_id`, FK va indekslar saqlanadi. |
 
 **Jadval holati:** MATCH — spec bilan mos · SCHEMA-ONLY — faqat sxemada · SPEC-ONLY — faqat spec'da · CONFLICT — ziddiyat bor.
 **Baseline hukmi:** KEEP · RENAME · DROP · ADD (ustun darajasida ham: CHANGE — cheklov/default o'zgaradi).
-**→ D-xx** — qaror; **⚠ U-xx** — foydalanuvchi qarori kutilmoqda.
+**→ D-xx** — qaror; **U-xx** — R4 bandi (foydalanuvchi qarori; hozir hammasi ✅ RESOLVED).
+
+Eski baza ETL sonlari (production, to'xtatilgan): `samples` = 12; `sample_documents`, `protocol_values`, `sample_id IS NULL` protokollar,
+`finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna — 0; `expires_at`/`deadline`
+to'ldirilgan namuna — 1. ETL bu "0" larni boshida tekshiradi (D-82).
 
 ## Umumiy kuzatuvlar
 
@@ -33,7 +37,7 @@ Yangi baseline rejasi — [`BASELINE_PLAN.md`](BASELINE_PLAN.md).
   `protocols`, `reagents`, `samples`, `sensor_configs`, `stability_checkpoints`, `stability_studies`, `substances`, `users`.
 - **`company_id` yo'q tenant jadvallari (B → ADD):** `substance_parameters`, `protocol_files`, `protocol_signatures`,
   `reagent_transactions`, `reagent_documents`, `temperature_readings`, `temperature_alerts`, `stability_checkpoints`,
-  `stability_results`, `user_permissions`, `sample_documents` (U-3 ga bog'liq). ETL — ota-jadvaldan to'ldiriladi.
+  `stability_results`, `user_permissions`. ETL — ota-jadvaldan to'ldiriladi. (`sample_documents` baseline'ga kirmaydi — D-73.)
   `sessions` va `telegram_link_tokens` — foydalanuvchi autentifikatsiya jadvallari (`super_admin` ham, `company_id = NULL`),
   tenant ma'lumoti emas — `company_id` qo'shilmaydi.
 - `company_id` FK'lari asosan `ON DELETE RESTRICT`; `files` — `CASCADE`, `audit_logs` — `SET NULL`. D-34 bo'yicha kompaniya
@@ -120,7 +124,7 @@ Yangi baseline rejasi — [`BASELINE_PLAN.md`](BASELINE_PLAN.md).
 | `id` | uuid PK | — | — | KEEP |
 | `user_id` | uuid NULL → `users(id)` ON DELETE SET NULL | D-64 (to'ldiriladi) | trigger to'ldirmagan | KEEP |
 | `table_name` | varchar(100) NOT NULL | D-60 | — | KEEP |
-| `record_id` | uuid NOT NULL | D-60: muvaffaqiyatsiz login ham yoziladi | yozuvsiz hodisa uchun qiymat yo'q | ⚠ **U-10** |
+| `record_id` | uuid NOT NULL | D-60: muvaffaqiyatsiz login ham yoziladi | yozuvsiz hodisa uchun qiymat yo'q | **CHANGE**: NULL faqat auth hodisalari uchun, CHECK bilan → D-80 (U-10) |
 | `action` | varchar(20) NOT NULL | D-60 | trigger `TG_OP` yozgan | KEEP |
 | `old_values`, `new_values` | jsonb NULL | D-62 (sezgir ustunlarsiz) | — | KEEP |
 | `ip_address` | inet NULL | D-64 | trigger to'ldirmagan | KEEP |
@@ -241,14 +245,14 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `created_by` | uuid NOT NULL → `users(id)` | §3 (kontrolyor), D-13 | — | KEEP |
 | `substance_id` | uuid NULL → `substances(id)` | §3 "modda tanlaydi" | NULL bo'lishi mumkin | KEEP (R1) |
 | `substance_name` | varchar(500) NOT NULL | — | modda nomining nusxasi | KEEP (R1, D-68) |
-| `type` | `sample_type` NOT NULL | §3: 5 tur | enum'da qo'shimcha `in_process` | KEEP; `in_process` → ⚠ **U-2** |
+| `type` | `sample_type` NOT NULL | §3: 5 tur | enum'da qo'shimcha `in_process` | KEEP; `in_process` qiymati **olib tashlanadi** → D-72 (U-2) |
 | `serial_number` | varchar(100) NULL | §3 seriya raqam | — | KEEP |
 | `lot_number` | varchar(100) NULL | §3 lot | — | KEEP |
 | `quantity` | varchar(50) NULL | §3 miqdor | matn (son emas) | KEEP (R1) |
 | `manufacturer` | varchar(255) NULL | spec'da yo'q | — | KEEP (R1, D-68) |
 | `manufactured_at` | date NULL | spec'da yo'q | — | KEEP (R1, D-68) |
-| `expires_at` | date NULL | D-17: namunada muddat maydoni yo'q | ziddiyat | ⚠ **U-1** |
-| `deadline` | date NULL | D-17 | ziddiyat | ⚠ **U-1** |
+| `expires_at` | date NULL | D-17: namunada muddat maydoni yo'q | ziddiyat | **DROP** → D-71 (U-1) |
+| `deadline` | date NULL | D-17 | ziddiyat | **DROP** → D-71 (U-1) |
 | `analysis_start`, `analysis_end` | date NULL | spec'da yo'q | — | KEEP (R1, D-68) |
 | `notes` | text NULL | — | — | KEEP (R1) |
 | `status` | `sample_status` NOT NULL DEFAULT `'pending_assignment'` | §3, D-14, D-36 | enum mos | KEEP; o'tishlar ilovada (R2) |
@@ -266,13 +270,15 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `passport_uploaded_by` | uuid NULL → `users(id)` | §3 (egasi o'chiradi) | — | KEEP |
 | `deleted_at` | — | D-43 soft-delete | yo'q | **ADD** (R3) |
 
-- `sample_type` enum: `raw_material`, `finished_product`, `in_process`, `reagent`, `standard_substance`, `other`.
+- `sample_type` enum (sxema): `raw_material`, `finished_product`, `in_process`, `reagent`, `standard_substance`, `other`;
+  baseline: `in_process` siz 5 qiymat (D-72; eski bazada 0 ta).
 - `sample_status` enum: `pending_assignment`, `in_progress`, `stopped`, `submitted`, `approved`, `rejected` — §3 bilan mos;
   D-14 dagi `rejected → submitted` o'tishi enum o'zgarishini talab qilmaydi (R2, ilova status machine'i).
-- Pasport rad etish sababi (D-39) uchun ustun yo'q — sabab `sample_tracking` voqeasida saqlanadi (R3, yangi ustun shart emas).
+- Pasport rad etish sababi uchun ustun yo'q — sabab `sample_tracking` voqeasida saqlanadi (D-85).
 - Indekslar: `idx_samples_assigned_to`, `idx_samples_company_id`, `idx_samples_created_at(DESC)`, `idx_samples_created_by`, `idx_samples_status`, `idx_samples_substance`, `idx_samples_substance_name`.
 - FK: `assigned_by`, `assigned_to`, `created_by`, `passport_uploaded_by`, `substance_id` — ON DELETE amalsiz (NO ACTION); `company_id` — RESTRICT.
-- ETL: to'g'ridan-to'g'ri (U-1, U-2 javobiga ko'ra); `deleted_at = NULL`; har namunaga sintetik tracking voqea (D-63).
+- ETL: to'g'ridan-to'g'ri; `deleted_at = NULL`; har namunaga sintetik tracking voqea (D-63). `expires_at`/`deadline` qiymati bor
+  yagona namunada qiymat shu voqea izohiga yoziladi (D-71).
 
 ### `sample_tracking` — SPEC-ONLY · ADD
 
@@ -282,21 +288,21 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
   NULL), sabab/izoh, status (D-63: joriy status), vaqt (D-63: asl `created_at`/`updated_at`).
 - Aniq ustunlar va voqea turlari ro'yxati — P4 boshida Q-25 (NON-BLOCKING) default'i bilan; tur — TEXT + CHECK (BASELINE_PLAN).
 
-### `sample_documents` (`:400`) — SCHEMA-ONLY · ⚠ U-3
+### `sample_documents` (`:400`) — SCHEMA-ONLY · DROP → D-73 (U-3)
 
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
-| `id` | uuid PK | — | — | U-3 |
-| `sample_id` | uuid NOT NULL → `samples(id)` ON DELETE CASCADE | — | — | U-3 |
-| `uploaded_by` | uuid NOT NULL → `users(id)` | — | — | U-3 |
-| `file_name` | varchar(255) NOT NULL | — | — | U-3 |
-| `file_path` | varchar(500) NOT NULL | — | — | U-3 |
-| `file_size` | integer NULL | — | mime yo'q | U-3 |
-| `uploaded_at` | timestamptz NOT NULL DEFAULT now() | — | — | U-3 |
+| `id` | uuid PK | — | — | DROP |
+| `sample_id` | uuid NOT NULL → `samples(id)` ON DELETE CASCADE | — | — | DROP |
+| `uploaded_by` | uuid NOT NULL → `users(id)` | — | — | DROP |
+| `file_name` | varchar(255) NOT NULL | — | — | DROP |
+| `file_path` | varchar(500) NOT NULL | — | — | DROP |
+| `file_size` | integer NULL | — | mime yo'q | DROP |
+| `uploaded_at` | timestamptz NOT NULL DEFAULT now() | — | — | DROP |
 
 - Spec'da bu jadval umuman yo'q. Namuna pasporti **emas** — pasport `samples.passport_*` ustunlarida (§3, §18 aniqlashtirish);
   bu namunaga biriktirilgan umumiy hujjatlar ro'yxati (tur/holat ustuni yo'q). `company_id` yo'q. Indeks: `idx_sample_docs_sample_id`.
-  Eski `audit_sample_documents` triggeri bor edi.
+  Eski `audit_sample_documents` triggeri bor edi. Eski bazada 0 ta qator — baseline'ga kirmaydi, ETL qadami yo'q (D-73, D-82).
 
 ---
 
@@ -307,11 +313,11 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
 | `id` | uuid PK | — | — | KEEP |
-| `sample_id` | uuid **NULL** → `samples(id)` | §3/§4: protokol namunaga tegishli; D-15 | NULL — namunasiz legacy protokollar | KEEP; NULL qatorlar → ⚠ **U-4** |
-| `substance_id` | uuid NULL → `substances(id)` | — (namuna orqali) | eski tuzilma | ⚠ **U-4** |
-| `batch_number` | varchar(100) NULL | — | eski tuzilma | ⚠ **U-4** |
-| `sample_source` | varchar(255) NULL | — | eski tuzilma | ⚠ **U-4** |
-| `notes` | text NULL | — | — | ⚠ **U-4** |
+| `sample_id` | uuid **NULL** → `samples(id)` | §3/§4: protokol namunaga tegishli; D-15 | NULL — namunasiz legacy protokollar | **CHANGE: NOT NULL** → D-74 (U-4; eski bazada 0 ta) |
+| `substance_id` | uuid NULL → `substances(id)` | — (namuna orqali) | eski tuzilma | **DROP** → D-74 |
+| `batch_number` | varchar(100) NULL | — | eski tuzilma | **DROP** → D-74 |
+| `sample_source` | varchar(255) NULL | — | eski tuzilma | **DROP** → D-74 |
+| `notes` | text NULL | — | — | **DROP** → D-74 |
 | `created_by` | uuid NOT NULL → `users(id)` | §4 kirish qoidasi (R-PROTO-41) | — | KEEP |
 | `status` | `protocol_status` NOT NULL DEFAULT `'draft'` | §4, D-14 | enum mos | KEEP; o'tishlar ilovada (R2) |
 | `protocol_role` | `protocol_role` **NULL** DEFAULT `'standard'` | §4, D-15 | NULL ruxsat etilgan | KEEP (R1); ilova har doim qiymat beradi (R2); ETL: NULL → `'standard'` |
@@ -331,8 +337,8 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 - `protocol_role` enum: `standard`, `final`, `in_process` — §4 bilan mos.
 - `uq_protocols_sample_role` — UNIQUE INDEX `(sample_id, protocol_role) WHERE sample_id IS NOT NULL AND protocol_role IS NOT NULL`
   — D-15 ("har `protocol_role` bo'yicha ko'pi bilan bitta") bilan mos, KEEP.
-- Indekslar: `idx_protocols_company_id`, `idx_protocols_created_at(DESC)`, `idx_protocols_created_by`, `idx_protocols_sample_id`, `idx_protocols_status`, `idx_protocols_substance_id`.
-- FK: `company_id` RESTRICT; `created_by`, `sample_id`, `substance_id` — NO ACTION.
+- Indekslar: `idx_protocols_company_id`, `idx_protocols_created_at(DESC)`, `idx_protocols_created_by`, `idx_protocols_sample_id`, `idx_protocols_status`, `idx_protocols_substance_id` (ustun bilan birga tushadi — D-74).
+- FK: `company_id` RESTRICT; `created_by`, `sample_id`, `substance_id` — NO ACTION (`substance_id` FK tushadi — D-74).
 - ETL: `protocol_role IS NULL` → `'standard'` (shu namunada `standard` allaqachon bo'lsa — ETL hisobotiga); har protokolga sintetik tracking voqea (D-63).
 
 ### `protocol_signatures` (`:277`) — CONFLICT · KEEP + CHANGE + ADD
@@ -366,7 +372,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `recorded_by` | uuid NOT NULL → `users(id)` | DROP |
 
 - `protocol_values_protocol_id_parameter_id_key UNIQUE(protocol_id, parameter_id)`, indeks `idx_protocol_values_protocol_id`.
-- ETL: ma'lumotlar yangi bazaga yozilmaydi; ularning taqdiri → ⚠ **U-5**.
+- ETL: eski bazada 0 ta qator — ETL'ga kirmaydi (D-75, D-82).
 
 ### `protocol_files` (`:261`) — CONFLICT · KEEP + ADD
 
@@ -381,7 +387,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `uploaded_at` | timestamptz **NULL** DEFAULT now() | — | NULL ruxsat | KEEP (R1) |
 | `company_id` | — | B | yo'q | **ADD** (ETL: `protocols.company_id`) |
 
-- D-49: faqat `finished_product` protokollariga — ilovada (R2); sxemada cheklov yo'q. Mavjud boshqa protokollardagi fayllar → ⚠ **U-6**.
+- D-49: faqat `finished_product` protokollariga — ilovada (R2); sxemada cheklov yo'q. Eski bazada boshqa protokollarda 0 ta fayl — istisno yo'q (D-76, D-82).
 - Indeks: `idx_protocol_files_protocol_id`.
 
 ### `files` (`:227`) — MATCH · KEEP
@@ -482,7 +488,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `doc_type` | `reagent_doc_type` NOT NULL | §6 "passport va tahlil natijasi", D-69 | — | KEEP |
 | `file_name` | varchar(255) NOT NULL | — | — | KEEP |
 | `file_path` | varchar(500) NOT NULL | — | — | KEEP |
-| `file_size` | integer NULL | fayl limiti | sxemada cheklov yo'q | KEEP; limit → ⚠ **U-9** |
+| `file_size` | integer NULL | fayl limiti | sxemada cheklov yo'q | KEEP; limit 20MB ilovada → D-79 (U-9) |
 | `file_mime` | varchar(100) NULL | — | — | KEEP |
 | `uploaded_by` | uuid NOT NULL → `users(id)` | — | — | KEEP |
 | `uploaded_at` | timestamptz NOT NULL DEFAULT now() | — | — | KEEP |
@@ -494,12 +500,12 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 
 ## P8 — Harorat
 
-### `sensor_configs` (`:463`) — CONFLICT · ⚠ U-8
+### `sensor_configs` (`:463`) — CONFLICT · KEEP + CHANGE → D-78 (U-8)
 
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
 | `id` | uuid PK | — | — | KEEP |
-| `sensor_id` | varchar(100) NOT NULL, **UNIQUE (global)** | D-52 "nomi" | identifikator butun platforma bo'yicha unikal; boshqa jadvallar shu matn orqali bog'langan | ⚠ **U-8** |
+| `sensor_id` | varchar(100) NOT NULL, **UNIQUE (global)** | D-52 "nomi" | identifikator butun platforma bo'yicha unikal; boshqa jadvallar shu matn orqali bog'langan | KEEP; **CHANGE**: `UNIQUE(company_id, sensor_id)` → D-78 |
 | `location_name` | varchar(255) NOT NULL | D-52 "joyi (xona)" | — | KEEP |
 | `temp_min`, `temp_max` | numeric(5,1) NOT NULL, CHECK `temp_min < temp_max` | §7 | — | KEEP |
 | `humidity_min`, `humidity_max` | numeric(5,1) NULL | D-52 (ixtiyoriy) | — | KEEP |
@@ -507,14 +513,15 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `created_at`, `updated_at` | timestamptz NOT NULL DEFAULT now() | — | — | KEEP (+ trigger) |
 | `company_id` | uuid NOT NULL → `companies(id)` ON DELETE RESTRICT | D-12 | — | KEEP |
 
-- Cheklovlar: `sensor_configs_pkey`, `sensor_configs_sensor_id_key UNIQUE(sensor_id)`, CHECK `temp_range_valid`. Indeks: `idx_sensor_configs_company_id`.
+- Cheklovlar: `sensor_configs_pkey`, `sensor_configs_sensor_id_key UNIQUE(sensor_id)` (→ `UNIQUE(company_id, sensor_id)`, D-78), CHECK `temp_range_valid`. Indeks: `idx_sensor_configs_company_id`.
+- D-83: sensor — `sensor_id` (identifikator) + `location_name` (joyi).
 
 ### `temperature_readings` (`:621`) — CONFLICT (tenant) · KEEP + ADD
 
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
 | `id` | uuid PK | — | — | KEEP |
-| `sensor_id` | varchar(100) NOT NULL → `sensor_configs(sensor_id)` | §7 | matnli FK | KEEP (U-8 ga bog'liq) |
+| `sensor_id` | varchar(100) NOT NULL → `sensor_configs(sensor_id)` | §7 | matnli FK | **CHANGE** → `sensor_config_id uuid` → `sensor_configs(id)`; matnli `sensor_id` ko'chirilmaydi (D-78) |
 | `temperature` | numeric(5,2) NOT NULL | §7 | — | KEEP |
 | `humidity` | numeric(5,2) NULL | §7 | — | KEEP |
 | `alert_triggered` | boolean NOT NULL DEFAULT false | §7 | — | KEEP |
@@ -530,7 +537,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
 | `id` | uuid PK | — | — | KEEP |
-| `sensor_id` | varchar(100) NOT NULL → `sensor_configs(sensor_id)` | §7 | matnli FK | KEEP (U-8 ga bog'liq) |
+| `sensor_id` | varchar(100) NOT NULL → `sensor_configs(sensor_id)` | §7 | matnli FK | **CHANGE** → `sensor_config_id uuid` → `sensor_configs(id)`; matnli `sensor_id` ko'chirilmaydi (D-78) |
 | `reading_id` | uuid NOT NULL → `temperature_readings(id)` | §7 | — | KEEP |
 | `temperature` | numeric(5,2) NOT NULL | — | — | KEEP |
 | `alert_type` | varchar(50) NOT NULL | — | qiymatlar ro'yxati sxemada yo'q (CHECK yo'q) | KEEP (R1) |
@@ -552,7 +559,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 | `sample_id` | uuid NOT NULL → `samples(id)` | §8 | — | KEEP |
 | `started_at` | date NOT NULL DEFAULT CURRENT_DATE | — | — | KEEP |
 | `storage_conditions` | text NULL | — | — | KEEP (R1) |
-| `status` | text NOT NULL DEFAULT `'active'`, CHECK (`active`, `completed`, `cancelled`) | §8, D-56 (`active`/`completed`, bekor qilish yo'q) | `cancelled` qiymati bor | KEEP CHECK (R1, legacy qatorlar); ilova `cancelled` ga o'tkazmaydi (R2) |
+| `status` | text NOT NULL DEFAULT `'active'`, CHECK (`active`, `completed`, `cancelled`) | §8, D-56 (`active`/`completed`, bekor qilish yo'q) | `cancelled` qiymati bor | **CHANGE**: CHECK faqat `active`, `completed` → D-81 (eski bazada 0 ta) |
 | `created_by` | uuid NOT NULL → `users(id)` | — | — | KEEP |
 | `created_at`, `updated_at` | timestamptz NOT NULL DEFAULT now() | — | — | KEEP (+ trigger) |
 | `company_id` | uuid NOT NULL → `companies(id)` ON DELETE RESTRICT | D-12 | — | KEEP |
@@ -560,7 +567,7 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 - `uq_stability_sample UNIQUE(sample_id)` — namunada **umrbod bitta** study; D-58: bir vaqtda bitta **faol** → **CHANGE**:
   qisman unikal `(sample_id) WHERE status = 'active'` (R2).
 - Indekslar: `idx_stability_studies_company_id`, `idx_stability_studies_sample`, `idx_stability_studies_status`.
-- ETL: `cancelled` qatorlar o'zgarishsiz (faqat ko'rish uchun).
+- ETL: `cancelled` qatorlar yo'q (D-82 tekshiradi).
 
 ### `stability_checkpoints` (`:499`) — CONFLICT (tenant) · KEEP + ADD
 
@@ -581,15 +588,15 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 - `uq_checkpoint UNIQUE(study_id, interval_tag)` — §8 (bir study'da bir xil nom yo'q) bilan mos.
 - Indekslar: `idx_stability_cp_due`, `idx_stability_cp_status`, `idx_stability_cp_study`.
 
-### `stability_results` (`:519`) — CONFLICT · KEEP + ADD · ⚠ U-7
+### `stability_results` (`:519`) — CONFLICT · KEEP + ADD + CHANGE → D-77 (U-7)
 
 | Ustun | Sxema | Spec / D-xx | Farq | Hukm |
 |---|---|---|---|---|
 | `id` | uuid PK | — | — | KEEP |
 | `checkpoint_id` | uuid NOT NULL → `stability_checkpoints(id)` ON DELETE CASCADE | §8 | — | KEEP |
 | `parameter` | varchar(200) NOT NULL | §8, D-05 | — | KEEP |
-| `initial_value` | text NULL | §8 T0, D-57 | har natija qatorida | KEEP (U-7 ga bog'liq) |
-| `current_value` | text **NOT NULL** | §8 | qator faqat qiymat bilan yaratiladi | KEEP (R1) → ⚠ **U-7** |
+| `initial_value` | text NULL | §8 T0, D-57 | har natija qatorida | KEEP — T0 study yaratilganda yoziladi (D-77) |
+| `current_value` | text **NOT NULL** | §8 | qator faqat qiymat bilan yaratiladi | **CHANGE: NULL ruxsat** — parametr qatorlari oldindan yaratiladi (D-77) |
 | `specification` | text NULL | D-57 | — | KEEP |
 | `result_status` | text NOT NULL DEFAULT `'pass'`, CHECK (`pass`, `fail`, `warning`) | §8, D-57 (qo'lda) | — | KEEP (R1); ilova qiymatni har doim aniq beradi (R2) |
 | `recorded_by` | uuid NOT NULL → `users(id)` | — | — | KEEP |
@@ -618,25 +625,28 @@ DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksi
 
 ---
 
-## Yig'ma: ⚠ FOYDALANUVCHI QARORI KERAK
+## Yig'ma: FOYDALANUVCHI QARORI KERAK bandlari (R4) — hammasi hal qilingan
 
-| # | Jadval.ustun | Sxema | Spec / D-xx | Ziddiyat | Taklif |
-|---|---|---|---|---|---|
-| U-1 | `samples.expires_at`, `samples.deadline` | `date NULL` ikkalasi | D-17: namunada muddat maydoni yo'q | R1 (sxema) va D-17 (foydalanuvchi qarori) to'qnashadi | Ustunlar saqlanadi (ETL ma'lumoti yo'qolmaydi), lekin D-17 bo'yicha ilovada ishlatilmaydi va xabarnoma yo'q — faqat namuna sahifasida o'qish uchun ko'rsatiladi. |
-| U-2 | `samples.type = 'in_process'` | `sample_type` enum'da bor | §3: 5 tur; R-SAMPLE-06 ro'yxatdan tashqarisini rad etadi | enum qiymati R1 bo'yicha qoladi, lekin bu turdagi namunaning xatti-harakati (pasport, protokol roli) spec'da yo'q | Enum'da qoladi (legacy qatorlar); yangi namuna yaratishda ruxsat berilmaydi; legacy `in_process` namunalar `standard` protokol oqimi bilan ko'rsatiladi. |
-| U-3 | `sample_documents` (butun jadval) | Namunaga biriktirilgan umumiy hujjatlar | Spec'da yo'q (pasport — `samples.passport_*`) | Jadval spec'da yo'q, xatti-harakati (kim yuklaydi/ko'radi/o'chiradi) noma'lum | ETL'da `files` jadvaliga ko'chirish (`files.sample_id` bor, D-61 generic fayllar); `sample_documents` baseline'ga kirmaydi. |
-| U-4 | `protocols.sample_id IS NULL` qatorlar; `protocols.substance_id`, `batch_number`, `sample_source`, `notes` | Namunasiz legacy protokollar mumkin | §3/§4, D-15: protokol namunaga tegishli | Legacy protokollarni namunasiz ko'chirsak, ilova oqimlari (D-14/D-15, reyestr) ishlamaydi | Ustunlar saqlanadi (R1). `sample_id IS NULL` protokollar ETL'da ko'chiriladi, lekin faqat arxiv sifatida (o'qish uchun, status o'zgarmaydi); keyinchalik `NOT NULL` qilinmaydi. Muqobil — ETL har biri uchun sintetik namuna yaratadi. |
-| U-5 | `protocol_values` ma'lumoti | Qo'lda kiritilgan parametr qiymatlari (2026-iyungacha) | D-09: jadval yangi sxemada yo'q; "faqat ETL'da kerak bo'lsa ko'rib chiqiladi" | Fayl asosidagi yangi protokolda bu qiymatlar uchun joy yo'q | ETL qiymatlarni protokol bo'yicha bitta hujjatga (PDF/CSV) aylantirib, protokolning asosiy fayli bo'sh bo'lsa shu faylni biriktiradi; aks holda faqat arxiv dump'ida qoladi. |
-| U-6 | `protocol_files` (`finished_product` bo'lmagan protokollar) | Har qanday protokolga fayl mumkin | D-49: faqat `finished_product` | Legacy qatorlar D-49 ga zid bo'lishi mumkin | Ko'chiriladi va ko'rsatiladi (o'qish/yuklab olish), yangi fayl qo'shish D-49 bo'yicha bloklanadi. |
-| U-7 | `stability_results.current_value NOT NULL`; T0/parametr ro'yxati joyi | Natija qatori faqat joriy qiymat bilan; study darajasida parametr ro'yxati yo'q | D-05 (5 standart parametr oldindan), D-55 ("barcha parametrlar to'ldirilgach"), D-57 (T0 study yaratishda kiritiladi va checkpointlarga ko'chadi) | Parametr ro'yxati va T0 natijalardan oldin saqlanadigan joy sxemada yo'q | Study yaratishda har checkpoint uchun parametr qatorlari oldindan yaratiladi: `current_value` NULL ga ruxsat beriladi (R1 dan istisno), `initial_value` T0 bilan to'ldiriladi. Muqobil — yangi `stability_study_parameters` jadvali (R3). |
-| U-8 | `sensor_configs.sensor_id` UNIQUE (global); `temperature_readings.sensor_id`, `temperature_alerts.sensor_id` → matnli FK | Sensor identifikatori butun platforma bo'yicha unikal | D-12 (kompaniyalar izolyatsiyasi), B (UUID FK) | Ikki kompaniya bir xil sensor nomini ishlata olmaydi; matnli FK B qoidasiga zid | `UNIQUE(company_id, sensor_id)`; o'qish/alert jadvallari `sensor_config_id uuid` FK orqali bog'lanadi (ETL `sensor_id` → `id` moslaydi), `sensor_id` matni nusxa sifatida qolmaydi. |
-| U-9 | `reagent_documents.file_size` (limit) | Cheklov yo'q | D-06: protokol 20MB, generic 50MB; reaktiv hujjatlari nomlanmagan (Q-39) | Sxema javob bermaydi | 20MB (protokol fayllari bilan bir xil, xuddi shu formatlar). |
-| U-10 | `audit_logs.record_id NOT NULL` | Har audit yozuvida yozuv ID'si majburiy | D-60: muvaffaqiyatsiz login ham yoziladi | Noma'lum email bilan urinishda `record_id` uchun qiymat yo'q | `record_id` NULL ga ruxsat (faqat auth hodisalari uchun, `table_name = 'auth'`); muvaffaqiyatli login/logout — `sessions.id`. |
+"Taklif" — P0.9 dagi dastlabki taklif (tarix uchun); amaldagi yechim — "Qaror" ustunida.
+Qo'shimcha: `stability_studies.status` dan `cancelled` olib tashlandi (D-81); ETL xavfsizlik tekshiruvi — D-82.
+
+| # | Jadval.ustun | Sxema | Spec / D-xx | Ziddiyat | Taklif | Qaror |
+|---|---|---|---|---|---|---|
+| U-1 | `samples.expires_at`, `samples.deadline` | `date NULL` ikkalasi | D-17: namunada muddat maydoni yo'q | R1 (sxema) va D-17 (foydalanuvchi qarori) to'qnashadi | Ustunlar saqlanadi (ETL ma'lumoti yo'qolmaydi), lekin D-17 bo'yicha ilovada ishlatilmaydi va xabarnoma yo'q — faqat namuna sahifasida o'qish uchun ko'rsatiladi. | ✅ RESOLVED → **D-71**: ikkala ustun baseline'ga kirmaydi (D-17); eski bazadagi yagona qiymat ETL tracking voqeasi izohiga yoziladi. |
+| U-2 | `samples.type = 'in_process'` | `sample_type` enum'da bor | §3: 5 tur; R-SAMPLE-06 ro'yxatdan tashqarisini rad etadi | enum qiymati R1 bo'yicha qoladi, lekin bu turdagi namunaning xatti-harakati (pasport, protokol roli) spec'da yo'q | Enum'da qoladi (legacy qatorlar); yangi namuna yaratishda ruxsat berilmaydi; legacy `in_process` namunalar `standard` protokol oqimi bilan ko'rsatiladi. | ✅ RESOLVED → **D-72**: `in_process` enum'dan olib tashlanadi (eski bazada 0 ta). |
+| U-3 | `sample_documents` (butun jadval) | Namunaga biriktirilgan umumiy hujjatlar | Spec'da yo'q (pasport — `samples.passport_*`) | Jadval spec'da yo'q, xatti-harakati (kim yuklaydi/ko'radi/o'chiradi) noma'lum | ETL'da `files` jadvaliga ko'chirish (`files.sample_id` bor, D-61 generic fayllar); `sample_documents` baseline'ga kirmaydi. | ✅ RESOLVED → **D-73**: jadval baseline'ga kirmaydi, ETL qadami yo'q (0 ta qator). |
+| U-4 | `protocols.sample_id IS NULL` qatorlar; `protocols.substance_id`, `batch_number`, `sample_source`, `notes` | Namunasiz legacy protokollar mumkin | §3/§4, D-15: protokol namunaga tegishli | Legacy protokollarni namunasiz ko'chirsak, ilova oqimlari (D-14/D-15, reyestr) ishlamaydi | Ustunlar saqlanadi (R1). `sample_id IS NULL` protokollar ETL'da ko'chiriladi, lekin faqat arxiv sifatida (o'qish uchun, status o'zgarmaydi); keyinchalik `NOT NULL` qilinmaydi. Muqobil — ETL har biri uchun sintetik namuna yaratadi. | ✅ RESOLVED → **D-74**: `sample_id` NOT NULL; 4 ta eski ustun kirmaydi (0 ta namunasiz protokol, ustunlarda qiymat yo'q). |
+| U-5 | `protocol_values` ma'lumoti | Qo'lda kiritilgan parametr qiymatlari (2026-iyungacha) | D-09: jadval yangi sxemada yo'q; "faqat ETL'da kerak bo'lsa ko'rib chiqiladi" | Fayl asosidagi yangi protokolda bu qiymatlar uchun joy yo'q | ETL qiymatlarni protokol bo'yicha bitta hujjatga (PDF/CSV) aylantirib, protokolning asosiy fayli bo'sh bo'lsa shu faylni biriktiradi; aks holda faqat arxiv dump'ida qoladi. | ✅ RESOLVED → **D-75**: ETL'ga ham kirmaydi (0 ta qator). |
+| U-6 | `protocol_files` (`finished_product` bo'lmagan protokollar) | Har qanday protokolga fayl mumkin | D-49: faqat `finished_product` | Legacy qatorlar D-49 ga zid bo'lishi mumkin | Ko'chiriladi va ko'rsatiladi (o'qish/yuklab olish), yangi fayl qo'shish D-49 bo'yicha bloklanadi. | ✅ RESOLVED → **D-76**: faqat `finished_product` (D-49), istisno yo'q (0 ta). |
+| U-7 | `stability_results.current_value NOT NULL`; T0/parametr ro'yxati joyi | Natija qatori faqat joriy qiymat bilan; study darajasida parametr ro'yxati yo'q | D-05 (5 standart parametr oldindan), D-55 ("barcha parametrlar to'ldirilgach"), D-57 (T0 study yaratishda kiritiladi va checkpointlarga ko'chadi) | Parametr ro'yxati va T0 natijalardan oldin saqlanadigan joy sxemada yo'q | Study yaratishda har checkpoint uchun parametr qatorlari oldindan yaratiladi: `current_value` NULL ga ruxsat beriladi (R1 dan istisno), `initial_value` T0 bilan to'ldiriladi. Muqobil — yangi `stability_study_parameters` jadvali (R3). | ✅ RESOLVED → **D-77**: taklif qabul — `current_value` NULL, parametr qatorlari oldindan, T0 `initial_value` da. |
+| U-8 | `sensor_configs.sensor_id` UNIQUE (global); `temperature_readings.sensor_id`, `temperature_alerts.sensor_id` → matnli FK | Sensor identifikatori butun platforma bo'yicha unikal | D-12 (kompaniyalar izolyatsiyasi), B (UUID FK) | Ikki kompaniya bir xil sensor nomini ishlata olmaydi; matnli FK B qoidasiga zid | `UNIQUE(company_id, sensor_id)`; o'qish/alert jadvallari `sensor_config_id uuid` FK orqali bog'lanadi (ETL `sensor_id` → `id` moslaydi), `sensor_id` matni nusxa sifatida qolmaydi. | ✅ RESOLVED → **D-78**: taklif qabul. |
+| U-9 | `reagent_documents.file_size` (limit) | Cheklov yo'q | D-06: protokol 20MB, generic 50MB; reaktiv hujjatlari nomlanmagan (Q-39) | Sxema javob bermaydi | 20MB (protokol fayllari bilan bir xil, xuddi shu formatlar). | ✅ RESOLVED → **D-79**: 20MB, protokol formatlari. |
+| U-10 | `audit_logs.record_id NOT NULL` | Har audit yozuvida yozuv ID'si majburiy | D-60: muvaffaqiyatsiz login ham yoziladi | Noma'lum email bilan urinishda `record_id` uchun qiymat yo'q | `record_id` NULL ga ruxsat (faqat auth hodisalari uchun, `table_name = 'auth'`); muvaffaqiyatli login/logout — `sessions.id`. | ✅ RESOLVED → **D-80**: NULL faqat auth hodisalari uchun, CHECK bilan. |
 
 ## Yig'ma: spec/DECISIONS ga sxema sabab o'zgartirish tavsiyalari
 
-| Joy | Hozirgi matn | Sxema | Tavsiya |
-|---|---|---|---|
+| Joy | Hozirgi matn | Sxema | Tavsiya | Holat |
+|---|---|---|---|---|
 | D-52 | Sensor: "nomi, joyi (xona)" | `sensor_id` (identifikator) + `location_name`; alohida "nom" ustuni yo'q | "Sensor: `sensor_id` (identifikator) va `location_name` (joyi)" deb aniqlashtirish. |
 | D-48 | `.docx` tarkibi: "namuna (tur, modda, lot, seriya, **kod**)" | Namuna kodi ustuni yo'q (D-68: avtomatik kod yo'q) | "kod" ni olib tashlash. |
 | R-NOTIF-11 | "Ro'yxatdan tashqari xabarnoma turi yaratib bo'lmaydi (DB CHECK/enum)" | Enum'da legacy `sample_created`, `sample_overdue`, `general` | "Ilova faqat §9 turlarini yaratadi; enum'dagi legacy turlar faqat ko'chirilgan yozuvlar uchun" (checklist'da yangilandi). |
