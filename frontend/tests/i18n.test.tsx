@@ -1,11 +1,15 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
+import MockAdapter from 'axios-mock-adapter';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { apiClient } from '@/api/client';
 import i18n, { DEFAULT_LANGUAGE, LANGUAGE_STORAGE_KEY } from '@/i18n';
 import en from '@/i18n/locales/en.json';
 import ru from '@/i18n/locales/ru.json';
 import uz from '@/i18n/locales/uz.json';
 import { loginAs, renderAt } from './helpers';
+
+let api: MockAdapter;
 
 function flatKeys(obj: object, prefix = ''): string[] {
   return Object.entries(obj).flatMap(([k, v]) =>
@@ -38,7 +42,13 @@ describe('tarjima fayllari', () => {
 describe('til almashtirgich', () => {
   beforeEach(async () => {
     localStorage.clear();
+    api = new MockAdapter(apiClient);
+    api.onGet(/.*/).reply(200, { data: [], meta: { page: 1, limit: 20, total: 0 } });
     await i18n.changeLanguage('uz');
+  });
+
+  afterEach(() => {
+    api.restore();
   });
 
   it("tanlangan til matnni, localStorage va <html lang> ni o'zgartiradi", async () => {

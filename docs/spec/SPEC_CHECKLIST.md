@@ -19,21 +19,21 @@
 | R-ROLE-05 | `super_admin` interfeysi butunlay boshqacha: faqat **Kompaniyalar** va **Audit jurnali** sahifalarini ko'radi (`SuperAdminDashboard`). | 01-roles §1 | P2 | [x] |
 | R-ROLE-06 | `super_admin` kompaniyalarni yaratadi/faollashtiradi. | 01-roles §1 | P2 | [x] |
 | R-ROLE-07 | `super_admin` barcha kompaniyalar bo'yicha audit jurnalini ko'radi. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-08 | Namuna yaratish: `kontrolyor` — RUXSAT. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-09 | Namuna yaratish: `chemist` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-10 | Namuna yaratish: `lab_head` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-11 | Namuna yaratish: `director` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-12 | Namuna yaratish: `admin` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-13 | Namuna ko'rish: `kontrolyor` — faqat o'zi yaratganlar. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-14 | Namuna ko'rish: `chemist` — faqat o'ziga biriktirilganlar. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-15 | Namuna ko'rish: `lab_head` — kompaniyaning hammasi. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-16 | Namuna ko'rish: `director` — kompaniyaning hammasi. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-17 | Namuna ko'rish: `admin` — kompaniyaning hammasi. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-18 | Kimyogarga biriktirish: `kontrolyor` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-19 | Kimyogarga biriktirish: `chemist` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-20 | Kimyogarga biriktirish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-21 | Kimyogarga biriktirish: `director` — TAQIQ. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-22 | Kimyogarga biriktirish: `admin` — TAQIQ. | 01-roles §1 | P4 | [ ] |
+| R-ROLE-08 | Namuna yaratish: `kontrolyor` — RUXSAT. | 01-roles §1 | P4 | [x] |
+| R-ROLE-09 | Namuna yaratish: `chemist` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-10 | Namuna yaratish: `lab_head` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-11 | Namuna yaratish: `director` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-12 | Namuna yaratish: `admin` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-13 | Namuna ko'rish: `kontrolyor` — faqat o'zi yaratganlar. | 01-roles §1 | P4 | [x] |
+| R-ROLE-14 | Namuna ko'rish: `chemist` — faqat o'ziga biriktirilganlar. | 01-roles §1 | P4 | [x] |
+| R-ROLE-15 | Namuna ko'rish: `lab_head` — kompaniyaning hammasi. | 01-roles §1 | P4 | [x] |
+| R-ROLE-16 | Namuna ko'rish: `director` — kompaniyaning hammasi. | 01-roles §1 | P4 | [x] |
+| R-ROLE-17 | Namuna ko'rish: `admin` — kompaniyaning hammasi. | 01-roles §1 | P4 | [x] |
+| R-ROLE-18 | Kimyogarga biriktirish: `kontrolyor` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-19 | Kimyogarga biriktirish: `chemist` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-20 | Kimyogarga biriktirish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [x] |
+| R-ROLE-21 | Kimyogarga biriktirish: `director` — TAQIQ. | 01-roles §1 | P4 | [x] |
+| R-ROLE-22 | Kimyogarga biriktirish: `admin` — TAQIQ. | 01-roles §1 | P4 | [x] |
 | R-ROLE-23 | Protokol fayl yuklash: `kontrolyor` — TAQIQ (asosiy fayl; protokol pasporti alohida — R-PROTO-31). | 01-roles §1 | P5 | [ ] |
 | R-ROLE-24 | Protokol fayl yuklash: `chemist` — RUXSAT. | 01-roles §1 | P5 | [ ] |
 | R-ROLE-25 | Protokol fayl yuklash: `lab_head` — RUXSAT. | 01-roles §1 | P5 | [ ] |
@@ -117,47 +117,47 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-SAMPLE-01 | Namuna turi `raw_material` (Xom ashyo) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-02 | Namuna turi `finished_product` (Tayyor mahsulot) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-03 | Namuna turi `reagent` qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-04 | Namuna turi `standard_substance` (Standart namuna) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-05 | Namuna turi `other` (Boshqa) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-06 | Ro'yxatdan tashqari namuna turi rad etiladi (validatsiya); `sample_type` da faqat §3 dagi 5 tur (`in_process` yo'q). | 03-samples §3, DECISIONS.md D-72 | P4 | [ ] |
-| R-SAMPLE-07 | Namuna statusi `pending_assignment` mavjud. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-08 | Namuna statusi `in_progress` mavjud. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-09 | Namuna statusi `stopped` mavjud. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-10 | Namuna statusi `submitted` mavjud. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-11 | Namuna statusi `approved` mavjud. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-12 | Namuna statusi `rejected` mavjud va ishlatiladi (lab_head rad etganda). | 03-samples §3, DECISIONS.md D-14 | P4 | [ ] |
-| R-SAMPLE-13 | Kontrolyor yangi namuna yaratadi: modda tanlaydi, lot, seriya raqam, miqdor kiritadi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-14 | Yangi namuna `pending_assignment` holatida yaratiladi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-15 | O'tish `pending_assignment → in_progress`: faqat lab_head, kimyogarga biriktirish orqali. | 03-samples §3 | P4 | [ ] |
+| R-SAMPLE-01 | Namuna turi `raw_material` (Xom ashyo) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-02 | Namuna turi `finished_product` (Tayyor mahsulot) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-03 | Namuna turi `reagent` qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-04 | Namuna turi `standard_substance` (Standart namuna) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-05 | Namuna turi `other` (Boshqa) qo'llab-quvvatlanadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-06 | Ro'yxatdan tashqari namuna turi rad etiladi (validatsiya); `sample_type` da faqat §3 dagi 5 tur (`in_process` yo'q). | 03-samples §3, DECISIONS.md D-72 | P4 | [x] |
+| R-SAMPLE-07 | Namuna statusi `pending_assignment` mavjud. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-08 | Namuna statusi `in_progress` mavjud. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-09 | Namuna statusi `stopped` mavjud. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-10 | Namuna statusi `submitted` mavjud. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-11 | Namuna statusi `approved` mavjud. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-12 | Namuna statusi `rejected` mavjud va ishlatiladi (lab_head rad etganda). | 03-samples §3, DECISIONS.md D-14 | P4 | [x] |
+| R-SAMPLE-13 | Kontrolyor yangi namuna yaratadi: modda tanlaydi, lot, seriya raqam, miqdor kiritadi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-14 | Yangi namuna `pending_assignment` holatida yaratiladi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-15 | O'tish `pending_assignment → in_progress`: faqat lab_head, kimyogarga biriktirish orqali. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-16 | Biriktirishda protokol avtomatik `draft` holatida yaratiladi: `finished_product` uchun `final`, boshqa turlar uchun `standard`. | 03-samples §3, DECISIONS.md D-15 | P5 | [ ] |
 | R-SAMPLE-17 | Biriktirishda kimyogarga `sample_assigned` xabarnomasi yuboriladi (ekran + real vaqt + Telegram, ulangan bo'lsa). | 03-samples §3, 09 §9 | P6 | [ ] |
-| R-SAMPLE-18 | Faqat `chemist` rolidagi o'sha kompaniya foydalanuvchisiga biriktirish mumkin. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-19 | O'tish `in_progress → stopped`: kimyogar "Tahlilni to'xtatish" bilan. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-20 | To'xtatishda sabab majburiy. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-21 | To'xtatish sababi kamida 5 belgi (4 belgi rad etiladi). | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-22 | O'tish `stopped → in_progress`: kimyogar "Davom ettirish" bilan. | 03-samples §3 | P4 | [ ] |
+| R-SAMPLE-18 | Faqat `chemist` rolidagi o'sha kompaniya foydalanuvchisiga biriktirish mumkin. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-19 | O'tish `in_progress → stopped`: kimyogar "Tahlilni to'xtatish" bilan. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-20 | To'xtatishda sabab majburiy. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-21 | To'xtatish sababi kamida 5 belgi (4 belgi rad etiladi). | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-22 | O'tish `stopped → in_progress`: kimyogar "Davom ettirish" bilan. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-23 | O'tish `in_progress → submitted`: kimyogar protokolni yuborganda (`stopped` dan — taqiq). | 03-samples §3, DECISIONS.md D-36 | P5 | [ ] |
 | R-SAMPLE-24 | O'tish `submitted → approved`: lab_head "Tasdiqlash" bilan (protokol tasdiqlanishi orqali). | 03-samples §3 | P5 | [ ] |
 | R-SAMPLE-25 | Lab_head "Rad etish" bosganda namuna `rejected` holatida qoladi; sabab saqlanadi va `sample_tracking` ga yoziladi. | 03-samples §3, DECISIONS.md D-14 | P5 | [ ] |
-| R-SAMPLE-26 | Diagrammada bo'lmagan o'tishlar rad etiladi (masalan `pending_assignment → submitted`, `approved → in_progress`). | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-27 | Kimyogar faqat o'ziga biriktirilgan namunani to'xtata/davom ettira oladi. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-28 | Kimyogar o'ziga biriktirilgan namunalarni ko'radi. | 03-samples §3 | P4 | [ ] |
+| R-SAMPLE-26 | Diagrammada bo'lmagan o'tishlar rad etiladi (masalan `pending_assignment → submitted`, `approved → in_progress`). | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-27 | Kimyogar faqat o'ziga biriktirilgan namunani to'xtata/davom ettira oladi. | 03-samples §3 | P4 | [x] |
+| R-SAMPLE-28 | Kimyogar o'ziga biriktirilgan namunalarni ko'radi. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-29 | Kimyogar protokolga tahlil faylini (PDF/Word/JPEG/PNG) namuna sahifasida yuklaydi. | 03-samples §3 | P5 | [ ] |
 | R-SAMPLE-30 | Lab_head `submitted` protokollarni ko'rib chiqadi; tasdiqlansa namuna `approved`, protokolga imzo qo'yiladi. | 03-samples §3 | P5 | [ ] |
-| R-SAMPLE-31 | `sample_tracking` jadvalida namuna voqealari tarixi yoziladi (kim, qachon, nima qildi). | 16-architecture §16, 00 §0 | P4 | [ ] |
+| R-SAMPLE-31 | `sample_tracking` jadvalida namuna voqealari tarixi yoziladi (kim, qachon, nima qildi). | 16-architecture §16, 00 §0 | P4 | [x] |
 | R-SAMPLE-32 | Protokolni to'ldirish/yuklash namunaning o'z sahifasida `ProtocolSection` komponentida bajariladi. | 03-samples §3 | P5 | [ ] |
 | R-SAMPLE-33 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuborganda. | DECISIONS.md D-14 | P5 | [ ] |
 | R-SAMPLE-34 | `stopped` namunadan protokolni yuborish rad etiladi (avval davom ettirish kerak). | DECISIONS.md D-36 | P5 | [ ] |
-| R-SAMPLE-35 | `lab_head` namunani `in_progress`, `stopped`, `rejected` holatlarida boshqa kimyogarga qayta biriktira oladi; boshqa holatlarda — rad etiladi. | DECISIONS.md D-37 | P4 | [ ] |
-| R-SAMPLE-36 | Qayta biriktirishda protokol(lar) saqlanib yangi kimyogarga o'tadi; yangi kimyogarga `sample_assigned`, tracking'ga yoziladi. | DECISIONS.md D-37 | P4 | [ ] |
-| R-SAMPLE-37 | To'xtatish/davom ettirishni faqat biriktirilgan kimyogar qiladi (`lab_head` ham — taqiq). | DECISIONS.md D-38 | P4 | [ ] |
-| R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [ ] |
+| R-SAMPLE-35 | `lab_head` namunani `in_progress`, `stopped`, `rejected` holatlarida boshqa kimyogarga qayta biriktira oladi; boshqa holatlarda — rad etiladi. | DECISIONS.md D-37 | P4 | [x] |
+| R-SAMPLE-36 | Qayta biriktirishda protokol(lar) saqlanib yangi kimyogarga o'tadi; yangi kimyogarga `sample_assigned`, tracking'ga yoziladi. | DECISIONS.md D-37 | P4 | [x] |
+| R-SAMPLE-37 | To'xtatish/davom ettirishni faqat biriktirilgan kimyogar qiladi (`lab_head` ham — taqiq). | DECISIONS.md D-38 | P4 | [x] |
+| R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [x] |
 | R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [ ] |
-| R-SAMPLE-40 | Namuna maydonlari — D-68 ro'yxati (sxemadagi `samples` ustunlari); avtomatik namuna kodi yo'q. | DECISIONS.md D-68 | P4 | [ ] |
-| R-SAMPLE-41 | `samples` da `expires_at` va `deadline` ustunlari yo'q. | DECISIONS.md D-17, DECISIONS.md D-71 | P4 | [ ] |
+| R-SAMPLE-40 | Namuna maydonlari — D-68 ro'yxati (sxemadagi `samples` ustunlari); avtomatik namuna kodi yo'q. | DECISIONS.md D-68 | P4 | [x] |
+| R-SAMPLE-41 | `samples` da `expires_at` va `deadline` ustunlari yo'q. | DECISIONS.md D-17, DECISIONS.md D-71 | P4 | [x] |
 
 ## PASS — Namuna pasporti
 

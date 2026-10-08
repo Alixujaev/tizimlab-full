@@ -19,6 +19,7 @@ import {
   type LoginLimitOptions,
 } from './modules/auth/loginLimiter.js';
 import { createCompaniesRouter } from './modules/companies/companies.router.js';
+import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
@@ -98,6 +99,7 @@ export function createApp({
   api.use('/companies', createCompaniesRouter({ auth }));
   api.use('/admin', createAdminRouter({ auth }));
   api.use('/substances', createSubstancesRouter({ auth }));
+  api.use('/samples', createSamplesRouter({ auth }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

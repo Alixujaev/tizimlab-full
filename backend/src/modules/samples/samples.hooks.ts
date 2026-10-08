@@ -1,0 +1,42 @@
+import type pg from 'pg';
+import type { SampleRow, SampleStatus } from './samples.types.js';
+
+export interface SampleHooks {
+  /**
+   * Namunani kimyogarga biriktirilganda chaqiriladi.
+   * P5 da bu nuqtada avtomatik protokol (finished_product -> final, boshqalar -> standard) yaratiladi (D-15).
+   */
+  onSampleAssigned: (
+    sample: SampleRow,
+    chemistUser: { id: string; fullName: string },
+    tx: pg.PoolClient,
+  ) => Promise<void>;
+
+  /**
+   * Namuna statusi o'zgarganda chaqiriladi.
+   * P6 da bu nuqtada xabarnomalar (real-vaqt, in-app, Telegram) yuboriladi (D-13).
+   */
+  onSampleStatusChanged: (
+    sample: SampleRow,
+    oldStatus: SampleStatus,
+    newStatus: SampleStatus,
+    actorId: string,
+    tx: pg.PoolClient,
+  ) => Promise<void>;
+}
+
+export const sampleHooks: SampleHooks = {
+  async onSampleAssigned(sample, chemistUser, _tx) {
+    // P5 integratsiyasi uchun ulanish nuqtasi
+    void sample;
+    void chemistUser;
+  },
+
+  async onSampleStatusChanged(sample, oldStatus, newStatus, actorId, _tx) {
+    // P6 integratsiyasi uchun ulanish nuqtasi
+    void sample;
+    void oldStatus;
+    void newStatus;
+    void actorId;
+  },
+};

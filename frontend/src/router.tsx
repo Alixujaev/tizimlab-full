@@ -9,6 +9,8 @@ import { CompaniesPage } from '@/pages/companies/CompaniesPage';
 import { NotFoundPage } from '@/pages/errors/NotFoundPage';
 import { HomePage } from '@/pages/HomePage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { SampleDetailPage } from '@/pages/samples/SampleDetailPage';
+import { SamplesPage } from '@/pages/samples/SamplesPage';
 import { SubstancesPage } from '@/pages/substances/SubstancesPage';
 import { UsersPage } from '@/pages/users/UsersPage';
 import { COMPANY_ROLES } from '@/types';
@@ -37,8 +39,8 @@ export const routes: RouteObject[] = [
             // Kompaniya ichidagi ish oqimlari — super_admin qatnashmaydi (spec §1)
             element: <RoleRoute roles={COMPANY_ROLES} />,
             children: [
-              stub('/samples', 'pages.samples'),
-              stub('/samples/:id', 'pages.sampleDetail'),
+              { path: '/samples', element: <SamplesPage /> },
+              { path: '/samples/:id', element: <SampleDetailPage /> },
               stub('/registry', 'pages.registry'),
               stub('/registry/:id', 'pages.registryDetail'),
               // Eski Protokollar sahifasi o'rniga Reyestr (spec §3)

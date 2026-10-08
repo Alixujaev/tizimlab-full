@@ -252,3 +252,112 @@ export interface SubstanceListParams {
   isActive?: boolean;
 }
 
+// ---------------------------------------------------- Samples
+export type SampleType =
+  | 'raw_material'
+  | 'finished_product'
+  | 'reagent'
+  | 'standard_substance'
+  | 'other';
+
+export type SampleStatus =
+  | 'pending_assignment'
+  | 'in_progress'
+  | 'stopped'
+  | 'submitted'
+  | 'approved'
+  | 'rejected';
+
+export type SampleTrackingEventType =
+  | 'sample_created'
+  | 'assigned'
+  | 'reassigned'
+  | 'stopped'
+  | 'resumed'
+  | 'submitted'
+  | 'approved'
+  | 'rejected'
+  | 'passport_uploaded'
+  | 'passport_reviewed'
+  | 'deleted';
+
+export interface SampleDto {
+  id: string;
+  companyId: string;
+  type: SampleType;
+  status: SampleStatus;
+  substanceId: string | null;
+  substanceName: string;
+  serialNumber: string | null;
+  lotNumber: string | null;
+  quantity: string | null;
+  manufacturer: string | null;
+  manufacturedAt: string | null;
+  analysisStart: string | null;
+  analysisEnd: string | null;
+  notes: string | null;
+  createdBy: string;
+  assignedTo: string | null;
+  assignedBy: string | null;
+  assignedAt: string | null;
+  stopReason: string | null;
+  stoppedAt: string | null;
+  deletedAt: string | null;
+  passportFileName?: string | null;
+  passportStatus?: 'pending' | 'approved' | 'rejected' | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SampleTrackingDto {
+  id: string;
+  sampleId: string;
+  eventType: SampleTrackingEventType;
+  userId: string | null;
+  userFullName?: string | null;
+  fromStatus: SampleStatus | null;
+  toStatus: SampleStatus | null;
+  reason: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+}
+
+export interface SampleDetailDto extends SampleDto {
+  tracking: SampleTrackingDto[];
+}
+
+export interface CreateSampleInput {
+  type: SampleType;
+  substanceId?: string | null;
+  substanceName: string;
+  serialNumber?: string | null;
+  lotNumber?: string | null;
+  quantity?: string | null;
+  manufacturer?: string | null;
+  manufacturedAt?: string | null;
+  analysisStart?: string | null;
+  analysisEnd?: string | null;
+  notes?: string | null;
+}
+
+export interface SampleListParams {
+  page?: number;
+  limit?: number;
+  status?: SampleStatus;
+  type?: SampleType;
+  substanceId?: string;
+  search?: string;
+}
+
+export interface AssignSampleInput {
+  chemistId: string;
+}
+
+export interface StopSampleInput {
+  reason: string;
+}
+
+export interface ResumeSampleInput {
+  reason?: string | null;
+}
+
