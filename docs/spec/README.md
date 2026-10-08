@@ -29,7 +29,7 @@ Yagona haqiqat manbai: [`../LOYIHA.md`](../LOYIHA.md). Quyidagi fayllar undan **
 
 | Fayl | Maqsad |
 |---|---|
-| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-62) — spec bilan teng kuchli |
+| [DECISIONS.md](DECISIONS.md) | Qabul qilingan qarorlar (D-01..D-65) — spec bilan teng kuchli |
 | [SCHEMA_DIFF.md](SCHEMA_DIFF.md) | Eski production sxemasi (`docs/legacy/schema.sql`) ↔ spec/DECISIONS farqlari |
 | [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | Ziddiyatlar, noaniqliklar, yetishmayotgan joylar — faza bo'yicha, taklif (default) va BLOCKING/NON-BLOCKING bilan (gate — D-19) |
 | [SPEC_CHECKLIST.md](SPEC_CHECKLIST.md) | Har bir tekshiriladigan talab, faza va holat bilan |

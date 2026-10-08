@@ -449,7 +449,10 @@
 | R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [ ] |
 | R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [ ] |
 | R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [ ] |
-| R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62 | P10 | [ ] |
+| R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62, D-64 | P10 | [ ] |
+| R-AUDIT-12 | Audit yozuvi ilova (servis) qatlamida yoziladi; audit uchun DB trigger yo'q. | DECISIONS.md D-64 | P10 | [ ] |
+| R-AUDIT-13 | Audit yozuvi o'zgartirish bilan bitta tranzaksiyada yoziladi — o'zgarish rollback bo'lsa audit yozuvi ham qolmaydi. | DECISIONS.md D-64 | P10 | [ ] |
+| R-AUDIT-14 | Audit yozuvida `user_id`, `company_id`, `ip_address`, `user_agent` to'ldiriladi. | DECISIONS.md D-64 | P10 | [ ] |
 
 ## FILE — Fayllarni saqlash
 
@@ -478,7 +481,7 @@
 | R-TG-05 | Bot buyrug'i `/unlink`. | 13-telegram §13 | P11 | [ ] |
 | R-TG-06 | Mini App: mavjud React frontend Telegram WebApp sifatida ochiladi (to'liq LIMS). | 13-telegram §13 | P11 | [ ] |
 | R-TG-07 | Ulash oqimi: veb-login → Profil → "Telegram ulash" → `POST /telegram/link-token`. | 13-telegram §13 | P11 | [ ] |
-| R-TG-08 | Link-tokenlar `telegram_link_tokens` jadvalida saqlanadi (Q-55). | 16-architecture §16 | P11 | [ ] |
+| R-TG-08 | Link-tokenlar `telegram_link_tokens` jadvalida SHA-256 xesh sifatida saqlanadi (xom token bazaga yozilmaydi); token bir martalik. | 16-architecture §16, DECISIONS.md D-65 | P11 | [ ] |
 | R-TG-09 | Bot `/start <token>` ni qabul qilib akkauntni foydalanuvchiga bog'laydi (`users` dagi Telegram maydonlari). | 13-telegram §13, 16 §16 | P11 | [ ] |
 | R-TG-10 | WebApp login: `initData` → `POST /telegram/webapp-auth` → avtomatik kirish. | 13-telegram §13 | P11 | [ ] |
 | R-TG-11 | `webapp-auth` `initData` ni HMAC-SHA256 bilan tekshiradi; noto'g'ri imzo rad etiladi. | 13-telegram §13 | P11 | [ ] |
@@ -488,6 +491,7 @@
 | R-TG-15 | Production'da webhook rejimi: `TELEGRAM_WEBHOOK_URL` + `TELEGRAM_WEBHOOK_SECRET`. | 13-telegram §13 | P11 | [ ] |
 | R-TG-16 | Webhook so'rovlari secret bilan tekshiriladi; noto'g'ri secret rad etiladi. | 13-telegram §13 | P11 | [ ] |
 | R-TG-17 | `TELEGRAM_BOT_TOKEN` yo'q bo'lsa bot ishga tushmaydi, ilova ishlashda davom etadi. | 13-telegram §13 | P11 | [ ] |
+| R-TG-18 | Ishlatilgan yoki muddati o'tgan link token bilan `/start <token>` rad etiladi (muddat — Q-55). | DECISIONS.md D-65 | P11 | [ ] |
 
 ## I18N — Ko'p tillilik
 
@@ -612,6 +616,8 @@
 | R-ARCH-66 | Migratsiyalar faqat oldinga (down yo'q). | DECISIONS.md D-24 | P1 | [x] |
 | R-ARCH-67 | Qo'llangan migratsiya fayli checksum'i o'zgarsa runner xato beradi. | DECISIONS.md D-24 | P1 | [x] |
 | R-ARCH-68 | Env qoidalari: JWT sirlari ≥32, production'da R2_* va FRONTEND_URL majburiy, Telegram token → username (+ production'da webhook URL/secret). | DECISIONS.md D-25, D-26 | P1 | [x] |
+| R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [ ] |
+| R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [ ] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
@@ -727,16 +733,16 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | STAB — Stabilizatsiya | 36 | 0 | 0 | 36 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 0 | 0 | 18 |
-| AUDIT — Audit va Faoliyat jurnali | 11 | 0 | 0 | 11 |
+| AUDIT — Audit va Faoliyat jurnali | 14 | 0 | 0 | 14 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
-| TG — Telegram | 17 | 0 | 0 | 17 |
+| TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
 | AUTH — Autentifikatsiya va xavfsizlik | 20 | 0 | 2 | 18 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 68 | 19 | 7 | 42 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 70 | 19 | 7 | 44 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 566 | 45 | 17 | 504 |
+| **Jami** | 572 | 45 | 17 | 510 |
 
 ### Fazalar bo'yicha
 
@@ -751,7 +757,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P7 | 33 | 0 | 0 | 33 |
 | P8 | 27 | 1 | 0 | 26 |
 | P9 | 55 | 0 | 0 | 55 |
-| P10 | 22 | 1 | 0 | 21 |
-| P11 | 25 | 0 | 0 | 25 |
-| P12 | 22 | 1 | 1 | 20 |
-| **Jami** | 566 | 45 | 17 | 504 |
+| P10 | 25 | 1 | 0 | 24 |
+| P11 | 26 | 0 | 0 | 26 |
+| P12 | 24 | 1 | 1 | 22 |
+| **Jami** | 572 | 45 | 17 | 510 |

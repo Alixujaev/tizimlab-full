@@ -28,13 +28,18 @@ Hozircha faqat **Audit** bo'limi; qolgan bo'limlar keyingi topshiriqda qo'shilad
 `telegram_link_tokens.token` (`:595`, xom token) — ularning jadvallarida trigger yo'q, lekin qoida umumiy.
 
 Qaror **D-62**: yangi tizimda audit yozuviga yozishdan oldin `password_hash` va token/token hash'lari olib tashlanadi.
+Qo'shimcha: `telegram_link_tokens.token` eski sxemada xom saqlanadi — yangi tizimda SHA-256 xesh, bir martalik (**D-65**).
 
-### (b) ETL (P12): eski `audit_logs` tarixi — ⚠ FOYDALANUVCHI QARORI KERAK
+### (b) ETL (P12): eski `audit_logs` tarixi — ✅ RESOLVED → D-63
 
 | Variant | Mazmuni | Oqibatlari |
 |---|---|---|
 | 1. Ko'chirish + scrub | `audit_logs` ko'chiriladi; `table_name = 'users'` qatorlarida `old_values` va `new_values` dan `password_hash` kaliti olib tashlanadi (`jsonb - 'password_hash'`). | Tarix saqlanadi. Ko'chirilgan yozuvlarda `user_id`/`company_id` yo'q — faoliyat jurnalida (kompaniya bo'yicha, D-60) ko'rinmaydi, faqat `super_admin` audit jurnalida. `protocol_values` yozuvlari yangi sxemada yo'q jadvalga (D-09) tegishli. Eski `password_hash` dump/backup'larda qolishi mumkin — ETL'dan keyin ham eski bazani himoyalash kerak. |
 | 2. Ko'chirmaslik | `audit_logs` yangi bazaga o'tkazilmaydi; yangi audit noldan boshlanadi. | Sezgir ma'lumot ko'chish xavfi yo'q. Eski harakatlar tarixi yangi tizimda ko'rinmaydi (faqat eski bazada/arxivda). |
+
+Tanlangan: **variant 2** (D-63) — eski `audit_logs` yangi audit jadvaliga ko'chirilmaydi, eski baza dump'i arxivlanadi.
+Eski sxemada `sample_tracking` yo'qligi sababli ETL har ko'chirilgan namuna va protokol uchun bitta sintetik tracking
+voqeasini yozadi: "legacy'dan ko'chirildi", joriy status, asl `created_at`/`updated_at`.
 
 ### (c) Qamrov: eski triggerlar ↔ D-60 (Q-51)
 
@@ -51,5 +56,6 @@ Spec §11 jurnallarni (kim ko'radi, ko'lami) tasvirlaydi, lekin yoziladigan hodi
 
 Qo'shimcha: `protocol_values` triggeri yangi sxemada keraksiz (D-09 — jadval yo'q).
 
-**Xulosa:** eski trigger qamrovi D-60 uchun yetarli emas. Yangi audit mexanizmi P10 da D-60 va D-62 asosida quriladi;
-uning qanday amalga oshirilishi (trigger yoki ilova darajasi) bu hujjatda tanlanmagan.
+**Xulosa:** eski trigger qamrovi D-60 uchun yetarli emas. Yangi audit P10 da **ilova darajasida** quriladi (**D-64**,
+DB trigger emas): servis qatlami audit yozuvini o'zgartirish bilan bir tranzaksiyada yozadi va `user_id`, `company_id`,
+`ip_address`, `user_agent` ni to'ldiradi; D-60 va D-62 amal qiladi.
