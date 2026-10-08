@@ -9,6 +9,7 @@ import { CompaniesPage } from '@/pages/companies/CompaniesPage';
 import { NotFoundPage } from '@/pages/errors/NotFoundPage';
 import { HomePage } from '@/pages/HomePage';
 import { ProfilePage } from '@/pages/profile/ProfilePage';
+import { SubstancesPage } from '@/pages/substances/SubstancesPage';
 import { UsersPage } from '@/pages/users/UsersPage';
 import { COMPANY_ROLES } from '@/types';
 
@@ -43,8 +44,8 @@ export const routes: RouteObject[] = [
               // Eski Protokollar sahifasi o'rniga Reyestr (spec §3)
               { path: '/protocols', element: <Navigate to="/registry" replace /> },
               { path: '/protocols/:id', element: <Navigate to="/registry" replace /> },
-              stub('/substances', 'pages.substances'),
-              stub('/substances/:id', 'pages.substanceDetail'),
+              { path: '/substances', element: <SubstancesPage /> },
+              { path: '/substances/:id', element: <SubstancesPage /> },
               stub('/reagents', 'pages.reagents'),
               stub('/reagents/journal', 'pages.reagentJournal'),
               stub('/expenses', 'pages.expenses'),

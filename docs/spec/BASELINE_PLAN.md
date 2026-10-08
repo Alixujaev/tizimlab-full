@@ -109,4 +109,8 @@ Natija: 24 jadval (26 legacy − `protocol_values` − `schema_migrations` − `
 | P2b | `companies` | `slug` unikal | `companies_slug_key UNIQUE(slug)` + CHECK format `^[a-z0-9]+(?:-[a-z0-9]+)*$` | Q-10, D-95: slug formati faqat kichik lotin harflari, raqamlar va defis; DB va Zod sxemada tekshiriladi. |
 | P2b | `/profile` | Telegram sozlamalari | Telegram qismi profil sahifasidan olib tashlandi (stubsiz) | D-107: Telegram integratsiyasi P11 da to'liq bot bilan birga kiritiladi; xom/ishlamaydigan stub ko'rsatilmaydi. |
 | P2b | `/admin/permissions` | Matritsa tahrirlash | Rol bo'yicha standart ruxsatlar disabled badge, faqat qo'shimcha grantlar checkbox orqali tahrirlanadi | D-105, Q-05: grant-only model; rol ruxsatlari bazaviy bo'lib, revoke qilinmaydi. |
+| P3 | Migratsiya fayli | `NNN_substances.sql` | `002_substances.sql` | Ikkinchi baseline migratsiyasi (`001_core.sql` o'zgartirilmadi). |
+| P3 | `substances` | `name_uz`, `name_ru`, `name_en` | `name_uz` NOT NULL, `name_ru` va `name_en` NULLable; CHECK `name_uz <> ''` | Spec §5 va R-SUBST-01: name_uz majburiy, ru va en ixtiyoriy, UI da fallback `name_uz` ga tushadi (R-I18N-09). |
+| P3 | `substances` o'chirish | Namuna bog'langan moddani o'chirish 409 (R-SUBST-11) | `deleteSubstance` da `information_schema.tables` orqali dinamik tekshiruv; P4 da `samples` yaratilgach FK RESTRICT ishlaydi | Tranzaksiya xatoliksiz bajarilishi va P4 bilan to'liq moslik uchun (R-SUBST-11 [~]). |
+| P3 | `substance_parameters` | `parameter_name` | CHECK `parameter_name <> ''`; bir moddada takror nom Zod va DB darajasida taqiqlandi | Bir xil nomli parametrlar takrorlanishining oldini olish. |
 

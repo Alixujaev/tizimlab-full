@@ -179,3 +179,76 @@ export interface UpdateProfileInput {
   fullName: string;
 }
 
+// ---------------------------------------------------- Substances
+export type Pharmacopoeia = 'EP' | 'BP' | 'UzDSt' | 'USP' | 'OTHER';
+
+export interface SubstanceParameterDto {
+  id: string;
+  substanceId: string;
+  parameterName: string;
+  unit: string | null;
+  specMin: number | null;
+  specMax: number | null;
+  method: string | null;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface SubstanceDto {
+  id: string;
+  nameUz: string;
+  nameRu: string | null;
+  nameEn: string | null;
+  pharmacopoeia: Pharmacopoeia;
+  casNumber: string | null;
+  description: string | null;
+  isActive: boolean;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  companyId: string;
+  parametersCount?: number;
+}
+
+export interface SubstanceDetailDto extends SubstanceDto {
+  parameters: SubstanceParameterDto[];
+}
+
+export interface SubstanceParameterInput {
+  parameterName: string;
+  unit?: string | null;
+  specMin?: number | null;
+  specMax?: number | null;
+  method?: string | null;
+  sortOrder?: number;
+}
+
+export interface CreateSubstanceInput {
+  nameUz: string;
+  nameRu?: string | null;
+  nameEn?: string | null;
+  pharmacopoeia: Pharmacopoeia;
+  casNumber?: string | null;
+  description?: string | null;
+  parameters?: SubstanceParameterInput[];
+}
+
+export interface UpdateSubstanceInput {
+  nameUz?: string;
+  nameRu?: string | null;
+  nameEn?: string | null;
+  pharmacopoeia?: Pharmacopoeia;
+  casNumber?: string | null;
+  description?: string | null;
+  isActive?: boolean;
+  parameters?: SubstanceParameterInput[];
+}
+
+export interface SubstanceListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  pharmacopoeia?: Pharmacopoeia;
+  isActive?: boolean;
+}
+

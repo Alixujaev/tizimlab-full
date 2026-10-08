@@ -37,6 +37,8 @@ describeDb('001_core baseline migratsiyasi', () => {
       'companies',
       'schema_migrations',
       'sessions',
+      'substance_parameters',
+      'substances',
       'user_permissions',
       'users',
     ]);
@@ -44,6 +46,7 @@ describeDb('001_core baseline migratsiyasi', () => {
     const status = await migrationStatus({ pool: db.pool });
     expect(status).toEqual([
       expect.objectContaining({ version: 1, name: 'core', state: 'applied' }),
+      expect.objectContaining({ version: 2, name: 'substances', state: 'applied' }),
     ]);
   });
 
@@ -130,6 +133,7 @@ describeDb('001_core baseline migratsiyasi', () => {
     );
     expect(triggers.rows.map((r) => r.tgname)).toEqual([
       'trg_companies_updated_at',
+      'trg_substances_updated_at',
       'trg_users_updated_at',
     ]);
   });

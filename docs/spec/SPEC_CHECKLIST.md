@@ -54,11 +54,11 @@
 | R-ROLE-40 | Reyestrni ko'rish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [ ] |
 | R-ROLE-41 | Reyestrni ko'rish: `director` — RUXSAT. | 01-roles §1 | P4 | [ ] |
 | R-ROLE-42 | Reyestrni ko'rish: `admin` — RUXSAT. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-43 | Moddalar: `kontrolyor` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
-| R-ROLE-44 | Moddalar: `chemist` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
-| R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [ ] |
-| R-ROLE-46 | Moddalar: `director` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
-| R-ROLE-47 | Moddalar: `admin` — to'liq. | 01-roles §1 | P3 | [ ] |
+| R-ROLE-43 | Moddalar: `kontrolyor` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
+| R-ROLE-44 | Moddalar: `chemist` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
+| R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [x] |
+| R-ROLE-46 | Moddalar: `director` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
+| R-ROLE-47 | Moddalar: `admin` — to'liq. | 01-roles §1 | P3 | [x] |
 | R-ROLE-48 | Reaktivlar: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
 | R-ROLE-49 | Reaktivlar: `chemist` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
 | R-ROLE-50 | Reaktivlar: `lab_head` — to'liq. | 01-roles §1 | P7 | [ ] |
@@ -282,17 +282,17 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-SUBST-01 | Modda nomi uch tilda: `name_uz`, `name_ru`, `name_en`. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-02 | `substances` jadvalida yagona `name` ustuni yo'q. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-03 | Farmakopiya — modda darajasidagi `substances.pharmacopoeia`: EP, BP, UzDSt, USP, OTHER; boshqasi rad etiladi. | 05-substances §5, DECISIONS.md D-67 | P3 | [ ] |
-| R-SUBST-04 | CAS raqami ixtiyoriy. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-05 | Modda parametrlari (`substance_parameters`): nomi (bitta `parameter_name` ustuni), o'lchov birligi, min/max chegara, metod (erkin matn). | 05-substances §5, 16 §16, DECISIONS.md D-67 | P3 | [ ] |
-| R-SUBST-06 | Moddani yaratish/tahrirlash: faqat `lab_head` va `admin`. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-07 | Moddalarni barcha (kompaniya) rollari ko'radi. | 05-substances §5 | P3 | [ ] |
-| R-SUBST-08 | Moddalar sahifasi asosiy navigatsiyada (Sidebar) yo'q — namuna yaratishda va modda havolalari orqali ochiladi. | 05-substances §5, 16 §16 | P3 | [ ] |
+| R-SUBST-01 | Modda nomi uch tilda: `name_uz`, `name_ru`, `name_en`. | 05-substances §5 | P3 | [x] |
+| R-SUBST-02 | `substances` jadvalida yagona `name` ustuni yo'q. | 05-substances §5 | P3 | [x] |
+| R-SUBST-03 | Farmakopiya — modda darajasidagi `substances.pharmacopoeia`: EP, BP, UzDSt, USP, OTHER; boshqasi rad etiladi. | 05-substances §5, DECISIONS.md D-67 | P3 | [x] |
+| R-SUBST-04 | CAS raqami ixtiyoriy. | 05-substances §5 | P3 | [x] |
+| R-SUBST-05 | Modda parametrlari (`substance_parameters`): nomi (bitta `parameter_name` ustuni), o'lchov birligi, min/max chegara, metod (erkin matn). | 05-substances §5, 16 §16, DECISIONS.md D-67 | P3 | [x] |
+| R-SUBST-06 | Moddani yaratish/tahrirlash: faqat `lab_head` va `admin`. | 05-substances §5 | P3 | [x] |
+| R-SUBST-07 | Moddalarni barcha (kompaniya) rollari ko'radi. | 05-substances §5 | P3 | [x] |
+| R-SUBST-08 | Moddalar sahifasi asosiy navigatsiyada (Sidebar) yo'q — namuna yaratishda va modda havolalari orqali ochiladi. | 05-substances §5, 16 §16 | P3 | [x] |
 | R-SUBST-09 | Namuna yaratishda modda tanlanadi (kompaniyaning moddalari ro'yxatidan). | 03-samples §3, 05 §5 | P4 | [ ] |
-| R-SUBST-10 | Moddani faqat `admin` o'chiradi; `lab_head` va boshqalar — 403. | DECISIONS.md D-30 | P3 | [ ] |
-| R-SUBST-11 | Namuna bog'langan moddani o'chirish 409 bilan rad etiladi. | DECISIONS.md D-30 | P3 | [ ] |
+| R-SUBST-10 | Moddani faqat `admin` o'chiradi; `lab_head` va boshqalar — 403. | DECISIONS.md D-30 | P3 | [x] |
+| R-SUBST-11 | Namuna bog'langan moddani o'chirish 409 bilan rad etiladi. | DECISIONS.md D-30 | P3 | [~] |
 
 ## REAG — Reaktivlar va Xarajat jurnali
 
@@ -514,7 +514,7 @@
 | R-I18N-06 | Uchala tilda kalitlar to'liq — bir tilda bor kalit qolgan ikkitasida ham bor (avtomatik test). | 14-i18n §14 | P12 | [x] |
 | R-I18N-07 | Tanlangan til `localStorage` da saqlanadi. | 14-i18n §14 | P1 | [x] |
 | R-I18N-08 | Til top bar'dagi til almashtirgichi orqali tanlanadi. | 14-i18n §14 | P1 | [x] |
-| R-I18N-09 | Modda nomi joriy tilga mos `name_uz`/`name_ru`/`name_en` dan ko'rsatiladi. | 05-substances §5 | P3 | [ ] |
+| R-I18N-09 | Modda nomi joriy tilga mos `name_uz`/`name_ru`/`name_en` dan ko'rsatiladi. | 05-substances §5 | P3 | [x] |
 
 ## AUTH — Autentifikatsiya va xavfsizlik
 
@@ -589,8 +589,8 @@
 | R-ARCH-24 | Jadval `sessions` (refresh token hash). | 16-architecture §16 | P2 | [x] |
 | R-ARCH-25 | Jadval `user_permissions`. | 16-architecture §16 | P2 | [x] |
 | R-ARCH-26 | Jadval `telegram_link_tokens`. | 16-architecture §16 | P11 | [ ] |
-| R-ARCH-27 | Jadval `substances`. | 16-architecture §16 | P3 | [ ] |
-| R-ARCH-28 | Jadval `substance_parameters`. | 16-architecture §16 | P3 | [ ] |
+| R-ARCH-27 | Jadval `substances`. | 16-architecture §16 | P3 | [x] |
+| R-ARCH-28 | Jadval `substance_parameters`. | 16-architecture §16 | P3 | [x] |
 | R-ARCH-29 | Jadval `protocols`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-30 | Jadval `protocol_signatures`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [ ] |
@@ -634,7 +634,7 @@
 | R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [ ] |
 | R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [ ] |
 | R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [x] |
-| R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [ ] |
+| R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [x] |
 | R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [ ] |
 | R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
@@ -680,7 +680,7 @@
 | R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [ ] |
 | R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [ ] |
 | R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
-| R-FE-28 | Sahifa: moddalar. | 16-architecture §16 | P3 | [ ] |
+| R-FE-28 | Sahifa: moddalar. | 16-architecture §16 | P3 | [x] |
 | R-FE-29 | Sahifa: reaktivlar. | 16-architecture §16 | P7 | [ ] |
 | R-FE-30 | Sahifa: `/reagents/journal`. | 06-reagents §6 | P7 | [ ] |
 | R-FE-31 | Sahifa: `/expenses`. | 06-reagents §6 | P7 | [ ] |
@@ -758,13 +758,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 12 | 0 | 67 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 17 | 0 | 62 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
 | SAMPLE — Namunalar | 41 | 0 | 0 | 41 |
 | PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
 | REG — Reyestr | 17 | 2 | 0 | 15 |
 | PROTO — Protokollar | 62 | 0 | 0 | 62 |
-| SUBST — Moddalar | 11 | 0 | 0 | 11 |
+| SUBST — Moddalar | 11 | 9 | 1 | 1 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
@@ -773,13 +773,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
-| I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
+| I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 25 | 1 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 34 | 7 | 44 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 20 | 4 | 21 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 37 | 7 | 41 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 21 | 4 | 20 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 137 | 17 | 448 |
+| **Jami** | 602 | 156 | 18 | 428 |
 
 ### Fazalar bo'yicha
 
@@ -787,7 +787,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 |---|---|---|---|---|
 | P1 | 50 | 38 | 12 | 0 |
 | P2 | 87 | 87 | 0 | 0 |
-| P3 | 20 | 0 | 0 | 20 |
+| P3 | 20 | 19 | 1 | 0 |
 | P4 | 71 | 4 | 0 | 67 |
 | P5 | 131 | 0 | 0 | 131 |
 | P6 | 40 | 0 | 1 | 39 |
@@ -797,4 +797,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 137 | 17 | 448 |
+| **Jami** | 602 | 156 | 18 | 428 |
