@@ -449,6 +449,7 @@
 | R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [ ] |
 | R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [ ] |
 | R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [ ] |
+| R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62 | P10 | [ ] |
 
 ## FILE — Fayllarni saqlash
 
@@ -726,7 +727,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | STAB — Stabilizatsiya | 36 | 0 | 0 | 36 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 0 | 0 | 18 |
-| AUDIT — Audit va Faoliyat jurnali | 10 | 0 | 0 | 10 |
+| AUDIT — Audit va Faoliyat jurnali | 11 | 0 | 0 | 11 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 17 | 0 | 0 | 17 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
@@ -735,7 +736,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 68 | 19 | 7 | 42 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 565 | 45 | 17 | 503 |
+| **Jami** | 566 | 45 | 17 | 504 |
 
 ### Fazalar bo'yicha
 
@@ -750,7 +751,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P7 | 33 | 0 | 0 | 33 |
 | P8 | 27 | 1 | 0 | 26 |
 | P9 | 55 | 0 | 0 | 55 |
-| P10 | 21 | 1 | 0 | 20 |
+| P10 | 22 | 1 | 0 | 21 |
 | P11 | 25 | 0 | 0 | 25 |
 | P12 | 22 | 1 | 1 | 20 |
-| **Jami** | 565 | 45 | 17 | 503 |
+| **Jami** | 566 | 45 | 17 | 504 |
