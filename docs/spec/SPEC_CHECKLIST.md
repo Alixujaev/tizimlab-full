@@ -49,14 +49,14 @@
 | R-ROLE-35 | Protokol yakunlash: `lab_head` — TAQIQ. | 01-roles §1 | P5 | [ ] |
 | R-ROLE-36 | Protokol yakunlash: `director` — RUXSAT. | 01-roles §1 | P5 | [ ] |
 | R-ROLE-37 | Protokol yakunlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-38 | Reyestrni ko'rish: `kontrolyor` — RUXSAT (ko'lami — Q-04). | 01-roles §1 | P4 | [ ] |
-| R-ROLE-39 | Reyestrni ko'rish: `chemist` — RUXSAT (ko'lami — Q-04). | 01-roles §1 | P4 | [ ] |
+| R-ROLE-38 | Reyestrni ko'rish: `kontrolyor` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [ ] |
+| R-ROLE-39 | Reyestrni ko'rish: `chemist` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [ ] |
 | R-ROLE-40 | Reyestrni ko'rish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [ ] |
 | R-ROLE-41 | Reyestrni ko'rish: `director` — RUXSAT. | 01-roles §1 | P4 | [ ] |
 | R-ROLE-42 | Reyestrni ko'rish: `admin` — RUXSAT. | 01-roles §1 | P4 | [ ] |
 | R-ROLE-43 | Moddalar: `kontrolyor` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
 | R-ROLE-44 | Moddalar: `chemist` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
-| R-ROLE-45 | Moddalar: `lab_head` — ko'rish + tahrirlash (+ yaratish, §5; o'chirish — Q-03). | 01-roles §1, 05 §5 | P3 | [ ] |
+| R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [ ] |
 | R-ROLE-46 | Moddalar: `director` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [ ] |
 | R-ROLE-47 | Moddalar: `admin` — to'liq. | 01-roles §1 | P3 | [ ] |
 | R-ROLE-48 | Reaktivlar: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
@@ -75,7 +75,7 @@
 | R-ROLE-61 | Stabilizatsiya boshlash: `director` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-62 | Stabilizatsiya boshlash: `admin` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-63 | Stabilizatsiya natija kiritish: `kontrolyor` — TAQIQ. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-64 | Stabilizatsiya natija kiritish: `chemist` — faqat biriktirilgan bo'lsa RUXSAT (nimaga — Q-41). | 01-roles §1 | P9 | [ ] |
+| R-ROLE-64 | Stabilizatsiya natija kiritish: `chemist` — faqat checkpointga biriktirilgan (`assigned_to`) bo'lsa RUXSAT. | 01-roles §1, DECISIONS.md D-53 | P9 | [ ] |
 | R-ROLE-65 | Stabilizatsiya natija kiritish: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-66 | Stabilizatsiya natija kiritish: `director` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-67 | Stabilizatsiya natija kiritish: `admin` — RUXSAT. | 01-roles §1 | P9 | [ ] |
@@ -103,12 +103,15 @@
 | R-TENANT-05 | `requireCompany` middleware kompaniya kontekstisiz so'rovlarni bloklaydi. | 02-multitenancy §2 | P2 | [ ] |
 | R-TENANT-06 | Kompaniyalar sahifasi `/companies` faqat `super_admin` uchun. | 02-multitenancy §2 | P2 | [ ] |
 | R-TENANT-07 | `super_admin` yangi kompaniya yaratadi (nomi + `slug`). | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-08 | `super_admin` kompaniyani faollashtiradi/o'chiradi (semantika — Q-08). | 02-multitenancy §2 | P2 | [ ] |
+| R-TENANT-08 | `super_admin` kompaniyani faollashtiradi/nofaollashtiradi (`is_active`); jismoniy o'chirish yo'q. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
 | R-TENANT-09 | `super_admin` kompaniyani tahrirlaydi. | 02-multitenancy §2 | P2 | [ ] |
 | R-TENANT-10 | Kompaniya boshqa kompaniyalarning ma'lumotini ko'rmaydi (o'z foydalanuvchilari, namunalari, reaktiv va moddalari). | 02-multitenancy §2 | P12 | [ ] |
 | R-TENANT-11 | HAR BIR tenant jadvaliga so'rov service'da `company_id` bo'yicha filtrlanadi (ilova darajasida). | DECISIONS.md D-12 | P12 | [ ] |
 | R-TENANT-12 | Har fazada yangi tenant endpointlar uchun kompaniyalararo izolyatsiya integration testi yoziladi. | DECISIONS.md D-12 | P2 | [ ] |
 | R-TENANT-13 | Barcha tenant endpointlarini qamrab oluvchi yakuniy izolyatsiya integration testi. | DECISIONS.md D-12 | P12 | [ ] |
+| R-TENANT-14 | `super_admin` CLI skript bilan yaratiladi (`npm run` buyrug'i). | DECISIONS.md D-35 | P2 | [ ] |
+| R-TENANT-15 | Kompaniya yaratishda `super_admin` shu kompaniyaning birinchi `admin` foydalanuvchisini yaratadi; boshqa foydalanuvchilarni yarata olmaydi. | DECISIONS.md D-35 | P2 | [ ] |
+| R-TENANT-16 | Nofaollashtirilgan kompaniyani qayta faollashtirish mumkin. | DECISIONS.md D-34 | P2 | [ ] |
 
 ## SAMPLE — Namunalar
 
@@ -136,7 +139,7 @@
 | R-SAMPLE-20 | To'xtatishda sabab majburiy. | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-21 | To'xtatish sababi kamida 5 belgi (4 belgi rad etiladi). | 03-samples §3 | P4 | [ ] |
 | R-SAMPLE-22 | O'tish `stopped → in_progress`: kimyogar "Davom ettirish" bilan. | 03-samples §3 | P4 | [ ] |
-| R-SAMPLE-23 | O'tish `→ submitted`: kimyogar protokolni yuborganda (manba holati — Q-14). | 03-samples §3 | P5 | [ ] |
+| R-SAMPLE-23 | O'tish `in_progress → submitted`: kimyogar protokolni yuborganda (`stopped` dan — taqiq). | 03-samples §3, DECISIONS.md D-36 | P5 | [ ] |
 | R-SAMPLE-24 | O'tish `submitted → approved`: lab_head "Tasdiqlash" bilan (protokol tasdiqlanishi orqali). | 03-samples §3 | P5 | [ ] |
 | R-SAMPLE-25 | Lab_head "Rad etish" bosganda namuna `rejected` holatida qoladi; sabab saqlanadi va `sample_tracking` ga yoziladi. | 03-samples §3, DECISIONS.md D-14 | P5 | [ ] |
 | R-SAMPLE-26 | Diagrammada bo'lmagan o'tishlar rad etiladi (masalan `pending_assignment → submitted`, `approved → in_progress`). | 03-samples §3 | P4 | [ ] |
@@ -147,6 +150,12 @@
 | R-SAMPLE-31 | `sample_tracking` jadvalida namuna voqealari tarixi yoziladi (kim, qachon, nima qildi). | 16-architecture §16, 00 §0 | P4 | [ ] |
 | R-SAMPLE-32 | Protokolni to'ldirish/yuklash namunaning o'z sahifasida `ProtocolSection` komponentida bajariladi. | 03-samples §3 | P5 | [ ] |
 | R-SAMPLE-33 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuborganda. | DECISIONS.md D-14 | P5 | [ ] |
+| R-SAMPLE-34 | `stopped` namunadan protokolni yuborish rad etiladi (avval davom ettirish kerak). | DECISIONS.md D-36 | P5 | [ ] |
+| R-SAMPLE-35 | `lab_head` namunani `in_progress`, `stopped`, `rejected` holatlarida boshqa kimyogarga qayta biriktira oladi; boshqa holatlarda — rad etiladi. | DECISIONS.md D-37 | P4 | [ ] |
+| R-SAMPLE-36 | Qayta biriktirishda protokol(lar) saqlanib yangi kimyogarga o'tadi; yangi kimyogarga `sample_assigned`, tracking'ga yoziladi. | DECISIONS.md D-37 | P4 | [ ] |
+| R-SAMPLE-37 | To'xtatish/davom ettirishni faqat biriktirilgan kimyogar qiladi (`lab_head` ham — taqiq). | DECISIONS.md D-38 | P4 | [ ] |
+| R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [ ] |
+| R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [ ] |
 
 ## PASS — Namuna pasporti
 
@@ -159,10 +168,10 @@
 | R-PASS-05 | `reagent`/`standard_substance`: lab_head yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [ ] |
 | R-PASS-06 | `reagent`/`standard_substance`: admin yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [ ] |
 | R-PASS-07 | Pasport avtomatik `approved` bo'lganda namuna ham darhol `approved` bo'ladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari avtomatik yopiladi (qaysi holatga — Q-21). | 03-samples §3 | P5 | [ ] |
+| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [ ] |
 | R-PASS-09 | `reagent`/`standard_substance`: kontrolyor (yoki boshqa oddiy foydalanuvchi) yuklasa pasport `pending` holatda qoladi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-10 | `pending` pasportni lab_head yoki admin `reviewPassport` bilan tasdiqlaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi (oqibati — Q-17). | 03-samples §3 | P5 | [ ] |
+| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi), namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39 | P5 | [ ] |
 | R-PASS-12 | NOTO'G'RI HOLAT: foydalanuvchi o'zi yuklagan pasportni o'zi tasdiqlay olmaydi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-13 | `pending` pasportni lab_head/admin bo'lmagan foydalanuvchi ko'rib chiqa olmaydi (403). | 03-samples §3 | P5 | [ ] |
 | R-PASS-14 | `raw_material`/`finished_product` uchun pasport faqat qo'shimcha hujjat — namuna statusini o'zgartirmaydi, oddiy oqimni bypass qilmaydi. | 03-samples §3 | P5 | [ ] |
@@ -173,6 +182,10 @@
 | R-PASS-19 | Pasportni egasi faqat hali tasdiqlanmagan bo'lsa o'chira oladi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-20 | Pasportni lab_head/admin (tasdiqlangan bo'lsa ham) o'chira oladi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-21 | Tasdiqlangan pasportni egasi (lab_head/admin bo'lmasa) o'chira olmaydi. | 03-samples §3 | P5 | [ ] |
+| R-PASS-22 | Rad etilgan pasportni yuklagan foydalanuvchi qayta yuklay oladi. | DECISIONS.md D-39 | P5 | [ ] |
+| R-PASS-23 | `reagent`/`standard_substance` namunasiga kimyogar biriktirilmaydi (urinish rad etiladi). | DECISIONS.md D-39 | P4 | [ ] |
+| R-PASS-24 | `reagent`/`standard_substance` pasportini `chemist` yuklay oladi (`pending`), `director` yuklay olmaydi. | DECISIONS.md D-40 | P5 | [ ] |
+| R-PASS-25 | `raw_material`/`finished_product` pasporti holatsiz qo'shimcha hujjat — `reviewPassport` ularga qo'llanmaydi. | DECISIONS.md D-41 | P5 | [ ] |
 
 ## REG — Reyestr
 
@@ -185,13 +198,16 @@
 | R-REG-05 | Reyestr filtri: lot raqami. | 03-samples §3 | P4 | [ ] |
 | R-REG-06 | Reyestr filtri: tasdiqlangan sana oralig'i, DD.MM.YYYY formatida. | 03-samples §3 | P4 | [ ] |
 | R-REG-07 | Reyestr qatoridan namuna tafsilotlariga o'tish: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
-| R-REG-08 | Reyestr qatoridan protokol faylini to'g'ridan-to'g'ri yuklab olish (Q-23). | 03-samples §3 | P5 | [ ] |
-| R-REG-09 | Lab_head namunani reyestrdan o'chira oladi (semantika — Q-22). | 03-samples §3 | P4 | [ ] |
-| R-REG-10 | Lab_head bo'lmagan rol reyestrdan o'chira olmaydi. | 03-samples §3 | P4 | [ ] |
+| R-REG-08 | Reyestr qatoridan faylni yuklab olish: `finished_product` — `final` protokol fayli; pasport orqali tasdiqlangan — namuna pasporti fayli. | 03-samples §3, DECISIONS.md D-44 | P5 | [ ] |
+| R-REG-09 | `lab_head` va `admin` namunani reyestrdan o'chiradi — soft-delete (`deleted_at`): barcha ro'yxatlardan yashiriladi, protokol/fayllar/stabilizatsiya saqlanadi, audit'ga yoziladi. | 03-samples §3, DECISIONS.md D-43 | P4 | [ ] |
+| R-REG-10 | `lab_head` va `admin` dan boshqa rol reyestrdan o'chira olmaydi. | 03-samples §3, DECISIONS.md D-43 | P4 | [ ] |
 | R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [ ] |
 | R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [ ] |
+| R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [ ] |
+| R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [ ] |
+| R-REG-17 | `/registry/:id` da direktor uchun protokolni "Yakunlash" tugmasi; alohida sahifa yo'q. | DECISIONS.md D-50 | P5 | [ ] |
 
 ## PROTO — Protokollar
 
@@ -203,7 +219,7 @@
 | R-PROTO-04 | Protokol statusi `approved` mavjud. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-05 | Protokol statusi `finalized` mavjud. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-06 | Protokol statusi `rejected` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-07 | O'tish `draft → submitted`: kimyogar fayl yuklab, yuboradi (Q-28). | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-07 | O'tish `draft → submitted`: faqat biriktirilgan kimyogar fayl yuklab yuboradi. | 04-protocols §4, DECISIONS.md D-45 | P5 | [ ] |
 | R-PROTO-08 | Asosiy fayl yuklanmagan protokolni yuborish rad etiladi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-09 | O'tish `submitted → approved`: faqat lab_head. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-10 | O'tish `submitted → rejected`: faqat lab_head, sabab bilan. | 04-protocols §4 | P5 | [ ] |
@@ -230,17 +246,17 @@
 | R-PROTO-31 | Protokol pasporti (`passport_*`) — protokolga qo'shimcha hujjat, chemist/lab_head/admin/kontrolyor yuklay oladi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-32 | Protokol pasportida alohida tasdiqlash oqimi yo'q. | 04-protocols §4, 18 §18 | P5 | [ ] |
 | R-PROTO-33 | Protokol pasportini `director` yuklay olmaydi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-34 | Qo'shimcha fayllar `protocol_files` — `finished_product` ko'p-protokol holatida bitta protokolga bir nechta fayl (Q-33). | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-34 | Qo'shimcha fayllar `protocol_files` faqat `finished_product` protokollariga biriktiriladi (bitta protokolga bir nechta fayl). | 04-protocols §4, DECISIONS.md D-49 | P5 | [ ] |
 | R-PROTO-35 | Qo'shimcha fayllar ro'yxati ko'rsatiladi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-36 | Qo'shimcha faylni alohida yuklab olish mumkin. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-37 | Qo'shimcha faylni alohida o'chirish mumkin. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-38 | Endpoint `GET /api/v1/protocols/:id/file` — asosiy faylni yuklab olish. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — protokolni `.docx` ga eksport (holat, imzolar, modda nomi va h.k.) (Q-32). | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya, kod), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-48 | P5 | [ ] |
 | R-PROTO-40 | DOCX eksport `docx` kutubxonasi bilan `src/utils/docxExport.ts` da generatsiya qilinadi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-41 | Kimyogar protokolga kira oladi, agar `protocol.created_by === kimyogar.id`. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-42 | Kimyogar protokolga kira oladi, agar `sample.assigned_to === kimyogar.id`. | 04-protocols §4, 18 §18 | P5 | [ ] |
 | R-PROTO-43 | Ikkala shart ham bajarilmasa kimyogar protokolga kira olmaydi (403/404). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-44 | Imzo: kimyogar yuborishda imzo qo'yadi (Q-30). | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-44 | Imzo: kimyogar yuborishda imzo qo'yadi — `protocol_signatures` yozuvi (foydalanuvchi, rol, harakat, vaqt), parol qayta kiritilmaydi. | 04-protocols §4, DECISIONS.md D-46 | P5 | [ ] |
 | R-PROTO-45 | Imzo: lab_head tasdiqlashda imzo qo'yadi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-46 | Imzo: director yakunlashda imzo qo'yadi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-47 | Imzolar `protocol_signatures` jadvalida saqlanadi. | 16-architecture §16 | P5 | [ ] |
@@ -251,6 +267,13 @@
 | R-PROTO-52 | `finished_product` namunasi biriktirilganda `final` protokol `draft` holatida avtomatik yaratiladi. | DECISIONS.md D-15 | P5 | [ ] |
 | R-PROTO-53 | `in_process` protokol ixtiyoriy: uni `lab_head` yoki biriktirilgan kimyogar namuna `approved` bo'lguncha yaratadi; boshqa rollar va `approved` dan keyingi urinish rad etiladi. | DECISIONS.md D-15 | P5 | [ ] |
 | R-PROTO-54 | `finished_product` namunasi statusini faqat `final` protokol belgilaydi (yuborilganda `submitted`, tasdiqlanganda `approved`); `in_process` protokol namuna statusiga ta'sir qilmaydi. | DECISIONS.md D-15 | P5 | [ ] |
+| R-PROTO-55 | `lab_head`/`admin` protokolga fayl yuklay oladi, lekin yubora olmaydi. | DECISIONS.md D-45 | P5 | [ ] |
+| R-PROTO-56 | Rad etilganda oldingi imzolar tarix sifatida saqlanadi; qayta yuborishda yangi imzo qo'shiladi. | DECISIONS.md D-46 | P5 | [ ] |
+| R-PROTO-57 | Asosiy fayl faqat `draft`/`rejected` holatida yuklanadi/almashtiriladi. | DECISIONS.md D-47 | P5 | [ ] |
+| R-PROTO-58 | `submitted`/`approved`/`finalized` holatida protokolning barcha fayllari (asosiy, pasport, qo'shimcha) qulflangan. | DECISIONS.md D-47 | P5 | [ ] |
+| R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [ ] |
+| R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [ ] |
+| R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi. | DECISIONS.md D-49 | P5 | [ ] |
 
 ## SUBST — Moddalar
 
@@ -265,6 +288,8 @@
 | R-SUBST-07 | Moddalarni barcha (kompaniya) rollari ko'radi. | 05-substances §5 | P3 | [ ] |
 | R-SUBST-08 | Moddalar sahifasi asosiy navigatsiyada (Sidebar) yo'q — namuna yaratishda va modda havolalari orqali ochiladi. | 05-substances §5, 16 §16 | P3 | [ ] |
 | R-SUBST-09 | Namuna yaratishda modda tanlanadi (kompaniyaning moddalari ro'yxatidan). | 03-samples §3, 05 §5 | P4 | [ ] |
+| R-SUBST-10 | Moddani faqat `admin` o'chiradi; `lab_head` va boshqalar — 403. | DECISIONS.md D-30 | P3 | [ ] |
+| R-SUBST-11 | Namuna bog'langan moddani o'chirish 409 bilan rad etiladi. | DECISIONS.md D-30 | P3 | [ ] |
 
 ## REAG — Reaktivlar va Xarajat jurnali
 
@@ -289,6 +314,8 @@
 | R-REAG-17 | Zaxira kam qolganda `low_stock` xabarnomasi yaratiladi (Q-37). | 09-notifications §9 | P7 | [ ] |
 | R-REAG-18 | `low_stock` kompaniyaning barcha `lab_head` va `admin` foydalanuvchilariga yuboriladi. | DECISIONS.md D-04 | P7 | [ ] |
 | R-REAG-19 | Reaktivlar sahifasi asosiy Sidebar'da yo'q. | 16-architecture §16 | P7 | [ ] |
+| R-REAG-20 | Reaktiv, barcha tranzaksiyalar va hujjatlarni faqat "To'liq" rollar (`lab_head`, `admin`) boshqaradi; "Ko'rish" rollari `out` yozolmaydi (403). | DECISIONS.md D-51 | P7 | [ ] |
+| R-REAG-21 | Xarajat sahifalari reaktivlarni ko'ra oladigan barcha rollarga faqat o'qish uchun ochiq. | DECISIONS.md D-51 | P7 | [ ] |
 
 ## TEMP — Harorat monitoringi
 
@@ -306,6 +333,10 @@
 | R-TEMP-10 | Sensor avtomatik ingest endpointi / API key bu versiyada YO'Q. | DECISIONS.md D-03 | P8 | [ ] |
 | R-TEMP-11 | Schema keyinchalik sensor ingest qo'shishga tayyor (o'qishda manba/`is_manual` farqlanadi). | DECISIONS.md D-03 | P8 | [ ] |
 | R-TEMP-12 | Harorat sahifasi (`temperature/`) asosiy Sidebar'da bor. | 16-architecture §16 | P8 | [ ] |
+| R-TEMP-13 | Sensor maydonlari: nomi, joyi (xona). | DECISIONS.md D-52 | P8 | [ ] |
+| R-TEMP-14 | Harorat o'qishini faqat `lab_head`/`admin` kiritadi; "Ko'rish" rollari — 403. | DECISIONS.md D-52 | P8 | [ ] |
+| R-TEMP-15 | Namlik uchun ixtiyoriy alohida min/max chegara. | DECISIONS.md D-52 | P8 | [ ] |
+| R-TEMP-16 | Chegaradan chiqqan har o'qish uchun alert yaratiladi; alertni yopish/"ko'rildi" belgisi yo'q. | DECISIONS.md D-52 | P8 | [ ] |
 
 ## STAB — Stabilizatsiya
 
@@ -319,17 +350,17 @@
 | R-STAB-06 | Checkpointlar qattiq T3/T6/T12 bilan cheklanmagan. | 08-stability §8 | P9 | [ ] |
 | R-STAB-07 | Bir study ichida bir xil nomli ikkita checkpoint bo'lishi mumkin emas (DB unique + validatsiya). | 08-stability §8 | P9 | [ ] |
 | R-STAB-08 | Turli study'larda bir xil checkpoint nomi ruxsat etiladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-09 | Checkpointlarni lab_head kiritadi (director/admin — Q-42). | 08-stability §8 | P9 | [ ] |
+| R-STAB-09 | Checkpointlarni `lab_head`, `director`, `admin` qo'shadi/o'zgartiradi/o'chiradi. | 08-stability §8, DECISIONS.md D-54 | P9 | [ ] |
 | R-STAB-10 | Checkpoint statusi `pending` mavjud; yangi checkpoint `pending` da yaratiladi. | 08-stability §8 | P9 | [ ] |
 | R-STAB-11 | Checkpoint statusi `in_progress` mavjud. | 08-stability §8 | P9 | [ ] |
 | R-STAB-12 | Checkpoint statusi `overdue` mavjud. | 08-stability §8 | P9 | [ ] |
 | R-STAB-13 | Checkpoint statusi `completed` mavjud. | 08-stability §8 | P9 | [ ] |
-| R-STAB-14 | O'tish `pending → in_progress` (kim/qachon — Q-43). | 08-stability §8 | P9 | [ ] |
+| R-STAB-14 | O'tish `pending → in_progress`: birinchi natija kiritilganda avtomatik. | 08-stability §8, DECISIONS.md D-55 | P9 | [ ] |
 | R-STAB-15 | O'tish `→ overdue`: faqat fon jarayoni muddat o'tganda belgilaydi. | 08-stability §8 | P9 | [ ] |
 | R-STAB-16 | O'tish `→ completed` (`overdue` checkpoint ham yakunlanishi mumkin). | 08-stability §8 | P9 | [ ] |
 | R-STAB-17 | `completed` checkpoint `overdue` deb belgilanmaydi. | 08-stability §8 | P9 | [ ] |
 | R-STAB-18 | Har checkpoint uchun bir nechta natija (`stability_results`): `parameter`, `initial_value` (T0), `current_value`, `specification`, `result_status`. | 08-stability §8 | P9 | [ ] |
-| R-STAB-19 | `result_status` faqat `pass`/`warning`/`fail` (Q-45). | 08-stability §8 | P9 | [ ] |
+| R-STAB-19 | `result_status` faqat `pass`/`warning`/`fail`, foydalanuvchi qo'lda tanlaydi. | 08-stability §8, DECISIONS.md D-57 | P9 | [ ] |
 | R-STAB-20 | 5 ta standart parametr oldindan to'ldiriladi: Tavsif, Assay, Namlik miqdori, Qo'shimcha aralashmalar, Eruvchanlik. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
 | R-STAB-21 | Qo'shimcha parametr qo'shish mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
 | R-STAB-22 | Parametrni (standartlarini ham) olib tashlash mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
@@ -340,6 +371,13 @@
 | R-STAB-27 | 14 kundan uzoq muddatli checkpoint uchun `stability_due_soon` yuborilmaydi. | 08-stability §8 | P9 | [ ] |
 | R-STAB-28 | `stability_due_soon` bitta checkpoint uchun 24 soatda ko'pi bilan bir marta yuboriladi. | 08-stability §8 | P9 | [ ] |
 | R-STAB-29 | Stabilizatsiya sahifalari asosiy Sidebar'da yo'q — namuna sahifasi va ichki havolalar orqali ochiladi. | 16-architecture §16 | P9 | [ ] |
+| R-STAB-30 | Checkpointga ixtiyoriy biriktirilgan kimyogar (`assigned_to`); study'da alohida mas'ul maydoni yo'q. | DECISIONS.md D-53 | P9 | [ ] |
+| R-STAB-31 | Natijasi bor checkpointni o'chirib bo'lmaydi. | DECISIONS.md D-54 | P9 | [ ] |
+| R-STAB-32 | Checkpoint `completed` — barcha parametrlar to'ldirilgach "Yakunlash" tugmasi bilan; to'ldirilmagan bo'lsa rad etiladi. | DECISIONS.md D-55 | P9 | [ ] |
+| R-STAB-33 | `pending` checkpoint ham muddat o'tganda `overdue` bo'ladi. | DECISIONS.md D-55 | P9 | [ ] |
+| R-STAB-34 | Study statuslari `active` / `completed`; barcha checkpointlar `completed` bo'lganda study avtomatik `completed`; bekor qilish yo'q. | DECISIONS.md D-56 | P9 | [ ] |
+| R-STAB-35 | `initial_value` (T0) study yaratishda parametr bo'yicha qo'lda kiritiladi va checkpointlarga ko'chadi. | DECISIONS.md D-57 | P9 | [ ] |
+| R-STAB-36 | Bitta namunada bir vaqtda ko'pi bilan bitta `active` study; ikkinchisi rad etiladi. | DECISIONS.md D-58 | P9 | [ ] |
 
 ## NOTIF — Xabarnomalar
 
@@ -369,6 +407,10 @@
 | R-NOTIF-22 | `stability_due_soon` / `stability_overdue` checkpointga biriktirilgan kimyogarga (bor bo'lsa) va kompaniyaning `lab_head`'lariga yuboriladi. | DECISIONS.md D-13 | P9 | [ ] |
 | R-NOTIF-23 | Harakatni bajargan foydalanuvchining o'ziga xabarnoma yuborilmaydi. | DECISIONS.md D-13 | P6 | [ ] |
 | R-NOTIF-24 | Xabarnoma faqat hodisa sodir bo'lgan kompaniya foydalanuvchilariga yuboriladi. | DECISIONS.md D-13, D-12 | P6 | [ ] |
+| R-NOTIF-25 | Xabarnomani bittalab o'qilgan deb belgilash. | DECISIONS.md D-59 | P6 | [ ] |
+| R-NOTIF-26 | "Hammasini o'qilgan deb belgilash". | DECISIONS.md D-59 | P6 | [ ] |
+| R-NOTIF-27 | Bell ikonasida o'qilmaganlar soni ko'rsatiladi. | DECISIONS.md D-59 | P6 | [ ] |
+| R-NOTIF-28 | Xabarnomalarni o'chirish va avtomatik tozalash yo'q. | DECISIONS.md D-59 | P6 | [ ] |
 
 ## USER — Foydalanuvchilar, Admin panel, Ruxsatlar
 
@@ -382,7 +424,7 @@
 | R-USER-06 | `admin` istalgan foydalanuvchi parolini, `lab_head` faqat `kontrolyor`/`chemist` parolini tiklay oladi. | 10-users §10, 15 §15, DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-07 | Admin panelda foydalanuvchi loglarini ko'rish (Q-52). | 10-users §10 | P10 | [ ] |
 | R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [ ] |
-| R-USER-09 | `user_permissions` dan ruxsatni olib tashlash (Q-05). | 10-users §10 | P2 | [ ] |
+| R-USER-09 | `user_permissions` dan ruxsatni olib tashlash = individual grant'ni o'chirish (rol ruxsatini deny qilib bo'lmaydi). | 10-users §10, DECISIONS.md D-32 | P2 | [ ] |
 | R-USER-10 | `requirePermission` natijasi so'rov davomida keshlanadi (bitta so'rovda takroriy DB so'rovi yo'q). | 10-users §10 | P2 | [ ] |
 | R-USER-11 | `resource:action` katalogi P2 da tuziladi va foydalanuvchiga tasdiqlatiladi. | DECISIONS.md D-10 | P2 | [ ] |
 | R-USER-12 | Har foydalanuvchi `/profile` da o'z parolini o'zgartira oladi. | 10-users §10, 15 §15 | P2 | [ ] |
@@ -391,6 +433,7 @@
 | R-USER-15 | `lab_head` `admin`/`lab_head`/`director` rolidagi foydalanuvchini yarata, tahrirlay va parolini tiklay olmaydi (403). | DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-16 | `user_permissions` ni faqat `admin` boshqaradi; `lab_head`/`director` urinishi rad etiladi. | DECISIONS.md D-16 | P2 | [ ] |
 | R-USER-17 | `director` foydalanuvchilarni faqat ko'radi (yaratish/tahrirlash/parol tiklash — 403). | DECISIONS.md D-16, 01 §1 | P2 | [ ] |
+| R-USER-18 | Effektiv ruxsat = rol ruxsatlari ∪ individual (`user_permissions`) ruxsatlar. | DECISIONS.md D-32 | P2 | [ ] |
 
 ## AUDIT — Audit va Faoliyat jurnali
 
@@ -402,8 +445,10 @@
 | R-AUDIT-04 | Faoliyat jurnali faqat o'z kompaniyasi ichidagi foydalanuvchi harakatlarini ko'rsatadi. | 11-audit §11 | P10 | [ ] |
 | R-AUDIT-05 | `super_admin` `/activity` ga, kompaniya rollari `/logs` ga kira olmaydi. | 11-audit §11 | P10 | [ ] |
 | R-AUDIT-06 | Ikkala jurnal backend'da bitta `audit` modulida: `audit.router.ts` (global), `activity.router.ts` (kompaniya bo'yicha). | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-07 | Audit yozuvlari `audit_log` jadvalida saqlanadi (hodisalar ro'yxati — Q-51). | 16-architecture §16 | P10 | [ ] |
+| R-AUDIT-07 | Audit yozuvlari bitta `audit_log` jadvalida: login/logout/muvaffaqiyatsiz login, CRUD, status o'tishlari, fayl yuklash/o'chirish, ruxsat o'zgarishlari. | 16-architecture §16, DECISIONS.md D-60 | P10 | [ ] |
 | R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [ ] |
+| R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [ ] |
+| R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [ ] |
 
 ## FILE — Fayllarni saqlash
 
@@ -413,7 +458,7 @@
 | R-FILE-02 | R2 bilan ishlash `@aws-sdk/client-s3` orqali. | 12-files §12 | P5 | [ ] |
 | R-FILE-03 | Generic `files` moduli: yuklash. | 12-files §12 | P5 | [ ] |
 | R-FILE-04 | Generic `files` moduli: ro'yxat. | 12-files §12 | P5 | [ ] |
-| R-FILE-05 | Generic `files` moduli: imzolangan URL (Q-53). | 12-files §12 | P5 | [ ] |
+| R-FILE-05 | Generic `files` moduli — UI'siz umumiy yuklash/yuklab olish servisi (R2 kaliti + metadata); yuklab olish backend orqali stream yoki 5 daqiqalik imzolangan URL. | 12-files §12, DECISIONS.md D-61 | P5 | [ ] |
 | R-FILE-06 | Generic `files` moduli: o'chirish. | 12-files §12 | P5 | [ ] |
 | R-FILE-07 | `multer` xotira-saqlash (memory storage) bilan qabul qilinadi. | 12-files §12 | P5 | [ ] |
 | R-FILE-08 | Generic `files` moduli limiti 50MB; undan katta fayl rad etiladi. | 12-files §12, DECISIONS.md D-06 | P5 | [ ] |
@@ -480,7 +525,7 @@
 | R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [ ] |
 | R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [~] |
 | R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [~] |
-| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi kirishi (Q-08 javobiga ko'ra). | 02-multitenancy §2 | P2 | [ ] |
+| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
 
 ## SEC — Xavfsizlik choralari
 
@@ -594,7 +639,7 @@
 | R-FE-21 | Sahifa: Dashboard — `LabHeadDashboard`. | 16-architecture §16 | P6 | [ ] |
 | R-FE-22 | Sahifa: Dashboard — `InspectorDashboard` (Q-65). | 16-architecture §16 | P6 | [ ] |
 | R-FE-23 | Sahifa: `SuperAdminDashboard`. | 01 §1, 16 §16 | P2 | [ ] |
-| R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (Q-07). | 16-architecture §16 | P6 | [ ] |
+| R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (tarkibi — D-33). | 16-architecture §16, DECISIONS.md D-33 | P6 | [ ] |
 | R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [ ] |
 | R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [ ] |
 | R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
@@ -613,6 +658,9 @@
 | R-FE-40 | Top bar'da til almashtirgichi va NotificationBell. | 09 §9, 14 §14 | P1 | [x] |
 | R-FE-41 | Access token faqat xotirada (Zustand, localStorage'ga yozilmaydi); sahifa yangilanganda refresh cookie orqali tiklanadi. | DECISIONS.md D-23 | P1 | [~] |
 | R-FE-42 | Spec'da nomlanmagan yo'llar: `/samples(/:id)`, `/substances(/:id)`, `/reagents`, `/stability(/:id)`; kompaniya sahifalari super_admin'ga yopiq. | DECISIONS.md D-29 | P1 | [x] |
+| R-FE-43 | Dashboard tarkibi: chemist — biriktirilgan namunalar statuslar bo'yicha; kontrolyor — o'z namunalari. | DECISIONS.md D-33 | P6 | [ ] |
+| R-FE-44 | Dashboard tarkibi: lab_head — biriktirish/tasdiq kutayotganlar, harorat alertlari, `low_stock`, `is_expired`, stabilizatsiya muddatlari; `admin` — LabHead dashboardi. | DECISIONS.md D-33 | P6 | [ ] |
+| R-FE-45 | Dashboard tarkibi: director — statuslar bo'yicha umumiy sonlar va yakunlanmagan protokollar. | DECISIONS.md D-33 | P6 | [ ] |
 
 ## FLOW — Asosiy ish oqimi (E2E)
 
@@ -626,7 +674,7 @@
 | R-FLOW-06 | E2E: namuna reyestrda qidiriladi va fayli yuklab olinadi. | 17-workflow §17 | P12 | [ ] |
 | R-FLOW-07 | E2E: lab_head/director stabilizatsiya boshlaydi va checkpointlarni qo'lda belgilaydi. | 17-workflow §17 | P12 | [ ] |
 | R-FLOW-08 | E2E: fon jarayoni muddat yaqinlashganda/o'tganda bildirishnoma yuboradi. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-09 | E2E: kimyogar har checkpoint uchun natija kiritadi → tekshiruv yakunlanadi (Q-44). | 17-workflow §17 | P12 | [ ] |
+| R-FLOW-09 | E2E: kimyogar har checkpoint uchun natija kiritadi → barcha checkpointlar `completed` → study avtomatik `completed`. | 17-workflow §17, DECISIONS.md D-56 | P12 | [ ] |
 | R-FLOW-10 | E2E: rad etish oqimi — rad → protokol va namuna `rejected` (sabab saqlangan, xabarnomalar) → kimyogar faylni yangilab qayta yuboradi → `submitted` → tasdiq. | DECISIONS.md D-14 | P12 | [ ] |
 | R-FLOW-11 | E2E: `reagent`/`standard_substance` namunasi lab_head pasporti bilan protokolsiz `approved` bo'ladi. | 03-samples §3 | P12 | [ ] |
 
@@ -667,42 +715,42 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
 | ROLE — Rollar va ruxsat matritsasi | 79 | 0 | 0 | 79 |
-| TENANT — Ko'p-kompaniyalilik | 13 | 0 | 0 | 13 |
-| SAMPLE — Namunalar | 33 | 0 | 0 | 33 |
-| PASS — Namuna pasporti | 21 | 0 | 0 | 21 |
-| REG — Reyestr | 14 | 2 | 0 | 12 |
-| PROTO — Protokollar | 54 | 0 | 0 | 54 |
-| SUBST — Moddalar | 9 | 0 | 0 | 9 |
-| REAG — Reaktivlar va Xarajat jurnali | 19 | 0 | 0 | 19 |
-| TEMP — Harorat monitoringi | 12 | 0 | 0 | 12 |
-| STAB — Stabilizatsiya | 29 | 0 | 0 | 29 |
-| NOTIF — Xabarnomalar | 24 | 0 | 0 | 24 |
-| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 17 | 0 | 0 | 17 |
-| AUDIT — Audit va Faoliyat jurnali | 8 | 0 | 0 | 8 |
+| TENANT — Ko'p-kompaniyalilik | 16 | 0 | 0 | 16 |
+| SAMPLE — Namunalar | 39 | 0 | 0 | 39 |
+| PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
+| REG — Reyestr | 17 | 2 | 0 | 15 |
+| PROTO — Protokollar | 61 | 0 | 0 | 61 |
+| SUBST — Moddalar | 11 | 0 | 0 | 11 |
+| REAG — Reaktivlar va Xarajat jurnali | 21 | 0 | 0 | 21 |
+| TEMP — Harorat monitoringi | 16 | 0 | 0 | 16 |
+| STAB — Stabilizatsiya | 36 | 0 | 0 | 36 |
+| NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
+| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 0 | 0 | 18 |
+| AUDIT — Audit va Faoliyat jurnali | 10 | 0 | 0 | 10 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 17 | 0 | 0 | 17 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
 | AUTH — Autentifikatsiya va xavfsizlik | 20 | 0 | 2 | 18 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 68 | 19 | 7 | 42 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 42 | 13 | 6 | 23 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 13 | 6 | 26 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 517 | 45 | 17 | 455 |
+| **Jami** | 565 | 45 | 17 | 503 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
 | P1 | 50 | 36 | 13 | 1 |
-| P2 | 74 | 2 | 3 | 69 |
-| P3 | 17 | 0 | 0 | 17 |
-| P4 | 64 | 4 | 0 | 60 |
-| P5 | 113 | 0 | 0 | 113 |
-| P6 | 32 | 0 | 0 | 32 |
-| P7 | 31 | 0 | 0 | 31 |
-| P8 | 23 | 1 | 0 | 22 |
-| P9 | 47 | 0 | 0 | 47 |
-| P10 | 19 | 1 | 0 | 18 |
+| P2 | 78 | 2 | 3 | 73 |
+| P3 | 19 | 0 | 0 | 19 |
+| P4 | 69 | 4 | 0 | 65 |
+| P5 | 127 | 0 | 0 | 127 |
+| P6 | 39 | 0 | 0 | 39 |
+| P7 | 33 | 0 | 0 | 33 |
+| P8 | 27 | 1 | 0 | 26 |
+| P9 | 55 | 0 | 0 | 55 |
+| P10 | 21 | 1 | 0 | 20 |
 | P11 | 25 | 0 | 0 | 25 |
 | P12 | 22 | 1 | 1 | 20 |
-| **Jami** | 517 | 45 | 17 | 455 |
+| **Jami** | 565 | 45 | 17 | 503 |
