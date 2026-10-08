@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AUTH_AUDIT_TABLE, writeAudit } from '../audit/audit.service.js';
+import { ValidationError } from '../../utils/errors.js';
 import {
   AccountInactiveError,
   InvalidCredentialsError,
@@ -16,7 +17,12 @@ import {
   type RequestMeta,
   type Role,
 } from './auth.types.js';
-import { getDummyHash, verifyPassword } from './password.js';
+import {
+  assertPasswordPolicy,
+  getDummyHash,
+  hashPassword,
+  verifyPassword,
+} from './password.js';
 import { sha256, signAccessToken, signRefreshToken, verifyRefreshToken } from './tokens.js';
 
 const SESSIONS_TABLE = 'sessions';
@@ -341,6 +347,99 @@ export async function getMe(userId: string): Promise<MeDto> {
   const { rows } = await query<UserRow>(`${USER_SELECT} WHERE u.id = $1`, [userId]);
   if (!rows[0]) throw new SessionExpiredError();
   return toMe(rows[0]);
+}
+
+/**
+ * Parolni almashtirish: joriy parol tekshiriladi, yangi parol o'rnatiladi,
+ * joriy sessiyadan boshqa barcha sessiyalar darhol bekor qilinadi.
+ */
+export async function changePassword(
+  userId: string,
+  sessionId: string,
+  input: { currentPassword: string; newPassword: string },
+  meta: RequestMeta,
+): Promise<void> {
+  const { rows } = await query<{
+    password_hash: string;
+    is_active: boolean;
+    company_id: string | null;
+  }>('SELECT password_hash, is_active, company_id FROM users WHERE id = $1', [userId]);
+  const user = rows[0];
+  if (!user || !user.is_active) throw new SessionExpiredError();
+
+  if (input.currentPassword === input.newPassword) {
+    throw new ValidationError("Yangi parol joriy parol bilan bir xil bo'lishi mumkin emas");
+  }
+
+  const matches = await verifyPassword(input.currentPassword, user.password_hash);
+  if (!matches) {
+    throw new ValidationError("Joriy parol noto'g'ri");
+  }
+
+  assertPasswordPolicy(input.newPassword);
+  const newHash = await hashPassword(input.newPassword);
+
+  await withTransaction(async (client) => {
+    await client.query('UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2', [
+      newHash,
+      userId,
+    ]);
+
+    const revoked = await client.query<{ id: string }>(
+      'DELETE FROM sessions WHERE user_id = $1 AND id <> $2 RETURNING id',
+      [userId, sessionId],
+    );
+
+    await writeAudit(client, {
+      tableName: 'users',
+      recordId: userId,
+      action: 'password_change',
+      userId,
+      companyId: user.company_id,
+      newValues: { revokedSessionsCount: revoked.rowCount ?? 0 },
+      ...auditMeta(meta),
+    });
+  });
+}
+
+/** Profil ma'lumotlarini (ism) yangilash. */
+export async function updateProfile(
+  userId: string,
+  input: { fullName: string },
+  meta: RequestMeta,
+): Promise<MeDto> {
+  const { rows: currentRows } = await query<{
+    full_name: string;
+    company_id: string | null;
+  }>('SELECT full_name, company_id FROM users WHERE id = $1', [userId]);
+  const current = currentRows[0];
+  if (!current) throw new SessionExpiredError();
+
+  const updated = await withTransaction(async (client) => {
+    await client.query('UPDATE users SET full_name = $1, updated_at = now() WHERE id = $2', [
+      input.fullName,
+      userId,
+    ]);
+
+    await writeAudit(client, {
+      tableName: 'users',
+      recordId: userId,
+      action: 'profile_update',
+      userId,
+      companyId: current.company_id,
+      oldValues: { fullName: current.full_name },
+      newValues: { fullName: input.fullName },
+      ...auditMeta(meta),
+    });
+
+    const { rows: updatedRows } = await client.query<UserRow>(
+      `${USER_SELECT} WHERE u.id = $1`,
+      [userId],
+    );
+    return toMe(updatedRows[0]!);
+  });
+
+  return updated;
 }
 
 /** Individual ruxsatlar (`resource:action`) — faqat o'z kompaniyasi doirasida (D-12, D-32). */

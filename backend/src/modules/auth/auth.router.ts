@@ -2,7 +2,11 @@ import { type RequestHandler, Router } from 'express';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
 import { createAuthController } from './auth.controller.js';
-import { loginBodySchema } from './auth.schemas.js';
+import {
+  changePasswordSchema,
+  loginBodySchema,
+  updateProfileSchema,
+} from './auth.schemas.js';
 import type { AuthConfig } from './auth.types.js';
 
 /**
@@ -134,6 +138,22 @@ export function createAuthRouter(deps: {
    *       401: { description: UNAUTHORIZED / SESSION_EXPIRED, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
    */
   router.get('/me', ...deps.auth.requireAuth, controller.me);
+
+  router.put(
+    '/password',
+    ...deps.auth.requireAuth,
+    validate({ body: changePasswordSchema }),
+    controller.changePassword,
+  );
+
+  router.get('/profile', ...deps.auth.requireAuth, controller.getProfile);
+
+  router.patch(
+    '/profile',
+    ...deps.auth.requireAuth,
+    validate({ body: updateProfileSchema }),
+    controller.updateProfile,
+  );
 
   return router;
 }

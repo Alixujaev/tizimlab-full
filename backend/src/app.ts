@@ -10,6 +10,7 @@ import { createAuthMiddleware } from './middleware/authenticate.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 import { requestId } from './middleware/requestId.js';
+import { createAdminRouter } from './modules/admin/admin.router.js';
 import { createAuthRouter } from './modules/auth/auth.router.js';
 import { authConfigFromEnv, type AuthEnv } from './modules/auth/auth.types.js';
 import {
@@ -17,6 +18,7 @@ import {
   LOGIN_LIMIT,
   type LoginLimitOptions,
 } from './modules/auth/loginLimiter.js';
+import { createCompaniesRouter } from './modules/companies/companies.router.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
 export const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -92,6 +94,8 @@ export function createApp({
     '/auth',
     createAuthRouter({ config: authConfig, auth, loginLimiter: createLoginLimiter(loginLimit) }),
   );
+  api.use('/companies', createCompaniesRouter({ auth }));
+  api.use('/admin', createAdminRouter({ auth }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

@@ -15,3 +15,17 @@ export const loginBodySchema = z.object({
 });
 
 export type LoginBody = z.infer<typeof loginBodySchema>;
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Joriy parol kiritilmagan').max(PASSWORD_MAX_LENGTH),
+  newPassword: z.string().min(1, 'Yangi parol kiritilmagan').max(PASSWORD_MAX_LENGTH),
+});
+
+export type ChangePasswordBody = z.infer<typeof changePasswordSchema>;
+
+export const updateProfileSchema = z.object({
+  fullName: z.string().trim().min(1, 'Ism kiritilmagan').max(255),
+});
+
+export type UpdateProfileBody = z.infer<typeof updateProfileSchema>;
+

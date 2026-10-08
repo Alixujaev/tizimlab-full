@@ -3,7 +3,6 @@ import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as database from '../src/config/database.js';
 import { query } from '../src/config/database.js';
-import type { RolePermissionCatalog } from '../src/config/permissions.js';
 import {
   createAuthMiddleware,
   requireCompany,
@@ -23,10 +22,7 @@ import { describeDb } from './helpers/db.js';
 
 type Db = Awaited<ReturnType<typeof setupAuthDb>>;
 
-// Sinov katalogi (haqiqiy katalog P2b da — D-10)
-const FAKE_CATALOG: RolePermissionCatalog = { lab_head: ['samples:approve'] };
-
-/** Haqiqiy auth zanjiri bilan soxta route'lar. */
+/** Haqiqiy auth zanjiri bilan route'lar. */
 function protectedApp() {
   const auth = createAuthMiddleware(TEST_AUTH_CONFIG);
   const r = Router();
@@ -44,9 +40,9 @@ function protectedApp() {
     '/approve',
     ...auth.requireAuth,
     requireCompany,
-    requirePermission('samples', 'approve', FAKE_CATALOG),
+    requirePermission('protocols', 'approve'),
     // Kesh: ikkinchi tekshiruv DB'ga murojaat qilmaydi
-    requirePermission('samples', 'approve', FAKE_CATALOG),
+    requirePermission('protocols', 'approve'),
     (_q, s) => s.json({ ok: true }),
   );
   return miniApp(r).app;
@@ -116,7 +112,7 @@ describeDb('authenticate / requireCompany / requireRole / requirePermission', ()
     const admin = await createUser({ role: 'admin', company });
     const t = (await loginAs(login, chemist)).accessToken;
     await query(
-      `INSERT INTO user_permissions (user_id, resource, action, granted_by, company_id) VALUES ($1, 'samples', 'approve', $2, $3)`,
+      `INSERT INTO user_permissions (user_id, resource, action, granted_by, company_id) VALUES ($1, 'protocols', 'approve', $2, $3)`,
       [chemist.id, admin.id, company.id],
     );
     expect((await request(app).get('/approve').set('Authorization', `Bearer ${t}`)).status).toBe(
@@ -128,7 +124,7 @@ describeDb('authenticate / requireCompany / requireRole / requirePermission', ()
     const chemist2 = await createUser({ role: 'chemist', company });
     const t2 = (await loginAs(login, chemist2)).accessToken;
     await query(
-      `INSERT INTO user_permissions (user_id, resource, action, granted_by, company_id) VALUES ($1, 'samples', 'approve', $2, $3)`,
+      `INSERT INTO user_permissions (user_id, resource, action, granted_by, company_id) VALUES ($1, 'protocols', 'approve', $2, $3)`,
       [chemist2.id, admin.id, other.id],
     );
     expect((await request(app).get('/approve').set('Authorization', `Bearer ${t2}`)).status).toBe(

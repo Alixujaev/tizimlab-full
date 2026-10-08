@@ -80,5 +80,23 @@ export function createAuthController(cfg: AuthConfig) {
     async me(req: Request, res: Response) {
       sendOk(res, await authService.getMe(authOf(req).userId));
     },
+
+    async changePassword(req: Request, res: Response) {
+      const auth = authOf(req);
+      const body = req.validated.body as { currentPassword: string; newPassword: string };
+      await authService.changePassword(auth.userId, auth.sessionId, body, requestMeta(req));
+      sendOk(res, { success: true });
+    },
+
+    async getProfile(req: Request, res: Response) {
+      sendOk(res, await authService.getMe(authOf(req).userId));
+    },
+
+    async updateProfile(req: Request, res: Response) {
+      const auth = authOf(req);
+      const body = req.validated.body as { fullName: string };
+      const updated = await authService.updateProfile(auth.userId, body, requestMeta(req));
+      sendOk(res, updated);
+    },
   };
 }

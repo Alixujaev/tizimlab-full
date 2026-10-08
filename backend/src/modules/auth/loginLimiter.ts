@@ -17,6 +17,7 @@ export function createLoginLimiter({
   return rateLimit({
     windowMs,
     limit: max,
+    skipSuccessfulRequests: true,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     handler: (req, res) => {

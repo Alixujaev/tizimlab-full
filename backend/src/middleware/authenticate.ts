@@ -68,7 +68,7 @@ export function requirePermission(
   return async (req, _res, next) => {
     const auth = req.auth;
     if (!auth) throw new UnauthorizedError();
-    if (catalog[auth.role]?.includes(key)) return next();
+    if ((catalog[auth.role] as readonly string[] | undefined)?.includes(key)) return next();
     auth.grants ??= loadUserGrants(auth.userId, auth.companyId);
     if (!(await auth.grants).has(key)) throw new ForbiddenError();
     next();

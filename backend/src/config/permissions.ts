@@ -1,11 +1,104 @@
 import type { Role } from '../modules/auth/auth.types.js';
 
-/** `resource:action` (masalan `samples:create`). */
-export type PermissionKey = `${string}:${string}`;
-export type RolePermissionCatalog = Partial<Record<Role, readonly PermissionKey[]>>;
+/** Spec §1 matritsasi bo'yicha ruxsatlar katalogi (D-10, P2b). */
+export const PERMISSION_CATALOG = [
+  'samples:create',
+  'samples:view',
+  'samples:assign',
+  'protocols:upload',
+  'protocols:approve',
+  'protocols:finalize',
+  'registry:view',
+  'substances:view',
+  'substances:write',
+  'substances:delete',
+  'reagents:view',
+  'reagents:write',
+  'temperature:view',
+  'temperature:write',
+  'stability:view',
+  'stability:start',
+  'stability:record',
+  'users:view',
+  'users:manage',
+  'permissions:manage',
+  'activity:view',
+] as const;
 
-/**
- * Rol asosidagi ruxsatlar katalogi. D-10: katalog P2b da tuziladi va foydalanuvchiga tasdiqlatiladi —
- * hozircha bo'sh (`requirePermission` faqat individual grant'lar bilan ishlaydi).
- */
-export const ROLE_PERMISSIONS: RolePermissionCatalog = {};
+export type PermissionKey = (typeof PERMISSION_CATALOG)[number];
+export type RolePermissionCatalog = Record<Role, readonly PermissionKey[]>;
+
+/** Rol asosidagi ruxsatlar katalogi (spec §1 matritsasi). */
+export const ROLE_PERMISSIONS: RolePermissionCatalog = {
+  super_admin: [],
+  kontrolyor: [
+    'samples:create',
+    'samples:view',
+    'registry:view',
+    'substances:view',
+    'reagents:view',
+    'temperature:view',
+    'stability:view',
+  ],
+  chemist: [
+    'samples:view',
+    'protocols:upload',
+    'registry:view',
+    'substances:view',
+    'reagents:view',
+    'temperature:view',
+    'stability:view',
+    'stability:record',
+  ],
+  lab_head: [
+    'samples:view',
+    'samples:assign',
+    'protocols:upload',
+    'protocols:approve',
+    'registry:view',
+    'substances:view',
+    'substances:write',
+    'reagents:view',
+    'reagents:write',
+    'temperature:view',
+    'temperature:write',
+    'stability:view',
+    'stability:start',
+    'stability:record',
+    'users:view',
+    'users:manage',
+    'activity:view',
+  ],
+  director: [
+    'samples:view',
+    'protocols:finalize',
+    'registry:view',
+    'substances:view',
+    'reagents:view',
+    'temperature:view',
+    'stability:view',
+    'stability:start',
+    'stability:record',
+    'users:view',
+    'activity:view',
+  ],
+  admin: [
+    'samples:view',
+    'protocols:upload',
+    'registry:view',
+    'substances:view',
+    'substances:write',
+    'substances:delete',
+    'reagents:view',
+    'reagents:write',
+    'temperature:view',
+    'temperature:write',
+    'stability:view',
+    'stability:start',
+    'stability:record',
+    'users:view',
+    'users:manage',
+    'permissions:manage',
+    'activity:view',
+  ],
+};

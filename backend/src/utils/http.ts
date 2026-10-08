@@ -20,6 +20,11 @@ export function sendOk<T>(res: Response, data: T, status = 200): Response {
   return res.status(status).json({ data });
 }
 
+/** D-22: yangi resurs yaratilganda `{ data }` status 201. */
+export function sendCreated<T>(res: Response, data: T): Response {
+  return sendOk(res, data, 201);
+}
+
 /** D-22: ro'yxat javobi `{ data, meta: { page, limit, total } }`. */
 export function sendPaginated<T>(res: Response, items: T[], meta: PageMeta): Response {
   return res.status(200).json({ data: items, meta });

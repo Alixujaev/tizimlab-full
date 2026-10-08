@@ -79,17 +79,17 @@
 | R-ROLE-65 | Stabilizatsiya natija kiritish: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-66 | Stabilizatsiya natija kiritish: `director` — RUXSAT. | 01-roles §1 | P9 | [ ] |
 | R-ROLE-67 | Stabilizatsiya natija kiritish: `admin` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-68 | Foydalanuvchilar boshqaruvi: `kontrolyor` — TAQIQ. | 01-roles §1 | P2 | [ ] |
-| R-ROLE-69 | Foydalanuvchilar boshqaruvi: `chemist` — TAQIQ. | 01-roles §1 | P2 | [ ] |
-| R-ROLE-70 | Foydalanuvchilar boshqaruvi: `lab_head` — RUXSAT, faqat `kontrolyor`/`chemist` rollaridagi foydalanuvchilar uchun. | 01-roles §1, DECISIONS.md D-16 | P2 | [ ] |
-| R-ROLE-71 | Foydalanuvchilar boshqaruvi: `director` — faqat ko'rish (yaratish/tahrirlash/parol tiklash TAQIQ). | 01-roles §1 | P2 | [ ] |
-| R-ROLE-72 | Foydalanuvchilar boshqaruvi: `admin` — to'liq. | 01-roles §1 | P2 | [ ] |
+| R-ROLE-68 | Foydalanuvchilar boshqaruvi: `kontrolyor` — TAQIQ. | 01-roles §1 | P2 | [x] |
+| R-ROLE-69 | Foydalanuvchilar boshqaruvi: `chemist` — TAQIQ. | 01-roles §1 | P2 | [x] |
+| R-ROLE-70 | Foydalanuvchilar boshqaruvi: `lab_head` — RUXSAT, faqat `kontrolyor`/`chemist` rollaridagi foydalanuvchilar uchun. | 01-roles §1, DECISIONS.md D-16 | P2 | [x] |
+| R-ROLE-71 | Foydalanuvchilar boshqaruvi: `director` — faqat ko'rish (yaratish/tahrirlash/parol tiklash TAQIQ). | 01-roles §1 | P2 | [x] |
+| R-ROLE-72 | Foydalanuvchilar boshqaruvi: `admin` — to'liq. | 01-roles §1 | P2 | [x] |
 | R-ROLE-73 | Faoliyat jurnali: `kontrolyor` — TAQIQ. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-74 | Faoliyat jurnali: `chemist` — TAQIQ. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-75 | Faoliyat jurnali: `lab_head` — RUXSAT. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-76 | Faoliyat jurnali: `director` — RUXSAT. | 01-roles §1 | P10 | [ ] |
 | R-ROLE-77 | Faoliyat jurnali: `admin` — RUXSAT. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-78 | Rol ruxsatlaridan tashqari `user_permissions` orqali individual ruxsat berish mumkin, `requirePermission(resource, action)` bilan tekshiriladi. | 01-roles §1 | P2 | [~] |
+| R-ROLE-78 | Rol ruxsatlaridan tashqari `user_permissions` orqali individual ruxsat berish mumkin, `requirePermission(resource, action)` bilan tekshiriladi. | 01-roles §1 | P2 | [x] |
 | R-ROLE-79 | Matritsadagi har bir TAQIQ backend'da (403) majburlanadi — faqat UI'da yashirish yetarli emas. | 01-roles §1, 16 §16 | P12 | [ ] |
 
 ## TENANT — Ko'p-kompaniyalilik
@@ -101,17 +101,17 @@
 | R-TENANT-03 | Har bir asosiy jadval (`samples`, `substances`, `protocols`, `reagents`, ...) kompaniya bo'yicha ajratilgan (`company_id`). | 02-multitenancy §2 | P2 | [~] |
 | R-TENANT-04 | JWT access tokenida `company_id` bor. | 02-multitenancy §2 | P2 | [x] |
 | R-TENANT-05 | `requireCompany` middleware kompaniya kontekstisiz so'rovlarni bloklaydi. | 02-multitenancy §2 | P2 | [x] |
-| R-TENANT-06 | Kompaniyalar sahifasi `/companies` faqat `super_admin` uchun. | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-07 | `super_admin` yangi kompaniya yaratadi (nomi + `slug`). | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-08 | `super_admin` kompaniyani faollashtiradi/nofaollashtiradi (`is_active`); jismoniy o'chirish yo'q. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [ ] |
-| R-TENANT-09 | `super_admin` kompaniyani tahrirlaydi. | 02-multitenancy §2 | P2 | [ ] |
-| R-TENANT-10 | Kompaniya boshqa kompaniyalarning ma'lumotini ko'rmaydi (o'z foydalanuvchilari, namunalari, reaktiv va moddalari). | 02-multitenancy §2 | P12 | [ ] |
+| R-TENANT-06 | Kompaniyalar sahifasi `/companies` faqat `super_admin` uchun. | 02-multitenancy §2 | P2 | [~] |
+| R-TENANT-07 | `super_admin` yangi kompaniya yaratadi (nomi + `slug`). | 02-multitenancy §2 | P2 | [~] |
+| R-TENANT-08 | `super_admin` kompaniyani faollashtiradi/nofaollashtiradi (`is_active`); jismoniy o'chirish yo'q. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [~] |
+| R-TENANT-09 | `super_admin` kompaniyani tahrirlaydi. | 02-multitenancy §2 | P2 | [~] |
+| R-TENANT-10 | Kompaniya boshqa kompaniyalarning ma'lumotini ko'rmaydi (o'z foydalanuvchilari, namunalari, reaktiv va moddalari). | 02-multitenancy §2 | P12 | [~] |
 | R-TENANT-11 | HAR BIR tenant jadvaliga so'rov service'da `company_id` bo'yicha filtrlanadi (ilova darajasida). | DECISIONS.md D-12 | P12 | [ ] |
-| R-TENANT-12 | Har fazada yangi tenant endpointlar uchun kompaniyalararo izolyatsiya integration testi yoziladi. | DECISIONS.md D-12 | P2 | [ ] |
+| R-TENANT-12 | Har fazada yangi tenant endpointlar uchun kompaniyalararo izolyatsiya integration testi yoziladi. | DECISIONS.md D-12 | P2 | [x] |
 | R-TENANT-13 | Barcha tenant endpointlarini qamrab oluvchi yakuniy izolyatsiya integration testi. | DECISIONS.md D-12 | P12 | [ ] |
 | R-TENANT-14 | `super_admin` CLI skript bilan yaratiladi (`npm run` buyrug'i). | DECISIONS.md D-35 | P2 | [x] |
-| R-TENANT-15 | Kompaniya yaratishda `super_admin` shu kompaniyaning birinchi `admin` foydalanuvchisini yaratadi; boshqa foydalanuvchilarni yarata olmaydi. | DECISIONS.md D-35 | P2 | [ ] |
-| R-TENANT-16 | Nofaollashtirilgan kompaniyani qayta faollashtirish mumkin. | DECISIONS.md D-34 | P2 | [ ] |
+| R-TENANT-15 | Kompaniya yaratishda `super_admin` shu kompaniyaning birinchi `admin` foydalanuvchisini yaratadi; boshqa foydalanuvchilarni yarata olmaydi. | DECISIONS.md D-35 | P2 | [~] |
+| R-TENANT-16 | Nofaollashtirilgan kompaniyani qayta faollashtirish mumkin. | DECISIONS.md D-34 | P2 | [~] |
 
 ## SAMPLE — Namunalar
 
@@ -424,23 +424,23 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-USER-01 | Admin panel `/users` — `lab_head`, `director`, `admin` uchun ochiq. | 10-users §10 | P2 | [ ] |
-| R-USER-02 | Admin panel `/users` — `kontrolyor` va `chemist` uchun yopiq. | 10-users §10, 01 §1 | P2 | [ ] |
-| R-USER-03 | Admin panelda foydalanuvchilar ro'yxati (faqat o'z kompaniyasi). | 10-users §10 | P2 | [ ] |
-| R-USER-04 | Admin panelda foydalanuvchilar statistikasi. | 10-users §10 | P2 | [ ] |
-| R-USER-05 | Admin panelda yangi foydalanuvchi yaratish: `admin` — istalgan kompaniya roli; `lab_head` — faqat `kontrolyor`/`chemist`. | 10-users §10, DECISIONS.md D-16 | P2 | [ ] |
-| R-USER-06 | `admin` istalgan foydalanuvchi parolini, `lab_head` faqat `kontrolyor`/`chemist` parolini tiklay oladi. | 10-users §10, 15 §15, DECISIONS.md D-16 | P2 | [ ] |
+| R-USER-01 | Admin panel `/users` — `lab_head`, `director`, `admin` uchun ochiq. | 10-users §10 | P2 | [~] |
+| R-USER-02 | Admin panel `/users` — `kontrolyor` va `chemist` uchun yopiq. | 10-users §10, 01 §1 | P2 | [~] |
+| R-USER-03 | Admin panelda foydalanuvchilar ro'yxati (faqat o'z kompaniyasi). | 10-users §10 | P2 | [~] |
+| R-USER-04 | Admin panelda foydalanuvchilar statistikasi. | 10-users §10 | P2 | [~] |
+| R-USER-05 | Admin panelda yangi foydalanuvchi yaratish: `admin` — istalgan kompaniya roli; `lab_head` — faqat `kontrolyor`/`chemist`. | 10-users §10, DECISIONS.md D-16 | P2 | [~] |
+| R-USER-06 | `admin` istalgan foydalanuvchi parolini, `lab_head` faqat `kontrolyor`/`chemist` parolini tiklay oladi. | 10-users §10, 15 §15, DECISIONS.md D-16 | P2 | [~] |
 | R-USER-07 | Admin panelda foydalanuvchi loglarini ko'rish (Q-52). | 10-users §10 | P10 | [ ] |
-| R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [~] |
-| R-USER-09 | `user_permissions` dan ruxsatni olib tashlash = individual grant'ni o'chirish (rol ruxsatini deny qilib bo'lmaydi). | 10-users §10, DECISIONS.md D-32 | P2 | [ ] |
+| R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [x] |
+| R-USER-09 | `user_permissions` dan ruxsatni olib tashlash = individual grant'ni o'chirish (rol ruxsatini deny qilib bo'lmaydi). | 10-users §10, DECISIONS.md D-32 | P2 | [x] |
 | R-USER-10 | `requirePermission` natijasi so'rov davomida keshlanadi (bitta so'rovda takroriy DB so'rovi yo'q). | 10-users §10 | P2 | [x] |
-| R-USER-11 | `resource:action` katalogi P2 da tuziladi va foydalanuvchiga tasdiqlatiladi. | DECISIONS.md D-10 | P2 | [ ] |
-| R-USER-12 | Har foydalanuvchi `/profile` da o'z parolini o'zgartira oladi. | 10-users §10, 15 §15 | P2 | [ ] |
+| R-USER-11 | `resource:action` katalogi P2 da tuziladi va foydalanuvchiga tasdiqlatiladi. | DECISIONS.md D-10 | P2 | [x] |
+| R-USER-12 | Har foydalanuvchi `/profile` da o'z parolini o'zgartira oladi. | 10-users §10, 15 §15 | P2 | [~] |
 | R-USER-13 | Har foydalanuvchi `/profile` da Telegram akkauntini ulay oladi. | 10-users §10 | P11 | [ ] |
 | R-USER-14 | Har foydalanuvchi `/profile` da Telegram akkauntini uza oladi. | 10-users §10 | P11 | [ ] |
-| R-USER-15 | `lab_head` `admin`/`lab_head`/`director` rolidagi foydalanuvchini yarata, tahrirlay va parolini tiklay olmaydi (403). | DECISIONS.md D-16 | P2 | [ ] |
-| R-USER-16 | `user_permissions` ni faqat `admin` boshqaradi; `lab_head`/`director` urinishi rad etiladi. | DECISIONS.md D-16 | P2 | [ ] |
-| R-USER-17 | `director` foydalanuvchilarni faqat ko'radi (yaratish/tahrirlash/parol tiklash — 403). | DECISIONS.md D-16, 01 §1 | P2 | [ ] |
+| R-USER-15 | `lab_head` `admin`/`lab_head`/`director` rolidagi foydalanuvchini yarata, tahrirlay va parolini tiklay olmaydi (403). | DECISIONS.md D-16 | P2 | [x] |
+| R-USER-16 | `user_permissions` ni faqat `admin` boshqaradi; `lab_head`/`director` urinishi rad etiladi. | DECISIONS.md D-16 | P2 | [x] |
+| R-USER-17 | `director` foydalanuvchilarni faqat ko'radi (yaratish/tahrirlash/parol tiklash — 403). | DECISIONS.md D-16, 01 §1 | P2 | [x] |
 | R-USER-18 | Effektiv ruxsat = rol ruxsatlari ∪ individual (`user_permissions`) ruxsatlar. | DECISIONS.md D-32 | P2 | [x] |
 
 ## AUDIT — Audit va Faoliyat jurnali
@@ -536,12 +536,12 @@
 | R-AUTH-14 | `SESSION_IDLE_TIMEOUT_MINUTES` standart qiymati 30 daqiqa. | 15-auth §15 | P2 | [x] |
 | R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [~] |
 | R-AUTH-16 | Parol bcrypt 10 round bilan xeshlanadi. | 15-auth §15 | P2 | [x] |
-| R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [ ] |
+| R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [~] |
 | R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [x] |
 | R-AUTH-19 | Frontend auth holati Zustand `store/authStore.ts` da (foydalanuvchi, token). | 16-architecture §16 | P2 | [x] |
-| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [~] |
+| R-AUTH-20 | Nofaol kompaniya foydalanuvchisi login qila olmaydi; nofaollashtirilganda faol sessiyalari darhol bekor qilinadi. | 02-multitenancy §2, DECISIONS.md D-34 | P2 | [x] |
 | R-AUTH-21 | Login identifikatori — `users.email`, butun platforma bo'yicha unikal; takroriy email bilan foydalanuvchi yaratish rad etiladi. | DECISIONS.md D-66 | P2 | [x] |
-| R-AUTH-22 | Parol siyosati: kamida 8 belgi, kamida bitta harf va bitta raqam; mos kelmasa 400. | DECISIONS.md D-66 | P2 | [~] |
+| R-AUTH-22 | Parol siyosati: kamida 8 belgi, kamida bitta harf va bitta raqam; mos kelmasa 400. | DECISIONS.md D-66 | P2 | [x] |
 | R-AUTH-23 | Login endpointiga alohida rate-limit: bitta IP'dan 15 daqiqada 10 urinish, keyingisi 429. | DECISIONS.md D-66 | P2 | [x] |
 | R-AUTH-24 | Almashtirilgan (eski) refresh token qayta ishlatilsa — 401 `TOKEN_REUSED` va o'sha sessiya bekor qilinadi. | DECISIONS.md D-88 | P2 | [x] |
 | R-AUTH-25 | Noma'lum email va noto'g'ri parol uchun bir xil javob (401 `INVALID_CREDENTIALS`); nofaol hisob holati faqat to'g'ri paroldan keyin (403 `ACCOUNT_INACTIVE`). | DECISIONS.md D-91 | P2 | [x] |
@@ -758,8 +758,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 3 | 2 | 74 |
-| TENANT — Ko'p-kompaniyalilik | 16 | 5 | 1 | 10 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 9 | 1 | 69 |
+| TENANT — Ko'p-kompaniyalilik | 16 | 6 | 8 | 2 |
 | SAMPLE — Namunalar | 41 | 0 | 0 | 41 |
 | PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
 | REG — Reyestr | 17 | 2 | 0 | 15 |
@@ -769,24 +769,24 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
-| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 2 | 1 | 15 |
+| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 8 | 7 | 3 |
 | AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
 | FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 7 | 1 | 1 |
-| AUTH — Autentifikatsiya va xavfsizlik | 26 | 22 | 3 | 1 |
+| AUTH — Autentifikatsiya va xavfsizlik | 26 | 24 | 2 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 34 | 7 | 44 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 15 | 5 | 25 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 99 | 23 | 480 |
+| **Jami** | 602 | 114 | 34 | 454 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
 | P1 | 50 | 38 | 12 | 0 |
-| P2 | 87 | 49 | 7 | 31 |
+| P2 | 87 | 64 | 17 | 6 |
 | P3 | 20 | 0 | 0 | 20 |
 | P4 | 71 | 4 | 0 | 67 |
 | P5 | 131 | 0 | 0 | 131 |
@@ -796,5 +796,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P9 | 58 | 0 | 0 | 58 |
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
-| P12 | 28 | 1 | 1 | 26 |
-| **Jami** | 602 | 99 | 23 | 480 |
+| P12 | 28 | 1 | 2 | 25 |
+| **Jami** | 602 | 114 | 34 | 454 |
