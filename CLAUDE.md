@@ -99,8 +99,10 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 3. Kod + testlar. Har checklist qatori uchun kamida bitta test.
 4. Oxirida `npm run check` YASHIL bo'lsin.
 5. `SPEC_CHECKLIST.md`: `[x]` faqat kod + test bo'lsa, qisman — `[~]` (sababi "Holat izohlari" da);
-   `npm run checklist:stats`. Mavjud qatorlar matni/ID'si o'zgartirilmaydi.
-6. Gate (D-19): ochiq savol NON-BLOCKING bo'lsa — default qo'lla, D-xx yoz, savolni `✅ D-xx` qil;
+   `npm run checklist:stats`. Mavjud qatorlar matni/ID'si o'zgartirilmaydi (istisno: DECISIONS qarori
+   o'zgartirgan qator — ID saqlanib matni yangilanadi).
+6. Gate (D-19): har faza boshida `OPEN_QUESTIONS.md` dagi shu faza bo'limi ko'riladi. NON-BLOCKING bo'lsa —
+   "Taklif (default)" ni qo'lla, D-xx yoz, savolni "Hal qilinganlar" ga `✅ D-xx` bilan ko'chir;
    BLOCKING bo'lsa — to'xta va so'ra. Spec'da yo'q narsani o'zingdan qo'shma.
 7. Commit: `<tur>(pN): <qisqa tavsif>` (masalan `feat(p4): sample status machine`).
 
