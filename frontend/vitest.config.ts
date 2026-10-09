@@ -12,5 +12,8 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['tests/**/*.test.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
     setupFiles: ['tests/setup.ts'],
+    // Sekin forma testlari (userEvent.type) to'liq to'plamda 5s dan oshadi; vitest shu faylni o'qiydi
+    testTimeout: 20000,
+    hookTimeout: 20000,
   },
 });

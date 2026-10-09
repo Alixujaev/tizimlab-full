@@ -1,11 +1,14 @@
 import type { Request, Response } from 'express';
 import { UnauthorizedError } from '../../utils/errors.js';
 import { sendCreated, sendOk, sendPaginated } from '../../utils/http.js';
+import type { FileStorage } from '../files/files.storage.js';
+import * as passportService from './samples.passport.service.js';
 import type {
   AssignSampleInput,
   CreateSampleInput,
   ListSamplesQuery,
   ResumeSampleInput,
+  ReviewPassportInput,
   StopSampleInput,
 } from './samples.schemas.js';
 import * as sampleService from './samples.service.js';
@@ -94,3 +97,55 @@ export const samplesController = {
     sendOk(res, data);
   },
 };
+
+const passportContext = (req: Request): passportService.PassportContext => {
+  if (!req.auth || !req.auth.companyId) throw new UnauthorizedError();
+  return {
+    companyId: req.auth.companyId,
+    user: { id: req.auth.userId, role: req.auth.role, companyId: req.auth.companyId },
+    meta: requestMeta(req),
+  };
+};
+
+/** Namuna pasporti endpointlari (spec §3) — storage DI orqali (testlarda xotiradagi adapter). */
+export function createPassportController(storage: FileStorage | null) {
+  return {
+    async upload(req: Request, res: Response): Promise<void> {
+      const data = await passportService.uploadPassport(
+        storage,
+        passportContext(req),
+        req.params.id as string,
+        req.file,
+      );
+      sendCreated(res, data);
+    },
+
+    async review(req: Request, res: Response): Promise<void> {
+      const input = (req.validated?.body ?? req.body) as ReviewPassportInput;
+      const data = await passportService.reviewPassport(
+        passportContext(req),
+        req.params.id as string,
+        input,
+      );
+      sendOk(res, data);
+    },
+
+    async download(req: Request, res: Response): Promise<void> {
+      const data = await passportService.getPassportDownload(
+        storage,
+        passportContext(req),
+        req.params.id as string,
+      );
+      sendOk(res, data);
+    },
+
+    async remove(req: Request, res: Response): Promise<void> {
+      const data = await passportService.deletePassport(
+        storage,
+        passportContext(req),
+        req.params.id as string,
+      );
+      sendOk(res, data);
+    },
+  };
+}

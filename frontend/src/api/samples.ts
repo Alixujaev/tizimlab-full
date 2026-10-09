@@ -3,17 +3,17 @@ import type {
   ApiResponse,
   AssignSampleInput,
   CreateSampleInput,
+  DownloadLink,
   Paginated,
   ResumeSampleInput,
+  ReviewPassportInput,
   SampleDetailDto,
   SampleDto,
   SampleListParams,
   StopSampleInput,
 } from '@/types';
 
-export async function fetchSamples(
-  params?: SampleListParams,
-): Promise<Paginated<SampleDto>> {
+export async function fetchSamples(params?: SampleListParams): Promise<Paginated<SampleDto>> {
   const query: Record<string, string | number> = {};
   if (params?.page) query.page = params.page;
   if (params?.limit) query.limit = params.limit;
@@ -36,29 +36,49 @@ export async function createSample(input: CreateSampleInput): Promise<SampleDto>
   return data.data;
 }
 
-export async function assignSample(
-  id: string,
-  input: AssignSampleInput,
-): Promise<SampleDto> {
+export async function assignSample(id: string, input: AssignSampleInput): Promise<SampleDto> {
   const { data } = await apiClient.post<ApiResponse<SampleDto>>(`/samples/${id}/assign`, input);
   return data.data;
 }
 
-export async function stopSample(
-  id: string,
-  input: StopSampleInput,
-): Promise<SampleDto> {
+export async function stopSample(id: string, input: StopSampleInput): Promise<SampleDto> {
   const { data } = await apiClient.post<ApiResponse<SampleDto>>(`/samples/${id}/stop`, input);
   return data.data;
 }
 
-export async function resumeSample(
-  id: string,
-  input?: ResumeSampleInput,
-): Promise<SampleDto> {
+export async function resumeSample(id: string, input?: ResumeSampleInput): Promise<SampleDto> {
   const { data } = await apiClient.post<ApiResponse<SampleDto>>(
     `/samples/${id}/resume`,
     input ?? {},
   );
+  return data.data;
+}
+
+// ---------------------------------------------------- Namuna pasporti (spec §3)
+
+export async function uploadPassport(id: string, file: File): Promise<SampleDto> {
+  const form = new FormData();
+  form.append('file', file);
+  const { data } = await apiClient.post<ApiResponse<SampleDto>>(`/samples/${id}/passport`, form);
+  return data.data;
+}
+
+export async function reviewPassport(id: string, input: ReviewPassportInput): Promise<SampleDto> {
+  const { data } = await apiClient.post<ApiResponse<SampleDto>>(
+    `/samples/${id}/passport/review`,
+    input,
+  );
+  return data.data;
+}
+
+export async function fetchPassportDownloadLink(id: string): Promise<DownloadLink> {
+  const { data } = await apiClient.get<ApiResponse<DownloadLink>>(
+    `/samples/${id}/passport/download`,
+  );
+  return data.data;
+}
+
+export async function deletePassport(id: string): Promise<SampleDto> {
+  const { data } = await apiClient.delete<ApiResponse<SampleDto>>(`/samples/${id}/passport`);
   return data.data;
 }

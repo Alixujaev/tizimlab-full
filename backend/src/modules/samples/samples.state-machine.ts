@@ -2,7 +2,7 @@ import { AppError } from '../../utils/errors.js';
 import type { SampleStatus, SampleType } from './samples.types.js';
 
 export class InvalidTransitionError extends AppError {
-  constructor(message = "Noto‘g‘ri status o‘tishi", details?: unknown) {
+  constructor(message = 'Noto‘g‘ri status o‘tishi', details?: unknown) {
     super(409, 'INVALID_TRANSITION', message, details);
   }
 }
@@ -57,6 +57,23 @@ export function assertTransition(from: SampleStatus, to: SampleStatus): void {
     throw new InvalidTransitionError(
       `Namunani «${from}» holatidan «${to}» holatiga o‘tkazish taqiqlangan`,
       { from, to, allowedTransitions: ALLOWED_TRANSITIONS[from] },
+    );
+  }
+}
+
+/**
+ * Pasport orqali tasdiqlash (D-118): `pending_assignment → approved` faqat reagent/standard_substance uchun
+ * va faqat pasport oqimida. Umumiy `ALLOWED_TRANSITIONS` matritsasi o'zgarmaydi.
+ */
+export function canApproveViaPassport(type: SampleType, from: SampleStatus): boolean {
+  return (type === 'reagent' || type === 'standard_substance') && from === 'pending_assignment';
+}
+
+export function assertPassportApproval(type: SampleType, from: SampleStatus): void {
+  if (!canApproveViaPassport(type, from)) {
+    throw new InvalidTransitionError(
+      `Pasport orqali «${from}» holatidagi «${type}» namunani tasdiqlab bo‘lmaydi`,
+      { from, to: 'approved', type },
     );
   }
 }

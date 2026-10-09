@@ -1,9 +1,5 @@
 import { query, withTransaction } from '../../config/database.js';
-import {
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-} from '../../utils/errors.js';
+import { ForbiddenError, NotFoundError, ValidationError } from '../../utils/errors.js';
 import { writeAudit } from '../audit/audit.service.js';
 import type { Role } from '../auth/auth.types.js';
 import { sampleHooks } from './samples.hooks.js';
@@ -13,11 +9,7 @@ import {
   assertCanStop,
   SampleAssignmentError,
 } from './samples.state-machine.js';
-import type {
-  AssignSampleInput,
-  CreateSampleInput,
-  ListSamplesQuery,
-} from './samples.schemas.js';
+import type { AssignSampleInput, CreateSampleInput, ListSamplesQuery } from './samples.schemas.js';
 import {
   type SampleDetailDto,
   type SampleDto,
@@ -36,6 +28,16 @@ export interface UserContext {
   id: string;
   role: Role;
   companyId: string | null;
+}
+
+/** Namunalar bo'limidagi ko'rinish (spec §1): kontrolyor — o'ziniki, chemist — biriktirilgan, qolganlar — hammasi. */
+export function isSampleVisibleTo(
+  user: Pick<UserContext, 'id' | 'role'>,
+  sample: Pick<SampleRow, 'created_by' | 'assigned_to'>,
+): boolean {
+  if (user.role === 'kontrolyor') return sample.created_by === user.id;
+  if (user.role === 'chemist') return sample.assigned_to === user.id;
+  return true;
 }
 
 export async function listSamples(
@@ -125,10 +127,7 @@ export async function getSampleById(
   }
 
   // Ko'rinish tekshiruvi (agar foydalanuvchiga tegishli bo'lmasa -> 404 xavfsizlik uchun)
-  if (user.role === 'kontrolyor' && sample.created_by !== user.id) {
-    throw new NotFoundError('Namuna topilmadi');
-  }
-  if (user.role === 'chemist' && sample.assigned_to !== user.id) {
+  if (!isSampleVisibleTo(user, sample)) {
     throw new NotFoundError('Namuna topilmadi');
   }
 
@@ -285,10 +284,10 @@ export async function assignSample(
       full_name: string;
       role: Role;
       is_active: boolean;
-    }>(
-      `SELECT id, full_name, role, is_active FROM users WHERE id = $1 AND company_id = $2`,
-      [input.chemistId, companyId],
-    );
+    }>(`SELECT id, full_name, role, is_active FROM users WHERE id = $1 AND company_id = $2`, [
+      input.chemistId,
+      companyId,
+    ]);
     const chemist = chemistRes.rows[0];
     if (!chemist) {
       throw new NotFoundError('Kimyogar topilmadi');
@@ -412,9 +411,7 @@ export async function stopSample(
 
     // Faqat biriktirilgan kimyogar to'xtata oladi (DECISIONS D-38, R-SAMPLE-37)
     if (sample.assigned_to !== userId) {
-      throw new ForbiddenError(
-        'Faqat namunaga biriktirilgan kimyogar tahlilni to‘xtata oladi',
-      );
+      throw new ForbiddenError('Faqat namunaga biriktirilgan kimyogar tahlilni to‘xtata oladi');
     }
 
     assertCanStop(sample.status, reason);
@@ -493,9 +490,7 @@ export async function resumeSample(
 
     // Faqat biriktirilgan kimyogar davom ettira oladi (DECISIONS D-38, R-SAMPLE-37)
     if (sample.assigned_to !== userId) {
-      throw new ForbiddenError(
-        'Faqat namunaga biriktirilgan kimyogar tahlilni davom ettira oladi',
-      );
+      throw new ForbiddenError('Faqat namunaga biriktirilgan kimyogar tahlilni davom ettira oladi');
     }
 
     assertCanResume(sample.status);

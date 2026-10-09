@@ -2,15 +2,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   assignSample,
   createSample,
+  deletePassport,
   fetchSample,
   fetchSamples,
   resumeSample,
+  reviewPassport,
   stopSample,
+  uploadPassport,
 } from '@/api/samples';
 import type {
   AssignSampleInput,
   CreateSampleInput,
   ResumeSampleInput,
+  ReviewPassportInput,
   SampleListParams,
   StopSampleInput,
 } from '@/types';
@@ -63,8 +67,7 @@ export function useAssignSampleMutation() {
 export function useStopSampleMutation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: StopSampleInput }) =>
-      stopSample(id, input),
+    mutationFn: ({ id, input }: { id: string; input: StopSampleInput }) => stopSample(id, input),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: samplesKeys.all });
       void queryClient.invalidateQueries({ queryKey: samplesKeys.detail(variables.id) });
@@ -81,5 +84,45 @@ export function useResumeSampleMutation() {
       void queryClient.invalidateQueries({ queryKey: samplesKeys.all });
       void queryClient.invalidateQueries({ queryKey: samplesKeys.detail(variables.id) });
     },
+  });
+}
+
+// ---------------------------------------------------- Namuna pasporti
+
+function useInvalidateSample() {
+  const queryClient = useQueryClient();
+  return (id: string) => {
+    void queryClient.invalidateQueries({ queryKey: samplesKeys.all });
+    void queryClient.invalidateQueries({ queryKey: samplesKeys.detail(id) });
+    // Pasport orqali tasdiqlash reyestrni ham o'zgartiradi
+    void queryClient.invalidateQueries({ queryKey: ['registry'] });
+  };
+}
+
+/** Xato bo'limning o'zida ko'rsatiladi (`silentError`) — global toast takrorlanmaydi. */
+export function useUploadPassportMutation() {
+  const invalidate = useInvalidateSample();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) => uploadPassport(id, file),
+    meta: { silentError: true },
+    onSuccess: (_data, { id }) => invalidate(id),
+  });
+}
+
+export function useReviewPassportMutation() {
+  const invalidate = useInvalidateSample();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: ReviewPassportInput }) =>
+      reviewPassport(id, input),
+    meta: { silentError: true },
+    onSuccess: (_data, { id }) => invalidate(id),
+  });
+}
+
+export function useDeletePassportMutation() {
+  const invalidate = useInvalidateSample();
+  return useMutation({
+    mutationFn: (id: string) => deletePassport(id),
+    onSuccess: (_data, id) => invalidate(id),
   });
 }

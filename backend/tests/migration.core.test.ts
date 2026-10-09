@@ -35,6 +35,7 @@ describeDb('001_core baseline migratsiyasi', () => {
     expect(rows.map((r) => r.table_name)).toEqual([
       'audit_log',
       'companies',
+      'files',
       'sample_tracking',
       'samples',
       'schema_migrations',
@@ -50,6 +51,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 1, name: 'core', state: 'applied' }),
       expect.objectContaining({ version: 2, name: 'substances', state: 'applied' }),
       expect.objectContaining({ version: 3, name: 'samples', state: 'applied' }),
+      expect.objectContaining({ version: 4, name: 'files_passport', state: 'applied' }),
     ]);
   });
 

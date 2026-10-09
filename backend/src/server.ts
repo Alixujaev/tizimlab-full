@@ -1,6 +1,7 @@
 import { createApp } from './app.js';
 import { closePool, initDb, pingDb } from './config/database.js';
 import { loadEnv } from './config/env.js';
+import { storageFromEnv } from './modules/files/files.storage.js';
 import { logger } from './utils/logger.js';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
@@ -8,7 +9,9 @@ const SHUTDOWN_TIMEOUT_MS = 10_000;
 const env = loadEnv();
 initDb(env.DATABASE_URL);
 
-const app = createApp({ env, pingDb: () => pingDb() });
+const storage = storageFromEnv(env);
+if (!storage) logger.warn("R2 sozlanmagan: fayl endpointlari 503 qaytaradi (R2_* ni to'ldiring)");
+const app = createApp({ env, pingDb: () => pingDb(), storage });
 const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
 });

@@ -1,17 +1,8 @@
 export type SampleType =
-  | 'raw_material'
-  | 'finished_product'
-  | 'reagent'
-  | 'standard_substance'
-  | 'other';
+  'raw_material' | 'finished_product' | 'reagent' | 'standard_substance' | 'other';
 
 export type SampleStatus =
-  | 'pending_assignment'
-  | 'in_progress'
-  | 'stopped'
-  | 'submitted'
-  | 'approved'
-  | 'rejected';
+  'pending_assignment' | 'in_progress' | 'stopped' | 'submitted' | 'approved' | 'rejected';
 
 export type SampleTrackingEventType =
   | 'sample_created'
@@ -24,6 +15,7 @@ export type SampleTrackingEventType =
   | 'rejected'
   | 'passport_uploaded'
   | 'passport_reviewed'
+  | 'passport_deleted'
   | 'deleted';
 
 export interface SampleRow {
@@ -94,6 +86,8 @@ export interface SampleDto {
   deletedAt: string | null;
   passportFileName?: string | null;
   passportStatus?: 'pending' | 'approved' | 'rejected' | null;
+  passportFileSize?: number | null;
+  passportUploadedBy?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -140,6 +134,8 @@ export function toSampleDto(row: SampleRow): SampleDto {
     deletedAt: row.deleted_at,
     passportFileName: row.passport_file_name,
     passportStatus: row.passport_status,
+    passportFileSize: row.passport_file_size,
+    passportUploadedBy: row.passport_uploaded_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

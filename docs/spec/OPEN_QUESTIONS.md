@@ -22,13 +22,13 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-20 | ✅ D-108 | 03-samples §3 | P4 | `other` oddiy oqim — biriktirish → `standard` protokol (D-15 "boshqa turlar"). | NON-BLOCKING |
 | Q-25 | ✅ D-109 | 16-architecture §16 | P4 | Voqealar ro'yxati va namuna sahifasida "Harakatlar tarixi" bloki. | NON-BLOCKING |
 | Q-26 | ✅ D-110 | 03-samples §3 | P4 | DD.MM.YYYY butun UI'da; sahifa hajmi 20 (D-22); standart saralash `created_at` kamayish bo'yicha. | NON-BLOCKING |
+| Q-54 | Fayl turi faqat kengaytma/MIME bo'yicha tekshiriladimi yoki magic-byte bo'yicha ham? | 04 §4, 12 §12 — LOYIHA.md:203,345 | P5 | ✅ D-114 |
 
 ## P5
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
 |---|---|---|---|---|---|
 | Q-29 | Rad etish sababiga minimal uzunlik bormi (to'xtatish sababidagi kabi 5 belgi)? | 04-protocols §4 — LOYIHA.md:180 | P5 | Ha, kamida 5 belgi (to'xtatish sababi bilan bir xil). | NON-BLOCKING |
-| Q-54 | Fayl turi faqat kengaytma/MIME bo'yicha tekshiriladimi yoki magic-byte bo'yicha ham? | 04 §4, 12 §12 — LOYIHA.md:203,345 | P5 | Kengaytma + MIME + magic-byte (fayl imzosi) — uchalasi mos kelmasa rad etiladi. | NON-BLOCKING |
 
 ## P6
 

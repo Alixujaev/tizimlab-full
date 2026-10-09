@@ -49,11 +49,11 @@
 | R-ROLE-35 | Protokol yakunlash: `lab_head` — TAQIQ. | 01-roles §1 | P5 | [ ] |
 | R-ROLE-36 | Protokol yakunlash: `director` — RUXSAT. | 01-roles §1 | P5 | [ ] |
 | R-ROLE-37 | Protokol yakunlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-38 | Reyestrni ko'rish: `kontrolyor` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [ ] |
-| R-ROLE-39 | Reyestrni ko'rish: `chemist` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [ ] |
-| R-ROLE-40 | Reyestrni ko'rish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-41 | Reyestrni ko'rish: `director` — RUXSAT. | 01-roles §1 | P4 | [ ] |
-| R-ROLE-42 | Reyestrni ko'rish: `admin` — RUXSAT. | 01-roles §1 | P4 | [ ] |
+| R-ROLE-38 | Reyestrni ko'rish: `kontrolyor` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [x] |
+| R-ROLE-39 | Reyestrni ko'rish: `chemist` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [x] |
+| R-ROLE-40 | Reyestrni ko'rish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [x] |
+| R-ROLE-41 | Reyestrni ko'rish: `director` — RUXSAT. | 01-roles §1 | P4 | [x] |
+| R-ROLE-42 | Reyestrni ko'rish: `admin` — RUXSAT. | 01-roles §1 | P4 | [x] |
 | R-ROLE-43 | Moddalar: `kontrolyor` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
 | R-ROLE-44 | Moddalar: `chemist` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
 | R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [x] |
@@ -163,51 +163,51 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-PASS-01 | Namuna pasportini `raw_material`, `finished_product`, `reagent`, `standard_substance` turlariga biriktirish mumkin. | 03-samples §3 | P5 | [ ] |
-| R-PASS-02 | `other` turidagi namunaga namuna pasporti biriktirilmaydi (Q-20). | 03-samples §3 | P5 | [ ] |
-| R-PASS-03 | Namuna pasporti (`samples.passport_*`) protokol pasportidan (`protocols.passport_*`) alohida ma'lumot va oqim. | 03-samples §3, 18 §18 | P5 | [ ] |
-| R-PASS-04 | `reagent`/`standard_substance` uchun pasport — tasdiqlashning yagona yo'li; kimyogar/protokol jarayoni talab qilinmaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-05 | `reagent`/`standard_substance`: lab_head yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [ ] |
-| R-PASS-06 | `reagent`/`standard_substance`: admin yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [ ] |
-| R-PASS-07 | Pasport avtomatik `approved` bo'lganda namuna ham darhol `approved` bo'ladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [ ] |
-| R-PASS-09 | `reagent`/`standard_substance`: kontrolyor (yoki boshqa oddiy foydalanuvchi) yuklasa pasport `pending` holatda qoladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-10 | `pending` pasportni lab_head yoki admin `reviewPassport` bilan tasdiqlaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi) va `sample_tracking` voqeasida saqlanadi, namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39, DECISIONS.md D-85 | P5 | [ ] |
-| R-PASS-12 | NOTO'G'RI HOLAT: foydalanuvchi o'zi yuklagan pasportni o'zi tasdiqlay olmaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-13 | `pending` pasportni lab_head/admin bo'lmagan foydalanuvchi ko'rib chiqa olmaydi (403). | 03-samples §3 | P5 | [ ] |
-| R-PASS-14 | `raw_material`/`finished_product` uchun pasport faqat qo'shimcha hujjat — namuna statusini o'zgartirmaydi, oddiy oqimni bypass qilmaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-15 | `raw_material`/`finished_product` pasportini kimyogar faqat o'ziga biriktirilgan namunaga yuklay oladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-16 | `raw_material`/`finished_product` pasportini kontrolyor, lab_head, admin yuklay oladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-17 | `raw_material`/`finished_product` pasportini boshqa rollar (director, biriktirilmagan kimyogar) yuklay olmaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-18 | Pasport fayli Cloudflare R2'da saqlanadi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-19 | Pasportni egasi faqat hali tasdiqlanmagan bo'lsa o'chira oladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-20 | Pasportni lab_head/admin (tasdiqlangan bo'lsa ham) o'chira oladi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-21 | Tasdiqlangan pasportni egasi (lab_head/admin bo'lmasa) o'chira olmaydi. | 03-samples §3 | P5 | [ ] |
-| R-PASS-22 | Rad etilgan pasportni yuklagan foydalanuvchi qayta yuklay oladi. | DECISIONS.md D-39 | P5 | [ ] |
+| R-PASS-01 | Namuna pasportini `raw_material`, `finished_product`, `reagent`, `standard_substance` turlariga biriktirish mumkin. | 03-samples §3 | P5 | [x] |
+| R-PASS-02 | `other` turidagi namunaga namuna pasporti biriktirilmaydi (Q-20). | 03-samples §3 | P5 | [x] |
+| R-PASS-03 | Namuna pasporti (`samples.passport_*`) protokol pasportidan (`protocols.passport_*`) alohida ma'lumot va oqim. | 03-samples §3, 18 §18 | P5 | [~] |
+| R-PASS-04 | `reagent`/`standard_substance` uchun pasport — tasdiqlashning yagona yo'li; kimyogar/protokol jarayoni talab qilinmaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-05 | `reagent`/`standard_substance`: lab_head yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [x] |
+| R-PASS-06 | `reagent`/`standard_substance`: admin yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [x] |
+| R-PASS-07 | Pasport avtomatik `approved` bo'lganda namuna ham darhol `approved` bo'ladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [~] |
+| R-PASS-09 | `reagent`/`standard_substance`: kontrolyor (yoki boshqa oddiy foydalanuvchi) yuklasa pasport `pending` holatda qoladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-10 | `pending` pasportni lab_head yoki admin `reviewPassport` bilan tasdiqlaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi) va `sample_tracking` voqeasida saqlanadi, namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39, DECISIONS.md D-85 | P5 | [x] |
+| R-PASS-12 | NOTO'G'RI HOLAT: foydalanuvchi o'zi yuklagan pasportni o'zi tasdiqlay olmaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-13 | `pending` pasportni lab_head/admin bo'lmagan foydalanuvchi ko'rib chiqa olmaydi (403). | 03-samples §3 | P5 | [x] |
+| R-PASS-14 | `raw_material`/`finished_product` uchun pasport faqat qo'shimcha hujjat — namuna statusini o'zgartirmaydi, oddiy oqimni bypass qilmaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-15 | `raw_material`/`finished_product` pasportini kimyogar faqat o'ziga biriktirilgan namunaga yuklay oladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-16 | `raw_material`/`finished_product` pasportini kontrolyor, lab_head, admin yuklay oladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-17 | `raw_material`/`finished_product` pasportini boshqa rollar (director, biriktirilmagan kimyogar) yuklay olmaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-18 | Pasport fayli Cloudflare R2'da saqlanadi. | 03-samples §3 | P5 | [x] |
+| R-PASS-19 | Pasportni egasi faqat hali tasdiqlanmagan bo'lsa o'chira oladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-20 | Pasportni lab_head/admin (tasdiqlangan bo'lsa ham) o'chira oladi. | 03-samples §3 | P5 | [x] |
+| R-PASS-21 | Tasdiqlangan pasportni egasi (lab_head/admin bo'lmasa) o'chira olmaydi. | 03-samples §3 | P5 | [x] |
+| R-PASS-22 | Rad etilgan pasportni yuklagan foydalanuvchi qayta yuklay oladi. | DECISIONS.md D-39 | P5 | [x] |
 | R-PASS-23 | `reagent`/`standard_substance` namunasiga kimyogar biriktirilmaydi (urinish rad etiladi). | DECISIONS.md D-39 | P4 | [x] |
-| R-PASS-24 | `reagent`/`standard_substance` pasportini `chemist` yuklay oladi (`pending`), `director` yuklay olmaydi. | DECISIONS.md D-40 | P5 | [ ] |
-| R-PASS-25 | `raw_material`/`finished_product` pasporti holatsiz qo'shimcha hujjat — `reviewPassport` ularga qo'llanmaydi. | DECISIONS.md D-41 | P5 | [ ] |
+| R-PASS-24 | `reagent`/`standard_substance` pasportini `chemist` yuklay oladi (`pending`), `director` yuklay olmaydi. | DECISIONS.md D-40 | P5 | [~] |
+| R-PASS-25 | `raw_material`/`finished_product` pasporti holatsiz qo'shimcha hujjat — `reviewPassport` ularga qo'llanmaydi. | DECISIONS.md D-41 | P5 | [x] |
 
 ## REG — Reyestr
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-REG-01 | `/registry` — barcha `approved` namunalarning qidiriladigan arxivi (boshqa statuslar ko'rinmaydi). | 03-samples §3, DECISIONS.md D-07 | P4 | [ ] |
-| R-REG-02 | Reyestr filtri: namuna turi. | 03-samples §3 | P4 | [ ] |
-| R-REG-03 | Reyestr filtri: modda nomi. | 03-samples §3 | P4 | [ ] |
-| R-REG-04 | Reyestr filtri: seriya raqami. | 03-samples §3 | P4 | [ ] |
-| R-REG-05 | Reyestr filtri: lot raqami. | 03-samples §3 | P4 | [ ] |
-| R-REG-06 | Reyestr filtri: tasdiqlangan sana oralig'i, DD.MM.YYYY formatida. | 03-samples §3 | P4 | [ ] |
-| R-REG-07 | Reyestr qatoridan namuna tafsilotlariga o'tish: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
-| R-REG-08 | Reyestr qatoridan faylni yuklab olish: `finished_product` — `final` protokol fayli; pasport orqali tasdiqlangan — namuna pasporti fayli. | 03-samples §3, DECISIONS.md D-44 | P5 | [ ] |
-| R-REG-09 | `lab_head` va `admin` namunani reyestrdan o'chiradi — soft-delete (`deleted_at`): barcha ro'yxatlardan yashiriladi, protokol/fayllar/stabilizatsiya saqlanadi, audit'ga yoziladi. | 03-samples §3, DECISIONS.md D-43 | P4 | [ ] |
-| R-REG-10 | `lab_head` va `admin` dan boshqa rol reyestrdan o'chira olmaydi. | 03-samples §3, DECISIONS.md D-43 | P4 | [ ] |
+| R-REG-01 | `/registry` — barcha `approved` namunalarning qidiriladigan arxivi (boshqa statuslar ko'rinmaydi). | 03-samples §3, DECISIONS.md D-07 | P4 | [x] |
+| R-REG-02 | Reyestr filtri: namuna turi. | 03-samples §3 | P4 | [x] |
+| R-REG-03 | Reyestr filtri: modda nomi. | 03-samples §3 | P4 | [x] |
+| R-REG-04 | Reyestr filtri: seriya raqami. | 03-samples §3 | P4 | [x] |
+| R-REG-05 | Reyestr filtri: lot raqami. | 03-samples §3 | P4 | [x] |
+| R-REG-06 | Reyestr filtri: tasdiqlangan sana oralig'i, DD.MM.YYYY formatida. | 03-samples §3 | P4 | [x] |
+| R-REG-07 | Reyestr qatoridan namuna tafsilotlariga o'tish: `/registry/:id`. | 03-samples §3 | P4 | [x] |
+| R-REG-08 | Reyestr qatoridan faylni yuklab olish: `finished_product` — `final` protokol fayli; pasport orqali tasdiqlangan — namuna pasporti fayli. | 03-samples §3, DECISIONS.md D-44 | P5 | [~] |
+| R-REG-09 | `lab_head` va `admin` namunani reyestrdan o'chiradi — soft-delete (`deleted_at`): barcha ro'yxatlardan yashiriladi, protokol/fayllar/stabilizatsiya saqlanadi, audit'ga yoziladi. | 03-samples §3, DECISIONS.md D-43 | P4 | [x] |
+| R-REG-10 | `lab_head` va `admin` dan boshqa rol reyestrdan o'chira olmaydi. | 03-samples §3, DECISIONS.md D-43 | P4 | [x] |
 | R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [x] |
 | R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [ ] |
-| R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [ ] |
+| R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [~] |
 | R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [ ] |
 | R-REG-17 | `/registry/:id` da direktor uchun protokolni "Yakunlash" tugmasi; alohida sahifa yo'q. | DECISIONS.md D-50 | P5 | [ ] |
 
@@ -467,17 +467,17 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-FILE-01 | Barcha fayllar (protokol hujjatlari, pasportlar, reaktiv hujjatlari) Cloudflare R2'da saqlanadi; lokal disk ishlatilmaydi. | 12-files §12, DECISIONS.md D-06 | P5 | [ ] |
-| R-FILE-02 | R2 bilan ishlash `@aws-sdk/client-s3` orqali. | 12-files §12 | P5 | [ ] |
-| R-FILE-03 | Generic `files` moduli: yuklash. | 12-files §12 | P5 | [ ] |
-| R-FILE-04 | Generic `files` moduli: ro'yxat. | 12-files §12 | P5 | [ ] |
-| R-FILE-05 | Generic `files` moduli — UI'siz umumiy yuklash/yuklab olish servisi (R2 kaliti + metadata); yuklab olish backend orqali stream yoki 5 daqiqalik imzolangan URL. | 12-files §12, DECISIONS.md D-61 | P5 | [ ] |
-| R-FILE-06 | Generic `files` moduli: o'chirish. | 12-files §12 | P5 | [ ] |
-| R-FILE-07 | `multer` xotira-saqlash (memory storage) bilan qabul qilinadi. | 12-files §12 | P5 | [ ] |
-| R-FILE-08 | Generic `files` moduli limiti 50MB; undan katta fayl rad etiladi. | 12-files §12, DECISIONS.md D-06 | P5 | [ ] |
-| R-FILE-09 | Generic `files` moduli faqat PDF/.doc/.docx/JPEG/PNG qabul qiladi. | 12-files §12, DECISIONS.md D-06 | P5 | [ ] |
-| R-FILE-10 | Fayl metama'lumoti `files` jadvalida saqlanadi. | 16-architecture §16 | P5 | [ ] |
-| R-FILE-11 | R2 `R2_*` muhit o'zgaruvchilari orqali sozlanadi. | 12-files §12 | P5 | [ ] |
+| R-FILE-01 | Barcha fayllar (protokol hujjatlari, pasportlar, reaktiv hujjatlari) Cloudflare R2'da saqlanadi; lokal disk ishlatilmaydi. | 12-files §12, DECISIONS.md D-06 | P5 | [~] |
+| R-FILE-02 | R2 bilan ishlash `@aws-sdk/client-s3` orqali. | 12-files §12 | P5 | [x] |
+| R-FILE-03 | Generic `files` moduli: yuklash. | 12-files §12 | P5 | [x] |
+| R-FILE-04 | Generic `files` moduli: ro'yxat. | 12-files §12 | P5 | [x] |
+| R-FILE-05 | Generic `files` moduli — UI'siz umumiy yuklash/yuklab olish servisi (R2 kaliti + metadata); yuklab olish backend orqali stream yoki 5 daqiqalik imzolangan URL. | 12-files §12, DECISIONS.md D-61 | P5 | [x] |
+| R-FILE-06 | Generic `files` moduli: o'chirish. | 12-files §12 | P5 | [x] |
+| R-FILE-07 | `multer` xotira-saqlash (memory storage) bilan qabul qilinadi. | 12-files §12 | P5 | [x] |
+| R-FILE-08 | Generic `files` moduli limiti 50MB; undan katta fayl rad etiladi. | 12-files §12, DECISIONS.md D-06 | P5 | [x] |
+| R-FILE-09 | Generic `files` moduli faqat PDF/.doc/.docx/JPEG/PNG qabul qiladi. | 12-files §12, DECISIONS.md D-06 | P5 | [x] |
+| R-FILE-10 | Fayl metama'lumoti `files` jadvalida saqlanadi. | 16-architecture §16 | P5 | [x] |
+| R-FILE-11 | R2 `R2_*` muhit o'zgaruvchilari orqali sozlanadi. | 12-files §12 | P5 | [x] |
 
 ## TG — Telegram
 
@@ -678,8 +678,8 @@
 | R-FE-23 | Sahifa: `SuperAdminDashboard`. | 01 §1, 16 §16 | P2 | [x] |
 | R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (tarkibi — D-33). | 16-architecture §16, DECISIONS.md D-33 | P6 | [ ] |
 | R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [x] |
-| R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [ ] |
-| R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
+| R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [x] |
+| R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [x] |
 | R-FE-28 | Sahifa: moddalar. | 16-architecture §16 | P3 | [x] |
 | R-FE-29 | Sahifa: reaktivlar. | 16-architecture §16 | P7 | [ ] |
 | R-FE-30 | Sahifa: `/reagents/journal`. | 06-reagents §6 | P7 | [ ] |
@@ -750,6 +750,15 @@
 - R-I18N-05 `[~]` — ESLint `i18next/no-literal-string` pages/components'da error (testlangan); P12 da to'liq audit.
 - R-I18N-06 `[x]` — uz/ru/en kalitlari parity testi har `npm run check` da ishlaydi.
 
+### P4b
+- R-PASS-*, R-FILE-* qatorlarining faza ustuni P5 (matn o'zgartirilmadi), lekin P4b da bajarildi (D-116).
+- R-PASS-03 `[~]` — namuna pasporti `samples.passport_*` ustunlarida, alohida oqim (`samples.passport.*`); protokol pasporti (`protocols.passport_*`) P5 da — ajratilganligi o'shanda testlanadi.
+- R-PASS-08 `[~]` — `sampleHooks.closeOpenProtocolsForSample` pasport orqali tasdiqlashda chaqiriladi (testlangan), lekin bo'sh: protocols jadvali P5 da.
+- R-PASS-24 `[~]` — chemist reagent/standard uchun `pending` (policy unit-testi); amalda chemist bu namunalarni ko'rmaydi → API 404 (D-112, foydalanuvchi qarori).
+- R-REG-08 `[~]` — pasport orqali tasdiqlangan namuna pasporti yuklab olinadi (testlangan); `finished_product` final protokol fayli `registryHooks.getFinalProtocolFile` (hozir `null` → 404) — P5.
+- R-REG-15 `[~]` — `registryHooks.assertNoActiveStability` o'chirishda chaqiriladi va xato bersa o'chirish bekor (testlangan); stability_studies jadvali P9 da, hozir tekshiruv bo'sh.
+- R-FILE-01 `[~]` — pasport R2 da (adapter, `files` jadvali); protokol (P5) va reaktiv (P7) hujjatlari o'z fazalarida. Testlar xotiradagi adapter bilan, haqiqiy R2 — qo'lda tekshiruv.
+
 ## Statistika
 
 _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
@@ -758,11 +767,11 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 32 | 0 | 47 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 37 | 0 | 42 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
 | SAMPLE — Namunalar | 41 | 30 | 0 | 11 |
-| PASS — Namuna pasporti | 25 | 1 | 0 | 24 |
-| REG — Reyestr | 17 | 3 | 0 | 14 |
+| PASS — Namuna pasporti | 25 | 22 | 3 | 0 |
+| REG — Reyestr | 17 | 12 | 2 | 3 |
 | PROTO — Protokollar | 62 | 0 | 0 | 62 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
@@ -771,15 +780,15 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 15 | 0 | 3 |
 | AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
-| FILE — Fayllarni saqlash | 11 | 0 | 0 | 11 |
+| FILE — Fayllarni saqlash | 11 | 10 | 1 | 0 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 25 | 1 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 39 | 7 | 39 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 22 | 4 | 19 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 24 | 4 | 17 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 208 | 17 | 377 |
+| **Jami** | 602 | 255 | 23 | 324 |
 
 ### Fazalar bo'yicha
 
@@ -788,13 +797,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P1 | 50 | 38 | 12 | 0 |
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
-| P4 | 71 | 55 | 0 | 16 |
-| P5 | 131 | 0 | 0 | 131 |
+| P4 | 71 | 71 | 0 | 0 |
+| P5 | 131 | 31 | 5 | 95 |
 | P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
-| P9 | 58 | 0 | 0 | 58 |
+| P9 | 58 | 0 | 1 | 57 |
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 208 | 17 | 377 |
+| **Jami** | 602 | 255 | 23 | 324 |

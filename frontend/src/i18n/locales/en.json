@@ -96,7 +96,19 @@
     "forbiddenText": "You do not have permission to view this page.",
     "notFoundTitle": "Page not found",
     "notFoundText": "The page you are looking for does not exist.",
-    "backHome": "Back to dashboard"
+    "backHome": "Back to dashboard",
+    "codes": {
+      "UNSUPPORTED_MEDIA_TYPE": "Unsupported file type or the extension does not match the content (PDF, DOC, DOCX, JPEG, PNG)",
+      "EMPTY_FILE": "The file is empty",
+      "PAYLOAD_TOO_LARGE": "The file exceeds the allowed size",
+      "STORAGE_UNAVAILABLE": "File storage is temporarily unavailable. Contact an administrator.",
+      "PASSPORT_EXISTS": "The sample already has a passport — delete it first",
+      "PASSPORT_NOT_ALLOWED": "Passports cannot be attached to this sample type",
+      "PASSPORT_NOT_FOUND": "Passport not found",
+      "PASSPORT_REVIEW_NOT_APPLICABLE": "Passports of this sample type are not reviewed",
+      "SELF_REVIEW_FORBIDDEN": "You cannot review a passport you uploaded yourself",
+      "FILE_NOT_FOUND": "No downloadable file found"
+    }
   },
   "companies": {
     "title": "Companies",
@@ -404,7 +416,6 @@
     "noTrackingEvents": "No tracking events recorded yet",
     "passportTitle": "Sample Passport",
     "noPassport": "No passport attached",
-    "passportPlaceholderNotice": "Passport upload and expedited approval will be integrated in phase P4b.",
     "protocolTitle": "Analysis Protocol",
     "protocolStatusDraft": "In Phase P5",
     "protocolPlaceholderNotice": "Automatic protocol generation, file upload, and approvals will be integrated in phase P5.",
@@ -439,13 +450,81 @@
       "rejected": "Sample Rejected",
       "passport_uploaded": "Passport Uploaded",
       "passport_reviewed": "Passport Reviewed",
-      "deleted": "Sample Deleted"
+      "deleted": "Sample Deleted",
+      "passport_deleted": "Passport deleted"
     },
     "validation": {
       "substanceRequired": "Substance name is required",
       "dateFormat": "Date format: YYYY-MM-DD",
       "chemistRequired": "Selecting a chemist is required",
       "stopReasonMinLength": "Suspension reason must contain at least 5 characters"
+    },
+    "passport": {
+      "approvalFlowNotice": "For reagents and standard substances the passport is the only approval path: no chemist or protocol is needed.",
+      "autoApproveNotice": "A passport you upload is approved immediately and the sample becomes approved.",
+      "pendingNotice": "A passport you upload will be reviewed by the lab head or an administrator.",
+      "attachmentNotice": "Supplementary document: the passport does not change the regular assignment → analysis → protocol path.",
+      "dropzone": "Drop a file here or",
+      "chooseFile": "choose a file",
+      "fileInputLabel": "Passport file",
+      "fileHint": "PDF, DOC, DOCX, JPEG, PNG — up to 20 MB",
+      "selected": "Selected file: {{name}}",
+      "upload": "Upload",
+      "uploaded": "Passport uploaded",
+      "download": "Download",
+      "delete": "Delete",
+      "deleteTitle": "Delete passport",
+      "deleteConfirm": "The passport file «{{name}}» will be permanently deleted.",
+      "deleteApprovedWarning": "The sample stays approved after the passport is deleted.",
+      "deleted": "Passport deleted",
+      "approve": "Approve",
+      "approved": "Passport approved",
+      "reject": "Reject",
+      "rejected": "Passport rejected",
+      "rejectTitle": "Reject passport",
+      "rejectReason": "Rejection reason",
+      "rejectReasonPlaceholder": "E.g. the certificate has expired",
+      "rejectReasonMin": "The reason must be at least 5 characters long",
+      "rejectedReasonLabel": "Rejection reason",
+      "ownPassportNotice": "You cannot approve a passport you uploaded yourself.",
+      "fileErrors": {
+        "empty": "The file is empty",
+        "tooLarge": "The file must not exceed 20 MB",
+        "unsupported": "Only PDF, DOC, DOCX, JPEG or PNG files can be uploaded"
+      }
     }
+  },
+  "registry": {
+    "subtitle": "Archive of approved samples",
+    "filters": {
+      "type": "Sample type",
+      "substanceName": "Substance name",
+      "serialNumber": "Serial number",
+      "lotNumber": "Lot number",
+      "approvedFrom": "Approved (from)",
+      "approvedTo": "Approved (to)",
+      "datePlaceholder": "DD.MM.YYYY",
+      "apply": "Search",
+      "reset": "Reset",
+      "invalidDate": "The date must be in DD.MM.YYYY format",
+      "invalidRange": "The «from» date cannot be after the «to» date"
+    },
+    "columns": {
+      "substance": "Substance",
+      "type": "Type",
+      "serialNumber": "Serial",
+      "lotNumber": "Lot",
+      "approvedAt": "Approval date"
+    },
+    "downloadPassport": "Download passport",
+    "downloadProtocol": "Download protocol",
+    "delete": "Remove from registry",
+    "deleteTitle": "Remove sample from registry",
+    "deleteConfirm": "Sample «{{name}}» will be hidden from the registry and all lists. Protocols and files are kept.",
+    "confirmDelete": "Remove",
+    "deleted": "Sample removed from the registry",
+    "empty": "There are no approved samples in the registry",
+    "notFound": "Sample not found in the registry",
+    "backToList": "Back to registry"
   }
 }

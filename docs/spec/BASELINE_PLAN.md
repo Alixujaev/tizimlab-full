@@ -113,4 +113,7 @@ Natija: 24 jadval (26 legacy − `protocol_values` − `schema_migrations` − `
 | P3 | `substances` | `name_uz`, `name_ru`, `name_en` | `name_uz` NOT NULL, `name_ru` va `name_en` NULLable; CHECK `name_uz <> ''` | Spec §5 va R-SUBST-01: name_uz majburiy, ru va en ixtiyoriy, UI da fallback `name_uz` ga tushadi (R-I18N-09). |
 | P3 | `substances` o'chirish | Namuna bog'langan moddani o'chirish 409 (R-SUBST-11) | `deleteSubstance` da `information_schema.tables` orqali dinamik tekshiruv; P4 da `samples` yaratilgach FK RESTRICT ishlaydi | Tranzaksiya xatoliksiz bajarilishi va P4 bilan to'liq moslik uchun (R-SUBST-11 [~]). |
 | P3 | `substance_parameters` | `parameter_name` | CHECK `parameter_name <> ''`; bir moddada takror nom Zod va DB darajasida taqiqlandi | Bir xil nomli parametrlar takrorlanishining oldini olish. |
+| P4b | `files` | P5 da (`NNN_protocols_files.sql`) | `004_files_passport.sql` da (P4b); + CHECK `files_size_bytes_check (size_bytes > 0)`, `files_filename_check` | D-116: namuna pasporti R2 fayli metama'lumoti `files` jadvalida; generic fayl servisi P4b da kerak (D-113). |
+| P4b | `sample_tracking` | voqea turlari D-109 | CHECK `sample_tracking_event_type_check` qayta yaratildi: + `passport_deleted`; + indeks `idx_sample_tracking_sample_event (sample_id, event_type, created_at DESC)` | D-117 (pasport o'chirilishi tracking'ga), D-120 (reyestr tasdiqlangan sanasi). |
+| P4b | `samples` | `passport_*` ustunlari | O'zgarishsiz (003 da bor); `passport_file_path` = `files.r2_key` | D-116: ko'rib chiqqan/vaqt/sabab — `sample_tracking` da (D-85). |
 

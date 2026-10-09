@@ -254,19 +254,10 @@ export interface SubstanceListParams {
 
 // ---------------------------------------------------- Samples
 export type SampleType =
-  | 'raw_material'
-  | 'finished_product'
-  | 'reagent'
-  | 'standard_substance'
-  | 'other';
+  'raw_material' | 'finished_product' | 'reagent' | 'standard_substance' | 'other';
 
 export type SampleStatus =
-  | 'pending_assignment'
-  | 'in_progress'
-  | 'stopped'
-  | 'submitted'
-  | 'approved'
-  | 'rejected';
+  'pending_assignment' | 'in_progress' | 'stopped' | 'submitted' | 'approved' | 'rejected';
 
 export type SampleTrackingEventType =
   | 'sample_created'
@@ -279,6 +270,7 @@ export type SampleTrackingEventType =
   | 'rejected'
   | 'passport_uploaded'
   | 'passport_reviewed'
+  | 'passport_deleted'
   | 'deleted';
 
 export interface SampleDto {
@@ -304,7 +296,9 @@ export interface SampleDto {
   stoppedAt: string | null;
   deletedAt: string | null;
   passportFileName?: string | null;
-  passportStatus?: 'pending' | 'approved' | 'rejected' | null;
+  passportStatus?: PassportStatus | null;
+  passportFileSize?: number | null;
+  passportUploadedBy?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -361,3 +355,40 @@ export interface ResumeSampleInput {
   reason?: string | null;
 }
 
+// ---------------------------------------------------- Passport & Files
+export type PassportStatus = 'pending' | 'approved' | 'rejected';
+
+export interface ReviewPassportInput {
+  decision: 'approve' | 'reject';
+  reason?: string;
+}
+
+/** 5 daqiqalik imzolangan URL (D-61). */
+export interface DownloadLink {
+  url: string;
+  expiresIn: number;
+}
+
+// ---------------------------------------------------- Registry
+export type RegistryDownloadKind = 'passport' | 'protocol' | null;
+
+export interface RegistryItemDto extends SampleDto {
+  approvedAt: string;
+  downloadKind: RegistryDownloadKind;
+}
+
+export interface RegistryDetailDto extends RegistryItemDto {
+  tracking: SampleTrackingDto[];
+}
+
+/** API'ga ISO sanalar (YYYY-MM-DD) bilan yuboriladi; UI'da DD.MM.YYYY (D-110). */
+export interface RegistryListParams {
+  page?: number;
+  limit?: number;
+  type?: SampleType;
+  substanceName?: string;
+  serialNumber?: string;
+  lotNumber?: string;
+  approvedFrom?: string;
+  approvedTo?: string;
+}

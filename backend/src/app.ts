@@ -18,9 +18,11 @@ import {
   LOGIN_LIMIT,
   type LoginLimitOptions,
 } from './modules/auth/loginLimiter.js';
+import { createRegistryRouter } from './modules/registry/registry.router.js';
 import { createCompaniesRouter } from './modules/companies/companies.router.js';
 import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
+import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
 export const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
@@ -36,6 +38,8 @@ export interface AppDeps {
   logger?: Logger;
   /** Login rate-limit (D-66) — testlarda kichik/katta qiymat bilan almashtiriladi. */
   loginLimit?: LoginLimitOptions;
+  /** Fayl xotirasi (R2); `null`/berilmagan — fayl endpointlari 503 (D-121). Testlarda xotiradagi adapter. */
+  storage?: FileStorage | null;
 }
 
 /** Express ilovasini yig'adi. Server ishga tushirish `server.ts` da (D-21). */
@@ -44,6 +48,7 @@ export function createApp({
   pingDb,
   logger = defaultLogger,
   loginLimit = LOGIN_LIMIT,
+  storage = null,
 }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
@@ -99,7 +104,8 @@ export function createApp({
   api.use('/companies', createCompaniesRouter({ auth }));
   api.use('/admin', createAdminRouter({ auth }));
   api.use('/substances', createSubstancesRouter({ auth }));
-  api.use('/samples', createSamplesRouter({ auth }));
+  api.use('/samples', createSamplesRouter({ auth, storage }));
+  api.use('/registry', createRegistryRouter({ auth, storage }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

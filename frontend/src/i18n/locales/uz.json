@@ -96,7 +96,19 @@
     "forbiddenText": "Bu sahifani ko'rish uchun huquqingiz yo'q.",
     "notFoundTitle": "Sahifa topilmadi",
     "notFoundText": "Siz qidirgan sahifa mavjud emas.",
-    "backHome": "Bosh sahifaga qaytish"
+    "backHome": "Bosh sahifaga qaytish",
+    "codes": {
+      "UNSUPPORTED_MEDIA_TYPE": "Fayl turi qo‘llab-quvvatlanmaydi yoki kengaytmasi mazmuniga mos emas (PDF, DOC, DOCX, JPEG, PNG)",
+      "EMPTY_FILE": "Fayl bo'sh",
+      "PAYLOAD_TOO_LARGE": "Fayl hajmi ruxsat etilgan chegaradan katta",
+      "STORAGE_UNAVAILABLE": "Fayl xotirasi vaqtincha mavjud emas. Administratorga murojaat qiling.",
+      "PASSPORT_EXISTS": "Namunada pasport allaqachon mavjud — avval uni o'chiring",
+      "PASSPORT_NOT_ALLOWED": "Bu turdagi namunaga pasport biriktirilmaydi",
+      "PASSPORT_NOT_FOUND": "Pasport topilmadi",
+      "PASSPORT_REVIEW_NOT_APPLICABLE": "Bu turdagi namuna pasporti ko'rib chiqilmaydi",
+      "SELF_REVIEW_FORBIDDEN": "O'zingiz yuklagan pasportni o'zingiz ko'rib chiqa olmaysiz",
+      "FILE_NOT_FOUND": "Yuklab olinadigan fayl topilmadi"
+    }
   },
   "companies": {
     "title": "Kompaniyalar",
@@ -404,7 +416,6 @@
     "noTrackingEvents": "Hozircha harakatlar tarixi mavjud emas",
     "passportTitle": "Namuna pasporti",
     "noPassport": "Pasport biriktirilmagan",
-    "passportPlaceholderNotice": "Pasport faylini yuklash va tezlashtirilgan tasdiqlash imkoniyati P4b bosqichida to'liq ulanadi.",
     "protocolTitle": "Tahlil protokoli",
     "protocolStatusDraft": "P5 bosqichida",
     "protocolPlaceholderNotice": "Tahlil protokollarini avtomatik yaratish, fayl yuklash va tasdiqlash P5 bosqichida ulanadi.",
@@ -439,13 +450,81 @@
       "rejected": "Namuna rad etildi",
       "passport_uploaded": "Pasport yuklandi",
       "passport_reviewed": "Pasport ko'rib chiqildi",
-      "deleted": "Namuna o'chirildi"
+      "deleted": "Namuna o'chirildi",
+      "passport_deleted": "Pasport o'chirildi"
     },
     "validation": {
       "substanceRequired": "Modda nomi kiritilishi shart",
       "dateFormat": "Sana formati: YYYY-MM-DD",
       "chemistRequired": "Kimyogarni tanlash shart",
       "stopReasonMinLength": "To'xtatish sababi kamida 5 ta belgidan iborat bo'lishi shart"
+    },
+    "passport": {
+      "approvalFlowNotice": "Reaktiv va standart namunalar uchun pasport — tasdiqlashning yagona yo'li: kimyogar va protokol talab qilinmaydi.",
+      "autoApproveNotice": "Siz yuklagan pasport darhol tasdiqlanadi va namuna tasdiqlangan holatga o'tadi.",
+      "pendingNotice": "Siz yuklagan pasport lab boshlig'i yoki administrator tomonidan ko'rib chiqiladi.",
+      "attachmentNotice": "Qo'shimcha hujjat: pasport namunaning odatdagi biriktirish → tahlil → protokol yo'lini o'zgartirmaydi.",
+      "dropzone": "Faylni shu yerga tashlang yoki",
+      "chooseFile": "faylni tanlang",
+      "fileInputLabel": "Pasport fayli",
+      "fileHint": "PDF, DOC, DOCX, JPEG, PNG — 20 MB gacha",
+      "selected": "Tanlangan fayl: {{name}}",
+      "upload": "Yuklash",
+      "uploaded": "Pasport yuklandi",
+      "download": "Yuklab olish",
+      "delete": "O'chirish",
+      "deleteTitle": "Pasportni o'chirish",
+      "deleteConfirm": "«{{name}}» pasport fayli butunlay o'chiriladi.",
+      "deleteApprovedWarning": "Pasport o'chirilsa ham namuna tasdiqlangan holatda qoladi.",
+      "deleted": "Pasport o'chirildi",
+      "approve": "Tasdiqlash",
+      "approved": "Pasport tasdiqlandi",
+      "reject": "Rad etish",
+      "rejected": "Pasport rad etildi",
+      "rejectTitle": "Pasportni rad etish",
+      "rejectReason": "Rad etish sababi",
+      "rejectReasonPlaceholder": "Masalan: sertifikat muddati o'tgan",
+      "rejectReasonMin": "Sabab kamida 5 ta belgidan iborat bo'lishi shart",
+      "rejectedReasonLabel": "Rad etish sababi",
+      "ownPassportNotice": "O'zingiz yuklagan pasportni o'zingiz tasdiqlay olmaysiz.",
+      "fileErrors": {
+        "empty": "Fayl bo'sh",
+        "tooLarge": "Fayl hajmi 20 MB dan oshmasligi kerak",
+        "unsupported": "Faqat PDF, DOC, DOCX, JPEG yoki PNG fayl yuklash mumkin"
+      }
     }
+  },
+  "registry": {
+    "subtitle": "Tasdiqlangan namunalar arxivi",
+    "filters": {
+      "type": "Namuna turi",
+      "substanceName": "Modda nomi",
+      "serialNumber": "Seriya raqami",
+      "lotNumber": "Lot raqami",
+      "approvedFrom": "Tasdiqlangan (dan)",
+      "approvedTo": "Tasdiqlangan (gacha)",
+      "datePlaceholder": "KK.OO.YYYY",
+      "apply": "Qidirish",
+      "reset": "Tozalash",
+      "invalidDate": "Sana KK.OO.YYYY formatida bo'lishi kerak",
+      "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo'lmasligi kerak"
+    },
+    "columns": {
+      "substance": "Modda",
+      "type": "Turi",
+      "serialNumber": "Seriya",
+      "lotNumber": "Lot",
+      "approvedAt": "Tasdiqlangan sana"
+    },
+    "downloadPassport": "Pasportni yuklab olish",
+    "downloadProtocol": "Protokolni yuklab olish",
+    "delete": "Reyestrdan o'chirish",
+    "deleteTitle": "Namunani reyestrdan o'chirish",
+    "deleteConfirm": "«{{name}}» namunasi reyestr va barcha ro'yxatlardan yashiriladi. Protokol va fayllar saqlanadi.",
+    "confirmDelete": "O'chirish",
+    "deleted": "Namuna reyestrdan o'chirildi",
+    "empty": "Reyestrda tasdiqlangan namuna yo'q",
+    "notFound": "Reyestrda namuna topilmadi",
+    "backToList": "Reyestrga qaytish"
   }
 }

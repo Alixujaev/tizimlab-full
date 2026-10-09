@@ -77,3 +77,26 @@ export type ListSamplesQuery = z.infer<typeof listSamplesQuerySchema>;
 export type AssignSampleInput = z.infer<typeof assignSampleSchema>;
 export type StopSampleInput = z.infer<typeof stopSampleSchema>;
 export type ResumeSampleInput = z.infer<typeof resumeSampleSchema>;
+
+/** Pasportni ko'rib chiqish: rad etishda sabab majburiy, kamida 5 belgi (Q-17, D-85). */
+export const reviewPassportSchema = z
+  .object({
+    decision: z.enum(['approve', 'reject']),
+    reason: z
+      .string()
+      .trim()
+      .max(1000, 'Sabab 1000 belgidan oshmasligi kerak')
+      .optional()
+      .nullable(),
+  })
+  .superRefine((v, ctx) => {
+    if (v.decision === 'reject' && (v.reason ?? '').length < 5) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['reason'],
+        message: 'Rad etish sababi kamida 5 ta belgidan iborat bo‘lishi shart',
+      });
+    }
+  });
+
+export type ReviewPassportInput = z.infer<typeof reviewPassportSchema>;

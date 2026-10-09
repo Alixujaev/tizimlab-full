@@ -2,17 +2,23 @@ import { Router } from 'express';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
 import { requireCompany, requirePermission } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
-import { samplesController } from './samples.controller.js';
+import type { FileStorage } from '../files/files.storage.js';
+import { uploadSingle } from '../files/files.upload.js';
+import { PASSPORT_MAX_BYTES } from '../files/files.validation.js';
+import { createPassportController, samplesController } from './samples.controller.js';
 import {
   assignSampleSchema,
   createSampleSchema,
   listSamplesQuerySchema,
   resumeSampleSchema,
+  reviewPassportSchema,
   stopSampleSchema,
 } from './samples.schemas.js';
 
 export interface SamplesRouterDeps {
   auth: AuthMiddleware;
+  /** R2 adapteri; `null` — sozlanmagan (fayl endpointlari 503, D-121). */
+  storage?: FileStorage | null;
 }
 
 /**
@@ -254,6 +260,154 @@ export function createSamplesRouter(deps: SamplesRouterDeps): Router {
     requirePermission('samples', 'view'),
     validate({ body: resumeSampleSchema }),
     samplesController.resumeSample,
+  );
+
+  const passport = createPassportController(deps.storage ?? null);
+
+  /**
+   * @openapi
+   * /samples/{id}/passport:
+   *   post:
+   *     tags: [Samples]
+   *     summary: Namuna pasportini yuklash (reagent/standard — tasdiqlash yo'li; raw/finished — qo'shimcha hujjat)
+   *     description: >
+   *       lab_head/admin yuklasa reagent/standard_substance pasporti va namuna darhol `approved`;
+   *       kontrolyor/chemist — `pending`. Fayl 20MB gacha, PDF/DOC/DOCX/JPEG/PNG (magic bytes tekshiriladi).
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         multipart/form-data:
+   *           schema:
+   *             type: object
+   *             required: [file]
+   *             properties:
+   *               file:
+   *                 type: string
+   *                 format: binary
+   *     responses:
+   *       201:
+   *         description: Pasport yuklandi
+   *       409:
+   *         description: Pasport mavjud yoki namuna holati mos emas
+   *       413:
+   *         description: Fayl juda katta
+   *       415:
+   *         description: Fayl turi qo'llab-quvvatlanmaydi
+   *       422:
+   *         description: Bo'sh fayl yoki bu turdagi namunaga pasport biriktirilmaydi
+   *       503:
+   *         description: Fayl xotirasi sozlanmagan
+   */
+  router.post(
+    '/:id/passport',
+    ...companyAuth,
+    requirePermission('samples', 'view'),
+    uploadSingle('file', PASSPORT_MAX_BYTES),
+    passport.upload,
+  );
+
+  /**
+   * @openapi
+   * /samples/{id}/passport/review:
+   *   post:
+   *     tags: [Samples]
+   *     summary: Kutilayotgan pasportni tasdiqlash yoki rad etish (lab_head/admin, o'zinikini emas)
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [decision]
+   *             properties:
+   *               decision:
+   *                 type: string
+   *                 enum: [approve, reject]
+   *               reason:
+   *                 type: string
+   *                 minLength: 5
+   *     responses:
+   *       200:
+   *         description: Pasport ko'rib chiqildi
+   */
+  router.post(
+    '/:id/passport/review',
+    ...companyAuth,
+    requirePermission('samples', 'view'),
+    validate({ body: reviewPassportSchema }),
+    passport.review,
+  );
+
+  /**
+   * @openapi
+   * /samples/{id}/passport/download:
+   *   get:
+   *     tags: [Samples]
+   *     summary: Pasport faylining 5 daqiqalik imzolangan URL'i
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *     responses:
+   *       200:
+   *         description: "{ url, expiresIn }"
+   *       404:
+   *         description: Namuna yoki pasport topilmadi
+   */
+  router.get(
+    '/:id/passport/download',
+    ...companyAuth,
+    requirePermission('samples', 'view'),
+    passport.download,
+  );
+
+  /**
+   * @openapi
+   * /samples/{id}/passport:
+   *   delete:
+   *     tags: [Samples]
+   *     summary: Pasportni o'chirish (egasi — tasdiqlanmagan bo'lsa; lab_head/admin — har doim)
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *     responses:
+   *       200:
+   *         description: Pasport o'chirildi (namuna statusi o'zgarmaydi)
+   */
+  router.delete(
+    '/:id/passport',
+    ...companyAuth,
+    requirePermission('samples', 'view'),
+    passport.remove,
   );
 
   return router;

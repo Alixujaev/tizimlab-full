@@ -23,6 +23,17 @@ export interface SampleHooks {
     actorId: string,
     tx: pg.PoolClient,
   ) => Promise<void>;
+
+  /**
+   * Namuna pasport orqali tasdiqlanganda chaqiriladi.
+   * P5 da bu nuqtada ochiq protokollar imzo va xabarnomasiz `approved` ga o'tkaziladi,
+   * tracking'ga "pasport orqali yopildi" yoziladi (D-42).
+   */
+  closeOpenProtocolsForSample: (
+    sample: SampleRow,
+    actorId: string,
+    tx: pg.PoolClient,
+  ) => Promise<void>;
 }
 
 export const sampleHooks: SampleHooks = {
@@ -37,6 +48,12 @@ export const sampleHooks: SampleHooks = {
     void sample;
     void oldStatus;
     void newStatus;
+    void actorId;
+  },
+
+  async closeOpenProtocolsForSample(sample, actorId, _tx) {
+    // P5 integratsiyasi uchun ulanish nuqtasi (protocols jadvali hali yo'q)
+    void sample;
     void actorId;
   },
 };
