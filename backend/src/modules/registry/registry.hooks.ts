@@ -1,6 +1,10 @@
 import type pg from 'pg';
+import { query } from '../../config/database.js';
+import { AppError } from '../../utils/errors.js';
 import type { DownloadLink } from '../files/files.service.js';
 import type { FileStorage } from '../files/files.storage.js';
+import { contentDisposition } from '../files/files.validation.js';
+import type { ProtocolRow } from '../protocols/protocols.types.js';
 import type { SampleRow } from '../samples/samples.types.js';
 
 export interface RegistryHooks {
@@ -22,10 +26,23 @@ export interface RegistryHooks {
 
 export const registryHooks: RegistryHooks = {
   async getFinalProtocolFile(sample, storage) {
-    // P5 integratsiyasi uchun ulanish nuqtasi
-    void sample;
-    void storage;
-    return null;
+    if (!storage) throw new AppError(503, 'STORAGE_UNAVAILABLE', 'Fayl saqlash xizmati ulanmagan');
+
+    const { rows } = await query<ProtocolRow>(
+      `SELECT * FROM protocols
+       WHERE sample_id = $1 AND company_id = $2 AND protocol_role = 'final'`,
+      [sample.id, sample.company_id],
+    );
+    const protocol = rows[0];
+    if (!protocol || !protocol.file_path || !protocol.file_name) return null;
+
+    const disposition = contentDisposition(protocol.file_name);
+    const url = await storage.getSignedUrl(protocol.file_path, {
+      contentDisposition: disposition,
+      contentType: protocol.file_mime ?? 'application/octet-stream',
+      expiresIn: 300,
+    });
+    return { url, expiresIn: 300 };
   },
 
   async assertNoActiveStability(sample, _tx) {

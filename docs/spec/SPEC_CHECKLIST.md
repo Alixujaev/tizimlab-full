@@ -34,21 +34,21 @@
 | R-ROLE-20 | Kimyogarga biriktirish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [x] |
 | R-ROLE-21 | Kimyogarga biriktirish: `director` — TAQIQ. | 01-roles §1 | P4 | [x] |
 | R-ROLE-22 | Kimyogarga biriktirish: `admin` — TAQIQ. | 01-roles §1 | P4 | [x] |
-| R-ROLE-23 | Protokol fayl yuklash: `kontrolyor` — TAQIQ (asosiy fayl; protokol pasporti alohida — R-PROTO-31). | 01-roles §1 | P5 | [ ] |
-| R-ROLE-24 | Protokol fayl yuklash: `chemist` — RUXSAT. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-25 | Protokol fayl yuklash: `lab_head` — RUXSAT. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-26 | Protokol fayl yuklash: `director` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-27 | Protokol fayl yuklash: `admin` — RUXSAT. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-28 | Protokol tasdiqlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-29 | Protokol tasdiqlash: `chemist` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-30 | Protokol tasdiqlash: `lab_head` — RUXSAT. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-31 | Protokol tasdiqlash: `director` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-32 | Protokol tasdiqlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-33 | Protokol yakunlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-34 | Protokol yakunlash: `chemist` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-35 | Protokol yakunlash: `lab_head` — TAQIQ. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-36 | Protokol yakunlash: `director` — RUXSAT. | 01-roles §1 | P5 | [ ] |
-| R-ROLE-37 | Protokol yakunlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [ ] |
+| R-ROLE-23 | Protokol fayl yuklash: `kontrolyor` — TAQIQ (asosiy fayl; protokol pasporti alohida — R-PROTO-31). | 01-roles §1 | P5 | [x] |
+| R-ROLE-24 | Protokol fayl yuklash: `chemist` — RUXSAT. | 01-roles §1 | P5 | [x] |
+| R-ROLE-25 | Protokol fayl yuklash: `lab_head` — RUXSAT. | 01-roles §1 | P5 | [x] |
+| R-ROLE-26 | Protokol fayl yuklash: `director` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-27 | Protokol fayl yuklash: `admin` — RUXSAT. | 01-roles §1 | P5 | [x] |
+| R-ROLE-28 | Protokol tasdiqlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-29 | Protokol tasdiqlash: `chemist` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-30 | Protokol tasdiqlash: `lab_head` — RUXSAT. | 01-roles §1 | P5 | [x] |
+| R-ROLE-31 | Protokol tasdiqlash: `director` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-32 | Protokol tasdiqlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-33 | Protokol yakunlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-34 | Protokol yakunlash: `chemist` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-35 | Protokol yakunlash: `lab_head` — TAQIQ. | 01-roles §1 | P5 | [x] |
+| R-ROLE-36 | Protokol yakunlash: `director` — RUXSAT. | 01-roles §1 | P5 | [x] |
+| R-ROLE-37 | Protokol yakunlash: `admin` — TAQIQ. | 01-roles §1 | P5 | [x] |
 | R-ROLE-38 | Reyestrni ko'rish: `kontrolyor` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [x] |
 | R-ROLE-39 | Reyestrni ko'rish: `chemist` — RUXSAT, kompaniyaning barcha `approved` namunalari (tafsilotlari bilan). | 01-roles §1, DECISIONS.md D-31 | P4 | [x] |
 | R-ROLE-40 | Reyestrni ko'rish: `lab_head` — RUXSAT. | 01-roles §1 | P4 | [x] |
@@ -132,30 +132,30 @@
 | R-SAMPLE-13 | Kontrolyor yangi namuna yaratadi: modda tanlaydi, lot, seriya raqam, miqdor kiritadi. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-14 | Yangi namuna `pending_assignment` holatida yaratiladi. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-15 | O'tish `pending_assignment → in_progress`: faqat lab_head, kimyogarga biriktirish orqali. | 03-samples §3 | P4 | [x] |
-| R-SAMPLE-16 | Biriktirishda protokol avtomatik `draft` holatida yaratiladi: `finished_product` uchun `final`, boshqa turlar uchun `standard`. | 03-samples §3, DECISIONS.md D-15 | P5 | [ ] |
+| R-SAMPLE-16 | Biriktirishda protokol avtomatik `draft` holatida yaratiladi: `finished_product` uchun `final`, boshqa turlar uchun `standard`. | 03-samples §3, DECISIONS.md D-15 | P5 | [x] |
 | R-SAMPLE-17 | Biriktirishda kimyogarga `sample_assigned` xabarnomasi yuboriladi (ekran + real vaqt + Telegram, ulangan bo'lsa). | 03-samples §3, 09 §9 | P6 | [ ] |
 | R-SAMPLE-18 | Faqat `chemist` rolidagi o'sha kompaniya foydalanuvchisiga biriktirish mumkin. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-19 | O'tish `in_progress → stopped`: kimyogar "Tahlilni to'xtatish" bilan. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-20 | To'xtatishda sabab majburiy. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-21 | To'xtatish sababi kamida 5 belgi (4 belgi rad etiladi). | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-22 | O'tish `stopped → in_progress`: kimyogar "Davom ettirish" bilan. | 03-samples §3 | P4 | [x] |
-| R-SAMPLE-23 | O'tish `in_progress → submitted`: kimyogar protokolni yuborganda (`stopped` dan — taqiq). | 03-samples §3, DECISIONS.md D-36 | P5 | [ ] |
-| R-SAMPLE-24 | O'tish `submitted → approved`: lab_head "Tasdiqlash" bilan (protokol tasdiqlanishi orqali). | 03-samples §3 | P5 | [ ] |
-| R-SAMPLE-25 | Lab_head "Rad etish" bosganda namuna `rejected` holatida qoladi; sabab saqlanadi va `sample_tracking` ga yoziladi. | 03-samples §3, DECISIONS.md D-14 | P5 | [ ] |
+| R-SAMPLE-23 | O'tish `in_progress → submitted`: kimyogar protokolni yuborganda (`stopped` dan — taqiq). | 03-samples §3, DECISIONS.md D-36 | P5 | [x] |
+| R-SAMPLE-24 | O'tish `submitted → approved`: lab_head "Tasdiqlash" bilan (protokol tasdiqlanishi orqali). | 03-samples §3 | P5 | [x] |
+| R-SAMPLE-25 | Lab_head "Rad etish" bosganda namuna `rejected` holatida qoladi; sabab saqlanadi va `sample_tracking` ga yoziladi. | 03-samples §3, DECISIONS.md D-14 | P5 | [x] |
 | R-SAMPLE-26 | Diagrammada bo'lmagan o'tishlar rad etiladi (masalan `pending_assignment → submitted`, `approved → in_progress`). | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-27 | Kimyogar faqat o'ziga biriktirilgan namunani to'xtata/davom ettira oladi. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-28 | Kimyogar o'ziga biriktirilgan namunalarni ko'radi. | 03-samples §3 | P4 | [x] |
-| R-SAMPLE-29 | Kimyogar protokolga tahlil faylini (PDF/Word/JPEG/PNG) namuna sahifasida yuklaydi. | 03-samples §3 | P5 | [ ] |
-| R-SAMPLE-30 | Lab_head `submitted` protokollarni ko'rib chiqadi; tasdiqlansa namuna `approved`, protokolga imzo qo'yiladi. | 03-samples §3 | P5 | [ ] |
+| R-SAMPLE-29 | Kimyogar protokolga tahlil faylini (PDF/Word/JPEG/PNG) namuna sahifasida yuklaydi. | 03-samples §3 | P5 | [x] |
+| R-SAMPLE-30 | Lab_head `submitted` protokollarni ko'rib chiqadi; tasdiqlansa namuna `approved`, protokolga imzo qo'yiladi. | 03-samples §3 | P5 | [x] |
 | R-SAMPLE-31 | `sample_tracking` jadvalida namuna voqealari tarixi yoziladi (kim, qachon, nima qildi). | 16-architecture §16, 00 §0 | P4 | [x] |
-| R-SAMPLE-32 | Protokolni to'ldirish/yuklash namunaning o'z sahifasida `ProtocolSection` komponentida bajariladi. | 03-samples §3 | P5 | [ ] |
-| R-SAMPLE-33 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuborganda. | DECISIONS.md D-14 | P5 | [ ] |
-| R-SAMPLE-34 | `stopped` namunadan protokolni yuborish rad etiladi (avval davom ettirish kerak). | DECISIONS.md D-36 | P5 | [ ] |
+| R-SAMPLE-32 | Protokolni to'ldirish/yuklash namunaning o'z sahifasida `ProtocolSection` komponentida bajariladi. | 03-samples §3 | P5 | [x] |
+| R-SAMPLE-33 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuborganda. | DECISIONS.md D-14 | P5 | [x] |
+| R-SAMPLE-34 | `stopped` namunadan protokolni yuborish rad etiladi (avval davom ettirish kerak). | DECISIONS.md D-36 | P5 | [x] |
 | R-SAMPLE-35 | `lab_head` namunani `in_progress`, `stopped`, `rejected` holatlarida boshqa kimyogarga qayta biriktira oladi; boshqa holatlarda — rad etiladi. | DECISIONS.md D-37 | P4 | [x] |
 | R-SAMPLE-36 | Qayta biriktirishda protokol(lar) saqlanib yangi kimyogarga o'tadi; yangi kimyogarga `sample_assigned`, tracking'ga yoziladi. | DECISIONS.md D-37 | P4 | [x] |
 | R-SAMPLE-37 | To'xtatish/davom ettirishni faqat biriktirilgan kimyogar qiladi (`lab_head` ham — taqiq). | DECISIONS.md D-38 | P4 | [x] |
 | R-SAMPLE-38 | Davom ettirishda sabab ixtiyoriy. | DECISIONS.md D-38 | P4 | [x] |
-| R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [ ] |
+| R-SAMPLE-39 | `stopped` namunada protokol fayli yuklanmaydi. | DECISIONS.md D-38 | P5 | [x] |
 | R-SAMPLE-40 | Namuna maydonlari — D-68 ro'yxati (sxemadagi `samples` ustunlari); avtomatik namuna kodi yo'q. | DECISIONS.md D-68 | P4 | [x] |
 | R-SAMPLE-41 | `samples` da `expires_at` va `deadline` ustunlari yo'q. | DECISIONS.md D-17, DECISIONS.md D-71 | P4 | [x] |
 
@@ -170,7 +170,7 @@
 | R-PASS-05 | `reagent`/`standard_substance`: lab_head yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [x] |
 | R-PASS-06 | `reagent`/`standard_substance`: admin yuklasa pasport avtomatik `approved`. | 03-samples §3 | P5 | [x] |
 | R-PASS-07 | Pasport avtomatik `approved` bo'lganda namuna ham darhol `approved` bo'ladi. | 03-samples §3 | P5 | [x] |
-| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [~] |
+| R-PASS-08 | Pasport orqali tasdiqlanganda namunaning ochiq protokollari `approved` ga o'tkaziladi — imzo va xabarnomasiz, tracking'ga "pasport orqali yopildi". | 03-samples §3, DECISIONS.md D-42 | P5 | [x] |
 | R-PASS-09 | `reagent`/`standard_substance`: kontrolyor (yoki boshqa oddiy foydalanuvchi) yuklasa pasport `pending` holatda qoladi. | 03-samples §3 | P5 | [x] |
 | R-PASS-10 | `pending` pasportni lab_head yoki admin `reviewPassport` bilan tasdiqlaydi. | 03-samples §3 | P5 | [x] |
 | R-PASS-11 | `pending` pasportni lab_head yoki admin rad etadi: pasport `rejected`, sabab majburiy (≥5 belgi) va `sample_tracking` voqeasida saqlanadi, namuna `pending_assignment` da qoladi. | 03-samples §3, DECISIONS.md D-39, DECISIONS.md D-85 | P5 | [x] |
@@ -200,51 +200,51 @@
 | R-REG-05 | Reyestr filtri: lot raqami. | 03-samples §3 | P4 | [x] |
 | R-REG-06 | Reyestr filtri: tasdiqlangan sana oralig'i, DD.MM.YYYY formatida. | 03-samples §3 | P4 | [x] |
 | R-REG-07 | Reyestr qatoridan namuna tafsilotlariga o'tish: `/registry/:id`. | 03-samples §3 | P4 | [x] |
-| R-REG-08 | Reyestr qatoridan faylni yuklab olish: `finished_product` — `final` protokol fayli; pasport orqali tasdiqlangan — namuna pasporti fayli. | 03-samples §3, DECISIONS.md D-44 | P5 | [~] |
+| R-REG-08 | Reyestr qatoridan faylni yuklab olish: `finished_product` — `final` protokol fayli; pasport orqali tasdiqlangan — namuna pasporti fayli. | 03-samples §3, DECISIONS.md D-44 | P5 | [x] |
 | R-REG-09 | `lab_head` va `admin` namunani reyestrdan o'chiradi — soft-delete (`deleted_at`): barcha ro'yxatlardan yashiriladi, protokol/fayllar/stabilizatsiya saqlanadi, audit'ga yoziladi. | 03-samples §3, DECISIONS.md D-43 | P4 | [x] |
 | R-REG-10 | `lab_head` va `admin` dan boshqa rol reyestrdan o'chira olmaydi. | 03-samples §3, DECISIONS.md D-43 | P4 | [x] |
 | R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [x] |
-| R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [ ] |
+| R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [x] |
 | R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [~] |
-| R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [ ] |
-| R-REG-17 | `/registry/:id` da direktor uchun protokolni "Yakunlash" tugmasi; alohida sahifa yo'q. | DECISIONS.md D-50 | P5 | [ ] |
+| R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [x] |
+| R-REG-17 | `/registry/:id` da direktor uchun protokolni "Yakunlash" tugmasi; alohida sahifa yo'q. | DECISIONS.md D-50 | P5 | [x] |
 
 ## PROTO — Protokollar
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-PROTO-01 | Protokol qo'lda qiymat kiritish o'rniga fayl yuklash asosida ishlaydi. | 04-protocols §4, 18 §18 | P5 | [ ] |
-| R-PROTO-02 | Protokol statusi `draft` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-03 | Protokol statusi `submitted` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-04 | Protokol statusi `approved` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-05 | Protokol statusi `finalized` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-06 | Protokol statusi `rejected` mavjud. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-07 | O'tish `draft → submitted`: faqat biriktirilgan kimyogar fayl yuklab yuboradi. | 04-protocols §4, DECISIONS.md D-45 | P5 | [ ] |
-| R-PROTO-08 | Asosiy fayl yuklanmagan protokolni yuborish rad etiladi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-09 | O'tish `submitted → approved`: faqat lab_head. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-10 | O'tish `submitted → rejected`: faqat lab_head, sabab bilan. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-11 | Rad etishda sabab majburiy (bo'sh sabab rad etiladi). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-12 | O'tish `approved → finalized`: faqat director. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-13 | `finalized` faqat protokol statusiga ta'sir qiladi, namuna statusiga emas. | DECISIONS.md D-07 | P5 | [ ] |
-| R-PROTO-14 | Rad etilgan protokol `rejected` holatida qoladi (draft'ga qaytmaydi), rad etish sababi saqlanadi. | DECISIONS.md D-14 | P5 | [ ] |
-| R-PROTO-15 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuboradi. | DECISIONS.md D-14 | P5 | [ ] |
-| R-PROTO-16 | Diagrammada bo'lmagan protokol o'tishlari rad etiladi (masalan `draft → approved`, `submitted → finalized`). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-17 | Protokol tasdiqlanganda namuna `approved` bo'ladi. | 03-samples §3, 17 §17 | P5 | [ ] |
-| R-PROTO-18 | `protocol_role` qiymati `standard` — oddiy namunalar uchun yagona protokol (standart). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-19 | `protocol_role` qiymati `final` — tayyor mahsulotning yakuniy tahlili. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-20 | `protocol_role` qiymati `in_process` — ishlab chiqarish jarayonidagi oraliq tahlil. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-21 | Bir namunada har `protocol_role` bo'yicha ko'pi bilan bitta protokol; faqat `finished_product` ikkita (`final` + `in_process`) protokolga ega bo'la oladi. | 04-protocols §4, DECISIONS.md D-15 | P5 | [ ] |
-| R-PROTO-22 | Asosiy fayl (`file_*`) — tahlil natijasi hisoboti, yuborish uchun majburiy. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-23 | Asosiy fayl yangilansa — eskisi almashtiriladi (R2'dan ham). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-24 | Ruxsat etilgan formatlar: PDF. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
-| R-PROTO-25 | Ruxsat etilgan formatlar: Word `.doc`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
-| R-PROTO-26 | Ruxsat etilgan formatlar: Word `.docx`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
-| R-PROTO-27 | Ruxsat etilgan formatlar: JPEG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
-| R-PROTO-28 | Ruxsat etilgan formatlar: PNG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
-| R-PROTO-29 | Boshqa formatdagi protokol fayllari rad etiladi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-30 | Protokol fayli maksimal 20 MB; undan katta fayl rad etiladi. | 04-protocols §4, DECISIONS.md D-06 | P5 | [ ] |
+| R-PROTO-01 | Protokol qo'lda qiymat kiritish o'rniga fayl yuklash asosida ishlaydi. | 04-protocols §4, 18 §18 | P5 | [x] |
+| R-PROTO-02 | Protokol statusi `draft` mavjud. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-03 | Protokol statusi `submitted` mavjud. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-04 | Protokol statusi `approved` mavjud. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-05 | Protokol statusi `finalized` mavjud. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-06 | Protokol statusi `rejected` mavjud. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-07 | O'tish `draft → submitted`: faqat biriktirilgan kimyogar fayl yuklab yuboradi. | 04-protocols §4, DECISIONS.md D-45 | P5 | [x] |
+| R-PROTO-08 | Asosiy fayl yuklanmagan protokolni yuborish rad etiladi. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-09 | O'tish `submitted → approved`: faqat lab_head. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-10 | O'tish `submitted → rejected`: faqat lab_head, sabab bilan. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-11 | Rad etishda sabab majburiy (bo'sh sabab rad etiladi). | 04-protocols §4 | P5 | [x] |
+| R-PROTO-12 | O'tish `approved → finalized`: faqat director. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-13 | `finalized` faqat protokol statusiga ta'sir qiladi, namuna statusiga emas. | DECISIONS.md D-07 | P5 | [x] |
+| R-PROTO-14 | Rad etilgan protokol `rejected` holatida qoladi (draft'ga qaytmaydi), rad etish sababi saqlanadi. | DECISIONS.md D-14 | P5 | [x] |
+| R-PROTO-15 | O'tish `rejected → submitted`: kimyogar faylni yangilab protokolni qayta yuboradi. | DECISIONS.md D-14 | P5 | [x] |
+| R-PROTO-16 | Diagrammada bo'lmagan protokol o'tishlari rad etiladi (masalan `draft → approved`, `submitted → finalized`). | 04-protocols §4 | P5 | [x] |
+| R-PROTO-17 | Protokol tasdiqlanganda namuna `approved` bo'ladi. | 03-samples §3, 17 §17 | P5 | [x] |
+| R-PROTO-18 | `protocol_role` qiymati `standard` — oddiy namunalar uchun yagona protokol (standart). | 04-protocols §4 | P5 | [x] |
+| R-PROTO-19 | `protocol_role` qiymati `final` — tayyor mahsulotning yakuniy tahlili. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-20 | `protocol_role` qiymati `in_process` — ishlab chiqarish jarayonidagi oraliq tahlil. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-21 | Bir namunada har `protocol_role` bo'yicha ko'pi bilan bitta protokol; faqat `finished_product` ikkita (`final` + `in_process`) protokolga ega bo'la oladi. | 04-protocols §4, DECISIONS.md D-15 | P5 | [x] |
+| R-PROTO-22 | Asosiy fayl (`file_*`) — tahlil natijasi hisoboti, yuborish uchun majburiy. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-23 | Asosiy fayl yangilansa — eskisi almashtiriladi (R2'dan ham). | 04-protocols §4 | P5 | [x] |
+| R-PROTO-24 | Ruxsat etilgan formatlar: PDF. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-25 | Ruxsat etilgan formatlar: Word `.doc`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-26 | Ruxsat etilgan formatlar: Word `.docx`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-27 | Ruxsat etilgan formatlar: JPEG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-28 | Ruxsat etilgan formatlar: PNG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-29 | Boshqa formatdagi protokol fayllari rad etiladi. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-30 | Protokol fayli maksimal 20 MB; undan katta fayl rad etiladi. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
 | R-PROTO-31 | Protokol pasporti (`passport_*`) — protokolga qo'shimcha hujjat, chemist/lab_head/admin/kontrolyor yuklay oladi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-32 | Protokol pasportida alohida tasdiqlash oqimi yo'q. | 04-protocols §4, 18 §18 | P5 | [ ] |
 | R-PROTO-33 | Protokol pasportini `director` yuklay olmaydi. | 04-protocols §4 | P5 | [ ] |
@@ -252,31 +252,31 @@
 | R-PROTO-35 | Qo'shimcha fayllar ro'yxati ko'rsatiladi. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-36 | Qo'shimcha faylni alohida yuklab olish mumkin. | 04-protocols §4 | P5 | [ ] |
 | R-PROTO-37 | Qo'shimcha faylni alohida o'chirish mumkin. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-38 | Endpoint `GET /api/v1/protocols/:id/file` — asosiy faylni yuklab olish. | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-38 | Endpoint `GET /api/v1/protocols/:id/file` — asosiy faylni yuklab olish. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-84 | P5 | [ ] |
 | R-PROTO-40 | DOCX eksport `docx` kutubxonasi bilan `src/utils/docxExport.ts` da generatsiya qilinadi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-41 | Kimyogar protokolga kira oladi, agar `protocol.created_by === kimyogar.id`. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-42 | Kimyogar protokolga kira oladi, agar `sample.assigned_to === kimyogar.id`. | 04-protocols §4, 18 §18 | P5 | [ ] |
-| R-PROTO-43 | Ikkala shart ham bajarilmasa kimyogar protokolga kira olmaydi (403/404). | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-44 | Imzo: kimyogar yuborishda imzo qo'yadi — `protocol_signatures` yozuvi (foydalanuvchi, rol, harakat, vaqt), parol qayta kiritilmaydi. | 04-protocols §4, DECISIONS.md D-46 | P5 | [ ] |
-| R-PROTO-45 | Imzo: lab_head tasdiqlashda imzo qo'yadi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-46 | Imzo: director yakunlashda imzo qo'yadi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-47 | Imzolar `protocol_signatures` jadvalida saqlanadi. | 16-architecture §16 | P5 | [ ] |
+| R-PROTO-41 | Kimyogar protokolga kira oladi, agar `protocol.created_by === kimyogar.id`. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-42 | Kimyogar protokolga kira oladi, agar `sample.assigned_to === kimyogar.id`. | 04-protocols §4, 18 §18 | P5 | [x] |
+| R-PROTO-43 | Ikkala shart ham bajarilmasa kimyogar protokolga kira olmaydi (403/404). | 04-protocols §4 | P5 | [x] |
+| R-PROTO-44 | Imzo: kimyogar yuborishda imzo qo'yadi — `protocol_signatures` yozuvi (foydalanuvchi, rol, harakat, vaqt), parol qayta kiritilmaydi. | 04-protocols §4, DECISIONS.md D-46 | P5 | [x] |
+| R-PROTO-45 | Imzo: lab_head tasdiqlashda imzo qo'yadi. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-46 | Imzo: director yakunlashda imzo qo'yadi. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-47 | Imzolar `protocol_signatures` jadvalida saqlanadi. | 16-architecture §16 | P5 | [x] |
 | R-PROTO-48 | Kimyogar yuborganda `protocol_submitted` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
 | R-PROTO-49 | Tasdiqlanganda `protocol_approved` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
 | R-PROTO-50 | Rad etilganda `protocol_rejected` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
-| R-PROTO-51 | `protocol_values` jadvali yangi schemada yo'q. | DECISIONS.md D-09 | P5 | [ ] |
-| R-PROTO-52 | `finished_product` namunasi biriktirilganda `final` protokol `draft` holatida avtomatik yaratiladi. | DECISIONS.md D-15 | P5 | [ ] |
-| R-PROTO-53 | `in_process` protokol ixtiyoriy: uni `lab_head` yoki biriktirilgan kimyogar namuna `approved` bo'lguncha yaratadi; boshqa rollar va `approved` dan keyingi urinish rad etiladi. | DECISIONS.md D-15 | P5 | [ ] |
-| R-PROTO-54 | `finished_product` namunasi statusini faqat `final` protokol belgilaydi (yuborilganda `submitted`, tasdiqlanganda `approved`); `in_process` protokol namuna statusiga ta'sir qilmaydi. | DECISIONS.md D-15 | P5 | [ ] |
-| R-PROTO-55 | `lab_head`/`admin` protokolga fayl yuklay oladi, lekin yubora olmaydi. | DECISIONS.md D-45 | P5 | [ ] |
-| R-PROTO-56 | Rad etilganda oldingi imzolar tarix sifatida saqlanadi; qayta yuborishda yangi imzo qo'shiladi. | DECISIONS.md D-46 | P5 | [ ] |
-| R-PROTO-57 | Asosiy fayl faqat `draft`/`rejected` holatida yuklanadi/almashtiriladi. | DECISIONS.md D-47 | P5 | [ ] |
-| R-PROTO-58 | `submitted`/`approved`/`finalized` holatida protokolning barcha fayllari (asosiy, pasport, qo'shimcha) qulflangan. | DECISIONS.md D-47 | P5 | [ ] |
+| R-PROTO-51 | `protocol_values` jadvali yangi schemada yo'q. | DECISIONS.md D-09 | P5 | [x] |
+| R-PROTO-52 | `finished_product` namunasi biriktirilganda `final` protokol `draft` holatida avtomatik yaratiladi. | DECISIONS.md D-15 | P5 | [x] |
+| R-PROTO-53 | `in_process` protokol ixtiyoriy: uni `lab_head` yoki biriktirilgan kimyogar namuna `approved` bo'lguncha yaratadi; boshqa rollar va `approved` dan keyingi urinish rad etiladi. | DECISIONS.md D-15 | P5 | [x] |
+| R-PROTO-54 | `finished_product` namunasi statusini faqat `final` protokol belgilaydi (yuborilganda `submitted`, tasdiqlanganda `approved`); `in_process` protokol namuna statusiga ta'sir qilmaydi. | DECISIONS.md D-15 | P5 | [x] |
+| R-PROTO-55 | `lab_head`/`admin` protokolga fayl yuklay oladi, lekin yubora olmaydi. | DECISIONS.md D-45 | P5 | [x] |
+| R-PROTO-56 | Rad etilganda oldingi imzolar tarix sifatida saqlanadi; qayta yuborishda yangi imzo qo'shiladi. | DECISIONS.md D-46 | P5 | [x] |
+| R-PROTO-57 | Asosiy fayl faqat `draft`/`rejected` holatida yuklanadi/almashtiriladi. | DECISIONS.md D-47 | P5 | [x] |
+| R-PROTO-58 | `submitted`/`approved`/`finalized` holatida protokolning barcha fayllari (asosiy, pasport, qo'shimcha) qulflangan. | DECISIONS.md D-47 | P5 | [x] |
 | R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [ ] |
 | R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [ ] |
 | R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi (legacy istisno yo'q). | DECISIONS.md D-49, DECISIONS.md D-76 | P5 | [ ] |
-| R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [ ] |
+| R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [x] |
 
 ## SUBST — Moddalar
 
@@ -591,8 +591,8 @@
 | R-ARCH-26 | Jadval `telegram_link_tokens`. | 16-architecture §16 | P11 | [ ] |
 | R-ARCH-27 | Jadval `substances`. | 16-architecture §16 | P3 | [x] |
 | R-ARCH-28 | Jadval `substance_parameters`. | 16-architecture §16 | P3 | [x] |
-| R-ARCH-29 | Jadval `protocols`. | 16-architecture §16 | P5 | [ ] |
-| R-ARCH-30 | Jadval `protocol_signatures`. | 16-architecture §16 | P5 | [ ] |
+| R-ARCH-29 | Jadval `protocols`. | 16-architecture §16 | P5 | [x] |
+| R-ARCH-30 | Jadval `protocol_signatures`. | 16-architecture §16 | P5 | [x] |
 | R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [ ] |
 | R-ARCH-32 | Jadval `samples`. | 16-architecture §16 | P4 | [x] |
 | R-ARCH-33 | Jadval `sample_tracking`. | 16-architecture §16 | P4 | [x] |
@@ -640,7 +640,7 @@
 | R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
 | R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [ ] |
 | R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [x] |
-| R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [x] |
 | R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [ ] |
 | R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
@@ -767,12 +767,12 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 37 | 0 | 42 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 52 | 0 | 27 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
-| SAMPLE — Namunalar | 41 | 30 | 0 | 11 |
-| PASS — Namuna pasporti | 25 | 22 | 3 | 0 |
-| REG — Reyestr | 17 | 12 | 2 | 3 |
-| PROTO — Protokollar | 62 | 0 | 0 | 62 |
+| SAMPLE — Namunalar | 41 | 40 | 0 | 1 |
+| PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
+| REG — Reyestr | 17 | 16 | 1 | 0 |
+| PROTO — Protokollar | 62 | 47 | 0 | 15 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
@@ -785,10 +785,10 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 25 | 1 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 39 | 7 | 39 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 42 | 7 | 36 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 24 | 4 | 17 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 255 | 23 | 324 |
+| **Jami** | 602 | 335 | 21 | 246 |
 
 ### Fazalar bo'yicha
 
@@ -798,7 +798,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
-| P5 | 131 | 31 | 5 | 95 |
+| P5 | 131 | 111 | 3 | 17 |
 | P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
@@ -806,4 +806,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 255 | 23 | 324 |
+| **Jami** | 602 | 335 | 21 | 246 |

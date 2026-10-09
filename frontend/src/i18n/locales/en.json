@@ -507,7 +507,8 @@
       "apply": "Search",
       "reset": "Reset",
       "invalidDate": "The date must be in DD.MM.YYYY format",
-      "invalidRange": "The «from» date cannot be after the «to» date"
+      "invalidRange": "The «from» date cannot be after the «to» date",
+      "unfinalizedOnly": "Unfinalized only (awaiting director finalization)"
     },
     "columns": {
       "substance": "Substance",
@@ -526,5 +527,40 @@
     "empty": "There are no approved samples in the registry",
     "notFound": "Sample not found in the registry",
     "backToList": "Back to registry"
+  },
+  "protocols": {
+    "title": "Analysis protocol",
+    "createInProcess": "Add in-process protocol",
+    "pendingAssignmentNotice": "The analysis protocol will be automatically created once the sample is assigned to a chemist.",
+    "noProtocolsNotice": "No protocols found for this sample.",
+    "mainFile": "Main analysis report (required)",
+    "fileUploaded": "File attached",
+    "fileMissing": "File not uploaded",
+    "uploadFileBtn": "Upload analysis report file",
+    "fileHints": "PDF, Word (.docx, .doc), PNG, JPEG (maximum 20 MB)",
+    "noFileAttached": "No file attached",
+    "uploadRequiredBeforeSubmit": "Please upload the main analysis file before submitting",
+    "submit": "Submit",
+    "resubmit": "Resubmit",
+    "approve": "Approve",
+    "reject": "Reject",
+    "finalize": "Finalize",
+    "rejectedNotice": "Rejected by lab head",
+    "rejectionFixNotice": "Update the file and resubmit the protocol.",
+    "signaturesHistory": "Digital signatures history",
+    "rejectModalTitle": "Reject protocol",
+    "rejectModalDesc": "Enter the reason for rejecting the protocol. This reason will be shown to the chemist and recorded in the signatures audit.",
+    "rejectReasonLabel": "Rejection reason (min 5 characters)",
+    "rejectReasonPlaceholder": "For example: Out of specification results, re-testing required...",
+    "reasonMinLength": "Reason must be at least 5 characters long",
+    "minChars": "At least 5 characters",
+    "rejectConfirm": "Reject",
+    "status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "finalized": "Finalized"
+    }
   }
 }

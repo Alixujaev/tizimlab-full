@@ -21,6 +21,7 @@ export const registryListQuerySchema = paginationQuerySchema
     lotNumber: text,
     approvedFrom: isoDate.optional(),
     approvedTo: isoDate.optional(),
+    unfinalizedOnly: z.coerce.boolean().optional(),
   })
   .refine((q) => !q.approvedFrom || !q.approvedTo || q.approvedFrom <= q.approvedTo, {
     path: ['approvedTo'],

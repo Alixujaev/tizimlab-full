@@ -28,7 +28,7 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
 |---|---|---|---|---|---|
-| Q-29 | Rad etish sababiga minimal uzunlik bormi (to'xtatish sababidagi kabi 5 belgi)? | 04-protocols §4 — LOYIHA.md:180 | P5 | Ha, kamida 5 belgi (to'xtatish sababi bilan bir xil). | NON-BLOCKING |
+| Q-29 | ✅ D-122 | 04-protocols §4 | P5 | Kamida 5 belgi (to'xtatish sababi bilan bir xil). | NON-BLOCKING |
 
 ## P6
 
@@ -95,6 +95,7 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-24 | `/registry/:id` namuna tafsilot sahifasi va namunalar bo'limidagi namuna sahifasi (`ProtocolSection` joylashgan) — bitta sahifami yoki ikki alohida? Namuna sahifasining yo'li (`/samples/:id`?) spec'da yo'q. | 03-samples §3 — LOYIHA.md:153,157 | P4 | ✅ D-29 |
 | Q-27 | `finished_product` ko'p-protokol: `final` va `in_process` protokollar qachon va kim tomonidan yaratiladi (biriktirishda avtomatik ikkalasimi?)? `in_process` bir nechta bo'lishi mumkinmi? Namuna qaysi protokol(lar) tasdiqlanganda `approved` bo'ladi? | 04-protocols §4 — LOYIHA.md:185-191 | P5 | ✅ RESOLVED → D-15 |
 | Q-28 | Protokolni yuborish (`submit`) — faqat kimyogarmi? Matritsada `lab_head` va `admin` ham fayl yuklay oladi — ular yuborishi ham mumkinmi? | 01-roles §1, 04 §4 — LOYIHA.md:65,171 | P5 | ✅ RESOLVED → D-45 |
+| Q-29 | Rad etish sababiga minimal uzunlik bormi (to'xtatish sababidagi kabi 5 belgi)? | 04-protocols §4 — LOYIHA.md:180 | P5 | ✅ D-122 |
 | Q-30 | "Imzo" nimadan iborat — faqat yozuv (kim, rol, vaqt) yoki parolni qayta kiritish/elektron imzo? D-02 bo'yicha rad etilib draft'ga qaytganda oldingi imzolar nima bo'ladi? _(Izoh: D-14 dan keyin protokol draft'ga qaytmaydi — `rejected → submitted`.)_ | 04-protocols §4 — LOYIHA.md:213-215 | P5 | ✅ RESOLVED → D-46 |
 | Q-31 | Protokol fayllarini (asosiy fayl, protokol pasporti, qo'shimcha fayllar) qaysi statuslarda yuklash/almashtirish/o'chirish mumkin (masalan `submitted`/`approved` da taqiqlanadimi)? Protokol pasportini va qo'shimcha fayllarni kim o'chira oladi? | 04-protocols §4 — LOYIHA.md:195-203 | P5 | ✅ RESOLVED → D-47 |
 | Q-32 | `.docx` eksportni kim va qaysi statuslarda yuklab oladi? Hujjat tarkibi ("holat, imzolar, moddaning nomi va h.k.") to'liq ro'yxati va qaysi tilda? | 04-protocols §4 — LOYIHA.md:207 | P5 | ✅ RESOLVED → D-48 |

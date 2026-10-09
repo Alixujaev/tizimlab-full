@@ -26,6 +26,7 @@ interface FilterForm {
   lotNumber: string;
   approvedFrom: string;
   approvedTo: string;
+  unfinalizedOnly: boolean;
 }
 
 const EMPTY: FilterForm = {
@@ -35,6 +36,7 @@ const EMPTY: FilterForm = {
   lotNumber: '',
   approvedFrom: '',
   approvedTo: '',
+  unfinalizedOnly: false,
 };
 
 const inputCls = 'mt-1 block w-full rounded border border-slate-300 px-3 py-1.5 text-sm';
@@ -74,6 +76,7 @@ export const RegistryPage: React.FC = () => {
       lotNumber: form.lotNumber.trim() || undefined,
       approvedFrom: from,
       approvedTo: to,
+      unfinalizedOnly: form.unfinalizedOnly || undefined,
     });
   };
 
@@ -194,6 +197,17 @@ export const RegistryPage: React.FC = () => {
             className={inputCls}
           />
         </label>
+        <div className="sm:col-span-3 flex items-center pt-1">
+          <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.unfinalizedOnly}
+              onChange={(e) => setForm((f) => ({ ...f, unfinalizedOnly: e.target.checked }))}
+              className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+            />
+            <span>{t('registry.filters.unfinalizedOnly', 'Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar')}</span>
+          </label>
+        </div>
         {dateError && (
           <p role="alert" className="text-xs text-rose-600 sm:col-span-3">
             {dateError}

@@ -20,6 +20,7 @@ import {
 } from './modules/auth/loginLimiter.js';
 import { createRegistryRouter } from './modules/registry/registry.router.js';
 import { createCompaniesRouter } from './modules/companies/companies.router.js';
+import { createProtocolsRouter } from './modules/protocols/protocols.router.js';
 import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
 import type { FileStorage } from './modules/files/files.storage.js';
@@ -105,6 +106,7 @@ export function createApp({
   api.use('/admin', createAdminRouter({ auth }));
   api.use('/substances', createSubstancesRouter({ auth }));
   api.use('/samples', createSamplesRouter({ auth, storage }));
+  api.use('/protocols', createProtocolsRouter({ auth, storage }));
   api.use('/registry', createRegistryRouter({ auth, storage }));
   app.use('/api/v1', api);
 

@@ -1,4 +1,8 @@
 import type pg from 'pg';
+import {
+  autoCreateProtocolOnAssignment,
+  closeOpenProtocolsForSample,
+} from '../protocols/protocols.service.js';
 import type { SampleRow, SampleStatus } from './samples.types.js';
 
 export interface SampleHooks {
@@ -37,10 +41,14 @@ export interface SampleHooks {
 }
 
 export const sampleHooks: SampleHooks = {
-  async onSampleAssigned(sample, chemistUser, _tx) {
-    // P5 integratsiyasi uchun ulanish nuqtasi
-    void sample;
-    void chemistUser;
+  async onSampleAssigned(sample, chemistUser, tx) {
+    await autoCreateProtocolOnAssignment(
+      tx,
+      sample.company_id,
+      sample.id,
+      sample.type,
+      sample.assigned_by || chemistUser.id,
+    );
   },
 
   async onSampleStatusChanged(sample, oldStatus, newStatus, actorId, _tx) {
@@ -51,9 +59,7 @@ export const sampleHooks: SampleHooks = {
     void actorId;
   },
 
-  async closeOpenProtocolsForSample(sample, actorId, _tx) {
-    // P5 integratsiyasi uchun ulanish nuqtasi (protocols jadvali hali yo'q)
-    void sample;
-    void actorId;
+  async closeOpenProtocolsForSample(sample, actorId, tx) {
+    await closeOpenProtocolsForSample(tx, sample.company_id, sample.id, actorId);
   },
 };

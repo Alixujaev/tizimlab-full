@@ -82,6 +82,9 @@ export async function listRegistry(
   // Ikki tomoni inklyuziv: [from 00:00, to+1 00:00)
   if (params.approvedFrom) add((i) => `r.approved_at >= $${i}::date`, params.approvedFrom);
   if (params.approvedTo) add((i) => `r.approved_at < ($${i}::date + 1)`, params.approvedTo);
+  if (params.unfinalizedOnly) {
+    where.push(`EXISTS (SELECT 1 FROM protocols p WHERE p.sample_id = r.id AND p.status = 'approved')`);
+  }
 
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
   const from = `FROM (${REGISTRY_BASE}) r ${whereSql}`;

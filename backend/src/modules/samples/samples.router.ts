@@ -6,6 +6,8 @@ import type { FileStorage } from '../files/files.storage.js';
 import { uploadSingle } from '../files/files.upload.js';
 import { PASSPORT_MAX_BYTES } from '../files/files.validation.js';
 import { createPassportController, samplesController } from './samples.controller.js';
+import { createProtocolsController } from '../protocols/protocols.controller.js';
+import { sampleIdParamSchema } from '../protocols/protocols.schemas.js';
 import {
   assignSampleSchema,
   createSampleSchema,
@@ -408,6 +410,22 @@ export function createSamplesRouter(deps: SamplesRouterDeps): Router {
     ...companyAuth,
     requirePermission('samples', 'view'),
     passport.remove,
+  );
+
+  const protocols = createProtocolsController(deps.storage ?? null);
+
+  router.get(
+    '/:sampleId/protocols',
+    ...companyAuth,
+    validate({ params: sampleIdParamSchema }),
+    protocols.getProtocolsBySample,
+  );
+
+  router.post(
+    '/:sampleId/protocols/in-process',
+    ...companyAuth,
+    validate({ params: sampleIdParamSchema }),
+    protocols.createInProcess,
   );
 
   return router;

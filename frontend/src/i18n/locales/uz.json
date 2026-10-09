@@ -507,7 +507,8 @@
       "apply": "Qidirish",
       "reset": "Tozalash",
       "invalidDate": "Sana KK.OO.YYYY formatida bo'lishi kerak",
-      "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo'lmasligi kerak"
+      "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo'lmasligi kerak",
+      "unfinalizedOnly": "Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar"
     },
     "columns": {
       "substance": "Modda",
@@ -526,5 +527,40 @@
     "empty": "Reyestrda tasdiqlangan namuna yo'q",
     "notFound": "Reyestrda namuna topilmadi",
     "backToList": "Reyestrga qaytish"
+  },
+  "protocols": {
+    "title": "Tahlil protokoli",
+    "createInProcess": "Oraliq protokol qo‘shish",
+    "pendingAssignmentNotice": "Namuna kimyogarga biriktirilgach tahlil protokoli avtomatik yaratiladi.",
+    "noProtocolsNotice": "Ushbu namunada protokollar topilmadi.",
+    "mainFile": "Asosiy tahlil hisoboti (majburiy)",
+    "fileUploaded": "Fayl biriktirilgan",
+    "fileMissing": "Fayl yuklanmagan",
+    "uploadFileBtn": "Tahlil hisobot faylini yuklash",
+    "fileHints": "PDF, Word (.docx, .doc), PNG, JPEG (maksimal 20 MB)",
+    "noFileAttached": "Fayl biriktirilmagan",
+    "uploadRequiredBeforeSubmit": "Yuborishdan oldin asosiy tahlil faylini yuklang",
+    "submit": "Yuborish",
+    "resubmit": "Qayta yuborish",
+    "approve": "Tasdiqlash",
+    "reject": "Rad etish",
+    "finalize": "Yakunlash",
+    "rejectedNotice": "Laboratoriya mudiri tomonidan rad etilgan",
+    "rejectionFixNotice": "Faylni yangilang va protokolni qayta yuboring.",
+    "signaturesHistory": "Elektron imzolar tarixi",
+    "rejectModalTitle": "Protokolni rad etish",
+    "rejectModalDesc": "Protokolni rad etish sababini kiriting. Ushbu sabab kimyogarga ko‘rsatiladi va imzo jurnalida saqlanadi.",
+    "rejectReasonLabel": "Rad etish sababi (kamida 5 ta belgi)",
+    "rejectReasonPlaceholder": "Masalan: Natijalar me’yoridan chetga chiqqan, tahlil qayta o‘tkazilsin...",
+    "reasonMinLength": "Sabab kamida 5 ta belgidan iborat bo‘lishi shart",
+    "minChars": "Kamida 5 ta belgi",
+    "rejectConfirm": "Rad etish",
+    "status": {
+      "draft": "Qoralama",
+      "submitted": "Yuborilgan",
+      "approved": "Tasdiqlangan",
+      "rejected": "Rad etilgan",
+      "finalized": "Yakunlangan"
+    }
   }
 }

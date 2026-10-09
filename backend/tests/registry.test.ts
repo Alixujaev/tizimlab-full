@@ -332,4 +332,31 @@ describeDb('registry: reyestr (R-REG-*, R-ROLE-38..42, R-FE-26/27 backend)', () 
       (await request(app).delete(`/api/v1/registry/${ids.raw}`).set(auth('admin'))).status,
     ).toBe(404);
   });
+
+  it('R-REG-16: /registry da unfinalizedOnly filtri faqat yakunlanmagan protokollarni qaytaradi', async () => {
+    // ids.finished uchun approved holatdagi protokol yaratamiz (finalized emas)
+    const protoId = '00000000-0000-0000-0000-000000000001';
+    await query(
+      `INSERT INTO protocols (id, company_id, sample_id, created_by, status, protocol_role)
+       VALUES ($1, $2, $3, $4, 'approved', 'final')
+       ON CONFLICT (id) DO NOTHING`,
+      [protoId, companyAId, ids.finished, users.labHead!.id],
+    );
+
+    const res = await request(app)
+      .get('/api/v1/registry?unfinalizedOnly=true')
+      .set(auth('director'));
+    expect(res.status).toBe(200);
+    const returnedIds = (res.body.data as { id: string }[]).map((s) => s.id);
+    expect(returnedIds).toContain(ids.finished);
+
+    // Protokolni finalized qilgach, unfinalizedOnly ro'yxatida chiqmaydi
+    await query(`UPDATE protocols SET status = 'finalized' WHERE id = $1`, [protoId]);
+    const resAfter = await request(app)
+      .get('/api/v1/registry?unfinalizedOnly=true')
+      .set(auth('director'));
+    expect(resAfter.status).toBe(200);
+    const returnedAfterIds = (resAfter.body.data as { id: string }[]).map((s) => s.id);
+    expect(returnedAfterIds).not.toContain(ids.finished);
+  });
 });

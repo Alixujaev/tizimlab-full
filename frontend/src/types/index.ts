@@ -381,7 +381,6 @@ export interface RegistryDetailDto extends RegistryItemDto {
   tracking: SampleTrackingDto[];
 }
 
-/** API'ga ISO sanalar (YYYY-MM-DD) bilan yuboriladi; UI'da DD.MM.YYYY (D-110). */
 export interface RegistryListParams {
   page?: number;
   limit?: number;
@@ -391,4 +390,54 @@ export interface RegistryListParams {
   lotNumber?: string;
   approvedFrom?: string;
   approvedTo?: string;
+  unfinalizedOnly?: boolean;
+}
+
+// ---------------------------------------------------- Protocols
+export type ProtocolStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'finalized';
+export type ProtocolRole = 'standard' | 'final' | 'in_process';
+export type ProtocolSignatureAction = 'submitted' | 'approved' | 'rejected' | 'finalized';
+
+export interface ProtocolSignatureDto {
+  id: string;
+  userId: string;
+  userFullName: string | null;
+  role: Role;
+  action: ProtocolSignatureAction;
+  signatureHash: string;
+  ipAddress: string | null;
+  signedAt: string;
+}
+
+export interface ProtocolDto {
+  id: string;
+  companyId: string;
+  sampleId: string;
+  createdBy: string;
+  createdByName?: string | null;
+  status: ProtocolStatus;
+  protocolRole: ProtocolRole;
+  filePath: string | null;
+  fileName: string | null;
+  fileSize: number | null;
+  fileMime: string | null;
+  rejectionReason: string | null;
+  submittedAt: string | null;
+  approvedAt: string | null;
+  finalizedAt: string | null;
+  rejectedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProtocolDetailDto extends ProtocolDto {
+  sampleSubstanceName: string;
+  sampleType: string;
+  sampleStatus: string;
+  sampleAssignedTo: string | null;
+  signatures: ProtocolSignatureDto[];
+}
+
+export interface RejectProtocolInput {
+  reason: string;
 }

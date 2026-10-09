@@ -36,6 +36,8 @@ describeDb('001_core baseline migratsiyasi', () => {
       'audit_log',
       'companies',
       'files',
+      'protocol_signatures',
+      'protocols',
       'sample_tracking',
       'samples',
       'schema_migrations',
@@ -52,6 +54,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 2, name: 'substances', state: 'applied' }),
       expect.objectContaining({ version: 3, name: 'samples', state: 'applied' }),
       expect.objectContaining({ version: 4, name: 'files_passport', state: 'applied' }),
+      expect.objectContaining({ version: 5, name: 'protocols', state: 'applied' }),
     ]);
   });
 
@@ -138,6 +141,7 @@ describeDb('001_core baseline migratsiyasi', () => {
     );
     expect(triggers.rows.map((r) => r.tgname)).toEqual([
       'trg_companies_updated_at',
+      'trg_protocols_updated_at',
       'trg_samples_updated_at',
       'trg_substances_updated_at',
       'trg_users_updated_at',

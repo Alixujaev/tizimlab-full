@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router';
 import { Spinner } from '@/components/ui/Spinner';
+import { useFinalizeProtocolMutation, useProtocolsBySampleQuery } from '@/hooks/useProtocols';
 import { useRegistryItemQuery } from '@/hooks/useRegistry';
 import { formatDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
@@ -16,7 +17,12 @@ export const RegistryDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const role = useAuthStore((s) => s.user?.role);
   const { data: item, isLoading, isError } = useRegistryItemQuery(id);
+  const { data: protocols } = useProtocolsBySampleQuery(id);
+  const finalizeMutation = useFinalizeProtocolMutation(id);
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const approvedProtocol = protocols?.find((p) => p.status === 'approved');
+  const isDirector = role === 'director';
 
   const back = (
     <Link to="/registry" className="text-xs font-medium text-slate-500 hover:text-slate-800">
@@ -68,6 +74,16 @@ export const RegistryDetailPage: React.FC = () => {
               {item.downloadKind === 'passport'
                 ? t('registry.downloadPassport')
                 : t('registry.downloadProtocol')}
+            </button>
+          )}
+          {isDirector && approvedProtocol && (
+            <button
+              type="button"
+              onClick={() => finalizeMutation.mutate(approvedProtocol.id)}
+              disabled={finalizeMutation.isPending}
+              className="px-3 py-1.5 text-sm font-medium rounded bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-colors disabled:opacity-50"
+            >
+              {finalizeMutation.isPending ? t('common.loading', 'Yuklanmoqda...') : t('protocols.finalize', 'Yakunlash')}
             </button>
           )}
           {canDeleteFromRegistry(role) && (
