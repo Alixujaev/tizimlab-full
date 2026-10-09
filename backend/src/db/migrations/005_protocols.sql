@@ -14,7 +14,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS protocols (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid NOT NULL REFERENCES companies(id) ON DELETE RESTRICT,
-  sample_id uuid NOT NULL REFERENCES samples(id) ON DELETE CASCADE,
+  sample_id uuid NOT NULL REFERENCES samples(id) ON DELETE RESTRICT,
   created_by uuid NOT NULL REFERENCES users(id),
   status protocol_status NOT NULL DEFAULT 'draft',
   protocol_role protocol_role NOT NULL DEFAULT 'standard',

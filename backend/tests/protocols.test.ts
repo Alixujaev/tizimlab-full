@@ -553,5 +553,12 @@ describeDb('protocols: protokollar yadrosi va imzolar (P5a, R-PROTO-*, R-ROLE-23
       expect(fileLink).not.toBeNull();
       expect(fileLink?.url).toMatch(/^memory:\/\//);
     });
+
+    it('namunada protokol mavjud bo‘lganda jismoniy DELETE samples FK RESTRICT bilan bloklanadi', async () => {
+      const { sampleId } = await createAndAssignSample('raw_material');
+      await expect(query(`DELETE FROM samples WHERE id = $1`, [sampleId])).rejects.toThrow(
+        /foreign key|violates foreign key constraint/i,
+      );
+    });
   });
 });
