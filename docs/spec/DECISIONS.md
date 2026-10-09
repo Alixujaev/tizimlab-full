@@ -50,7 +50,7 @@ Checklist'da ularga `DECISIONS.md D-NN` deb havola qilinadi.
 | D-43 | (Q-22) Soft-delete (`deleted_at`): namuna barcha ro'yxatlardan yashiriladi, protokol/fayllar/stabilizatsiya saqlanadi, audit'ga yoziladi; `lab_head` va `admin` qila oladi; faol stabilizatsiyasi bor namunani o'chirib bo'lmaydi. |
 | D-44 | (Q-23) `finished_product` — `final` protokol fayli (D-15); pasport orqali tasdiqlangan namuna — namuna pasporti fayli. |
 | D-45 | (Q-28) Yuborishni faqat biriktirilgan kimyogar qiladi; `lab_head`/`admin` fayl yuklay oladi, lekin yubormaydi. |
-| D-46 | (Q-30) Imzo — `protocol_signatures` yozuvi (foydalanuvchi, rol, harakat, vaqt), parol qayta kiritilmaydi; rad etilganda oldingi imzolar tarix sifatida saqlanadi, qayta yuborishda yangi imzo qo'shiladi. |
+| D-46 | (Q-30) Imzo — `protocol_signatures` yozuvi (foydalanuvchi, rol, harakat, vaqt), parol qayta kiritilmaydi; `signature_hash` (SHA-256) — audit/yaxlitlik izi, huquqiy imzo emas; rad etilganda oldingi imzolar tarix sifatida saqlanadi, qayta yuborishda yangi imzo qo'shiladi. |
 | D-47 | (Q-31) Asosiy fayl faqat `draft`/`rejected` da yuklanadi/almashtiriladi; `submitted`/`approved`/`finalized` da hamma fayllar qulflangan; pasport va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi. |
 | D-48 | (Q-32) Protokolni ko'ra oladigan har kim, istalgan statusda; tarkib: namuna (tur, modda, lot, seriya, kod), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); so'rov paytidagi UI tilida. → YANGILANDI: D-84 |
 | D-49 | (Q-33) `protocol_files` (qo'shimcha fayllar) faqat `finished_product` protokollariga biriktiriladi (spec §4); boshqa protokollarga — yo'q. |

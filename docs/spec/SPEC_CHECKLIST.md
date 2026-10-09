@@ -239,10 +239,10 @@
 | R-PROTO-22 | Asosiy fayl (`file_*`) — tahlil natijasi hisoboti, yuborish uchun majburiy. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-23 | Asosiy fayl yangilansa — eskisi almashtiriladi (R2'dan ham). | 04-protocols §4 | P5 | [x] |
 | R-PROTO-24 | Ruxsat etilgan formatlar: PDF. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
-| R-PROTO-25 | Ruxsat etilgan formatlar: Word `.doc`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
-| R-PROTO-26 | Ruxsat etilgan formatlar: Word `.docx`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
-| R-PROTO-27 | Ruxsat etilgan formatlar: JPEG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
-| R-PROTO-28 | Ruxsat etilgan formatlar: PNG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
+| R-PROTO-25 | Ruxsat etilgan formatlar: Word `.doc`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [~] |
+| R-PROTO-26 | Ruxsat etilgan formatlar: Word `.docx`. | 04-protocols §4, DECISIONS.md D-06 | P5 | [~] |
+| R-PROTO-27 | Ruxsat etilgan formatlar: JPEG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [~] |
+| R-PROTO-28 | Ruxsat etilgan formatlar: PNG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [~] |
 | R-PROTO-29 | Boshqa formatdagi protokol fayllari rad etiladi. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-30 | Protokol fayli maksimal 20 MB; undan katta fayl rad etiladi. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
 | R-PROTO-31 | Protokol pasporti (`passport_*`) — protokolga qo'shimcha hujjat, chemist/lab_head/admin/kontrolyor yuklay oladi. | 04-protocols §4 | P5 | [ ] |
@@ -276,7 +276,7 @@
 | R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [ ] |
 | R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [ ] |
 | R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi (legacy istisno yo'q). | DECISIONS.md D-49, DECISIONS.md D-76 | P5 | [ ] |
-| R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [x] |
+| R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [~] |
 
 ## SUBST — Moddalar
 
@@ -772,7 +772,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | SAMPLE — Namunalar | 41 | 40 | 0 | 1 |
 | PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
 | REG — Reyestr | 17 | 16 | 1 | 0 |
-| PROTO — Protokollar | 62 | 47 | 0 | 15 |
+| PROTO — Protokollar | 62 | 42 | 5 | 15 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
@@ -788,7 +788,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 42 | 7 | 36 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 24 | 4 | 17 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 335 | 21 | 246 |
+| **Jami** | 602 | 330 | 26 | 246 |
 
 ### Fazalar bo'yicha
 
@@ -798,7 +798,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
-| P5 | 131 | 111 | 3 | 17 |
+| P5 | 131 | 106 | 8 | 17 |
 | P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
@@ -806,4 +806,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 335 | 21 | 246 |
+| **Jami** | 602 | 330 | 26 | 246 |
