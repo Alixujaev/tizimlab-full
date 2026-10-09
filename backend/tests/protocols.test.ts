@@ -561,4 +561,167 @@ describeDb('protocols: protokollar yadrosi va imzolar (P5a, R-PROTO-*, R-ROLE-23
       );
     });
   });
+
+  describe('P5a maxsus oqimlar va ruxsatlar (qayta biriktirish, admin in_process cheklovi, approved namunada in_process)', () => {
+    it('chemist A ga biriktirilgan namuna chemist B ga qayta biriktirilgandan keyin: A protokolni ko‘rishda 404 oladi, fayl yuklay va yubora olmaydi; B ko‘radi', async () => {
+      // 1. Namunani chemist1 ga biriktiramiz
+      const { sampleId, protocolId } = await createAndAssignSample('raw_material');
+
+      // Chemist1 boshida protokolni ko'ra oladi
+      const initialGet = await request(app)
+        .get(`/api/v1/protocols/${protocolId}`)
+        .set(auth('chemist1'));
+      expect(initialGet.status).toBe(200);
+
+      // 2. Lab_head namunani chemist2 ga qayta biriktiradi
+      const reassignRes = await request(app)
+        .post(`/api/v1/samples/${sampleId}/assign`)
+        .set(auth('labHead'))
+        .send({ chemistId: users.chemist2!.id });
+      expect(reassignRes.status).toBe(200);
+
+      // 3. Chemist1 (A) endi protokolni ko'ra olmaydi (404)
+      const getResA = await request(app)
+        .get(`/api/v1/protocols/${protocolId}`)
+        .set(auth('chemist1'));
+      expect(getResA.status).toBe(404);
+
+      // Chemist1 fayl yuklay olmaydi (403)
+      const uploadResA = await request(app)
+        .post(`/api/v1/protocols/${protocolId}/file`)
+        .set(auth('chemist1'))
+        .attach('file', fixtures.pdf(), 'a_urinish.pdf');
+      expect(uploadResA.status).toBe(403);
+
+      // Chemist1 yubora olmaydi (403)
+      const submitResA = await request(app)
+        .post(`/api/v1/protocols/${protocolId}/submit`)
+        .set(auth('chemist1'));
+      expect(submitResA.status).toBe(403);
+
+      // 4. Chemist2 (B) protokolni ko'radi (200)
+      const getResB = await request(app)
+        .get(`/api/v1/protocols/${protocolId}`)
+        .set(auth('chemist2'));
+      expect(getResB.status).toBe(200);
+      expect(getResB.body.data.id).toBe(protocolId);
+      expect(getResB.body.data.sampleAssignedTo).toBe(users.chemist2!.id);
+    });
+
+    it('admin in_process yarata olmaydi (403); lab_head va biriktirilgan chemist yaratadi', async () => {
+      // 1. Finished product namunasi
+      const { sampleId: sampleId1 } = await createAndAssignSample('finished_product');
+
+      // Admin in_process yarata olmaydi (403)
+      const adminCreate = await request(app)
+        .post(`/api/v1/protocols/sample/${sampleId1}/in-process`)
+        .set(auth('admin'));
+      expect(adminCreate.status).toBe(403);
+
+      // Lab_head yarata oladi (201)
+      const labHeadCreate = await request(app)
+        .post(`/api/v1/protocols/sample/${sampleId1}/in-process`)
+        .set(auth('labHead'));
+      expect(labHeadCreate.status).toBe(201);
+      expect(labHeadCreate.body.data.protocolRole).toBe('in_process');
+
+      // 2. Ikkinchi finished product namunasi
+      const { sampleId: sampleId2 } = await createAndAssignSample('finished_product');
+
+      // Biriktirilgan kimyogar (chemist1) yarata oladi (201)
+      const chemistCreate = await request(app)
+        .post(`/api/v1/protocols/sample/${sampleId2}/in-process`)
+        .set(auth('chemist1'));
+      expect(chemistCreate.status).toBe(201);
+      expect(chemistCreate.body.data.protocolRole).toBe('in_process');
+    });
+
+    it('final protokol tasdiqlanib namuna approved bo‘lgandan KEYIN mavjud in_process: chemist yubora oladi, lab_head tasdiqlay/rad eta oladi, namuna statusi o‘zgarmaydi', async () => {
+      // 1. Finished product namunasi va in_process protokol ochamiz
+      const { sampleId, protocolId: finalProtocolId } = await createAndAssignSample('finished_product');
+
+      const createInProcessRes = await request(app)
+        .post(`/api/v1/protocols/sample/${sampleId}/in-process`)
+        .set(auth('labHead'));
+      expect(createInProcessRes.status).toBe(201);
+      const inProcessId = createInProcessRes.body.data.id;
+
+      // 2. Final protokolni to'ldiramiz, yuboramiz va lab_head tasdiqlaydi
+      await request(app)
+        .post(`/api/v1/protocols/${finalProtocolId}/file`)
+        .set(auth('chemist1'))
+        .attach('file', fixtures.pdf(), 'final_analiz.pdf');
+
+      await request(app)
+        .post(`/api/v1/protocols/${finalProtocolId}/submit`)
+        .set(auth('chemist1'));
+
+      const approveFinalRes = await request(app)
+        .post(`/api/v1/protocols/${finalProtocolId}/approve`)
+        .set(auth('labHead'));
+      expect(approveFinalRes.status).toBe(200);
+
+      // Namuna approved bo'lganini tekshiramiz
+      const sampleAfterFinal = await request(app)
+        .get(`/api/v1/samples/${sampleId}`)
+        .set(auth('chemist1'));
+      expect(sampleAfterFinal.body.data.status).toBe('approved');
+
+      // 3. KEYIN: Chemist mavjud in_process ga fayl yuklaydi va yubora oladi
+      const uploadInProcess = await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/file`)
+        .set(auth('chemist1'))
+        .attach('file', fixtures.pdf(), 'in_process_v1.pdf');
+      expect(uploadInProcess.status).toBe(200);
+
+      const submitInProcess = await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/submit`)
+        .set(auth('chemist1'));
+      expect(submitInProcess.status).toBe(200);
+      expect(submitInProcess.body.data.status).toBe('submitted');
+
+      // Namuna statusi submitted bo'lib qolmasligi, approved bo'lib turishi shart
+      const sampleAfterSubmit = await request(app)
+        .get(`/api/v1/samples/${sampleId}`)
+        .set(auth('chemist1'));
+      expect(sampleAfterSubmit.body.data.status).toBe('approved');
+
+      // 4. Lab_head in_process protokolni rad eta oladi
+      const rejectInProcess = await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/reject`)
+        .set(auth('labHead'))
+        .send({ reason: 'Oraliq tahlil qayta tekshirilsin' });
+      expect(rejectInProcess.status).toBe(200);
+      expect(rejectInProcess.body.data.status).toBe('rejected');
+
+      // Namuna statusi rejected ga o'tib ketmasligi, approved bo'lib turishi shart
+      const sampleAfterReject = await request(app)
+        .get(`/api/v1/samples/${sampleId}`)
+        .set(auth('chemist1'));
+      expect(sampleAfterReject.body.data.status).toBe('approved');
+
+      // 5. Chemist faylni yangilab qayta yuboradi
+      await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/file`)
+        .set(auth('chemist1'))
+        .attach('file', fixtures.pdf(), 'in_process_v2.pdf');
+
+      await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/submit`)
+        .set(auth('chemist1'));
+
+      // 6. Lab_head in_process protokolni tasdiqlay oladi
+      const approveInProcess = await request(app)
+        .post(`/api/v1/protocols/${inProcessId}/approve`)
+        .set(auth('labHead'));
+      expect(approveInProcess.status).toBe(200);
+      expect(approveInProcess.body.data.status).toBe('approved');
+
+      // Namuna statusi haligacha approved!
+      const sampleFinalCheck = await request(app)
+        .get(`/api/v1/samples/${sampleId}`)
+        .set(auth('chemist1'));
+      expect(sampleFinalCheck.body.data.status).toBe('approved');
+    });
+  });
 });
