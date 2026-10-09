@@ -572,5 +572,31 @@
     "uploadExtraFileBtn": "Загрузить дополнительный файл",
     "extraFilesEmpty": "Дополнительные файлы отсутствуют",
     "extraFilesMaxNotice": "Достигнут лимит 10 файлов"
+  },
+  "notifications": {
+    "markAllRead": "Отметить все как прочитанные",
+    "unread": "Не прочитано",
+    "unreadCount": "Непрочитанных уведомлений: {{n}}",
+    "types": {
+      "sample_assigned": "Вам назначен новый образец",
+      "sample_approved": "Образец утверждён",
+      "sample_rejected": "Образец отклонён",
+      "protocol_submitted": "Протокол отправлен на утверждение",
+      "protocol_approved": "Протокол утверждён",
+      "protocol_rejected": "Протокол отклонён",
+      "temperature_alert": "Температура вышла за пределы",
+      "low_stock": "Запас реактива заканчивается",
+      "stability_due_soon": "Срок проверки стабильности приближается",
+      "stability_overdue": "Срок проверки стабильности истёк"
+    }
+  },
+  "dashboard": {
+    "assignedSamples": "Назначенные мне образцы",
+    "mySamples": "Мои образцы",
+    "companySamples": "Образцы компании",
+    "needsAttention": "Требует внимания",
+    "pendingAssignment": "Ожидают назначения",
+    "awaitingApproval": "Ожидают утверждения (протоколы)",
+    "openProtocols": "Незавершённые протоколы"
   }
 }

@@ -572,5 +572,31 @@
     "uploadExtraFileBtn": "Qo‘shimcha fayl yuklash",
     "extraFilesEmpty": "Qo‘shimcha fayllar mavjud emas",
     "extraFilesMaxNotice": "Maksimal 10 ta fayl limitiga yetildi"
+  },
+  "notifications": {
+    "markAllRead": "Hammasini o'qilgan deb belgilash",
+    "unread": "O'qilmagan",
+    "unreadCount": "{{n}} ta o'qilmagan bildirishnoma",
+    "types": {
+      "sample_assigned": "Sizga yangi namuna biriktirildi",
+      "sample_approved": "Namuna tasdiqlandi",
+      "sample_rejected": "Namuna rad etildi",
+      "protocol_submitted": "Protokol tasdiqlashga yuborildi",
+      "protocol_approved": "Protokol tasdiqlandi",
+      "protocol_rejected": "Protokol rad etildi",
+      "temperature_alert": "Harorat chegaradan chiqdi",
+      "low_stock": "Reaktiv zaxirasi kam qoldi",
+      "stability_due_soon": "Stabilizatsiya muddati yaqinlashmoqda",
+      "stability_overdue": "Stabilizatsiya muddati o'tdi"
+    }
+  },
+  "dashboard": {
+    "assignedSamples": "Menga biriktirilgan namunalar",
+    "mySamples": "Mening namunalarim",
+    "companySamples": "Kompaniya namunalari",
+    "needsAttention": "Diqqat talab qiladi",
+    "pendingAssignment": "Biriktirish kutilmoqda",
+    "awaitingApproval": "Tasdiqlash kutilmoqda (protokollar)",
+    "openProtocols": "Yakunlanmagan protokollar"
   }
 }

@@ -20,6 +20,8 @@ import {
 } from './modules/auth/loginLimiter.js';
 import { createRegistryRouter } from './modules/registry/registry.router.js';
 import { createCompaniesRouter } from './modules/companies/companies.router.js';
+import { createDashboardRouter } from './modules/dashboard/dashboard.router.js';
+import { createNotificationsRouter } from './modules/notifications/notifications.router.js';
 import { createProtocolsRouter } from './modules/protocols/protocols.router.js';
 import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
@@ -108,6 +110,8 @@ export function createApp({
   api.use('/samples', createSamplesRouter({ auth, storage }));
   api.use('/protocols', createProtocolsRouter({ auth, storage }));
   api.use('/registry', createRegistryRouter({ auth, storage }));
+  api.use('/notifications', createNotificationsRouter({ auth }));
+  api.use('/dashboard', createDashboardRouter({ auth }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

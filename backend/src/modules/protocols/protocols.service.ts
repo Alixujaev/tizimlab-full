@@ -147,7 +147,7 @@ export async function recordSignature(
   return res.rows[0]!;
 }
 
-interface SampleLookup {
+export interface SampleLookup {
   id: string;
   company_id: string;
   type: SampleType;
@@ -637,12 +637,12 @@ export async function submitProtocol(
       userAgent: meta.userAgent,
     });
 
-    await protocolHooks.onProtocolStatusChanged?.(
-      updatedProtocol,
-      previousStatus,
-      'submitted',
+    await protocolHooks.onProtocolStatusChanged?.(updatedProtocol, previousStatus, 'submitted', {
+      tx: client,
+      actorId: user.id,
+      sample,
       meta,
-    );
+    });
 
     return toProtocolDto(updatedProtocol);
   });
@@ -718,12 +718,12 @@ export async function approveProtocol(
       userAgent: meta.userAgent,
     });
 
-    await protocolHooks.onProtocolStatusChanged?.(
-      updatedProtocol,
-      previousStatus,
-      'approved',
+    await protocolHooks.onProtocolStatusChanged?.(updatedProtocol, previousStatus, 'approved', {
+      tx: client,
+      actorId: user.id,
+      sample,
       meta,
-    );
+    });
 
     return toProtocolDto(updatedProtocol);
   });
@@ -804,12 +804,12 @@ export async function rejectProtocol(
       userAgent: meta.userAgent,
     });
 
-    await protocolHooks.onProtocolStatusChanged?.(
-      updatedProtocol,
-      previousStatus,
-      'rejected',
+    await protocolHooks.onProtocolStatusChanged?.(updatedProtocol, previousStatus, 'rejected', {
+      tx: client,
+      actorId: user.id,
+      sample,
       meta,
-    );
+    });
 
     return toProtocolDto(updatedProtocol);
   });
@@ -822,7 +822,7 @@ export async function finalizeProtocol(
   meta: RequestMeta,
 ): Promise<ProtocolDto> {
   return withTransaction(async (client) => {
-    const { protocol } = await getProtocolAndSample(companyId, protocolId, client);
+    const { protocol, sample } = await getProtocolAndSample(companyId, protocolId, client);
 
     assertCanFinalize({
       protocolStatus: protocol.status,
@@ -864,12 +864,12 @@ export async function finalizeProtocol(
       userAgent: meta.userAgent,
     });
 
-    await protocolHooks.onProtocolStatusChanged?.(
-      updatedProtocol,
-      previousStatus,
-      'finalized',
+    await protocolHooks.onProtocolStatusChanged?.(updatedProtocol, previousStatus, 'finalized', {
+      tx: client,
+      actorId: user.id,
+      sample,
       meta,
-    );
+    });
 
     return toProtocolDto(updatedProtocol);
   });

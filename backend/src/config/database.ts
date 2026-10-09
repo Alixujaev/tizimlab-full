@@ -31,18 +31,42 @@ export function query<R extends pg.QueryResultRow = pg.QueryResultRow>(
   return db.query<R>(text, params);
 }
 
+// Tranzaksiya COMMIT bo'lgandan keyin bajariladigan amallar (masalan, socket push) — ROLLBACK da tashlanadi
+const afterCommit = new WeakMap<pg.PoolClient, (() => void)[]>();
+
+/**
+ * `fn` ni tranzaksiya muvaffaqiyatli yakunlangach chaqiradi. Tranzaksiyadan tashqarida (`Pool`) — darhol.
+ * Shu tufayli rollback bo'lgan yozuv haqida tashqi dunyoga (brauzer, Telegram) xabar ketmaydi.
+ */
+export function onCommit(db: pg.Pool | pg.PoolClient, fn: () => void): void {
+  const queue = db instanceof pg.Pool ? undefined : afterCommit.get(db);
+  if (queue) queue.push(fn);
+  else fn();
+}
+
 /** Bir nechta yozuvni bitta tranzaksiyada bajaradi: xatoda ROLLBACK, har doim release. */
 export async function withTransaction<T>(
   fn: (client: pg.PoolClient) => Promise<T>,
   db: pg.Pool = getPool(),
 ): Promise<T> {
   const client = await db.connect();
+  const queue: (() => void)[] = [];
+  afterCommit.set(client, queue);
   try {
     await client.query('BEGIN');
     const result = await fn(client);
     await client.query('COMMIT');
+    afterCommit.delete(client);
+    for (const job of queue) {
+      try {
+        job();
+      } catch {
+        // Ma'lumot allaqachon saqlangan: COMMIT dan keyingi yon ta'sir xatosi so'rovni buzmasligi kerak
+      }
+    }
     return result;
   } catch (err) {
+    afterCommit.delete(client);
     try {
       await client.query('ROLLBACK');
     } catch {

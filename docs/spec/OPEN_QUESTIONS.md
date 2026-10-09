@@ -34,7 +34,6 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
 |---|---|---|---|---|---|
-| Q-65 | Frontend'da "Inspector" dashboardi — bu `kontrolyor` rolimi? (Nomlash farqi.) | 16-architecture §16 — LOYIHA.md:451 | P6 | Ha, `InspectorDashboard` = `kontrolyor` roli (faqat komponent nomi). | NON-BLOCKING |
 
 ## P7
 
@@ -131,4 +130,5 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-62 | JWT sirlari va R2 uchun aniq env o'zgaruvchi nomlari spec'da berilmagan (faqat `R2_*`). `.env.example` da `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT` deb nomlandi — tasdiqlash kerak. | 15 §15, 12 §12, 16 §16 — LOYIHA.md:345,406 | P1/P2 | ✅ D-25 (foydalanuvchi tasdig'i: D-18) |
 | Q-63 | Swagger UI "login formasi bilan" — Swagger'ga kirish uchun alohida login (basic auth?) yoki Swagger ichida JWT olish formasi? | 16-architecture §16 — LOYIHA.md:494 | P1 | ✅ D-93 |
 | Q-64 | Sidebar elementlari (Dashboard, Namunalar, Reyestr, Harorat, Foydalanuvchilar, Faoliyat) rol bo'yicha qanday ko'rinadi? Masalan kontrolyor/chemist "Foydalanuvchilar" va "Faoliyat" ni ko'rmaydi (matritsa bo'yicha), lekin bu sidebar uchun aniq yozilmagan. Profil sahifasiga kirish joyi? | 16-architecture §16, 01 §1 — LOYIHA.md:458,463 | P1/P6 | ✅ D-28 |
+| Q-65 | Frontend'da "Inspector" dashboardi — bu `kontrolyor` rolimi? (Nomlash farqi.) | 16-architecture §16 — LOYIHA.md:451 | P6 | ✅ D-127 |
 | Q-66 | Til almashtirgichi — foydalanuvchi profilida (bazada) ham saqlanadimi yoki faqat `localStorage`? (Q-50 bilan bog'liq.) | 14-i18n §14 — LOYIHA.md:367 | P1 | ✅ D-27 |

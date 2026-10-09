@@ -572,5 +572,31 @@
     "uploadExtraFileBtn": "Upload additional file",
     "extraFilesEmpty": "No additional files",
     "extraFilesMaxNotice": "Maximum 10 files limit reached"
+  },
+  "notifications": {
+    "markAllRead": "Mark all as read",
+    "unread": "Unread",
+    "unreadCount": "{{n}} unread notifications",
+    "types": {
+      "sample_assigned": "A new sample was assigned to you",
+      "sample_approved": "Sample approved",
+      "sample_rejected": "Sample rejected",
+      "protocol_submitted": "Protocol submitted for approval",
+      "protocol_approved": "Protocol approved",
+      "protocol_rejected": "Protocol rejected",
+      "temperature_alert": "Temperature out of range",
+      "low_stock": "Reagent stock is low",
+      "stability_due_soon": "Stability checkpoint is due soon",
+      "stability_overdue": "Stability checkpoint is overdue"
+    }
+  },
+  "dashboard": {
+    "assignedSamples": "Samples assigned to me",
+    "mySamples": "My samples",
+    "companySamples": "Company samples",
+    "needsAttention": "Needs attention",
+    "pendingAssignment": "Awaiting assignment",
+    "awaitingApproval": "Awaiting approval (protocols)",
+    "openProtocols": "Unfinalized protocols"
   }
 }

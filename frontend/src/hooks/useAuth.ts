@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { login, logout, type LoginInput } from '@/api/auth';
+import { disconnectSocket } from '@/lib/socket';
 import { useAuthStore } from '@/store/authStore';
 
 /** Login xatosi formada ko'rsatiladi — global toast o'chirilgan (`meta.silentError`). */
@@ -18,6 +19,7 @@ export function useLogout() {
     mutationFn: () => logout(),
     meta: { silentError: true },
     onSettled: () => {
+      disconnectSocket();
       queryClient.clear();
       useAuthStore.getState().clear();
     },

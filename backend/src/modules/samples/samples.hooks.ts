@@ -1,5 +1,9 @@
 import type pg from 'pg';
 import {
+  notifySampleAssigned,
+  notifySampleDecision,
+} from '../notifications/notifications.events.js';
+import {
   autoCreateProtocolOnAssignment,
   closeOpenProtocolsForSample,
 } from '../protocols/protocols.service.js';
@@ -18,7 +22,8 @@ export interface SampleHooks {
 
   /**
    * Namuna statusi o'zgarganda chaqiriladi.
-   * P6 da bu nuqtada xabarnomalar (real-vaqt, in-app, Telegram) yuboriladi (D-13).
+   * `approved`/`rejected` ga o'tishda xabarnoma yuboriladi (D-13). Protokol orqali o'tishlar
+   * `protocolHooks` da (namuna statusi protokol servisida yangilanadi).
    */
   onSampleStatusChanged: (
     sample: SampleRow,
@@ -49,14 +54,14 @@ export const sampleHooks: SampleHooks = {
       sample.type,
       sample.assigned_by || chemistUser.id,
     );
+    await notifySampleAssigned(tx, sample, sample.assigned_by);
   },
 
-  async onSampleStatusChanged(sample, oldStatus, newStatus, actorId, _tx) {
-    // P6 integratsiyasi uchun ulanish nuqtasi
-    void sample;
-    void oldStatus;
-    void newStatus;
-    void actorId;
+  async onSampleStatusChanged(sample, oldStatus, newStatus, actorId, tx) {
+    if (oldStatus === newStatus) return;
+    if (newStatus === 'approved' || newStatus === 'rejected') {
+      await notifySampleDecision(tx, sample, newStatus, actorId);
+    }
   },
 
   async closeOpenProtocolsForSample(sample, actorId, tx) {

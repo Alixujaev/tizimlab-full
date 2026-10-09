@@ -461,3 +461,50 @@ export interface RejectProtocolInput {
   reason: string;
 }
 
+// ---------------------------------------------------------------- Notifications (P6, spec §9)
+
+/** Ilova yaratadigan 10 tur; legacy (`general` va h.k.) faqat ko'chirilgan yozuvlarda. */
+export type NotificationType =
+  | 'sample_assigned'
+  | 'sample_approved'
+  | 'sample_rejected'
+  | 'protocol_submitted'
+  | 'protocol_approved'
+  | 'protocol_rejected'
+  | 'temperature_alert'
+  | 'low_stock'
+  | 'stability_due_soon'
+  | 'stability_overdue';
+
+export interface NotificationDto {
+  id: string;
+  type: NotificationType | 'sample_created' | 'sample_overdue' | 'general';
+  title: string;
+  message: string;
+  referenceId: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface NotificationListParams {
+  page?: number;
+  limit?: number;
+  unread?: boolean;
+}
+
+// ---------------------------------------------------------------- Dashboard (P6, D-33)
+
+interface SamplesSummary {
+  samplesByStatus: Record<SampleStatus, number>;
+  totalSamples: number;
+}
+
+export type DashboardDto =
+  | ({ view: 'chemist' } & SamplesSummary)
+  | ({ view: 'inspector' } & SamplesSummary)
+  | ({ view: 'lab_head'; pendingAssignment: number; awaitingApproval: number } & SamplesSummary)
+  | ({
+      view: 'director';
+      openProtocolsByStatus: Record<Exclude<ProtocolStatus, 'finalized'>, number>;
+      openProtocolsTotal: number;
+    } & SamplesSummary);

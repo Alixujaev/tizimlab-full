@@ -133,7 +133,7 @@
 | R-SAMPLE-14 | Yangi namuna `pending_assignment` holatida yaratiladi. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-15 | O'tish `pending_assignment → in_progress`: faqat lab_head, kimyogarga biriktirish orqali. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-16 | Biriktirishda protokol avtomatik `draft` holatida yaratiladi: `finished_product` uchun `final`, boshqa turlar uchun `standard`. | 03-samples §3, DECISIONS.md D-15 | P5 | [x] |
-| R-SAMPLE-17 | Biriktirishda kimyogarga `sample_assigned` xabarnomasi yuboriladi (ekran + real vaqt + Telegram, ulangan bo'lsa). | 03-samples §3, 09 §9 | P6 | [ ] |
+| R-SAMPLE-17 | Biriktirishda kimyogarga `sample_assigned` xabarnomasi yuboriladi (ekran + real vaqt + Telegram, ulangan bo'lsa). | 03-samples §3, 09 §9 | P6 | [~] |
 | R-SAMPLE-18 | Faqat `chemist` rolidagi o'sha kompaniya foydalanuvchisiga biriktirish mumkin. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-19 | O'tish `in_progress → stopped`: kimyogar "Tahlilni to'xtatish" bilan. | 03-samples §3 | P4 | [x] |
 | R-SAMPLE-20 | To'xtatishda sabab majburiy. | 03-samples §3 | P4 | [x] |
@@ -262,9 +262,9 @@
 | R-PROTO-45 | Imzo: lab_head tasdiqlashda imzo qo'yadi. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-46 | Imzo: director yakunlashda imzo qo'yadi. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-47 | Imzolar `protocol_signatures` jadvalida saqlanadi. | 16-architecture §16 | P5 | [x] |
-| R-PROTO-48 | Kimyogar yuborganda `protocol_submitted` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
-| R-PROTO-49 | Tasdiqlanganda `protocol_approved` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
-| R-PROTO-50 | Rad etilganda `protocol_rejected` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [ ] |
+| R-PROTO-48 | Kimyogar yuborganda `protocol_submitted` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [x] |
+| R-PROTO-49 | Tasdiqlanganda `protocol_approved` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [x] |
+| R-PROTO-50 | Rad etilganda `protocol_rejected` xabarnomasi yaratiladi. | 09-notifications §9 | P6 | [x] |
 | R-PROTO-51 | `protocol_values` jadvali yangi schemada yo'q. | DECISIONS.md D-09 | P5 | [x] |
 | R-PROTO-52 | `finished_product` namunasi biriktirilganda `final` protokol `draft` holatida avtomatik yaratiladi. | DECISIONS.md D-15 | P5 | [x] |
 | R-PROTO-53 | `in_process` protokol ixtiyoriy: uni `lab_head` yoki biriktirilgan kimyogar namuna `approved` bo'lguncha yaratadi; boshqa rollar va `approved` dan keyingi urinish rad etiladi. | DECISIONS.md D-15 | P5 | [x] |
@@ -391,34 +391,34 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-NOTIF-01 | Xabarnoma turi `sample_assigned` — kimyogarga namuna biriktirilganda. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-02 | Xabarnoma turi `sample_approved` — namuna tasdiqlanganda; namunani yaratgan kontrolyor va biriktirilgan kimyogarga. | 09-notifications §9, DECISIONS.md D-13 | P6 | [ ] |
-| R-NOTIF-03 | Xabarnoma turi `sample_rejected` — lab_head rad etganda; namunani yaratgan kontrolyor va biriktirilgan kimyogarga. | 09-notifications §9, DECISIONS.md D-13, D-14 | P6 | [ ] |
-| R-NOTIF-04 | Xabarnoma turi `protocol_submitted` — kimyogar protokolni yuborganda; kompaniyaning barcha `lab_head`'lariga. | 09-notifications §9, DECISIONS.md D-13 | P6 | [ ] |
-| R-NOTIF-05 | Xabarnoma turi `protocol_approved` — protokol tasdiqlanganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [ ] |
-| R-NOTIF-06 | Xabarnoma turi `protocol_rejected` — protokol rad etilganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [ ] |
+| R-NOTIF-01 | Xabarnoma turi `sample_assigned` — kimyogarga namuna biriktirilganda. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-02 | Xabarnoma turi `sample_approved` — namuna tasdiqlanganda; namunani yaratgan kontrolyor va biriktirilgan kimyogarga. | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
+| R-NOTIF-03 | Xabarnoma turi `sample_rejected` — lab_head rad etganda; namunani yaratgan kontrolyor va biriktirilgan kimyogarga. | 09-notifications §9, DECISIONS.md D-13, D-14 | P6 | [x] |
+| R-NOTIF-04 | Xabarnoma turi `protocol_submitted` — kimyogar protokolni yuborganda; kompaniyaning barcha `lab_head`'lariga. | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
+| R-NOTIF-05 | Xabarnoma turi `protocol_approved` — protokol tasdiqlanganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
+| R-NOTIF-06 | Xabarnoma turi `protocol_rejected` — protokol rad etilganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
 | R-NOTIF-07 | Xabarnoma turi `temperature_alert` — harorat chegaradan chiqqanda. | 09-notifications §9 | P8 | [ ] |
 | R-NOTIF-08 | Xabarnoma turi `low_stock` — reaktiv zaxirasi kam qolganda. | 09-notifications §9 | P7 | [ ] |
 | R-NOTIF-09 | Xabarnoma turi `stability_due_soon` — checkpoint muddati yaqinlashganda. | 09-notifications §9 | P9 | [ ] |
 | R-NOTIF-10 | Xabarnoma turi `stability_overdue` — checkpoint muddati o'tganda. | 09-notifications §9 | P9 | [ ] |
-| R-NOTIF-11 | Ilova faqat §9 dagi xabarnoma turlarini yaratadi; `notification_type` enum'idagi legacy `sample_created`, `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70 | P6 | [ ] |
-| R-NOTIF-12 | Kanal 1: xabarnoma `notifications` jadvaliga yoziladi. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-13 | Bazadagi xabarnomalar yuqori o'ng burchakdagi bell ikonasi (`NotificationBell`) orqali ko'rinadi. | 09-notifications §9, 16 §16 | P6 | [ ] |
-| R-NOTIF-14 | Kanal 2: Socket.IO real vaqtli push. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-15 | Har foydalanuvchi ulanishda o'zining `user:<id>` xonasiga qo'shiladi. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-16 | Yangi xabarnoma `notification:new` hodisasi bilan faqat qabul qiluvchi xonasiga yuboriladi. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-17 | Frontend `notification:new` ni React Query keshiga yozadi (sahifa yangilanmasdan). | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-18 | Frontend `notification:new` da toast ko'rsatadi. | 09-notifications §9 | P6 | [ ] |
-| R-NOTIF-19 | Socket handshake JWT access-token bilan tasdiqlanadi; tokensiz/yaroqsiz ulanish rad etiladi. | 09-notifications §9, 15 §15 | P6 | [ ] |
+| R-NOTIF-11 | Ilova faqat §9 dagi xabarnoma turlarini yaratadi; `notification_type` enum'idagi legacy `sample_created`, `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70 | P6 | [x] |
+| R-NOTIF-12 | Kanal 1: xabarnoma `notifications` jadvaliga yoziladi. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-13 | Bazadagi xabarnomalar yuqori o'ng burchakdagi bell ikonasi (`NotificationBell`) orqali ko'rinadi. | 09-notifications §9, 16 §16 | P6 | [x] |
+| R-NOTIF-14 | Kanal 2: Socket.IO real vaqtli push. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-15 | Har foydalanuvchi ulanishda o'zining `user:<id>` xonasiga qo'shiladi. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-16 | Yangi xabarnoma `notification:new` hodisasi bilan faqat qabul qiluvchi xonasiga yuboriladi. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-17 | Frontend `notification:new` ni React Query keshiga yozadi (sahifa yangilanmasdan). | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-18 | Frontend `notification:new` da toast ko'rsatadi. | 09-notifications §9 | P6 | [x] |
+| R-NOTIF-19 | Socket handshake JWT access-token bilan tasdiqlanadi; tokensiz/yaroqsiz ulanish rad etiladi. | 09-notifications §9, 15 §15 | P6 | [x] |
 | R-NOTIF-20 | Kanal 3: Telegram push — faqat Telegram akkaunti ulangan foydalanuvchiga. | 09-notifications §9, 13 §13 | P11 | [ ] |
-| R-NOTIF-21 | Bitta `createNotification()` funksiyasi DB yozuvi, socket push va Telegram push'ni bajaradi. | 13-telegram §13, 16 §16 | P6 | [ ] |
+| R-NOTIF-21 | Bitta `createNotification()` funksiyasi DB yozuvi, socket push va Telegram push'ni bajaradi. | 13-telegram §13, 16 §16 | P6 | [~] |
 | R-NOTIF-22 | `stability_due_soon` / `stability_overdue` checkpointga biriktirilgan kimyogarga (bor bo'lsa) va kompaniyaning `lab_head`'lariga yuboriladi. | DECISIONS.md D-13 | P9 | [ ] |
-| R-NOTIF-23 | Harakatni bajargan foydalanuvchining o'ziga xabarnoma yuborilmaydi. | DECISIONS.md D-13 | P6 | [ ] |
-| R-NOTIF-24 | Xabarnoma faqat hodisa sodir bo'lgan kompaniya foydalanuvchilariga yuboriladi. | DECISIONS.md D-13, D-12 | P6 | [ ] |
-| R-NOTIF-25 | Xabarnomani bittalab o'qilgan deb belgilash. | DECISIONS.md D-59 | P6 | [ ] |
-| R-NOTIF-26 | "Hammasini o'qilgan deb belgilash". | DECISIONS.md D-59 | P6 | [ ] |
-| R-NOTIF-27 | Bell ikonasida o'qilmaganlar soni ko'rsatiladi. | DECISIONS.md D-59 | P6 | [ ] |
-| R-NOTIF-28 | Xabarnomalarni o'chirish va avtomatik tozalash yo'q. | DECISIONS.md D-59 | P6 | [ ] |
+| R-NOTIF-23 | Harakatni bajargan foydalanuvchining o'ziga xabarnoma yuborilmaydi. | DECISIONS.md D-13 | P6 | [x] |
+| R-NOTIF-24 | Xabarnoma faqat hodisa sodir bo'lgan kompaniya foydalanuvchilariga yuboriladi. | DECISIONS.md D-13, D-12 | P6 | [x] |
+| R-NOTIF-25 | Xabarnomani bittalab o'qilgan deb belgilash. | DECISIONS.md D-59 | P6 | [x] |
+| R-NOTIF-26 | "Hammasini o'qilgan deb belgilash". | DECISIONS.md D-59 | P6 | [x] |
+| R-NOTIF-27 | Bell ikonasida o'qilmaganlar soni ko'rsatiladi. | DECISIONS.md D-59 | P6 | [x] |
+| R-NOTIF-28 | Xabarnomalarni o'chirish va avtomatik tozalash yo'q. | DECISIONS.md D-59 | P6 | [x] |
 
 ## USER — Foydalanuvchilar, Admin panel, Ruxsatlar
 
@@ -534,7 +534,7 @@
 | R-AUTH-12 | 4-sessiya ochilganda eng eskisi avtomatik o'chiriladi (Q-58). | 15-auth §15 | P2 | [x] |
 | R-AUTH-13 | Harakatsizlik `SESSION_IDLE_TIMEOUT_MINUTES` dan oshsa sessiya avtomatik tugaydi (Q-59). | 15-auth §15 | P2 | [x] |
 | R-AUTH-14 | `SESSION_IDLE_TIMEOUT_MINUTES` standart qiymati 30 daqiqa. | 15-auth §15 | P2 | [x] |
-| R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [~] |
+| R-AUTH-15 | Access token va Socket.IO handshake bitta `verifyAccessToken` funksiyasi bilan tekshiriladi. | 15-auth §15 | P6 | [x] |
 | R-AUTH-16 | Parol bcrypt 10 round bilan xeshlanadi. | 15-auth §15 | P2 | [x] |
 | R-AUTH-17 | Foydalanuvchi o'z parolini o'zgartira oladi. | 15-auth §15 | P2 | [x] |
 | R-AUTH-18 | Frontend axios 401 interceptor + token refresh navbati (parallel 401'larda bitta refresh). | 16-architecture §16 | P2 | [x] |
@@ -578,7 +578,7 @@
 | R-ARCH-13 | Middleware `errorHandler.ts`: markazlashtirilgan xato handler (domen xatolari → HTTP kod). | 16-architecture §16 | P1 | [x] |
 | R-ARCH-14 | Har modul naqshi: `*.router.ts` (Router + Swagger annotatsiya), `*.controller.ts`, `*.service.ts` (SQL + logika + domen xato klassi), `*.schemas.ts` (Zod). | 16-architecture §16 | P1 | [~] |
 | R-ARCH-15 | Backend modullari: auth, admin, companies, substances, protocols, samples, reagents, temperature, stability, notifications, dashboard, files, audit, telegram. | 16-architecture §16 | P1 | [~] |
-| R-ARCH-16 | `realtime/socket.ts` — Socket.IO server bir xil HTTP server ustida, JWT handshake, `user:<id>` xonalar. | 16-architecture §16 | P6 | [ ] |
+| R-ARCH-16 | `realtime/socket.ts` — Socket.IO server bir xil HTTP server ustida, JWT handshake, `user:<id>` xonalar. | 16-architecture §16 | P6 | [x] |
 | R-ARCH-17 | `jobs/stabilityAlertJob.ts` — 6 soatlik fon jarayoni. | 16-architecture §16 | P9 | [ ] |
 | R-ARCH-18 | `utils/logger.ts` — Winston logger. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-19 | Migratsiyalar `db/migrations/` da raqamlangan SQL fayllar, `npm run migrate` bilan qo'llaniladi. | 16-architecture §16 | P1 | [x] |
@@ -605,7 +605,7 @@
 | R-ARCH-40 | Jadval `stability_studies`. | 16-architecture §16 | P9 | [ ] |
 | R-ARCH-41 | Jadval `stability_checkpoints`. | 16-architecture §16 | P9 | [ ] |
 | R-ARCH-42 | Jadval `stability_results`. | 16-architecture §16 | P9 | [ ] |
-| R-ARCH-43 | Jadval `notifications`. | 16-architecture §16 | P6 | [ ] |
+| R-ARCH-43 | Jadval `notifications`. | 16-architecture §16 | P6 | [x] |
 | R-ARCH-44 | Jadval `files`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-45 | Jadval `audit_log`. | 16-architecture §16 | P10 | [x] |
 | R-ARCH-46 | Jadval `schema_migrations`. | 16-architecture §16 | P1 | [x] |
@@ -642,7 +642,7 @@
 | R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [x] |
 | R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
-| R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [ ] |
+| R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [x] |
 | R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
 | R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [ ] |
 | R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [ ] |
@@ -657,8 +657,8 @@
 | R-FE-02 | `src/api/client.ts` — axios instance (401 interceptor bilan, R-AUTH-18). | 16-architecture §16 | P1 | [x] |
 | R-FE-03 | `src/api/` da har modul uchun API funksiyalari (companies, admin, auditLogs, dashboard, notifications, telegram, ...). | 16-architecture §16 | P1 | [~] |
 | R-FE-04 | `src/hooks/` da har modul uchun React Query hooklari. | 16-architecture §16 | P1 | [~] |
-| R-FE-05 | `hooks/useNotificationSocket.ts` — Socket.IO ulanishi va real vaqtli yangilash. | 16-architecture §16 | P6 | [ ] |
-| R-FE-06 | `lib/socket.ts` — Socket.IO client ulanish/uzish (logout'da uziladi). | 16-architecture §16 | P6 | [ ] |
+| R-FE-05 | `hooks/useNotificationSocket.ts` — Socket.IO ulanishi va real vaqtli yangilash. | 16-architecture §16 | P6 | [x] |
+| R-FE-06 | `lib/socket.ts` — Socket.IO client ulanish/uzish (logout'da uziladi). | 16-architecture §16 | P6 | [x] |
 | R-FE-07 | `types/index.ts` — TypeScript interfeyslari. | 16-architecture §16 | P1 | [~] |
 | R-FE-08 | UI komponentlari: Table, Modal, Spinner, Pagination, NotificationBell. | 16-architecture §16 | P1 | [~] |
 | R-FE-09 | Layout: `AppLayout`, `Sidebar` (rol bo'yicha; super_admin uchun alohida menyu). | 16-architecture §16 | P1 | [x] |
@@ -671,12 +671,12 @@
 | R-FE-16 | Sidebar'da Moddalar, Reaktivlar, Stabilizatsiya elementlari YO'Q. | 16-architecture §16 | P1 | [x] |
 | R-FE-17 | super_admin Sidebar'i faqat Kompaniyalar va Audit jurnali. | 01 §1, 16 §16 | P2 | [x] |
 | R-FE-18 | Sahifa: auth (login). | 16-architecture §16 | P2 | [x] |
-| R-FE-19 | Sahifa: Dashboard — `ChemistDashboard`. | 16-architecture §16 | P6 | [ ] |
-| R-FE-20 | Sahifa: Dashboard — `DirectorDashboard`. | 16-architecture §16 | P6 | [ ] |
-| R-FE-21 | Sahifa: Dashboard — `LabHeadDashboard`. | 16-architecture §16 | P6 | [ ] |
-| R-FE-22 | Sahifa: Dashboard — `InspectorDashboard` (Q-65). | 16-architecture §16 | P6 | [ ] |
+| R-FE-19 | Sahifa: Dashboard — `ChemistDashboard`. | 16-architecture §16 | P6 | [x] |
+| R-FE-20 | Sahifa: Dashboard — `DirectorDashboard`. | 16-architecture §16 | P6 | [x] |
+| R-FE-21 | Sahifa: Dashboard — `LabHeadDashboard`. | 16-architecture §16 | P6 | [x] |
+| R-FE-22 | Sahifa: Dashboard — `InspectorDashboard` (Q-65). | 16-architecture §16 | P6 | [x] |
 | R-FE-23 | Sahifa: `SuperAdminDashboard`. | 01 §1, 16 §16 | P2 | [x] |
-| R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (tarkibi — D-33). | 16-architecture §16, DECISIONS.md D-33 | P6 | [ ] |
+| R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (tarkibi — D-33). | 16-architecture §16, DECISIONS.md D-33 | P6 | [x] |
 | R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [x] |
 | R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [x] |
 | R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [x] |
@@ -695,9 +695,9 @@
 | R-FE-40 | Top bar'da til almashtirgichi va NotificationBell. | 09 §9, 14 §14 | P1 | [x] |
 | R-FE-41 | Access token faqat xotirada (Zustand, localStorage'ga yozilmaydi); sahifa yangilanganda refresh cookie orqali tiklanadi. | DECISIONS.md D-23 | P1 | [x] |
 | R-FE-42 | Spec'da nomlanmagan yo'llar: `/samples(/:id)`, `/substances(/:id)`, `/reagents`, `/stability(/:id)`; kompaniya sahifalari super_admin'ga yopiq. | DECISIONS.md D-29 | P1 | [x] |
-| R-FE-43 | Dashboard tarkibi: chemist — biriktirilgan namunalar statuslar bo'yicha; kontrolyor — o'z namunalari. | DECISIONS.md D-33 | P6 | [ ] |
-| R-FE-44 | Dashboard tarkibi: lab_head — biriktirish/tasdiq kutayotganlar, harorat alertlari, `low_stock`, `is_expired`, stabilizatsiya muddatlari; `admin` — LabHead dashboardi. | DECISIONS.md D-33 | P6 | [ ] |
-| R-FE-45 | Dashboard tarkibi: director — statuslar bo'yicha umumiy sonlar va yakunlanmagan protokollar. | DECISIONS.md D-33 | P6 | [ ] |
+| R-FE-43 | Dashboard tarkibi: chemist — biriktirilgan namunalar statuslar bo'yicha; kontrolyor — o'z namunalari. | DECISIONS.md D-33 | P6 | [x] |
+| R-FE-44 | Dashboard tarkibi: lab_head — biriktirish/tasdiq kutayotganlar, harorat alertlari, `low_stock`, `is_expired`, stabilizatsiya muddatlari; `admin` — LabHead dashboardi. | DECISIONS.md D-33 | P6 | [~] |
+| R-FE-45 | Dashboard tarkibi: director — statuslar bo'yicha umumiy sonlar va yakunlanmagan protokollar. | DECISIONS.md D-33 | P6 | [x] |
 
 ## FLOW — Asosiy ish oqimi (E2E)
 
@@ -729,19 +729,23 @@
 - R-ARCH-61 `[~]` — `createApp()` testlangan; graceful shutdown uchun avtomatik test yo'q (qo'lda tekshirildi).
 - R-FE-03, R-FE-04 `[~]` — `client.ts` va `useBootstrapAuth` bor; modul API/hook'lari tegishli fazalarda.
 - R-FE-07 `[~]` — umumiy tiplar (`Role`, `User`, `ApiError`, `Paginated`); modul tiplari keyin.
-- R-FE-08 `[~]` — Table, Modal, Spinner, Pagination tayyor; NotificationBell — stub (P6).
+- R-FE-08 `[~]` — Table, Modal, Spinner, Pagination tayyor; NotificationBell P6 da ishlaydi (`frontend/tests/notifications.test.tsx`), P1 qatori ID bo'yicha testga bog'lanmagan.
 
 ### P2a
 - R-ROLE-04 `[~]` — `requireCompany` (super_admin → 403 `COMPANY_REQUIRED`) testlangan; modul endpointlariga ulanishi har fazada.
 - R-ROLE-78, R-USER-08 `[~]` — `requirePermission` (rol katalogi ∪ `user_permissions`) testlangan; grant berish/olish UI va API, katalog — P2b (D-10).
 - R-TENANT-03 `[~]` — P2 jadvallarida `company_id` bor; qolgan jadvallar o'z fazalarida.
-- R-AUTH-15 `[~]` — yagona `verifyAccessToken` bor va testlangan; Socket.IO handshake P6 da.
 - R-AUTH-20 `[~]` — nofaol kompaniya foydalanuvchisi login qila olmaydi, mavjud sessiya keyingi so'rovda bekor qilinadi (testlangan); kompaniyani nofaollashtirish amali P2b.
 - R-AUTH-22 `[~]` — siyosat `assertPasswordPolicy` da (CLI'da qo'llanadi, testlangan); foydalanuvchi yaratish/parol o'zgartirish P2b.
 - R-AUDIT-07, R-AUDIT-09 `[~]` — bitta `audit_log` va auth hodisalari yoziladi; CRUD/status/fayl hodisalari tegishli fazalarda, jurnal sahifalari P10.
 - R-ARCH-14 `[~]` — birinchi modul (`auth`) to'rt fayl naqshida; qoida keyingi modullarga ham qo'llanadi.
 - R-FE-18 `[x]` — LoginPage (forma, validatsiya, xatolar t() orqali, loading) testlangan; `useLogin`/`useLogout`, `TopBar` logout tugmasi tayyor.
 - R-AUTH-01..04, R-AUTH-18, R-AUTH-19 `[x]` — login/logout/refresh/me, interceptor, Zustand authStore frontend va backend bilan to'liq ishlaydi va testlangan.
+
+### P6
+- R-SAMPLE-17 `[~]` — ekran + real vaqt testlangan; Telegram kanali P11 da (`setNotificationChannel`).
+- R-NOTIF-21 `[~]` — yagona `createNotification()` DB yozuvi va socket push'ni bajaradi (testlangan); Telegram push P11 da shu kanal ro'yxatiga ulanadi.
+- R-FE-44 `[~]` — biriktirish/tasdiq kutayotganlar va admin = LabHead testlangan; harorat alertlari, `low_stock`, `is_expired`, stabilizatsiya kartalari P7–P9 (D-131).
 
 ### Boshqa fazalar (P1 da oldindan qisman bajarilgan)
 - R-FE-11/12/13/14/15/17 `[x]` — Sidebar elementlari va rol bo'yicha ko'rinishi (D-28) testlangan; sahifalarning o'zi tegishli fazada.
@@ -770,26 +774,26 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 |---|---|---|---|---|
 | ROLE — Rollar va ruxsat matritsasi | 79 | 52 | 0 | 27 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
-| SAMPLE — Namunalar | 41 | 40 | 0 | 1 |
+| SAMPLE — Namunalar | 41 | 40 | 1 | 0 |
 | PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
 | REG — Reyestr | 17 | 16 | 1 | 0 |
-| PROTO — Protokollar | 62 | 45 | 14 | 3 |
+| PROTO — Protokollar | 62 | 48 | 14 | 0 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
-| NOTIF — Xabarnomalar | 28 | 0 | 0 | 28 |
+| NOTIF — Xabarnomalar | 28 | 21 | 1 | 6 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 15 | 0 | 3 |
 | AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
 | FILE — Fayllarni saqlash | 11 | 10 | 1 | 0 |
 | TG — Telegram | 18 | 0 | 0 | 18 |
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
-| AUTH — Autentifikatsiya va xavfsizlik | 26 | 25 | 1 | 0 |
+| AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 42 | 7 | 36 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 24 | 4 | 17 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 45 | 7 | 33 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 33 | 5 | 7 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 333 | 35 | 234 |
+| **Jami** | 602 | 370 | 37 | 195 |
 
 ### Fazalar bo'yicha
 
@@ -800,11 +804,11 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
 | P5 | 131 | 109 | 17 | 5 |
-| P6 | 40 | 0 | 1 | 39 |
+| P6 | 40 | 37 | 3 | 0 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
 | P9 | 58 | 0 | 1 | 57 |
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 333 | 35 | 234 |
+| **Jami** | 602 | 370 | 37 | 195 |

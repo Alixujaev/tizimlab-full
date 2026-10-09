@@ -16,7 +16,7 @@ export function TopBar({ user }: { user: User }) {
   return (
     <header className="flex h-14 items-center justify-end gap-3 border-b border-slate-200 bg-white px-5">
       <LanguageSwitcher />
-      <NotificationBell />
+      {user.companyId && <NotificationBell />}
       <Link
         to="/profile"
         className="rounded px-2 py-1 text-sm text-slate-700 hover:bg-slate-100"

@@ -1,15 +1,28 @@
-import type { ProtocolRow, ProtocolStatus } from './protocols.types.js';
+import type pg from 'pg';
+import { notifyProtocolStatus } from '../notifications/notifications.events.js';
+import type { SampleLookup } from './protocols.service.js';
+import type { ProtocolRow, ProtocolStatus, RequestMeta } from './protocols.types.js';
+
+export interface ProtocolStatusContext {
+  tx: pg.PoolClient;
+  actorId: string;
+  sample: SampleLookup;
+  meta: RequestMeta;
+}
 
 export interface ProtocolHooks {
+  /** Tranzaksiya ichida chaqiriladi; xabarnoma push'i COMMIT dan keyin ketadi (`onCommit`). */
   onProtocolStatusChanged?: (
     protocol: ProtocolRow,
     fromStatus: ProtocolStatus,
     toStatus: ProtocolStatus,
-    meta?: unknown,
+    ctx: ProtocolStatusContext,
   ) => Promise<void> | void;
 }
 
 export const protocolHooks: ProtocolHooks = {
-  // P6 da Socket.IO va xabarnomalar moduli ulanadi
-  onProtocolStatusChanged: async () => {},
+  // Xabarnomalar (spec §9, D-13)
+  onProtocolStatusChanged: async (protocol, _from, toStatus, ctx) => {
+    await notifyProtocolStatus(ctx.tx, protocol, toStatus, ctx.sample, ctx.actorId);
+  },
 };

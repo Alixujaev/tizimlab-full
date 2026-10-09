@@ -36,6 +36,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'audit_log',
       'companies',
       'files',
+      'notifications',
       'protocol_files',
       'protocol_signatures',
       'protocols',
@@ -57,7 +58,47 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 4, name: 'files_passport', state: 'applied' }),
       expect.objectContaining({ version: 5, name: 'protocols', state: 'applied' }),
       expect.objectContaining({ version: 6, name: 'protocol_extras', state: 'applied' }),
+      expect.objectContaining({ version: 7, name: 'notifications', state: 'applied' }),
     ]);
+  });
+
+  it("notification_type: §9 dagi 10 tur + legacy 3 tur; notifications.type da DEFAULT yo'q (R-ARCH-43, R-ARCH-80, R-NOTIF-11)", async () => {
+    const { rows } = await query<{ v: string }>(
+      `SELECT unnest(enum_range(NULL::notification_type))::text AS v`,
+      [],
+    );
+    expect(rows.map((r) => r.v).sort()).toEqual(
+      [
+        'general',
+        'low_stock',
+        'protocol_approved',
+        'protocol_rejected',
+        'protocol_submitted',
+        'sample_approved',
+        'sample_assigned',
+        'sample_created',
+        'sample_overdue',
+        'sample_rejected',
+        'stability_due_soon',
+        'stability_overdue',
+        'temperature_alert',
+      ].sort(),
+    );
+    const col = await query<{ column_default: string | null; is_nullable: string }>(
+      `SELECT column_default, is_nullable FROM information_schema.columns
+       WHERE table_schema = $1 AND table_name = 'notifications' AND column_name = 'type'`,
+      [db.schema],
+    );
+    expect(col.rows[0]).toEqual({ column_default: null, is_nullable: 'NO' });
+    const company = await createCompany();
+    // type berilmasa — NOT NULL buziladi (default yo'q)
+    expect(
+      await pgCode(
+        `INSERT INTO notifications (company_id, user_id, title, message)
+         VALUES ($1, gen_random_uuid(), 't', 'm')`,
+        [company.id],
+      ),
+    ).toBe('23502');
   });
 
   it('protocols: sample_id NOT NULL va ortiqcha ustunlar yo‘q (R-PROTO-62, D-74)', async () => {
