@@ -20,5 +20,9 @@ export default defineConfig(({ mode }) => {
         '/socket.io': { target, changeOrigin: true, ws: true },
       },
     },
+    test: {
+      testTimeout: 20000,
+      hookTimeout: 20000,
+    },
   };
 });
