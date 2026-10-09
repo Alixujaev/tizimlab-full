@@ -63,6 +63,14 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-56 | WebApp `initData` uchun `auth_date` maksimal yoshi qancha? WebApp login sessiyasi ham 3 sessiya limitiga kiradimi? | 13-telegram §13, 15 §15 — LOYIHA.md:358,380 | P11 | `auth_date` 1 soatdan eski bo'lmasin; WebApp sessiyasi oddiy sessiya — 3 sessiya limitiga kiradi. | NON-BLOCKING |
 | Q-57 | `/status` va `/help` bot buyruqlari aniq nimani ko'rsatadi? Bot qaysi tilda javob beradi? | 13-telegram §13 — LOYIHA.md:353 | P11 | `/status` — ulanish holati (foydalanuvchi, kompaniya, rol) va o'qilmagan xabarnomalar soni; `/help` — buyruqlar ro'yxati; til — Q-50 dagi qoida. | NON-BLOCKING |
 
+## Texnik qarz (savol emas)
+
+- **Checklist ↔ test bog'lanishi.** `SPEC_CHECKLIST.md` dagi `[x]` qatorlar R-ID bo'yicha aniq testga bog'lanmagan
+  (test nomlari taxminiy). Har `[x]` uchun test nomiga R-ID yoziladi yoki "Holat izohlari" da test fayli ko'rsatiladi.
+  P5b qatorlari (R-PROTO-31..40, 59..61, R-ARCH-31/44/49/73/79) kod+test bilan bajarilgan, lekin checklist hali yangilanmagan.
+- **Haqiqiy R2 sinovi.** P5 fayl oqimlari faqat `MemoryStorage` bilan testlangan; dev bucket bilan qo'lda
+  yuklash/yuklab olish sinovi P6 dan oldin.
+
 ## Hal qilinganlar
 
 | ID | Savol | Manba | Faza | Holat |
