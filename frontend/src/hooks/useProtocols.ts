@@ -2,13 +2,18 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   approveProtocol,
   createInProcessProtocol,
+  deleteProtocolExtraFile,
   deleteProtocolFile,
+  deleteProtocolPassport,
   fetchProtocol,
+  fetchProtocolFiles,
   fetchProtocolsBySample,
   finalizeProtocol,
   rejectProtocol,
   submitProtocol,
+  uploadProtocolExtraFile,
   uploadProtocolFile,
+  uploadProtocolPassport,
 } from '@/api/protocols';
 import { samplesKeys } from '@/hooks/useSamples';
 import type { RejectProtocolInput } from '@/types';
@@ -17,6 +22,7 @@ export const protocolsKeys = {
   all: ['protocols'] as const,
   bySample: (sampleId: string) => [...protocolsKeys.all, 'sample', sampleId] as const,
   detail: (id: string) => [...protocolsKeys.all, 'detail', id] as const,
+  files: (id: string) => [...protocolsKeys.all, 'files', id] as const,
 };
 
 export function useProtocolsBySampleQuery(sampleId: string) {
@@ -133,3 +139,67 @@ export function useFinalizeProtocolMutation(sampleId?: string) {
     },
   });
 }
+
+export function useUploadProtocolPassportMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) => uploadProtocolPassport(id, file),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(variables.id) });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
+
+export function useDeleteProtocolPassportMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProtocolPassport(id),
+    onSuccess: (_data, id) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
+
+export function useProtocolFilesQuery(protocolId: string | null) {
+  return useQuery({
+    queryKey: protocolsKeys.files(protocolId ?? ''),
+    queryFn: () => fetchProtocolFiles(protocolId!),
+    enabled: Boolean(protocolId),
+  });
+}
+
+export function useUploadProtocolExtraFileMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) => uploadProtocolExtraFile(id, file),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(variables.id) });
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.files(variables.id) });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
+
+export function useDeleteProtocolExtraFileMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ protocolId, fileId }: { protocolId: string; fileId: string }) =>
+      deleteProtocolExtraFile(protocolId, fileId),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(variables.protocolId) });
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.files(variables.protocolId) });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
+

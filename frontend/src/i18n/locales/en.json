@@ -561,6 +561,16 @@
       "approved": "Approved",
       "rejected": "Rejected",
       "finalized": "Finalized"
-    }
+    },
+    "exportDocx": "Download DOCX",
+    "passportTitle": "Protocol passport",
+    "passportDesc": "Additional document without approval workflow",
+    "uploadPassportBtn": "Upload protocol passport",
+    "passportUploaded": "Passport attached",
+    "passportMissing": "Passport not uploaded",
+    "extraFilesTitle": "Additional files (max 10)",
+    "uploadExtraFileBtn": "Upload additional file",
+    "extraFilesEmpty": "No additional files",
+    "extraFilesMaxNotice": "Maximum 10 files limit reached"
   }
 }

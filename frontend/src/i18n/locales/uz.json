@@ -561,6 +561,16 @@
       "approved": "Tasdiqlangan",
       "rejected": "Rad etilgan",
       "finalized": "Yakunlangan"
-    }
+    },
+    "exportDocx": "DOCX yuklab olish",
+    "passportTitle": "Protokol pasporti",
+    "passportDesc": "Qo‘shimcha tasdiqlanmagan holatsiz hujjat",
+    "uploadPassportBtn": "Protokol pasportini yuklash",
+    "passportUploaded": "Pasport biriktirilgan",
+    "passportMissing": "Pasport yuklanmagan",
+    "extraFilesTitle": "Qo‘shimcha fayllar (maksimal 10 ta)",
+    "uploadExtraFileBtn": "Qo‘shimcha fayl yuklash",
+    "extraFilesEmpty": "Qo‘shimcha fayllar mavjud emas",
+    "extraFilesMaxNotice": "Maksimal 10 ta fayl limitiga yetildi"
   }
 }

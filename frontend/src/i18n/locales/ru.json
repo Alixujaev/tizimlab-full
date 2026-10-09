@@ -561,6 +561,16 @@
       "approved": "Утверждён",
       "rejected": "Отклонён",
       "finalized": "Завершён"
-    }
+    },
+    "exportDocx": "Скачать DOCX",
+    "passportTitle": "Паспорт протокола",
+    "passportDesc": "Дополнительный документ без процесса утверждения",
+    "uploadPassportBtn": "Загрузить паспорт протокола",
+    "passportUploaded": "Паспорт прикреплён",
+    "passportMissing": "Паспорт не загружен",
+    "extraFilesTitle": "Дополнительные файлы (максимум 10)",
+    "uploadExtraFileBtn": "Загрузить дополнительный файл",
+    "extraFilesEmpty": "Дополнительные файлы отсутствуют",
+    "extraFilesMaxNotice": "Достигнут лимит 10 файлов"
   }
 }

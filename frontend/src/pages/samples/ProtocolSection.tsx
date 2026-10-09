@@ -1,20 +1,36 @@
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getProtocolFileDownload } from '@/api/protocols';
+import {
+  exportProtocolDocx,
+  getProtocolExtraFileDownload,
+  getProtocolFileDownload,
+  getProtocolPassportDownload,
+} from '@/api/protocols';
 import { Spinner } from '@/components/ui/Spinner';
 import {
   useApproveProtocolMutation,
   useCreateInProcessProtocolMutation,
+  useDeleteProtocolExtraFileMutation,
   useDeleteProtocolFileMutation,
+  useDeleteProtocolPassportMutation,
   useFinalizeProtocolMutation,
+  useProtocolFilesQuery,
   useProtocolQuery,
   useProtocolsBySampleQuery,
   useRejectProtocolMutation,
   useSubmitProtocolMutation,
+  useUploadProtocolExtraFileMutation,
   useUploadProtocolFileMutation,
+  useUploadProtocolPassportMutation,
 } from '@/hooks/useProtocols';
 import { useAuthStore } from '@/store/authStore';
-import type { ProtocolDto, ProtocolRole, ProtocolStatus, SampleDetailDto } from '@/types';
+import type {
+  ProtocolDto,
+  ProtocolFileDto,
+  ProtocolRole,
+  ProtocolStatus,
+  SampleDetailDto,
+} from '@/types';
 import { ProtocolRejectModal } from './ProtocolRejectModal';
 
 interface ProtocolSectionProps {
@@ -36,14 +52,20 @@ const roleLabels: Record<ProtocolRole, string> = {
 };
 
 export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const passportInputRef = useRef<HTMLInputElement>(null);
+  const extraFileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: protocols, isLoading } = useProtocolsBySampleQuery(sample.id);
   const [selectedProtocolId, setSelectedProtocolId] = useState<string | null>(null);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingPassport, setDownloadingPassport] = useState(false);
+  const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
+  const [exportingDocx, setExportingDocx] = useState(false);
 
   // Faol protokolni aniqlaymiz
   const activeProtocolSummary: ProtocolDto | undefined =
@@ -52,16 +74,22 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
 
   const { data: activeProtocolDetail, isLoading: isDetailLoading } =
     useProtocolQuery(activeProtocolId);
+  const { data: protocolFilesData } = useProtocolFilesQuery(activeProtocolId);
 
   // Mutatsiyalar
   const createInProcessMutation = useCreateInProcessProtocolMutation(sample.id);
   const uploadFileMutation = useUploadProtocolFileMutation(sample.id);
   const deleteFileMutation = useDeleteProtocolFileMutation(sample.id);
+  const uploadPassportMutation = useUploadProtocolPassportMutation(sample.id);
+  const deletePassportMutation = useDeleteProtocolPassportMutation(sample.id);
+  const uploadExtraFileMutation = useUploadProtocolExtraFileMutation(sample.id);
+  const deleteExtraFileMutation = useDeleteProtocolExtraFileMutation(sample.id);
   const submitMutation = useSubmitProtocolMutation(sample.id);
   const approveMutation = useApproveProtocolMutation(sample.id);
   const rejectMutation = useRejectProtocolMutation(sample.id);
   const finalizeMutation = useFinalizeProtocolMutation(sample.id);
 
+  const isKontrolyor = user?.role === 'kontrolyor';
   const isAssignedChemist =
     user?.role === 'chemist' && Boolean(user?.id && sample.assignedTo === user.id);
   const isLabHead = user?.role === 'lab_head';
@@ -69,7 +97,7 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
   const isAdmin = user?.role === 'admin';
 
   // Fayl yuklash huquqi (D-45, D-47)
-  const canUpload =
+  const canUploadMain =
     (isAssignedChemist || isLabHead || isAdmin) &&
     (activeProtocolSummary?.status === 'draft' || activeProtocolSummary?.status === 'rejected') &&
     sample.status !== 'stopped';
@@ -94,7 +122,31 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
     sample.status !== 'approved' &&
     (isLabHead || isAssignedChemist);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Pasport yuklash huquqi (D-123)
+  // kontrolyor, lab_head, admin, biriktirilgan chemist. Direktor yo'q. Qulf ta'sir qilmaydi.
+  const canUploadPassport =
+    !isDirector &&
+    (isKontrolyor || isLabHead || isAdmin || isAssignedChemist);
+
+  const activeProto = activeProtocolDetail ?? activeProtocolSummary;
+
+  // Pasport o'chirish huquqi (D-123)
+  const canDeletePassport =
+    isLabHead ||
+    isAdmin ||
+    Boolean(user?.id && activeProto?.passportUploadedBy === user.id);
+
+  // Qo'shimcha fayllar (D-49, D-76, D-124)
+  const extraFiles: ProtocolFileDto[] =
+    protocolFilesData ?? activeProtocolDetail?.files ?? [];
+  const canUploadExtraFiles =
+    sample.type === 'finished_product' &&
+    (isAssignedChemist || isLabHead || isAdmin) &&
+    (activeProtocolSummary?.status === 'draft' || activeProtocolSummary?.status === 'rejected') &&
+    sample.status !== 'stopped' &&
+    extraFiles.length < 10;
+
+  const handleMainFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !activeProtocolId) return;
     try {
@@ -104,7 +156,27 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
     }
   };
 
-  const handleDownload = async () => {
+  const handlePassportChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeProtocolId) return;
+    try {
+      await uploadPassportMutation.mutateAsync({ id: activeProtocolId, file });
+    } finally {
+      if (passportInputRef.current) passportInputRef.current.value = '';
+    }
+  };
+
+  const handleExtraFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !activeProtocolId) return;
+    try {
+      await uploadExtraFileMutation.mutateAsync({ id: activeProtocolId, file });
+    } finally {
+      if (extraFileInputRef.current) extraFileInputRef.current.value = '';
+    }
+  };
+
+  const handleMainDownload = async () => {
     if (!activeProtocolId) return;
     try {
       setDownloading(true);
@@ -112,6 +184,50 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
       window.open(link.url, '_blank');
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handlePassportDownload = async () => {
+    if (!activeProtocolId) return;
+    try {
+      setDownloadingPassport(true);
+      const link = await getProtocolPassportDownload(activeProtocolId);
+      window.open(link.url, '_blank');
+    } finally {
+      setDownloadingPassport(false);
+    }
+  };
+
+  const handleExtraFileDownload = async (fileId: string) => {
+    if (!activeProtocolId) return;
+    try {
+      setDownloadingFileId(fileId);
+      const link = await getProtocolExtraFileDownload(activeProtocolId, fileId);
+      window.open(link.url, '_blank');
+    } finally {
+      setDownloadingFileId(null);
+    }
+  };
+
+  const handleExportDocx = async () => {
+    if (!activeProtocolId) return;
+    try {
+      setExportingDocx(true);
+      const lang = (['uz', 'ru', 'en'].includes(i18n.language) ? i18n.language : 'uz') as
+        | 'uz'
+        | 'ru'
+        | 'en';
+      const blob = await exportProtocolDocx(activeProtocolId, lang);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `protocol-${activeProtocolId}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setExportingDocx(false);
     }
   };
 
@@ -159,8 +275,162 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
     );
   }
 
-  const activeProto = activeProtocolDetail ?? activeProtocolSummary;
+  // Pasport bloki (universal render)
+  const renderPassportBlock = () => {
+    if (!activeProto) return null;
+    const hasPassport = Boolean(activeProto.passportFilePath);
 
+    return (
+      <div className="p-4 rounded-lg border border-slate-200 bg-white space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+              {t('protocols.passportTitle', 'Protokol pasporti')}
+            </h4>
+            <p className="text-xs text-slate-400">
+              {t('protocols.passportDesc', 'Qo‘shimcha tasdiqlanmagan holatsiz hujjat')}
+            </p>
+          </div>
+          {hasPassport ? (
+            <span className="text-xs text-emerald-600 font-medium">
+              {t('protocols.passportUploaded', 'Pasport biriktirilgan')}
+            </span>
+          ) : (
+            <span className="text-xs text-slate-400 font-medium">
+              {t('protocols.passportMissing', 'Pasport yuklanmagan')}
+            </span>
+          )}
+        </div>
+
+        {hasPassport && activeProto.passportFileName ? (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-slate-900 truncate">
+                {activeProto.passportFileName}
+              </p>
+              {activeProto.passportFileSize && (
+                <p className="text-xs text-slate-500">
+                  {`${(activeProto.passportFileSize / 1024).toFixed(1)} KB`}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={handlePassportDownload}
+                disabled={downloadingPassport}
+                className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                {t('common.download', 'Yuklab olish')}
+              </button>
+
+              {canUploadPassport && (
+                <>
+                  <input
+                    ref={passportInputRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                    onChange={handlePassportChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => passportInputRef.current?.click()}
+                    disabled={uploadPassportMutation.isPending}
+                    className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    {t('common.replace', 'Almashtirish')}
+                  </button>
+                </>
+              )}
+
+              {canDeletePassport && (
+                <button
+                  type="button"
+                  onClick={() => deletePassportMutation.mutate(activeProto.id)}
+                  disabled={deletePassportMutation.isPending}
+                  className="px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-rose-200"
+                >
+                  {t('common.delete', 'O‘chirish')}
+                </button>
+              )}
+            </div>
+          </div>
+        ) : canUploadPassport ? (
+          <div className="text-center py-6 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-lg space-y-2">
+            <input
+              ref={passportInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+              onChange={handlePassportChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => passportInputRef.current?.click()}
+              disabled={uploadPassportMutation.isPending}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200"
+            >
+              {t('protocols.uploadPassportBtn', 'Protokol pasportini yuklash')}
+            </button>
+            <p className="text-xs text-slate-400">
+              {t('protocols.fileHints', 'PDF, Word (.docx, .doc), PNG, JPEG (maksimal 20 MB)')}
+            </p>
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500 italic">
+            {t('protocols.passportMissing', 'Pasport yuklanmagan')}
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  // KONTROLYOR: FAQAT pasport blokini ko'radi (Qoida 5)
+  if (isKontrolyor) {
+    return (
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5 space-y-5">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h3 className="text-base font-semibold text-slate-900">
+            {t('protocols.title', 'Tahlil protokoli')}
+          </h3>
+        </div>
+
+        {protocols.length > 1 && (
+          <div className="flex space-x-2 border-b border-slate-200 pb-2">
+            {protocols.map((p) => {
+              const isSelected = p.id === activeProtocolId;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setSelectedProtocolId(p.id)}
+                  className={`flex items-center space-x-2 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <span>{roleLabels[p.protocolRole] ?? p.protocolRole}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {isDetailLoading && !activeProtocolDetail ? (
+          <div className="py-8 text-center">
+            <Spinner size="sm" />
+          </div>
+        ) : (
+          renderPassportBlock()
+        )}
+      </div>
+    );
+  }
+
+  // Boshqa foydalanuvchilar uchun to'liq ko'rinish
   return (
     <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-5 space-y-5">
       {/* Sarlavha va Tablar */}
@@ -175,6 +445,18 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
         </div>
 
         <div className="flex items-center space-x-2">
+          {activeProtocolId && (
+            <button
+              type="button"
+              onClick={handleExportDocx}
+              disabled={exportingDocx}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+              title={t('protocols.exportDocx', 'DOCX yuklab olish')}
+            >
+              <span>{t('protocols.exportDocx', 'DOCX yuklab olish')}</span>
+            </button>
+          )}
+
           {canCreateInProcess && (
             <button
               type="button"
@@ -263,7 +545,7 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
             </div>
           )}
 
-          {/* Asosiy Fayl qismi */}
+          {/* 1. Asosiy Fayl qismi */}
           <div className="p-4 rounded-lg border border-slate-200 bg-white space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
@@ -294,20 +576,20 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
-                    onClick={handleDownload}
+                    onClick={handleMainDownload}
                     disabled={downloading}
                     className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     {t('common.download', 'Yuklab olish')}
                   </button>
 
-                  {canUpload && (
+                  {canUploadMain && (
                     <>
                       <input
                         ref={fileInputRef}
                         type="file"
                         accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                        onChange={handleFileChange}
+                        onChange={handleMainFileChange}
                         className="hidden"
                       />
                       <button
@@ -330,13 +612,13 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
                   )}
                 </div>
               </div>
-            ) : canUpload ? (
+            ) : canUploadMain ? (
               <div className="text-center py-6 px-4 bg-slate-50 border border-dashed border-slate-200 rounded-lg space-y-2">
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                  onChange={handleFileChange}
+                  onChange={handleMainFileChange}
                   className="hidden"
                 />
                 <button
@@ -357,6 +639,102 @@ export const ProtocolSection: React.FC<ProtocolSectionProps> = ({ sample }) => {
               </p>
             )}
           </div>
+
+          {/* 2. Protokol pasporti */}
+          {renderPassportBlock()}
+
+          {/* 3. Qo'shimcha fayllar ro'yxati (FAQAT finished_product uchun) */}
+          {sample.type === 'finished_product' && (
+            <div className="p-4 rounded-lg border border-slate-200 bg-white space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    {t('protocols.extraFilesTitle', 'Qo‘shimcha fayllar (maksimal 10 ta)')}
+                  </h4>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">
+                    {extraFiles.length}/10
+                  </span>
+                </div>
+
+                {canUploadExtraFiles && (
+                  <div>
+                    <input
+                      ref={extraFileInputRef}
+                      type="file"
+                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                      onChange={handleExtraFileChange}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => extraFileInputRef.current?.click()}
+                      disabled={uploadExtraFileMutation.isPending}
+                      className="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      + {t('protocols.uploadExtraFileBtn', 'Qo‘shimcha fayl yuklash')}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {extraFiles.length === 0 ? (
+                <p className="text-xs text-slate-400 italic">
+                  {t('protocols.extraFilesEmpty', 'Qo‘shimcha fayllar mavjud emas')}
+                </p>
+              ) : (
+                <div className="divide-y divide-slate-100 border border-slate-100 rounded-lg overflow-hidden">
+                  {extraFiles.map((f) => {
+                    const canDeleteThisFile =
+                      (activeProto.status === 'draft' || activeProto.status === 'rejected') &&
+                      (isLabHead || isAdmin || f.uploadedBy === user?.id);
+
+                    return (
+                      <div
+                        key={f.id}
+                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-50/60"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-900 truncate">
+                            {f.fileName}
+                          </p>
+                          <p className="text-[11px] text-slate-400">
+                            {`${(f.fileSize / 1024).toFixed(1)} KB • ${f.uploadedByName ?? f.uploadedBy} • ${new Date(f.createdAt).toLocaleString()}`}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => handleExtraFileDownload(f.id)}
+                            disabled={downloadingFileId === f.id}
+                            className="px-2.5 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors"
+                          >
+                            {t('common.download', 'Yuklab olish')}
+                          </button>
+
+                          {canDeleteThisFile && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                deleteExtraFileMutation.mutate({
+                                  protocolId: activeProto.id,
+                                  fileId: f.id,
+                                })
+                              }
+                              disabled={deleteExtraFileMutation.isPending}
+                              className="px-2 py-1 text-xs text-rose-600 hover:bg-rose-50 rounded transition-colors border border-rose-200"
+                            >
+                              {t('common.delete', 'O‘chirish')}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Harakatlar Paneli (Action buttons) */}
           <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-slate-100">

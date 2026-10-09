@@ -7,6 +7,7 @@ import { uploadSingle } from '../files/files.upload.js';
 import { PASSPORT_MAX_BYTES } from '../files/files.validation.js';
 import { createProtocolsController } from './protocols.controller.js';
 import {
+  protocolFileIdParamSchema,
   protocolIdParamSchema,
   rejectProtocolSchema,
   sampleIdParamSchema,
@@ -36,6 +37,67 @@ export function createProtocolsRouter(deps: ProtocolsRouterDeps): Router {
     ...companyAuth,
     validate({ params: sampleIdParamSchema }),
     controller.createInProcess,
+  );
+
+  // DOCX eksport (D-84, D-125)
+  router.get(
+    '/:id/export',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    controller.exportProtocolDocx,
+  );
+
+  // Protokol pasporti (D-123, R-PROTO-31)
+  router.post(
+    '/:id/passport',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    uploadSingle('file', PASSPORT_MAX_BYTES),
+    controller.uploadPassport,
+  );
+
+  router.get(
+    '/:id/passport',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    controller.getPassportDownload,
+  );
+
+  router.delete(
+    '/:id/passport',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    controller.deletePassport,
+  );
+
+  // Qo'shimcha fayllar (D-49, D-76, D-124)
+  router.post(
+    '/:id/files',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    uploadSingle('file', PASSPORT_MAX_BYTES),
+    controller.uploadProtocolFile,
+  );
+
+  router.get(
+    '/:id/files',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    controller.listProtocolFiles,
+  );
+
+  router.get(
+    '/:id/files/:fileId',
+    ...companyAuth,
+    validate({ params: protocolFileIdParamSchema }),
+    controller.getProtocolFileDownload,
+  );
+
+  router.delete(
+    '/:id/files/:fileId',
+    ...companyAuth,
+    validate({ params: protocolFileIdParamSchema }),
+    controller.deleteProtocolFile,
   );
 
   // Protokol tafsilotlari

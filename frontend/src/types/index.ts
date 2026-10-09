@@ -426,8 +426,26 @@ export interface ProtocolDto {
   approvedAt: string | null;
   finalizedAt: string | null;
   rejectedAt: string | null;
+  passportFileName?: string | null;
+  passportFilePath?: string | null;
+  passportFileSize?: number | null;
+  passportFileMime?: string | null;
+  passportUploadedBy?: string | null;
+  passportUploadedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProtocolFileDto {
+  id: string;
+  protocolId: string;
+  fileId: string;
+  fileName: string;
+  fileSize: number;
+  fileMime: string;
+  uploadedBy: string;
+  uploadedByName?: string | null;
+  createdAt: string;
 }
 
 export interface ProtocolDetailDto extends ProtocolDto {
@@ -436,8 +454,10 @@ export interface ProtocolDetailDto extends ProtocolDto {
   sampleStatus: string;
   sampleAssignedTo: string | null;
   signatures: ProtocolSignatureDto[];
+  files?: ProtocolFileDto[];
 }
 
 export interface RejectProtocolInput {
   reason: string;
 }
+

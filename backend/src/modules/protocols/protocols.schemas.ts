@@ -14,3 +14,14 @@ export const protocolIdParamSchema = z.object({
 export const sampleIdParamSchema = z.object({
   sampleId: z.string().uuid('Namuna identifikatori noto‘g‘ri formatda'),
 });
+
+export const protocolFileIdParamSchema = z.object({
+  id: z.string().uuid('Protokol identifikatori noto‘g‘ri formatda'),
+  fileId: z.string().uuid('Fayl identifikatori noto‘g‘ri formatda'),
+});
+
+export const exportProtocolQuerySchema = z.object({
+  lang: z.enum(['uz', 'ru', 'en'], {
+    message: 'Til faqat uz, ru yoki en bo‘lishi mumkin',
+  }).default('uz'),
+});

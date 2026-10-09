@@ -27,7 +27,7 @@ describeDb('001_core baseline migratsiyasi', () => {
     }
   };
 
-  it("jadvallar yaratilgan, qayta ishga tushirish hech narsa o'zgartirmaydi", async () => {
+  it("jadvallar yaratilgan, qayta ishga tushirish hech narsa o'zgartirmaydi (R-ARCH-20, R-ARCH-29..31)", async () => {
     const { rows } = await query<{ table_name: string }>(
       `SELECT table_name FROM information_schema.tables WHERE table_schema = $1 ORDER BY table_name`,
       [db.schema],
@@ -36,6 +36,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'audit_log',
       'companies',
       'files',
+      'protocol_files',
       'protocol_signatures',
       'protocols',
       'sample_tracking',
@@ -55,7 +56,30 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 3, name: 'samples', state: 'applied' }),
       expect.objectContaining({ version: 4, name: 'files_passport', state: 'applied' }),
       expect.objectContaining({ version: 5, name: 'protocols', state: 'applied' }),
+      expect.objectContaining({ version: 6, name: 'protocol_extras', state: 'applied' }),
     ]);
+  });
+
+  it('protocols: sample_id NOT NULL va ortiqcha ustunlar yo‘q (R-PROTO-62, D-74)', async () => {
+    const { rows } = await query<{
+      column_name: string;
+      is_nullable: string;
+    }>(
+      `SELECT column_name, is_nullable
+         FROM information_schema.columns
+        WHERE table_schema = $1 AND table_name = 'protocols'
+        ORDER BY column_name`,
+      [db.schema],
+    );
+    const sampleIdCol = rows.find((r) => r.column_name === 'sample_id');
+    expect(sampleIdCol).toBeDefined();
+    expect(sampleIdCol?.is_nullable).toBe('NO');
+
+    const columnNames = rows.map((r) => r.column_name);
+    expect(columnNames).not.toContain('substance_id');
+    expect(columnNames).not.toContain('batch_number');
+    expect(columnNames).not.toContain('sample_source');
+    expect(columnNames).not.toContain('notes');
   });
 
   it("user_role enum'i — aynan 6 ta rol (spec §1)", async () => {

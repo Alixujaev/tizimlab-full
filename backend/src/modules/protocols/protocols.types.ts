@@ -20,8 +20,40 @@ export interface ProtocolRow {
   approved_at: Date | null;
   finalized_at: Date | null;
   rejected_at: Date | null;
+  passport_file_name: string | null;
+  passport_file_path: string | null;
+  passport_file_size: number | null;
+  passport_file_mime: string | null;
+  passport_uploaded_by: string | null;
+  passport_uploaded_at: Date | null;
   created_at: Date;
   updated_at: Date;
+}
+
+export interface ProtocolFileRow {
+  id: string;
+  company_id: string;
+  protocol_id: string;
+  file_id: string;
+  uploaded_by: string;
+  created_at: Date;
+  filename?: string;
+  size_bytes?: number | string;
+  mime_type?: string;
+  r2_key?: string;
+  uploaded_by_name?: string | null;
+}
+
+export interface ProtocolFileDto {
+  id: string;
+  protocolId: string;
+  fileId: string;
+  fileName: string;
+  fileSize: number;
+  fileMime: string;
+  uploadedBy: string;
+  uploadedByName: string | null;
+  createdAt: string;
 }
 
 export interface ProtocolSignatureRow {
@@ -59,6 +91,12 @@ export interface ProtocolDto {
   fileName: string | null;
   fileSize: number | null;
   fileMime: string | null;
+  passportFileName: string | null;
+  passportFilePath: string | null;
+  passportFileSize: number | null;
+  passportFileMime: string | null;
+  passportUploadedBy: string | null;
+  passportUploadedAt: string | null;
   rejectionReason: string | null;
   submittedAt: string | null;
   approvedAt: string | null;
@@ -74,6 +112,7 @@ export interface ProtocolDetailDto extends ProtocolDto {
   sampleStatus: string;
   sampleAssignedTo: string | null;
   signatures: ProtocolSignatureDto[];
+  files: ProtocolFileDto[];
 }
 
 export interface RejectProtocolInput {

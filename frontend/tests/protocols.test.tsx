@@ -273,4 +273,84 @@ describe('Protocols frontend component (ProtocolSection & workflows)', () => {
     expect(await screen.findByText('Kimyogar Ali')).toBeInTheDocument();
     expect(screen.getByText('submitted')).toBeInTheDocument();
   });
+
+  it('kontrolyor FAQAT pasport yuklash blokini ko‘radi (asosiy fayl va harakatlar ko‘rinmaydi)', async () => {
+    const s = createSample();
+    const p = createProtocol({
+      passportFileName: 'pasport_hujjati.pdf',
+      passportFilePath: 'c1/protocol-passports/uuid.pdf',
+      passportFileSize: 2048,
+    });
+
+    api.onGet('/samples/s1').reply(200, { data: s });
+    api.onGet('/protocols/sample/s1').reply(200, { data: [p] });
+    api.onGet('/protocols/p1').reply(200, { data: p });
+
+    loginAs('kontrolyor');
+    renderAt('/samples/s1');
+
+    // Pasport bloki ko'rinadi
+    expect(await screen.findByText(uz.protocols.passportTitle)).toBeInTheDocument();
+    expect(screen.getByText('pasport_hujjati.pdf')).toBeInTheDocument();
+
+    // Asosiy fayl bloki, DOCX tugmasi va yuborish/tasdiqlash tugmalari ko'rinmaydi
+    expect(screen.queryByText(uz.protocols.mainFile)).not.toBeInTheDocument();
+    expect(screen.queryByText(uz.protocols.exportDocx)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: uz.protocols.submit })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: uz.protocols.approve })).not.toBeInTheDocument();
+  });
+
+  it('finished_product namunasida qo‘shimcha fayllar bloki ko‘rinadi, raw_material da ko‘rinmaydi', async () => {
+    const fpSample = createSample({ type: 'finished_product' });
+    const p = createProtocol({
+      files: [
+        {
+          id: 'pf-1',
+          protocolId: 'p1',
+          fileId: 'f-1',
+          fileName: 'spektr_grafigi.pdf',
+          fileSize: 1024,
+          fileMime: 'application/pdf',
+          uploadedBy: 'u1',
+          uploadedByName: 'Kimyogar Ali',
+          createdAt: '2026-03-01T11:00:00.000Z',
+        },
+      ],
+    });
+
+    api.onGet('/samples/s1').reply(200, { data: fpSample });
+    api.onGet('/protocols/sample/s1').reply(200, { data: [p] });
+    api.onGet('/protocols/p1').reply(200, { data: p });
+    api.onGet('/protocols/p1/files').reply(200, { data: p.files });
+
+    loginAs('chemist');
+    renderAt('/samples/s1');
+
+    // finished_product bo'lganda qo'shimcha fayllar bloki ko'rinadi
+    expect(await screen.findByText(uz.protocols.extraFilesTitle)).toBeInTheDocument();
+    expect(screen.getByText('spektr_grafigi.pdf')).toBeInTheDocument();
+  });
+
+  it('DOCX yuklab olish tugmasi ko‘rinadi va bosilganda eksport endpointi chaqiriladi', async () => {
+    const s = createSample();
+    const p = createProtocol();
+
+    api.onGet('/samples/s1').reply(200, { data: s });
+    api.onGet('/protocols/sample/s1').reply(200, { data: [p] });
+    api.onGet('/protocols/p1').reply(200, { data: p });
+    api.onGet('/protocols/p1/export?lang=uz').reply(200, new Blob(['mock docx']));
+
+    loginAs('lab_head');
+    renderAt('/samples/s1');
+
+    const exportBtn = await screen.findByRole('button', { name: uz.protocols.exportDocx });
+    expect(exportBtn).toBeInTheDocument();
+
+    await userEvent.click(exportBtn);
+
+    await waitFor(() => {
+      expect(api.history.get.some((req) => req.url?.startsWith('/protocols/p1/export'))).toBe(true);
+    });
+  });
 });
+
