@@ -245,16 +245,16 @@
 | R-PROTO-28 | Ruxsat etilgan formatlar: PNG. | 04-protocols §4, DECISIONS.md D-06 | P5 | [~] |
 | R-PROTO-29 | Boshqa formatdagi protokol fayllari rad etiladi. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-30 | Protokol fayli maksimal 20 MB; undan katta fayl rad etiladi. | 04-protocols §4, DECISIONS.md D-06 | P5 | [x] |
-| R-PROTO-31 | Protokol pasporti (`passport_*`) — protokolga qo'shimcha hujjat, chemist/lab_head/admin/kontrolyor yuklay oladi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-32 | Protokol pasportida alohida tasdiqlash oqimi yo'q. | 04-protocols §4, 18 §18 | P5 | [ ] |
-| R-PROTO-33 | Protokol pasportini `director` yuklay olmaydi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-34 | Qo'shimcha fayllar `protocol_files` faqat `finished_product` protokollariga biriktiriladi (bitta protokolga bir nechta fayl). | 04-protocols §4, DECISIONS.md D-49 | P5 | [ ] |
-| R-PROTO-35 | Qo'shimcha fayllar ro'yxati ko'rsatiladi. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-36 | Qo'shimcha faylni alohida yuklab olish mumkin. | 04-protocols §4 | P5 | [ ] |
-| R-PROTO-37 | Qo'shimcha faylni alohida o'chirish mumkin. | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-31 | Protokol pasporti (`passport_*`) — protokolga qo'shimcha hujjat, chemist/lab_head/admin/kontrolyor yuklay oladi. | 04-protocols §4 | P5 | [x] |
+| R-PROTO-32 | Protokol pasportida alohida tasdiqlash oqimi yo'q. | 04-protocols §4, 18 §18 | P5 | [~] |
+| R-PROTO-33 | Protokol pasportini `director` yuklay olmaydi. | 04-protocols §4 | P5 | [~] |
+| R-PROTO-34 | Qo'shimcha fayllar `protocol_files` faqat `finished_product` protokollariga biriktiriladi (bitta protokolga bir nechta fayl). | 04-protocols §4, DECISIONS.md D-49 | P5 | [~] |
+| R-PROTO-35 | Qo'shimcha fayllar ro'yxati ko'rsatiladi. | 04-protocols §4 | P5 | [~] |
+| R-PROTO-36 | Qo'shimcha faylni alohida yuklab olish mumkin. | 04-protocols §4 | P5 | [~] |
+| R-PROTO-37 | Qo'shimcha faylni alohida o'chirish mumkin. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-38 | Endpoint `GET /api/v1/protocols/:id/file` — asosiy faylni yuklab olish. | 04-protocols §4 | P5 | [x] |
-| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-84 | P5 | [ ] |
-| R-PROTO-40 | DOCX eksport `docx` kutubxonasi bilan `src/utils/docxExport.ts` da generatsiya qilinadi. | 04-protocols §4 | P5 | [ ] |
+| R-PROTO-39 | Endpoint `GET /api/v1/protocols/:id/export` — `.docx` eksport: namuna (tur, modda, lot, seriya), protokol roli va holati, imzolar (kim/rol/vaqt), rad etish sababi (bo'lsa); UI tilida. | 04-protocols §4, DECISIONS.md D-84 | P5 | [~] |
+| R-PROTO-40 | DOCX eksport `docx` kutubxonasi bilan `src/utils/docxExport.ts` da generatsiya qilinadi. | 04-protocols §4 | P5 | [~] |
 | R-PROTO-41 | Kimyogar protokolga kira oladi, agar `protocol.created_by === kimyogar.id`. | 04-protocols §4 | P5 | [x] |
 | R-PROTO-42 | Kimyogar protokolga kira oladi, agar `sample.assigned_to === kimyogar.id`. | 04-protocols §4, 18 §18 | P5 | [x] |
 | R-PROTO-43 | Ikkala shart ham bajarilmasa kimyogar protokolga kira olmaydi (403/404). | 04-protocols §4 | P5 | [x] |
@@ -273,9 +273,9 @@
 | R-PROTO-56 | Rad etilganda oldingi imzolar tarix sifatida saqlanadi; qayta yuborishda yangi imzo qo'shiladi. | DECISIONS.md D-46 | P5 | [x] |
 | R-PROTO-57 | Asosiy fayl faqat `draft`/`rejected` holatida yuklanadi/almashtiriladi. | DECISIONS.md D-47 | P5 | [x] |
 | R-PROTO-58 | `submitted`/`approved`/`finalized` holatida protokolning barcha fayllari (asosiy, pasport, qo'shimcha) qulflangan. | DECISIONS.md D-47 | P5 | [x] |
-| R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [ ] |
-| R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [ ] |
-| R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi (legacy istisno yo'q). | DECISIONS.md D-49, DECISIONS.md D-76 | P5 | [ ] |
+| R-PROTO-59 | Protokol pasporti va qo'shimcha fayllarni yuklagan foydalanuvchi yoki `lab_head`/`admin` o'chiradi; boshqalar — rad etiladi. | DECISIONS.md D-47 | P5 | [x] |
+| R-PROTO-60 | `.docx` eksportni protokolni ko'ra oladigan har kim istalgan statusda yuklab oladi. | DECISIONS.md D-48 | P5 | [~] |
+| R-PROTO-61 | `finished_product` bo'lmagan protokolga qo'shimcha fayl (`protocol_files`) biriktirish rad etiladi (legacy istisno yo'q). | DECISIONS.md D-49, DECISIONS.md D-76 | P5 | [~] |
 | R-PROTO-62 | `protocols.sample_id` NOT NULL (namunasiz protokol yaratib bo'lmaydi); `substance_id`, `batch_number`, `sample_source`, `notes` ustunlari yo'q. | DECISIONS.md D-74 | P5 | [~] |
 
 ## SUBST — Moddalar
@@ -756,6 +756,7 @@
 - R-PASS-08 `[~]` — `sampleHooks.closeOpenProtocolsForSample` pasport orqali tasdiqlashda chaqiriladi (testlangan), lekin bo'sh: protocols jadvali P5 da.
 - R-PASS-24 `[~]` — chemist reagent/standard uchun `pending` (policy unit-testi); amalda chemist bu namunalarni ko'rmaydi → API 404 (D-112, foydalanuvchi qarori).
 - R-REG-08 `[~]` — pasport orqali tasdiqlangan namuna pasporti yuklab olinadi (testlangan); `finished_product` final protokol fayli `registryHooks.getFinalProtocolFile` (hozir `null` → 404) — P5.
+- R-PROTO-32..36, 39, 40, 60, 61 `[~]` — P5b kodi va testlari bor (`backend/tests/protocols.extras.test.ts`), lekin test sarlavhasida R-ID yo'q; ID bo'yicha bog'langach `[x]` (OPEN_QUESTIONS "Texnik qarz").
 - R-REG-15 `[~]` — `registryHooks.assertNoActiveStability` o'chirishda chaqiriladi va xato bersa o'chirish bekor (testlangan); stability_studies jadvali P9 da, hozir tekshiruv bo'sh.
 - R-FILE-01 `[~]` — pasport R2 da (adapter, `files` jadvali); protokol (P5) va reaktiv (P7) hujjatlari o'z fazalarida. Testlar xotiradagi adapter bilan, haqiqiy R2 — qo'lda tekshiruv.
 
@@ -772,7 +773,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | SAMPLE — Namunalar | 41 | 40 | 0 | 1 |
 | PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
 | REG — Reyestr | 17 | 16 | 1 | 0 |
-| PROTO — Protokollar | 62 | 42 | 5 | 15 |
+| PROTO — Protokollar | 62 | 45 | 14 | 3 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
@@ -788,7 +789,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 42 | 7 | 36 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 24 | 4 | 17 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 330 | 26 | 246 |
+| **Jami** | 602 | 333 | 35 | 234 |
 
 ### Fazalar bo'yicha
 
@@ -798,7 +799,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
-| P5 | 131 | 106 | 8 | 17 |
+| P5 | 131 | 109 | 17 | 5 |
 | P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
 | P8 | 30 | 1 | 0 | 29 |
@@ -806,4 +807,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 330 | 26 | 246 |
+| **Jami** | 602 | 333 | 35 | 234 |
