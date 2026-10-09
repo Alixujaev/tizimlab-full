@@ -2,6 +2,7 @@ import express from 'express';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { query } from '../src/config/database.js';
+import * as auditService from '../src/modules/audit/audit.service.js';
 import { sampleHooks } from '../src/modules/samples/samples.hooks.js';
 import { testApp } from './helpers/app.js';
 import {
@@ -569,6 +570,39 @@ describeDb('samples: core, tracking, state machine, RBAC, isolation and hooks', 
         .get(`/api/v1/substances/${testSubId}`)
         .set('Authorization', `Bearer ${tokenAdminA}`);
       expect(getSubRes.status).toBe(200);
+    });
+  });
+
+  describe('Tranzaksiya va rollback (D-64, withTransaction)', () => {
+    it('namuna yaratishda xatolik yuz bersa, sample, tracking va audit butunlay rollback qilinadi', async () => {
+      const spy = vi
+        .spyOn(auditService, 'writeAudit')
+        .mockRejectedValueOnce(new Error('Simulyatsiya qilingan audit xatosi'));
+
+      const res = await request(app)
+        .post('/api/v1/samples')
+        .set('Authorization', `Bearer ${tokenKontrolyorA1}`)
+        .send({
+          type: 'raw_material',
+          substanceName: 'Rollback Sinov Namunasi',
+          lotNumber: 'RB-001',
+        });
+
+      expect(res.status).toBe(500);
+
+      // Bazada namuna saqlanmaganini tasdiqlaymiz
+      const sampleCheck = await query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count FROM samples WHERE substance_name = 'Rollback Sinov Namunasi'`,
+      );
+      expect(Number(sampleCheck.rows[0]?.count ?? '0')).toBe(0);
+
+      // sample_tracking ga ham yozilmagan
+      const trackingCheck = await query<{ count: string }>(
+        `SELECT COUNT(*)::text AS count FROM sample_tracking WHERE metadata::text LIKE '%Rollback Sinov Namunasi%'`,
+      );
+      expect(Number(trackingCheck.rows[0]?.count ?? '0')).toBe(0);
+
+      spy.mockRestore();
     });
   });
 });

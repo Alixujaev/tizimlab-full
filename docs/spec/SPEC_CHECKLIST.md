@@ -185,7 +185,7 @@
 | R-PASS-20 | Pasportni lab_head/admin (tasdiqlangan bo'lsa ham) o'chira oladi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-21 | Tasdiqlangan pasportni egasi (lab_head/admin bo'lmasa) o'chira olmaydi. | 03-samples §3 | P5 | [ ] |
 | R-PASS-22 | Rad etilgan pasportni yuklagan foydalanuvchi qayta yuklay oladi. | DECISIONS.md D-39 | P5 | [ ] |
-| R-PASS-23 | `reagent`/`standard_substance` namunasiga kimyogar biriktirilmaydi (urinish rad etiladi). | DECISIONS.md D-39 | P4 | [ ] |
+| R-PASS-23 | `reagent`/`standard_substance` namunasiga kimyogar biriktirilmaydi (urinish rad etiladi). | DECISIONS.md D-39 | P4 | [x] |
 | R-PASS-24 | `reagent`/`standard_substance` pasportini `chemist` yuklay oladi (`pending`), `director` yuklay olmaydi. | DECISIONS.md D-40 | P5 | [ ] |
 | R-PASS-25 | `raw_material`/`finished_product` pasporti holatsiz qo'shimcha hujjat — `reviewPassport` ularga qo'llanmaydi. | DECISIONS.md D-41 | P5 | [ ] |
 
@@ -205,7 +205,7 @@
 | R-REG-10 | `lab_head` va `admin` dan boshqa rol reyestrdan o'chira olmaydi. | 03-samples §3, DECISIONS.md D-43 | P4 | [ ] |
 | R-REG-11 | `/protocols` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
-| R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [ ] |
+| R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [x] |
 | R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [ ] |
 | R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [ ] |
 | R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [ ] |
@@ -290,9 +290,9 @@
 | R-SUBST-06 | Moddani yaratish/tahrirlash: faqat `lab_head` va `admin`. | 05-substances §5 | P3 | [x] |
 | R-SUBST-07 | Moddalarni barcha (kompaniya) rollari ko'radi. | 05-substances §5 | P3 | [x] |
 | R-SUBST-08 | Moddalar sahifasi asosiy navigatsiyada (Sidebar) yo'q — namuna yaratishda va modda havolalari orqali ochiladi. | 05-substances §5, 16 §16 | P3 | [x] |
-| R-SUBST-09 | Namuna yaratishda modda tanlanadi (kompaniyaning moddalari ro'yxatidan). | 03-samples §3, 05 §5 | P4 | [ ] |
+| R-SUBST-09 | Namuna yaratishda modda tanlanadi (kompaniyaning moddalari ro'yxatidan). | 03-samples §3, 05 §5 | P4 | [x] |
 | R-SUBST-10 | Moddani faqat `admin` o'chiradi; `lab_head` va boshqalar — 403. | DECISIONS.md D-30 | P3 | [x] |
-| R-SUBST-11 | Namuna bog'langan moddani o'chirish 409 bilan rad etiladi. | DECISIONS.md D-30 | P3 | [~] |
+| R-SUBST-11 | Namuna bog'langan moddani o'chirish 409 bilan rad etiladi. | DECISIONS.md D-30 | P3 | [x] |
 
 ## REAG — Reaktivlar va Xarajat jurnali
 
@@ -594,8 +594,8 @@
 | R-ARCH-29 | Jadval `protocols`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-30 | Jadval `protocol_signatures`. | 16-architecture §16 | P5 | [ ] |
 | R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [ ] |
-| R-ARCH-32 | Jadval `samples`. | 16-architecture §16 | P4 | [ ] |
-| R-ARCH-33 | Jadval `sample_tracking`. | 16-architecture §16 | P4 | [ ] |
+| R-ARCH-32 | Jadval `samples`. | 16-architecture §16 | P4 | [x] |
+| R-ARCH-33 | Jadval `sample_tracking`. | 16-architecture §16 | P4 | [x] |
 | R-ARCH-34 | Jadval `reagents`. | 16-architecture §16 | P7 | [ ] |
 | R-ARCH-35 | Jadval `reagent_transactions`. | 16-architecture §16 | P7 | [ ] |
 | R-ARCH-36 | Jadval `reagent_documents`. | 16-architecture §16 | P7 | [ ] |
@@ -677,7 +677,7 @@
 | R-FE-22 | Sahifa: Dashboard — `InspectorDashboard` (Q-65). | 16-architecture §16 | P6 | [ ] |
 | R-FE-23 | Sahifa: `SuperAdminDashboard`. | 01 §1, 16 §16 | P2 | [x] |
 | R-FE-24 | Backend `dashboard` moduli rol bo'yicha statistika qaytaradi (tarkibi — D-33). | 16-architecture §16, DECISIONS.md D-33 | P6 | [ ] |
-| R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [ ] |
+| R-FE-25 | Sahifa: namunalar (ro'yxat, yaratish, namuna sahifasi `ProtocolSection` bilan) (Q-24). | 16-architecture §16 | P4 | [x] |
 | R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [ ] |
 | R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [ ] |
 | R-FE-28 | Sahifa: moddalar. | 16-architecture §16 | P3 | [x] |
@@ -758,13 +758,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 17 | 0 | 62 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 32 | 0 | 47 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
-| SAMPLE — Namunalar | 41 | 0 | 0 | 41 |
-| PASS — Namuna pasporti | 25 | 0 | 0 | 25 |
-| REG — Reyestr | 17 | 2 | 0 | 15 |
+| SAMPLE — Namunalar | 41 | 30 | 0 | 11 |
+| PASS — Namuna pasporti | 25 | 1 | 0 | 24 |
+| REG — Reyestr | 17 | 3 | 0 | 14 |
 | PROTO — Protokollar | 62 | 0 | 0 | 62 |
-| SUBST — Moddalar | 11 | 9 | 1 | 1 |
+| SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
@@ -776,10 +776,10 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 25 | 1 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 37 | 7 | 41 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 21 | 4 | 20 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 39 | 7 | 39 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 22 | 4 | 19 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 156 | 18 | 428 |
+| **Jami** | 602 | 208 | 17 | 377 |
 
 ### Fazalar bo'yicha
 
@@ -787,8 +787,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 |---|---|---|---|---|
 | P1 | 50 | 38 | 12 | 0 |
 | P2 | 87 | 87 | 0 | 0 |
-| P3 | 20 | 19 | 1 | 0 |
-| P4 | 71 | 4 | 0 | 67 |
+| P3 | 20 | 20 | 0 | 0 |
+| P4 | 71 | 55 | 0 | 16 |
 | P5 | 131 | 0 | 0 | 131 |
 | P6 | 40 | 0 | 1 | 39 |
 | P7 | 36 | 0 | 0 | 36 |
@@ -797,4 +797,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 156 | 18 | 428 |
+| **Jami** | 602 | 208 | 17 | 377 |

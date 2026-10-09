@@ -19,9 +19,9 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
 |---|---|---|---|---|---|
-| Q-20 | `other` turi uchun pasport yo'q (§3 ro'yxatida yo'q) — `other` oddiy biriktirish → protokol yo'lidan o'tadimi? | 03-samples §3 — LOYIHA.md:104,140 | P4 | Ha: `other` oddiy oqim — biriktirish → `standard` protokol (D-15 "boshqa turlar"). | NON-BLOCKING |
-| Q-25 | `sample_tracking` ("voqealar tarixi") qaysi hodisalarni yozadi va UI'da qayerda ko'rsatiladi? | 16-architecture §16 — LOYIHA.md:476 | P4 | Yaratish, biriktirish, to'xtatish/davom ettirish (sabab bilan), yuborish, tasdiq, rad (sabab bilan), pasport yuklash/ko'rib chiqish; namuna sahifasida "Tarix" bloki. | NON-BLOCKING |
-| Q-26 | Sana formati DD.MM.YYYY faqat reyestr filtri uchunmi yoki butun UI uchunmi? Sahifalash (page size), saralash standartlari yo'q. | 03-samples §3 — LOYIHA.md:152 | P4 | DD.MM.YYYY butun UI'da (uchala tilda); sahifa hajmi 20 (D-22); standart saralash `created_at` kamayish bo'yicha. | NON-BLOCKING |
+| Q-20 | ✅ D-108 | 03-samples §3 | P4 | `other` oddiy oqim — biriktirish → `standard` protokol (D-15 "boshqa turlar"). | NON-BLOCKING |
+| Q-25 | ✅ D-109 | 16-architecture §16 | P4 | Voqealar ro'yxati va namuna sahifasida "Harakatlar tarixi" bloki. | NON-BLOCKING |
+| Q-26 | ✅ D-110 | 03-samples §3 | P4 | DD.MM.YYYY butun UI'da; sahifa hajmi 20 (D-22); standart saralash `created_at` kamayish bo'yicha. | NON-BLOCKING |
 
 ## P5
 
@@ -71,6 +71,9 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 | Q-02 | `lab_head` "Foydalanuvchilar boshqaruvi ✅" va `admin` "✅ To'liq" farqi nimada? `lab_head` qaysi amallarni qila olmaydi (yaratish, rol o'zgartirish, o'chirish, individual ruxsat berish)? `lab_head` `admin` rolli foydalanuvchi yarata oladimi? | 01-roles §1 — LOYIHA.md:74 | P2 | ✅ RESOLVED → D-16 |
 | Q-03 | Moddalar: `lab_head` "Ko'rish + tahrirlash", `admin` "✅ To'liq". §5 ga ko'ra yaratish ham `lab_head` da bor. Farq — o'chirish huquqimi? Moddani o'chirish umuman mavjudmi (namunalar unga bog'langan)? | 01-roles §1, 05 §5 — LOYIHA.md:69,228 | P3 | ✅ RESOLVED → D-30 |
 | Q-04 | Kontrolyor namunalardan "Faqat o'ziniki"ni ko'radi, lekin "Reyestrni ko'rish ✅" — reyestrda kontrolyor boshqalar yaratgan `approved` namunalarni (va `/registry/:id` tafsilotlarini) ko'radimi? Kimyogar uchun ham xuddi shu savol ("O'ziga biriktirilgan" vs reyestr ✅). | 01-roles §1, 03 §3 — LOYIHA.md:63,68,150 | P4 | ✅ RESOLVED → D-31 |
+| Q-20 | `other` turi uchun pasport yo'q (§3 ro'yxatida yo'q) — `other` oddiy biriktirish → protokol yo'lidan o'tadimi? | 03-samples §3 — LOYIHA.md:104,140 | P4 | ✅ D-108 |
+| Q-25 | `sample_tracking` ("voqealar tarixi") qaysi hodisalarni yozadi va UI'da qayerda ko'rsatiladi? | 16-architecture §16 — LOYIHA.md:476 | P4 | ✅ D-109 |
+| Q-26 | Sana formati DD.MM.YYYY faqat reyestr filtri uchunmi yoki butun UI uchunmi? Sahifalash (page size), saralash standartlari yo'q. | 03-samples §3 — LOYIHA.md:152 | P4 | ✅ D-110 |
 | Q-05 | Individual ruxsatlarni "olib tashlash" (§10) — rolga berilgan ruxsatni bekor qilish (deny) ham mumkinmi yoki faqat qo'shimcha (grant) beriladimi? Rol + individual ruxsat birlashish qoidasi qanday? (Katalog D-10 bo'yicha P2 da, lekin semantika ham kerak.) | 01-roles §1, 10 §10 — LOYIHA.md:77,324 | P2 | ✅ RESOLVED → D-32 |
 | Q-06 | Individual ruxsatlarni kim boshqaradi: faqat `admin` ("Foydalanuvchilar, ruxsatlar" — §1) yoki `lab_head` ham? | 01-roles §1, 10 §10 — LOYIHA.md:54,324 | P2 | ✅ RESOLVED → D-16 |
 | Q-07 | `director` dashboard'da "umumiy statistika" — qaysi ko'rsatkichlar? Umuman har rol dashboardi tarkibi spec'da yo'q; frontend'da `Chemist/Director/LabHead/Inspector/SuperAdmin` dashboardlari bor, lekin `admin` uchun dashboard nomlanmagan — admin qaysi dashboardni ko'radi? | 01-roles §1, 16 §16 — LOYIHA.md:53,451 | P6 | ✅ RESOLVED → D-33 |
