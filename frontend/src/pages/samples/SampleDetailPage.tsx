@@ -239,13 +239,13 @@ export const SampleDetailPage: React.FC = () => {
                   {t('samples.assignedChemistLabel', 'Biriktirilgan kimyogar')}
                 </dt>
                 <dd className="mt-1 font-medium text-slate-900">
-                  {sample.assignedTo ? (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs">
-                      {sample.assignedTo}
+                  {sample.assignedToName || sample.assigned_to_name ? (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-medium">
+                      {sample.assignedToName || sample.assigned_to_name}
                     </span>
                   ) : (
                     <span className="text-slate-400">
-                      {t('samples.notAssigned', 'Biriktirilmagan')}
+                      —
                     </span>
                   )}
                 </dd>
@@ -305,11 +305,13 @@ export const SampleDetailPage: React.FC = () => {
       </div>
 
       {/* Modallar */}
-      <SampleAssignModal
-        open={assignModalOpen}
-        onClose={() => setAssignModalOpen(false)}
-        sample={sample}
-      />
+      {canAssign && (
+        <SampleAssignModal
+          open={assignModalOpen}
+          onClose={() => setAssignModalOpen(false)}
+          sample={sample}
+        />
+      )}
 
       <SampleStopModal
         open={stopModalOpen}

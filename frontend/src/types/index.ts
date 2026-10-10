@@ -290,6 +290,8 @@ export interface SampleDto {
   notes: string | null;
   createdBy: string;
   assignedTo: string | null;
+  assignedToName?: string | null;
+  assigned_to_name?: string | null;
   assignedBy: string | null;
   assignedAt: string | null;
   stopReason: string | null;

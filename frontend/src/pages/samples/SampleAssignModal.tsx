@@ -20,11 +20,14 @@ export const SampleAssignModal: React.FC<SampleAssignModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const assignMutation = useAssignSampleMutation();
-  const { data: usersData, isLoading: isUsersLoading } = useUsersQuery({
-    role: 'chemist',
-    isActive: true,
-    limit: 100,
-  });
+  const { data: usersData, isLoading: isUsersLoading } = useUsersQuery(
+    {
+      role: 'chemist',
+      isActive: true,
+      limit: 100,
+    },
+    { enabled: open && Boolean(sample) },
+  );
 
   const chemists = usersData?.data ?? [];
   const [selectedChemistId, setSelectedChemistId] = useState<string>('');

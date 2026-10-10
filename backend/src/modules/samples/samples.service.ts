@@ -45,7 +45,7 @@ export async function listSamples(
   user: UserContext,
   params: ListSamplesQuery,
 ): Promise<{ data: SampleDto[]; meta: { page: number; limit: number; total: number } }> {
-  const whereClauses: string[] = ['company_id = $1', 'deleted_at IS NULL'];
+  const whereClauses: string[] = ['s.company_id = $1', 's.deleted_at IS NULL'];
   const values: unknown[] = [companyId];
 
   // Ko'rinish qoidalari (spec §1, Q-04):
@@ -54,39 +54,39 @@ export async function listSamples(
   // - lab_head, director, admin: kompaniyaning hammasi
   if (user.role === 'kontrolyor') {
     values.push(user.id);
-    whereClauses.push(`created_by = $${values.length}`);
+    whereClauses.push(`s.created_by = $${values.length}`);
   } else if (user.role === 'chemist') {
     values.push(user.id);
-    whereClauses.push(`assigned_to = $${values.length}`);
+    whereClauses.push(`s.assigned_to = $${values.length}`);
   }
 
   if (params.status) {
     values.push(params.status);
-    whereClauses.push(`status = $${values.length}`);
+    whereClauses.push(`s.status = $${values.length}`);
   }
 
   if (params.type) {
     values.push(params.type);
-    whereClauses.push(`type = $${values.length}`);
+    whereClauses.push(`s.type = $${values.length}`);
   }
 
   if (params.substanceId) {
     values.push(params.substanceId);
-    whereClauses.push(`substance_id = $${values.length}`);
+    whereClauses.push(`s.substance_id = $${values.length}`);
   }
 
   if (params.search && params.search.trim()) {
     values.push(`%${params.search.trim()}%`);
     const sIndex = values.length;
     whereClauses.push(
-      `(substance_name ILIKE $${sIndex} OR lot_number ILIKE $${sIndex} OR serial_number ILIKE $${sIndex})`,
+      `(s.substance_name ILIKE $${sIndex} OR s.lot_number ILIKE $${sIndex} OR s.serial_number ILIKE $${sIndex})`,
     );
   }
 
   const whereSql = whereClauses.join(' AND ');
 
   const countRes = await query<{ count: string }>(
-    `SELECT COUNT(*)::text AS count FROM samples WHERE ${whereSql}`,
+    `SELECT COUNT(*)::text AS count FROM samples s WHERE ${whereSql}`,
     values,
   );
   const total = Number(countRes.rows[0]?.count ?? '0');
@@ -98,7 +98,12 @@ export async function listSamples(
   const offsetIdx = values.length;
 
   const dataRes = await query<SampleRow>(
-    `SELECT * FROM samples WHERE ${whereSql} ORDER BY created_at DESC LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
+    `SELECT s.*, u.full_name AS assigned_to_name
+     FROM samples s
+     LEFT JOIN users u ON u.id = s.assigned_to AND u.company_id = s.company_id
+     WHERE ${whereSql}
+     ORDER BY s.created_at DESC
+     LIMIT $${limitIdx} OFFSET $${offsetIdx}`,
     values,
   );
 
@@ -118,7 +123,10 @@ export async function getSampleById(
   sampleId: string,
 ): Promise<SampleDetailDto> {
   const sampleRes = await query<SampleRow>(
-    `SELECT * FROM samples WHERE id = $1 AND company_id = $2 AND deleted_at IS NULL`,
+    `SELECT s.*, u.full_name AS assigned_to_name
+     FROM samples s
+     LEFT JOIN users u ON u.id = s.assigned_to AND u.company_id = s.company_id
+     WHERE s.id = $1 AND s.company_id = $2 AND s.deleted_at IS NULL`,
     [sampleId, companyId],
   );
   const sample = sampleRes.rows[0];
@@ -388,7 +396,10 @@ export async function assignSample(
       userAgent: meta.userAgent,
     });
 
-    return toSampleDto(updatedSample);
+    return toSampleDto({
+      ...updatedSample,
+      assigned_to_name: chemist.full_name,
+    });
   });
 }
 

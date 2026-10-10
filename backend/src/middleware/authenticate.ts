@@ -50,7 +50,7 @@ export const requireCompany: RequestHandler = (req, _res, next) => {
 export function requireRole(...roles: Role[]): RequestHandler {
   return (req, _res, next) => {
     if (!req.auth) throw new UnauthorizedError();
-    if (!roles.includes(req.auth.role)) throw new ForbiddenError();
+    if (!roles.includes(req.auth.role)) throw new ForbiddenError(undefined, { requiredRoles: roles });
     next();
   };
 }
@@ -70,7 +70,7 @@ export function requirePermission(
     if (!auth) throw new UnauthorizedError();
     if ((catalog[auth.role] as readonly string[] | undefined)?.includes(key)) return next();
     auth.grants ??= loadUserGrants(auth.userId, auth.companyId);
-    if (!(await auth.grants).has(key)) throw new ForbiddenError();
+    if (!(await auth.grants).has(key)) throw new ForbiddenError(undefined, { resource, action });
     next();
   };
 }

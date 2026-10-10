@@ -37,8 +37,8 @@ export class UnauthorizedError extends AppError {
 }
 
 export class ForbiddenError extends AppError {
-  constructor(message = "Bu amal uchun ruxsat yo'q") {
-    super(403, 'FORBIDDEN', message);
+  constructor(message = "Bu amal uchun ruxsat yo'q", details?: unknown) {
+    super(403, 'FORBIDDEN', message, details);
   }
 }
 

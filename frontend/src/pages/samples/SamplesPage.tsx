@@ -122,16 +122,18 @@ export const SamplesPage: React.FC = () => {
     {
       key: 'assignedTo',
       header: t('samples.assignedTo', 'Biriktirilgan'),
-      render: (item) =>
-        item.assignedTo ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700">
-            {item.assignedTo}
+      render: (item) => {
+        const name = item.assignedToName || item.assigned_to_name;
+        return name ? (
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700 font-medium">
+            {name}
           </span>
         ) : (
           <span className="text-xs text-slate-400">
-            {t('samples.notAssigned', 'Biriktirilmagan')}
+            —
           </span>
-        ),
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -358,19 +360,23 @@ export const SamplesPage: React.FC = () => {
       </div>
 
       {/* Modallar */}
-      <SampleFormModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-      />
+      {isKontrolyor && (
+        <SampleFormModal
+          open={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+        />
+      )}
 
-      <SampleAssignModal
-        open={assignModalOpen}
-        onClose={() => {
-          setAssignModalOpen(false);
-          setSelectedSampleForAssign(null);
-        }}
-        sample={selectedSampleForAssign}
-      />
+      {isLabHead && (
+        <SampleAssignModal
+          open={assignModalOpen}
+          onClose={() => {
+            setAssignModalOpen(false);
+            setSelectedSampleForAssign(null);
+          }}
+          sample={selectedSampleForAssign}
+        />
+      )}
 
       <SampleStopModal
         open={stopModalOpen}

@@ -97,6 +97,23 @@
     "notFoundTitle": "Sahifa topilmadi",
     "notFoundText": "Siz qidirgan sahifa mavjud emas.",
     "backHome": "Bosh sahifaga qaytish",
+    "forbidden": {
+      "default": "Bu amal uchun ruxsat yo'q",
+      "samplesView": "Namunalar ro'yxatini ko'rish uchun ruxsat yo'q",
+      "samplesCreate": "Namuna yaratish uchun ruxsat yo'q",
+      "samplesAssign": "Namunani biriktirish uchun ruxsat yo'q",
+      "protocolsUpload": "Protokol yuklash uchun ruxsat yo'q",
+      "protocolsApprove": "Protokolni tasdiqlash uchun ruxsat yo'q",
+      "protocolsFinalize": "Protokolni yakunlash uchun ruxsat yo'q",
+      "registryView": "Reyestrni ko'rish uchun ruxsat yo'q",
+      "substancesView": "Moddalarni ko'rish uchun ruxsat yo'q",
+      "substancesWrite": "Moddalarni tahrirlash uchun ruxsat yo'q",
+      "reagentsView": "Reaktivlarni ko'rish uchun ruxsat yo'q",
+      "reagentsWrite": "Reaktivlarni tahrirlash uchun ruxsat yo'q",
+      "temperatureView": "Harorat monitoringini ko'rish uchun ruxsat yo'q",
+      "usersView": "Foydalanuvchilar ro'yxatini ko'rish uchun ruxsat yo'q",
+      "usersManage": "Foydalanuvchilarni boshqarish uchun ruxsat yo'q"
+    },
     "codes": {
       "UNSUPPORTED_MEDIA_TYPE": "Fayl turi qo‘llab-quvvatlanmaydi yoki kengaytmasi mazmuniga mos emas (PDF, DOC, DOCX, JPEG, PNG)",
       "EMPTY_FILE": "Fayl bo'sh",

@@ -30,10 +30,11 @@ export const adminKeys = {
     [...adminKeys.all, 'logs', id, params] as const,
 };
 
-export function useUsersQuery(params?: UserListParams) {
+export function useUsersQuery(params?: UserListParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: adminKeys.userList(params),
     queryFn: () => fetchUsers(params),
+    enabled: options?.enabled ?? true,
   });
 }
 

@@ -97,6 +97,23 @@
     "notFoundTitle": "Page not found",
     "notFoundText": "The page you are looking for does not exist.",
     "backHome": "Back to dashboard",
+    "forbidden": {
+      "default": "Permission denied for this action",
+      "samplesView": "No permission to view samples list",
+      "samplesCreate": "No permission to create sample",
+      "samplesAssign": "No permission to assign sample",
+      "protocolsUpload": "No permission to upload protocol",
+      "protocolsApprove": "No permission to approve protocol",
+      "protocolsFinalize": "No permission to finalize protocol",
+      "registryView": "No permission to view registry",
+      "substancesView": "No permission to view substances",
+      "substancesWrite": "No permission to edit substances",
+      "reagentsView": "No permission to view reagents",
+      "reagentsWrite": "No permission to edit reagents",
+      "temperatureView": "No permission to view temperature monitoring",
+      "usersView": "No permission to view users list",
+      "usersManage": "No permission to manage users"
+    },
     "codes": {
       "UNSUPPORTED_MEDIA_TYPE": "Unsupported file type or the extension does not match the content (PDF, DOC, DOCX, JPEG, PNG)",
       "EMPTY_FILE": "The file is empty",

@@ -52,6 +52,7 @@ export interface TestUser {
   id: string;
   email: string;
   password: string;
+  fullName: string;
   role: Role;
   companyId: string | null;
 }
@@ -68,12 +69,13 @@ export async function createUser(opts: {
   const companyId =
     opts.role === 'super_admin' ? null : (opts.company?.id ?? (await createCompany()).id);
   const email = opts.email ?? `${opts.role}.${uniq()}@test.uz`;
+  const fullName = `Test ${opts.role}`;
   const { rows } = await query<{ id: string }>(
     `INSERT INTO users (email, password_hash, full_name, role, company_id, is_active)
      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-    [email, hash, `Test ${opts.role}`, opts.role, companyId, opts.isActive ?? true],
+    [email, hash, fullName, opts.role, companyId, opts.isActive ?? true],
   );
-  return { id: rows[0]!.id, email, password, role: opts.role, companyId };
+  return { id: rows[0]!.id, email, password, fullName, role: opts.role, companyId };
 }
 
 export interface LoggedIn {

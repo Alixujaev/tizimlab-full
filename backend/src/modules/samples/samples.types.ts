@@ -35,6 +35,7 @@ export interface SampleRow {
   notes: string | null;
   created_by: string;
   assigned_to: string | null;
+  assigned_to_name?: string | null;
   assigned_by: string | null;
   assigned_at: string | null;
   stop_reason: string | null;
@@ -79,6 +80,8 @@ export interface SampleDto {
   notes: string | null;
   createdBy: string;
   assignedTo: string | null;
+  assignedToName?: string | null;
+  assigned_to_name?: string | null;
   assignedBy: string | null;
   assignedAt: string | null;
   stopReason: string | null;
@@ -127,6 +130,8 @@ export function toSampleDto(row: SampleRow): SampleDto {
     notes: row.notes,
     createdBy: row.created_by,
     assignedTo: row.assigned_to,
+    assignedToName: row.assigned_to_name ?? null,
+    assigned_to_name: row.assigned_to_name ?? null,
     assignedBy: row.assigned_by,
     assignedAt: row.assigned_at,
     stopReason: row.stop_reason,

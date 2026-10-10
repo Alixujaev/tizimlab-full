@@ -605,4 +605,47 @@ describeDb('samples: core, tracking, state machine, RBAC, isolation and hooks', 
       spy.mockRestore();
     });
   });
+
+  describe('assigned_to_name va tenant izolyatsiyasi', () => {
+    it('namuna biriktirilganda assigned_to_name kimyogar ismini qaytaradi, tenant izolyatsiyasi saqlanadi', async () => {
+      // 1. Namuna yaratish
+      const createRes = await request(app)
+        .post('/api/v1/samples')
+        .set('Authorization', `Bearer ${tokenKontrolyorA1}`)
+        .send({
+          type: 'raw_material',
+          substanceName: 'Assigned Name Test Sample',
+        });
+      expect(createRes.status).toBe(201);
+      const sampleId = createRes.body.data.id;
+
+      // 2. Biriktirilmaganda assigned_to_name null
+      const getInitial = await request(app)
+        .get(`/api/v1/samples/${sampleId}`)
+        .set('Authorization', `Bearer ${tokenLabHeadA}`);
+      expect(getInitial.status).toBe(200);
+      expect(getInitial.body.data.assignedToName).toBeNull();
+      expect(getInitial.body.data.assigned_to_name).toBeNull();
+
+      // 3. Kimyogarga biriktirish
+      const assignRes = await request(app)
+        .post(`/api/v1/samples/${sampleId}/assign`)
+        .set('Authorization', `Bearer ${tokenLabHeadA}`)
+        .send({ chemistId: chemistA1.id });
+      expect(assignRes.status).toBe(200);
+      expect(assignRes.body.data.assignedToName).toBe(chemistA1.fullName);
+      expect(assignRes.body.data.assigned_to_name).toBe(chemistA1.fullName);
+
+      // 4. listSamples (GET /api/v1/samples) da ham assigned_to_name chiqadi
+      const listRes = await request(app)
+        .get('/api/v1/samples')
+        .set('Authorization', `Bearer ${tokenLabHeadA}`)
+        .query({ search: 'Assigned Name Test Sample' });
+      expect(listRes.status).toBe(200);
+      const item = listRes.body.data.find((s: { id: string }) => s.id === sampleId);
+      expect(item).toBeDefined();
+      expect(item.assignedToName).toBe(chemistA1.fullName);
+      expect(item.assigned_to_name).toBe(chemistA1.fullName);
+    });
+  });
 });
