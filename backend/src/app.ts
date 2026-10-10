@@ -29,6 +29,7 @@ import {
   createExpensesRouter,
   createReagentsRouter,
 } from './modules/reagents/reagents.router.js';
+import { createTemperatureRouter } from './modules/temperature/temperature.router.js';
 import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
@@ -118,6 +119,7 @@ export function createApp({
   api.use('/dashboard', createDashboardRouter({ auth }));
   api.use('/reagents', createReagentsRouter({ auth, storage }));
   api.use('/expenses', createExpensesRouter({ auth, storage }));
+  api.use('/temperature', createTemperatureRouter({ auth }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

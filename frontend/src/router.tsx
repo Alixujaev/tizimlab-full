@@ -19,6 +19,7 @@ import { ReagentsPage } from '@/pages/reagents/ReagentsPage';
 import { ReagentDetailPage } from '@/pages/reagents/ReagentDetailPage';
 import { ReagentJournalPage } from '@/pages/reagents/ReagentJournalPage';
 import { ExpensesPage } from '@/pages/reagents/ExpensesPage';
+import { TemperaturePage } from '@/pages/temperature/TemperaturePage';
 import { COMPANY_ROLES } from '@/types';
 
 const stub = (path: string, titleKey: string): RouteObject => ({
@@ -58,7 +59,7 @@ export const routes: RouteObject[] = [
               { path: '/reagents/:id', element: <ReagentDetailPage /> },
               { path: '/reagents/journal', element: <ReagentJournalPage /> },
               { path: '/expenses', element: <ExpensesPage /> },
-              stub('/temperature', 'pages.temperature'),
+              { path: '/temperature', element: <TemperaturePage /> },
               stub('/stability', 'pages.stability'),
               stub('/stability/:id', 'pages.stabilityDetail'),
             ],

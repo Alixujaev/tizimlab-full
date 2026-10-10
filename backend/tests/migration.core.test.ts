@@ -47,9 +47,12 @@ describeDb('001_core baseline migratsiyasi', () => {
       'sample_tracking',
       'samples',
       'schema_migrations',
+      'sensor_configs',
       'sessions',
       'substance_parameters',
       'substances',
+      'temperature_alerts',
+      'temperature_readings',
       'user_permissions',
       'users',
     ]);
@@ -64,6 +67,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 6, name: 'protocol_extras', state: 'applied' }),
       expect.objectContaining({ version: 7, name: 'notifications', state: 'applied' }),
       expect.objectContaining({ version: 8, name: 'reagents', state: 'applied' }),
+      expect.objectContaining({ version: 9, name: 'temperature', state: 'applied' }),
     ]);
   });
 
@@ -213,6 +217,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'trg_companies_updated_at',
       'trg_protocols_updated_at',
       'trg_samples_updated_at',
+      'trg_sensor_configs_updated_at',
       'trg_substances_updated_at',
       'trg_users_updated_at',
     ]);

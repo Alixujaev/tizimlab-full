@@ -629,3 +629,116 @@ export interface ExpenseCalendarDayDto {
   itemsCount: number;
   reagents: { id: string; name: string; quantity: number; unit: string }[];
 }
+
+// ---------------------------------------------------- Temperature (P8)
+export interface SensorConfigDto {
+  id: string;
+  companyId: string;
+  sensorId: string;
+  locationName: string;
+  tempMin: number;
+  tempMax: number;
+  humidityMin: number | null;
+  humidityMax: number | null;
+  isActive: boolean;
+  apiKey?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateSensorConfigInput {
+  sensorId: string;
+  locationName: string;
+  tempMin: number;
+  tempMax: number;
+  humidityMin?: number | null;
+  humidityMax?: number | null;
+  isActive?: boolean;
+  apiKey?: string | null;
+}
+
+export interface UpdateSensorConfigInput {
+  sensorId?: string;
+  locationName?: string;
+  tempMin?: number;
+  tempMax?: number;
+  humidityMin?: number | null;
+  humidityMax?: number | null;
+  isActive?: boolean;
+  apiKey?: string | null;
+}
+
+export interface TemperatureReadingDto {
+  id: string;
+  companyId: string;
+  sensorConfigId: string;
+  sensorId?: string;
+  locationName?: string;
+  temperature: number;
+  humidity: number | null;
+  alertTriggered: boolean;
+  recordedAt: string;
+  isManual: boolean;
+  recordedBy: string | null;
+  recordedByName?: string | null;
+}
+
+export interface CreateManualReadingInput {
+  sensorConfigId: string;
+  temperature: number;
+  humidity?: number | null;
+  recordedAt?: string;
+}
+
+export interface TemperatureAlertDto {
+  id: string;
+  companyId: string;
+  sensorConfigId: string;
+  sensorId?: string;
+  locationName?: string;
+  readingId: string;
+  temperature: number;
+  alertType: string;
+  resolvedAt: string | null;
+  resolvedBy: string | null;
+  resolvedByName?: string | null;
+  resolutionNote: string | null;
+  notifiedAt: string | null;
+  createdAt: string;
+}
+
+export interface ResolveAlertInput {
+  resolutionNote?: string | null;
+}
+
+export interface SensorStatusDto {
+  sensor: SensorConfigDto;
+  latestReading: TemperatureReadingDto | null;
+  activeAlertCount: number;
+  stats24h?: {
+    minTemp: number | null;
+    maxTemp: number | null;
+    avgTemp: number | null;
+    readingCount: number;
+  };
+}
+
+export interface ListReadingsQuery {
+  sensorConfigId?: string;
+  from?: string;
+  to?: string;
+  isManual?: boolean;
+  alertOnly?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface ListAlertsQuery {
+  sensorConfigId?: string;
+  unresolvedOnly?: boolean;
+  from?: string;
+  to?: string;
+  page?: number;
+  limit?: number;
+}
+
