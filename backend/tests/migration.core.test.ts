@@ -49,6 +49,9 @@ describeDb('001_core baseline migratsiyasi', () => {
       'schema_migrations',
       'sensor_configs',
       'sessions',
+      'stability_checkpoints',
+      'stability_results',
+      'stability_studies',
       'substance_parameters',
       'substances',
       'temperature_alerts',
@@ -69,6 +72,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 8, name: 'reagents', state: 'applied' }),
       expect.objectContaining({ version: 9, name: 'temperature', state: 'applied' }),
       expect.objectContaining({ version: 10, name: 'sensor_key_hash', state: 'applied' }),
+      expect.objectContaining({ version: 11, name: 'stability', state: 'applied' }),
     ]);
   });
 
@@ -219,6 +223,8 @@ describeDb('001_core baseline migratsiyasi', () => {
       'trg_protocols_updated_at',
       'trg_samples_updated_at',
       'trg_sensor_configs_updated_at',
+      'trg_stability_checkpoints_updated_at',
+      'trg_stability_studies_updated_at',
       'trg_substances_updated_at',
       'trg_users_updated_at',
     ]);

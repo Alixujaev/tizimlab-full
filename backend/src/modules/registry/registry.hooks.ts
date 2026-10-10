@@ -45,8 +45,15 @@ export const registryHooks: RegistryHooks = {
     return { url, expiresIn: 300 };
   },
 
-  async assertNoActiveStability(sample, _tx) {
-    // P9 integratsiyasi uchun ulanish nuqtasi
-    void sample;
+  async assertNoActiveStability(sample, tx) {
+    const { rows } = await tx.query(
+      `SELECT id FROM stability_studies
+       WHERE sample_id = $1 AND company_id = $2 AND status = 'active'
+       LIMIT 1`,
+      [sample.id, sample.company_id],
+    );
+    if (rows.length > 0) {
+      throw new AppError(409, 'ACTIVE_STABILITY', 'Faol stabilizatsiya tekshiruvi mavjud namunani o‘chirib bo‘lmaydi');
+    }
   },
 };

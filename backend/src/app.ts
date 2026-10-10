@@ -35,6 +35,7 @@ import {
   type IngestLimitOptions,
 } from './modules/temperature/ingestLimiter.js';
 import { createTemperatureRouter } from './modules/temperature/temperature.router.js';
+import { createStabilityRouter } from './modules/stability/stability.router.js';
 import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
@@ -131,6 +132,7 @@ export function createApp({
     '/temperature',
     createTemperatureRouter({ auth, ingestLimiter: createIngestLimiter(ingestLimit) }),
   );
+  api.use('/stability', createStabilityRouter({ auth }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

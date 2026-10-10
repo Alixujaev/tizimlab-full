@@ -742,3 +742,122 @@ export interface ListAlertsQuery {
   limit?: number;
 }
 
+// ============================================================================
+// Stabilizatsiya (P9, spec §8, D-05, D-53..D-58, D-77, D-81, D-142..D-145)
+// ============================================================================
+
+export type StabilityStudyStatus = 'active' | 'completed';
+export type StabilityCheckpointStatus = 'pending' | 'in_progress' | 'completed' | 'overdue';
+export type StabilityResultStatus = 'pass' | 'fail' | 'warning';
+
+export interface StabilityStudyDto {
+  id: string;
+  companyId: string;
+  sampleId: string;
+  serialNumber: string | null;
+  substanceName: string;
+  sampleName: string;
+  startedAt: string;
+  storageConditions: string | null;
+  status: StabilityStudyStatus;
+  createdBy: string;
+  createdByName: string | null;
+  totalCheckpoints: number;
+  completedCheckpoints: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StabilityCheckpointDto {
+  id: string;
+  companyId: string;
+  studyId: string;
+  intervalTag: string;
+  dueDate: string;
+  status: StabilityCheckpointStatus;
+  isDueSoon: boolean;
+  assignedTo: string | null;
+  assignedToName: string | null;
+  completedAt: string | null;
+  completedBy: string | null;
+  completedByName: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  results?: StabilityResultDto[];
+}
+
+export interface StabilityResultDto {
+  id: string;
+  companyId: string;
+  checkpointId: string;
+  parameter: string;
+  initialValue: string | null;
+  currentValue: string | null;
+  specification: string | null;
+  resultStatus: StabilityResultStatus;
+  recordedBy: string;
+  recordedByName: string | null;
+  recordedAt: string;
+}
+
+export interface StabilityStudyDetailDto extends StabilityStudyDto {
+  checkpoints: StabilityCheckpointDto[];
+  parameters: Array<{
+    parameter: string;
+    initialValue: string | null;
+    specification: string | null;
+  }>;
+}
+
+export interface CreateStabilityStudyInput {
+  sampleId: string;
+  storageConditions?: string | null;
+  startedAt?: string;
+  parameters?: Array<{
+    parameter: string;
+    initialValue?: string | null;
+    specification?: string | null;
+  }>;
+  checkpoints?: Array<{
+    intervalTag: string;
+    dueDate: string;
+    assignedTo?: string | null;
+    notes?: string | null;
+  }>;
+}
+
+export interface CreateStabilityCheckpointInput {
+  intervalTag: string;
+  dueDate: string;
+  assignedTo?: string | null;
+  notes?: string | null;
+}
+
+export interface UpdateStabilityCheckpointInput {
+  intervalTag?: string;
+  dueDate?: string;
+  assignedTo?: string | null;
+  notes?: string | null;
+  status?: StabilityCheckpointStatus;
+}
+
+export interface RecordStabilityResultsInput {
+  results: Array<{
+    id?: string;
+    parameter: string;
+    currentValue: string;
+    specification?: string | null;
+    resultStatus: StabilityResultStatus;
+  }>;
+}
+
+export interface ListStabilityStudiesQuery {
+  status?: StabilityStudyStatus;
+  sampleId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+

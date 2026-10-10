@@ -4,6 +4,7 @@ import { loadEnv } from './config/env.js';
 import { authConfigFromEnv } from './modules/auth/auth.types.js';
 import { storageFromEnv } from './modules/files/files.storage.js';
 import { closeSocketServer, createSocketServer } from './realtime/socket.js';
+import { startStabilityScheduler, stopStabilityScheduler } from './modules/stability/stability.job.js';
 import { logger } from './utils/logger.js';
 
 const SHUTDOWN_TIMEOUT_MS = 10_000;
@@ -16,6 +17,7 @@ if (!storage) logger.warn("R2 sozlanmagan: fayl endpointlari 503 qaytaradi (R2_*
 const app = createApp({ env, pingDb: () => pingDb(), storage });
 const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
+  startStabilityScheduler();
 });
 // Socket.IO — bir xil HTTP server ustida (spec §16)
 const io = createSocketServer(server, {
@@ -33,6 +35,7 @@ async function shutdown(signal: string): Promise<void> {
     process.exit(1);
   }, SHUTDOWN_TIMEOUT_MS);
   timer.unref();
+  stopStabilityScheduler();
   void closeSocketServer(io);
   server.close(async () => {
     await closePool();
