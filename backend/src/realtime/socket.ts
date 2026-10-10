@@ -8,6 +8,7 @@ import { AppError } from '../utils/errors.js';
 import { logger } from '../utils/logger.js';
 
 export const NOTIFICATION_EVENT = 'notification:new';
+export const companyRoom = (companyId: string): string => `company:${companyId}`;
 export const userRoom = (userId: string): string => `user:${userId}`;
 
 interface SocketData {
@@ -29,8 +30,7 @@ function handshakeError(code: string): Error & { data: { code: string } } {
 /**
  * Socket.IO bir xil HTTP server ustida (R-ARCH-16). Handshake REST bilan bir xil tekshiriladi:
  * `verifyAccessToken` (R-AUTH-15) + sessiya/foydalanuvchi/kompaniya faolligi (`touchSession`).
- * Har ulanish faqat o'z `user:<id>` xonasiga qo'shiladi (R-NOTIF-15) — kompaniya xonasi yo'q,
- * shuning uchun push faqat qabul qiluvchining o'ziga boradi.
+ * Har ulanish o'z kompaniyasi (`company:<companyId>`) va foydalanuvchisi (`user:<userId>`) xonalariga qo'shiladi.
  */
 export function createSocketServer(httpServer: HttpServer, opts: SocketServerOptions): Server {
   const io = new Server<
@@ -67,7 +67,7 @@ export function createSocketServer(httpServer: HttpServer, opts: SocketServerOpt
   });
 
   io.on('connection', (socket) => {
-    void socket.join(userRoom(socket.data.userId));
+    void socket.join([companyRoom(socket.data.companyId), userRoom(socket.data.userId)]);
   });
 
   setNotificationChannel('socket', (userId, notification) => {

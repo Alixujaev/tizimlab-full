@@ -8,8 +8,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import type { NotificationDto } from '../src/modules/notifications/notifications.types.js';
 import {
   closeSocketServer,
+  companyRoom,
   createSocketServer,
   NOTIFICATION_EVENT,
+  userRoom,
 } from '../src/realtime/socket.js';
 import { TEST_AUTH_CONFIG, testApp } from './helpers/app.js';
 import { createCompany, createUser, loginAs, setupAuthDb, type TestUser } from './helpers/auth.js';
@@ -146,6 +148,36 @@ describeDb('Socket.IO: JWT handshake, user:<id> xonalari, real vaqtli push (P6, 
       expect(cb.received).toEqual([]);
       // Harakat egasi (lab_head) ham olmaydi
       expect(lh.received).toEqual([]);
+    });
+
+    it('socket company:<companyId> va user:<userId> xonalariga a‘zo bo‘ladi, boshqa kompaniya xonasiga a‘zo bo‘lmaydi', async () => {
+      await connected('chemist1');
+      const companyId = users.chemist1!.companyId!;
+      const otherCompanyId = users.chemistB!.companyId!;
+
+      const sockets = await io.fetchSockets();
+      const s1 = sockets.find((s) => s.data.userId === users.chemist1!.id);
+      expect(s1).toBeDefined();
+      expect(s1!.rooms.has(companyRoom(companyId))).toBe(true);
+      expect(s1!.rooms.has(userRoom(users.chemist1!.id))).toBe(true);
+      expect(s1!.rooms.has(companyRoom(otherCompanyId))).toBe(false);
+    });
+
+    it('kompaniya xonasiga yuborilgan push faqat shu kompaniya socketiga boradi, boshqa kompaniyaga bormaydi', async () => {
+      const c1 = await connected('chemist1');
+      const cb = await connected('chemistB');
+      const companyId = users.chemist1!.companyId!;
+
+      const c1Received: unknown[] = [];
+      const cbReceived: unknown[] = [];
+      c1.socket.on('test:company_broadcast', (data) => c1Received.push(data));
+      cb.socket.on('test:company_broadcast', (data) => cbReceived.push(data));
+
+      io.to(companyRoom(companyId)).emit('test:company_broadcast', { ok: true });
+      await new Promise((r) => setTimeout(r, 100));
+
+      expect(c1Received).toHaveLength(1);
+      expect(cbReceived).toHaveLength(0);
     });
   });
 });
