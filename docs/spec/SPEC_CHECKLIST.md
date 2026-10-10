@@ -59,11 +59,11 @@
 | R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [x] |
 | R-ROLE-46 | Moddalar: `director` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
 | R-ROLE-47 | Moddalar: `admin` — to'liq. | 01-roles §1 | P3 | [x] |
-| R-ROLE-48 | Reaktivlar: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
-| R-ROLE-49 | Reaktivlar: `chemist` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
-| R-ROLE-50 | Reaktivlar: `lab_head` — to'liq. | 01-roles §1 | P7 | [ ] |
-| R-ROLE-51 | Reaktivlar: `director` — faqat ko'rish. | 01-roles §1 | P7 | [ ] |
-| R-ROLE-52 | Reaktivlar: `admin` — to'liq. | 01-roles §1 | P7 | [ ] |
+| R-ROLE-48 | Reaktivlar: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
+| R-ROLE-49 | Reaktivlar: `chemist` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
+| R-ROLE-50 | Reaktivlar: `lab_head` — to'liq. | 01-roles §1 | P7 | [x] |
+| R-ROLE-51 | Reaktivlar: `director` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
+| R-ROLE-52 | Reaktivlar: `admin` — to'liq. | 01-roles §1 | P7 | [x] |
 | R-ROLE-53 | Harorat: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P8 | [ ] |
 | R-ROLE-54 | Harorat: `chemist` — faqat ko'rish. | 01-roles §1 | P8 | [ ] |
 | R-ROLE-55 | Harorat: `lab_head` — to'liq. | 01-roles §1 | P8 | [ ] |
@@ -298,29 +298,29 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-REAG-01 | Reaktiv `quantity` (joriy zaxira) maydoniga ega. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-02 | Reaktiv `low_stock_threshold` maydoniga ega. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-03 | Reaktiv `expires_at` (yaroqlilik muddati) maydoniga ega. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-04 | Reaktiv `is_hazardous` (xavfli modda) belgisiga ega. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-05 | Tranzaksiya turi `in` loglanadi. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-06 | Tranzaksiya turi `out` loglanadi. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-07 | Tranzaksiya turi `adjustment` loglanadi. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-08 | Tranzaksiya turi `disposal` loglanadi. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-09 | Har bir zaxira o'zgarishi `reagent_transactions` ga yoziladi (quantity va tranzaksiya bitta tranzaksiyada). | 06-reagents §6 | P7 | [ ] |
-| R-REAG-10 | Xarajat = `out` turidagi `reagent_transactions`; narx maydoni yo'q. | DECISIONS.md D-08 | P7 | [ ] |
-| R-REAG-11 | Xarajat jurnali sahifasi `/reagents/journal` — sarfni kalendar ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [ ] |
-| R-REAG-12 | Xarajatlar ro'yxati sahifasi `/expenses` — sarfni ro'yxat ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [ ] |
-| R-REAG-13 | Reaktivga hujjatlar `reagent_documents` orqali biriktiriladi; turi `reagent_doc_type`: `passport`, `analysis`. | 06-reagents §6, DECISIONS.md D-69 | P7 | [ ] |
-| R-REAG-14 | Reaktiv hujjatlari Cloudflare R2'da saqlanadi. | 12-files §12 | P7 | [ ] |
-| R-REAG-15 | `is_low_stock` bayrog'i (`quantity < low_stock_threshold`) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6 | P7 | [ ] |
-| R-REAG-16 | `is_expired` bayrog'i (`expires_at` o'tgan) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6, DECISIONS.md D-17 | P7 | [ ] |
-| R-REAG-17 | Zaxira kam qolganda `low_stock` xabarnomasi yaratiladi (Q-37). | 09-notifications §9 | P7 | [ ] |
-| R-REAG-18 | `low_stock` kompaniyaning barcha `lab_head` va `admin` foydalanuvchilariga yuboriladi. | DECISIONS.md D-04 | P7 | [ ] |
-| R-REAG-19 | Reaktivlar sahifasi asosiy Sidebar'da yo'q. | 16-architecture §16 | P7 | [ ] |
-| R-REAG-20 | Reaktiv, barcha tranzaksiyalar va hujjatlarni faqat "To'liq" rollar (`lab_head`, `admin`) boshqaradi; "Ko'rish" rollari `out` yozolmaydi (403). | DECISIONS.md D-51 | P7 | [ ] |
-| R-REAG-21 | Xarajat sahifalari reaktivlarni ko'ra oladigan barcha rollarga faqat o'qish uchun ochiq. | DECISIONS.md D-51 | P7 | [ ] |
-| R-REAG-22 | Reaktiv maydonlari — D-69 ro'yxati (`name`, `cas_number`, `unit`, `quantity`, `low_stock_threshold`, `expires_at`, `supplier`, `storage_conditions`, `is_hazardous`). | DECISIONS.md D-69 | P7 | [ ] |
-| R-REAG-23 | Reaktiv hujjati maksimal 20MB va faqat PDF, .doc, .docx, JPEG, PNG; boshqasi rad etiladi. | DECISIONS.md D-79 | P7 | [ ] |
+| R-REAG-01 | Reaktiv `quantity` (joriy zaxira) maydoniga ega. | 06-reagents §6 | P7 | [x] |
+| R-REAG-02 | Reaktiv `low_stock_threshold` maydoniga ega. | 06-reagents §6 | P7 | [x] |
+| R-REAG-03 | Reaktiv `expires_at` (yaroqlilik muddati) maydoniga ega. | 06-reagents §6 | P7 | [x] |
+| R-REAG-04 | Reaktiv `is_hazardous` (xavfli modda) belgisiga ega. | 06-reagents §6 | P7 | [x] |
+| R-REAG-05 | Tranzaksiya turi `in` loglanadi. | 06-reagents §6 | P7 | [x] |
+| R-REAG-06 | Tranzaksiya turi `out` loglanadi. | 06-reagents §6 | P7 | [x] |
+| R-REAG-07 | Tranzaksiya turi `adjustment` loglanadi. | 06-reagents §6 | P7 | [x] |
+| R-REAG-08 | Tranzaksiya turi `disposal` loglanadi. | 06-reagents §6 | P7 | [x] |
+| R-REAG-09 | Har bir zaxira o'zgarishi `reagent_transactions` ga yoziladi (quantity va tranzaksiya bitta tranzaksiyada). | 06-reagents §6 | P7 | [x] |
+| R-REAG-10 | Xarajat = `out` turidagi `reagent_transactions`; narx maydoni yo'q. | DECISIONS.md D-08 | P7 | [x] |
+| R-REAG-11 | Xarajat jurnali sahifasi `/reagents/journal` — sarfni kalendar ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [x] |
+| R-REAG-12 | Xarajatlar ro'yxati sahifasi `/expenses` — sarfni ro'yxat ko'rinishida ko'rsatadi. | 06-reagents §6, DECISIONS.md D-08 | P7 | [x] |
+| R-REAG-13 | Reaktivga hujjatlar `reagent_documents` orqali biriktiriladi; turi `reagent_doc_type`: `passport`, `analysis`. | 06-reagents §6, DECISIONS.md D-69 | P7 | [x] |
+| R-REAG-14 | Reaktiv hujjatlari Cloudflare R2'da saqlanadi. | 12-files §12 | P7 | [x] |
+| R-REAG-15 | `is_low_stock` bayrog'i (`quantity < low_stock_threshold`) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6 | P7 | [x] |
+| R-REAG-16 | `is_expired` bayrog'i (`expires_at` o'tgan) hisoblanadi va dashboardda ko'rsatiladi. | 06-reagents §6, DECISIONS.md D-17 | P7 | [x] |
+| R-REAG-17 | Zaxira kam qolganda `low_stock` xabarnomasi yaratiladi (Q-37). | 09-notifications §9 | P7 | [x] |
+| R-REAG-18 | `low_stock` kompaniyaning barcha `lab_head` va `admin` foydalanuvchilariga yuboriladi. | DECISIONS.md D-04 | P7 | [x] |
+| R-REAG-19 | Reaktivlar sahifasi asosiy Sidebar'da yo'q. | 16-architecture §16 | P7 | [x] |
+| R-REAG-20 | Reaktiv, barcha tranzaksiyalar va hujjatlarni faqat "To'liq" rollar (`lab_head`, `admin`) boshqaradi; "Ko'rish" rollari `out` yozolmaydi (403). | DECISIONS.md D-51 | P7 | [x] |
+| R-REAG-21 | Xarajat sahifalari reaktivlarni ko'ra oladigan barcha rollarga faqat o'qish uchun ochiq. | DECISIONS.md D-51 | P7 | [x] |
+| R-REAG-22 | Reaktiv maydonlari — D-69 ro'yxati (`name`, `cas_number`, `unit`, `quantity`, `low_stock_threshold`, `expires_at`, `supplier`, `storage_conditions`, `is_hazardous`). | DECISIONS.md D-69 | P7 | [x] |
+| R-REAG-23 | Reaktiv hujjati maksimal 20MB va faqat PDF, .doc, .docx, JPEG, PNG; boshqasi rad etiladi. | DECISIONS.md D-79 | P7 | [x] |
 
 ## TEMP — Harorat monitoringi
 
@@ -596,9 +596,9 @@
 | R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [ ] |
 | R-ARCH-32 | Jadval `samples`. | 16-architecture §16 | P4 | [x] |
 | R-ARCH-33 | Jadval `sample_tracking`. | 16-architecture §16 | P4 | [x] |
-| R-ARCH-34 | Jadval `reagents`. | 16-architecture §16 | P7 | [ ] |
-| R-ARCH-35 | Jadval `reagent_transactions`. | 16-architecture §16 | P7 | [ ] |
-| R-ARCH-36 | Jadval `reagent_documents`. | 16-architecture §16 | P7 | [ ] |
+| R-ARCH-34 | Jadval `reagents`. | 16-architecture §16 | P7 | [x] |
+| R-ARCH-35 | Jadval `reagent_transactions`. | 16-architecture §16 | P7 | [x] |
+| R-ARCH-36 | Jadval `reagent_documents`. | 16-architecture §16 | P7 | [x] |
 | R-ARCH-37 | Jadval `sensor_configs`. | 16-architecture §16 | P8 | [ ] |
 | R-ARCH-38 | Jadval `temperature_readings`. | 16-architecture §16 | P8 | [ ] |
 | R-ARCH-39 | Jadval `temperature_alerts`. | 16-architecture §16 | P8 | [ ] |
@@ -636,7 +636,7 @@
 | R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [x] |
 | R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
-| R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [ ] |
+| R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [x] |
 | R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
 | R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [ ] |
 | R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [x] |
@@ -681,9 +681,9 @@
 | R-FE-26 | Sahifa: `/registry`. | 03-samples §3 | P4 | [x] |
 | R-FE-27 | Sahifa: `/registry/:id`. | 03-samples §3 | P4 | [x] |
 | R-FE-28 | Sahifa: moddalar. | 16-architecture §16 | P3 | [x] |
-| R-FE-29 | Sahifa: reaktivlar. | 16-architecture §16 | P7 | [ ] |
-| R-FE-30 | Sahifa: `/reagents/journal`. | 06-reagents §6 | P7 | [ ] |
-| R-FE-31 | Sahifa: `/expenses`. | 06-reagents §6 | P7 | [ ] |
+| R-FE-29 | Sahifa: reaktivlar. | 16-architecture §16 | P7 | [x] |
+| R-FE-30 | Sahifa: `/reagents/journal`. | 06-reagents §6 | P7 | [x] |
+| R-FE-31 | Sahifa: `/expenses`. | 06-reagents §6 | P7 | [x] |
 | R-FE-32 | Sahifa: harorat. | 16-architecture §16 | P8 | [ ] |
 | R-FE-33 | Sahifa: stabilizatsiya. | 16-architecture §16 | P9 | [ ] |
 | R-FE-34 | Sahifa: `/companies` (faqat super_admin). | 02 §2, 16 §16 | P2 | [x] |
@@ -772,14 +772,14 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 52 | 0 | 27 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 57 | 0 | 22 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
 | SAMPLE — Namunalar | 41 | 40 | 1 | 0 |
 | PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
 | REG — Reyestr | 17 | 16 | 1 | 0 |
 | PROTO — Protokollar | 62 | 48 | 14 | 0 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
-| REAG — Reaktivlar va Xarajat jurnali | 23 | 0 | 0 | 23 |
+| REAG — Reaktivlar va Xarajat jurnali | 23 | 23 | 0 | 0 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
 | NOTIF — Xabarnomalar | 28 | 21 | 1 | 6 |
@@ -790,10 +790,10 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 45 | 7 | 33 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 33 | 5 | 7 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 49 | 7 | 29 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 36 | 5 | 4 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 370 | 37 | 195 |
+| **Jami** | 602 | 405 | 37 | 160 |
 
 ### Fazalar bo'yicha
 
@@ -805,10 +805,10 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P4 | 71 | 71 | 0 | 0 |
 | P5 | 131 | 109 | 17 | 5 |
 | P6 | 40 | 37 | 3 | 0 |
-| P7 | 36 | 0 | 0 | 36 |
+| P7 | 36 | 35 | 0 | 1 |
 | P8 | 30 | 1 | 0 | 29 |
 | P9 | 58 | 0 | 1 | 57 |
 | P10 | 25 | 6 | 2 | 17 |
 | P11 | 26 | 0 | 0 | 26 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 370 | 37 | 195 |
+| **Jami** | 602 | 405 | 37 | 160 |

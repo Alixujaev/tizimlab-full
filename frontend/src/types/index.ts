@@ -508,3 +508,122 @@ export type DashboardDto =
       openProtocolsByStatus: Record<Exclude<ProtocolStatus, 'finalized'>, number>;
       openProtocolsTotal: number;
     } & SamplesSummary);
+
+// ---------------------------------------------------------------- Reagents (P7, spec §6, D-08, D-51, D-69, D-79, D-132..D-136)
+
+export type ReagentTransactionType = 'in' | 'out' | 'adjustment' | 'disposal';
+export type ReagentDocType = 'passport' | 'analysis_result' | 'other';
+
+export interface ReagentDto {
+  id: string;
+  companyId: string;
+  name: string;
+  casNumber: string | null;
+  unit: string;
+  quantity: number;
+  lowStockThreshold: number;
+  expiresAt: string | null;
+  supplier: string | null;
+  storageConditions: string | null;
+  isHazardous: boolean;
+  isLowStock: boolean;
+  isExpired: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateReagentInput {
+  name: string;
+  casNumber?: string | null;
+  unit: string;
+  quantity?: number;
+  lowStockThreshold?: number;
+  expiresAt?: string | null;
+  supplier?: string | null;
+  storageConditions?: string | null;
+  isHazardous?: boolean;
+}
+
+export interface UpdateReagentInput {
+  name?: string;
+  casNumber?: string | null;
+  unit?: string;
+  lowStockThreshold?: number;
+  expiresAt?: string | null;
+  supplier?: string | null;
+  storageConditions?: string | null;
+  isHazardous?: boolean;
+}
+
+export interface ListReagentsQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isLowStock?: boolean;
+  isExpired?: boolean;
+  isHazardous?: boolean;
+}
+
+export interface ReagentTransactionDto {
+  id: string;
+  companyId: string;
+  reagentId: string;
+  userId: string;
+  type: ReagentTransactionType;
+  quantity: number;
+  quantityBefore: number;
+  quantityAfter: number;
+  note: string | null;
+  protocolId: string | null;
+  analysisPurpose: string | null;
+  recordedDate: string;
+  createdAt: string;
+  userFullName?: string | null;
+}
+
+export interface CreateTransactionInput {
+  type: ReagentTransactionType;
+  quantity: number;
+  note?: string | null;
+  protocolId?: string | null;
+  analysisPurpose?: string | null;
+  recordedDate?: string | null;
+}
+
+export interface ReagentDocumentDto {
+  id: string;
+  companyId: string;
+  reagentId: string;
+  docType: ReagentDocType;
+  title: string;
+  fileId: string;
+  originalName: string;
+  mimeType: string;
+  sizeBytes: number;
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+export interface ReagentExpenseItemDto {
+  id: string;
+  companyId: string;
+  reagentId: string;
+  reagentName: string;
+  unit: string;
+  userId: string;
+  userFullName: string | null;
+  quantity: number;
+  recordedDate: string;
+  note: string | null;
+  protocolId: string | null;
+  protocolNumber?: string | null;
+  analysisPurpose: string | null;
+  createdAt: string;
+}
+
+export interface ExpenseCalendarDayDto {
+  date: string;
+  totalQuantity: number;
+  itemsCount: number;
+  reagents: { id: string; name: string; quantity: number; unit: string }[];
+}

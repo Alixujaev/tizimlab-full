@@ -39,7 +39,7 @@ Savol raqamlari (`Q-NN`) va matni o'zgarmaydi. Manba formati: `spec fayl §` + `
 
 | ID | Savol | Manba | Faza | Taklif (default) | Turi |
 |---|---|---|---|---|---|
-| Q-37 | `low_stock` xabarnomasi qachon yuboriladi (har `out` tranzaksiyadan keyin chegaradan pastga tushganda, bir marta yoki har safar)? `is_expired` uchun xabarnoma yo'q — kerakmi? | 06-reagents §6, 09 §9 — LOYIHA.md:239,245,309 | P7 | Zaxirani kamaytiruvchi tranzaksiya uni chegaradan pastga tushirgan paytda bir marta; zaxira tiklanib yana tushsa — yana. `is_expired` uchun xabarnoma yo'q (D-17). | NON-BLOCKING |
+| Q-37 | ✅ D-132 | 06-reagents §6, 09 §9 — LOYIHA.md:239,245,309 | P7 | Zaxirani kamaytiruvchi tranzaksiya uni chegaradan pastga tushirgan paytda bir marta; zaxira tiklanib yana tushsa — yana. `is_expired` uchun xabarnoma yo'q (D-17). | NON-BLOCKING |
 
 ## P9
 

@@ -15,6 +15,10 @@ import { SampleDetailPage } from '@/pages/samples/SampleDetailPage';
 import { SamplesPage } from '@/pages/samples/SamplesPage';
 import { SubstancesPage } from '@/pages/substances/SubstancesPage';
 import { UsersPage } from '@/pages/users/UsersPage';
+import { ReagentsPage } from '@/pages/reagents/ReagentsPage';
+import { ReagentDetailPage } from '@/pages/reagents/ReagentDetailPage';
+import { ReagentJournalPage } from '@/pages/reagents/ReagentJournalPage';
+import { ExpensesPage } from '@/pages/reagents/ExpensesPage';
 import { COMPANY_ROLES } from '@/types';
 
 const stub = (path: string, titleKey: string): RouteObject => ({
@@ -50,9 +54,10 @@ export const routes: RouteObject[] = [
               { path: '/protocols/:id', element: <Navigate to="/registry" replace /> },
               { path: '/substances', element: <SubstancesPage /> },
               { path: '/substances/:id', element: <SubstancesPage /> },
-              stub('/reagents', 'pages.reagents'),
-              stub('/reagents/journal', 'pages.reagentJournal'),
-              stub('/expenses', 'pages.expenses'),
+              { path: '/reagents', element: <ReagentsPage /> },
+              { path: '/reagents/:id', element: <ReagentDetailPage /> },
+              { path: '/reagents/journal', element: <ReagentJournalPage /> },
+              { path: '/expenses', element: <ExpensesPage /> },
               stub('/temperature', 'pages.temperature'),
               stub('/stability', 'pages.stability'),
               stub('/stability/:id', 'pages.stabilityDetail'),

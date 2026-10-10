@@ -25,6 +25,10 @@ import { createNotificationsRouter } from './modules/notifications/notifications
 import { createProtocolsRouter } from './modules/protocols/protocols.router.js';
 import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
+import {
+  createExpensesRouter,
+  createReagentsRouter,
+} from './modules/reagents/reagents.router.js';
 import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
@@ -112,6 +116,8 @@ export function createApp({
   api.use('/registry', createRegistryRouter({ auth, storage }));
   api.use('/notifications', createNotificationsRouter({ auth }));
   api.use('/dashboard', createDashboardRouter({ auth }));
+  api.use('/reagents', createReagentsRouter({ auth, storage }));
+  api.use('/expenses', createExpensesRouter({ auth, storage }));
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

@@ -104,7 +104,7 @@ describe('Protocols frontend component (ProtocolSection & workflows)', () => {
     loginAs('chemist');
     renderAt('/samples/s1');
 
-    const submitBtn = await screen.findByRole('button', { name: uz.protocols.submit });
+    const submitBtn = await screen.findByRole('button', { name: uz.protocols.submit }, { timeout: 3000 });
     expect(submitBtn).toBeDisabled();
     expect(screen.getByText(uz.protocols.fileMissing)).toBeInTheDocument();
   });

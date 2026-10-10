@@ -40,6 +40,10 @@ describeDb('001_core baseline migratsiyasi', () => {
       'protocol_files',
       'protocol_signatures',
       'protocols',
+      'reagent_documents',
+      'reagent_expense_log',
+      'reagent_transactions',
+      'reagents',
       'sample_tracking',
       'samples',
       'schema_migrations',
@@ -59,6 +63,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 5, name: 'protocols', state: 'applied' }),
       expect.objectContaining({ version: 6, name: 'protocol_extras', state: 'applied' }),
       expect.objectContaining({ version: 7, name: 'notifications', state: 'applied' }),
+      expect.objectContaining({ version: 8, name: 'reagents', state: 'applied' }),
     ]);
   });
 
