@@ -109,6 +109,14 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
    BLOCKING bo'lsa — to'xta va so'ra. Spec'da yo'q narsani o'zingdan qo'shma.
 7. Commit: `<tur>(pN): <qisqa tavsif>` (masalan `feat(p4): sample status machine`).
 
+## Git oqimi
+
+- Har feature/faza uchun `main` dan yangi branch och (nomi: `p6-notifications` kabi).
+- Ish tugagach `npm run check` yashil bo'lsa: commit, `main` ga merge, push, branch'ni o'chir.
+- Git status/log bilan foydalanuvchini chalg'itma. Faqat xato chiqsa xabar ber.
+- `package-lock.json` o'zgarishini feature commit'iga qo'sh, alohida masala qilma.
+- Qo'llangan migratsiyani tahrirlama, faqat yangi 00N fayl.
+
 ## Qilma
 
 - Docker / docker-compose (D-11; `Dockerfile` faqat P12 da, ixtiyoriy).
