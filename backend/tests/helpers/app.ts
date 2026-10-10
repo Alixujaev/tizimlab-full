@@ -55,6 +55,7 @@ export function testApp(deps: TestAppDeps = {}): { app: Express; sink: MemoryTra
     pingDb: async () => true,
     logger,
     loginLimit: { max: 1000, windowMs: 60_000 },
+    ingestLimit: { max: 1000, windowMs: 60_000 },
     ...rest,
     env: { ...TEST_ENV, ...env },
   });

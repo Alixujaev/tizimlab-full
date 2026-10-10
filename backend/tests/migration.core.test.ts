@@ -68,6 +68,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 7, name: 'notifications', state: 'applied' }),
       expect.objectContaining({ version: 8, name: 'reagents', state: 'applied' }),
       expect.objectContaining({ version: 9, name: 'temperature', state: 'applied' }),
+      expect.objectContaining({ version: 10, name: 'sensor_key_hash', state: 'applied' }),
     ]);
   });
 

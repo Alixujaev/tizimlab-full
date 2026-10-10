@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type express from 'express';
 import request from 'supertest';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -394,6 +395,134 @@ describeDb('P8: Harorat monitoringi (spec §7, SCHEMA_DIFF P8, D-52, D-78, D-83,
           temperature: 21.5,
         });
       expect(badKeyRes.status).toBe(401);
+    });
+
+    it('sensor kaliti DB da ochiq holda emas, SHA-256 xesh ko‘rinishida saqlanadi (D-141)', async () => {
+      const rawKey = 'my-super-secret-key-456';
+      const expectedHash = createHash('sha256').update(rawKey).digest('hex');
+
+      const sensor = await request(app)
+        .post('/api/v1/temperature/sensors')
+        .set(auth('admin'))
+        .send({
+          sensorId: 'IOT-HASH-TEST',
+          locationName: 'Server xonasi',
+          tempMin: 15,
+          tempMax: 25,
+          apiKey: rawKey,
+        });
+
+      const sensorId = sensor.body.data.id;
+
+      // DB dan to'g'ridan-to'g'ri o'qib tekshiramiz
+      const dbRes = await query<{ api_key: string }>(
+        `SELECT api_key FROM sensor_configs WHERE id = $1`,
+        [sensorId],
+      );
+
+      expect(dbRes.rows[0]?.api_key).toBe(expectedHash);
+      expect(dbRes.rows[0]?.api_key).not.toBe(rawKey);
+
+      // Ingest o'sha rawKey bilan muvaffaqiyatli ishlaydi
+      const ingestRes = await request(app)
+        .post('/api/v1/temperature/readings/ingest')
+        .set('X-Sensor-Key', rawKey)
+        .send({
+          sensorId: 'IOT-HASH-TEST',
+          temperature: 20.0,
+        });
+      expect(ingestRes.status).toBe(201);
+    });
+
+    it('parallel ingest paytida (Promise.all) chegaradan chiqqan 2 o‘qish cooldown ichida faqat 1 alert yaratadi (D-138, D-141)', async () => {
+      const rawKey = 'parallel-sensor-key-777';
+      const sensor = await request(app)
+        .post('/api/v1/temperature/sensors')
+        .set(auth('admin'))
+        .send({
+          sensorId: 'IOT-PARALLEL',
+          locationName: 'Muzlatgich P',
+          tempMin: -25,
+          tempMax: -15,
+          apiKey: rawKey,
+        });
+      const sensorId = sensor.body.data.id;
+
+      // 2 ta parallel o'qish (ikkalasi ham tempMax -15 dan yuqori, masalan -10 va -8)
+      const [res1, res2] = await Promise.all([
+        request(app)
+          .post('/api/v1/temperature/readings/ingest')
+          .set('X-Sensor-Key', rawKey)
+          .send({
+            sensorConfigId: sensorId,
+            temperature: -10,
+          }),
+        request(app)
+          .post('/api/v1/temperature/readings/ingest')
+          .set('X-Sensor-Key', rawKey)
+          .send({
+            sensorConfigId: sensorId,
+            temperature: -8,
+          }),
+      ]);
+
+      expect(res1.status).toBe(201);
+      expect(res2.status).toBe(201);
+
+      // Ikkala o'qish ham alert_triggered bo'ladi
+      expect(res1.body.data.reading.alertTriggered).toBe(true);
+      expect(res2.body.data.reading.alertTriggered).toBe(true);
+
+      // Lekin cooldown tufayli faqat bittasi alert yaratgan, ikkinchisi 0 alert yaratgan
+      const totalAlertsCreated =
+        res1.body.data.alertsCreated + res2.body.data.alertsCreated;
+      expect(totalAlertsCreated).toBe(1);
+
+      // DB dagi alertlar ro'yxatida faqat 1 ta yozuv bo'lishi kerak
+      const alertsRes = await request(app)
+        .get(`/api/v1/temperature/alerts?sensorConfigId=${sensorId}`)
+        .set(auth('admin'));
+      expect(alertsRes.body.data).toHaveLength(1);
+    });
+
+    it('ingest endpointiga rate limit o‘rnatilgan va limit oshganda 429 qaytaradi (D-141)', async () => {
+      const limitedApp = testApp({
+        ingestLimit: { max: 2, windowMs: 60000 },
+      }).app;
+
+      const rawKey = 'rate-limit-key-999';
+      await request(app)
+        .post('/api/v1/temperature/sensors')
+        .set(auth('admin'))
+        .send({
+          sensorId: 'IOT-RATE',
+          locationName: 'Rate limit xonasi',
+          tempMin: 10,
+          tempMax: 20,
+          apiKey: rawKey,
+        });
+
+      // 1-so'rov: 201
+      const r1 = await request(limitedApp)
+        .post('/api/v1/temperature/readings/ingest')
+        .set('X-Sensor-Key', rawKey)
+        .send({ sensorId: 'IOT-RATE', temperature: 15 });
+      expect(r1.status).toBe(201);
+
+      // 2-so'rov: 201
+      const r2 = await request(limitedApp)
+        .post('/api/v1/temperature/readings/ingest')
+        .set('X-Sensor-Key', rawKey)
+        .send({ sensorId: 'IOT-RATE', temperature: 15 });
+      expect(r2.status).toBe(201);
+
+      // 3-so'rov (limit 2 dan oshdi): 429 RATE_LIMITED
+      const r3 = await request(limitedApp)
+        .post('/api/v1/temperature/readings/ingest')
+        .set('X-Sensor-Key', rawKey)
+        .send({ sensorId: 'IOT-RATE', temperature: 15 });
+      expect(r3.status).toBe(429);
+      expect(r3.body.error.code).toBe('RATE_LIMITED');
     });
   });
 

@@ -1,7 +1,9 @@
+import type { RequestHandler } from 'express';
 import { Router } from 'express';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
 import { requireCompany, requirePermission } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
+import { createIngestLimiter } from './ingestLimiter.js';
 import { createTemperatureController } from './temperature.controller.js';
 import {
   createManualReadingSchema,
@@ -16,12 +18,14 @@ import {
 
 export interface TemperatureRouterDeps {
   auth: AuthMiddleware;
+  ingestLimiter?: RequestHandler;
 }
 
 export function createTemperatureRouter(deps: TemperatureRouterDeps): Router {
   const router = Router();
   const companyAuth = [...deps.auth.requireAuth, requireCompany];
   const controller = createTemperatureController();
+  const ingestLimiter = deps.ingestLimiter ?? createIngestLimiter();
 
   // Status (har bir sensor bo'yicha joriy holat, so'nggi o'qish, 24h statistika)
   router.get(
@@ -88,9 +92,10 @@ export function createTemperatureRouter(deps: TemperatureRouterDeps): Router {
     controller.createReading,
   );
 
-  // IoT / Qurilma orqali o'qish yuborish (D-137: API key orqali)
+  // IoT / Qurilma orqali o'qish yuborish (D-137: API key orqali, D-141: rate-limited)
   router.post(
     '/readings/ingest',
+    ingestLimiter,
     validate({ body: ingestReadingSchema }),
     controller.ingestReading,
   );

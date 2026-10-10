@@ -1,7 +1,12 @@
+import { createHash } from 'node:crypto';
 import { query, withTransaction } from '../../config/database.js';
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../../utils/errors.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
 import { createNotification } from '../notifications/notifications.service.js';
+
+export function hashApiKey(key: string): string {
+  return createHash('sha256').update(key.trim()).digest('hex');
+}
 import type {
   CreateManualReadingInput,
   CreateSensorConfigInput,
@@ -105,6 +110,8 @@ export async function createSensorConfig(
     throw new ConflictError(`'${input.sensorId}' identifikatorli sensor allaqachon mavjud`);
   }
 
+  const hashedApiKey = input.apiKey ? hashApiKey(input.apiKey) : null;
+
   const { rows } = await query<SensorConfigRow>(
     `INSERT INTO sensor_configs (
       company_id, sensor_id, location_name, temp_min, temp_max, humidity_min, humidity_max, is_active, api_key
@@ -119,7 +126,7 @@ export async function createSensorConfig(
       input.humidityMin ?? null,
       input.humidityMax ?? null,
       input.isActive ?? true,
-      input.apiKey ?? null,
+      hashedApiKey,
     ],
   );
 
@@ -173,6 +180,15 @@ export async function updateSensorConfig(
     throw new ValidationError('Minimal namlik maksimal namlikdan kichik bo‘lishi shart');
   }
 
+  let hashedApiKey: string | null = null;
+  if (input.apiKey !== undefined) {
+    if (input.apiKey === null || input.apiKey.trim() === '') {
+      hashedApiKey = null;
+    } else {
+      hashedApiKey = input.apiKey === current.api_key ? current.api_key : hashApiKey(input.apiKey);
+    }
+  }
+
   const { rows } = await query<SensorConfigRow>(
     `UPDATE sensor_configs SET
       sensor_id = COALESCE($3, sensor_id),
@@ -196,7 +212,7 @@ export async function updateSensorConfig(
       newHumidityMax,
       input.isActive ?? null,
       input.apiKey !== undefined,
-      input.apiKey ?? null,
+      hashedApiKey,
     ],
   );
 
@@ -297,6 +313,12 @@ export async function recordReading(
   const alertTriggered = violations.length > 0;
 
   return withTransaction(async (client) => {
+    // Parallel ingest poygalarini (race condition) oldini olish uchun sensor yozuvini bloklaymiz
+    await client.query(
+      `SELECT id FROM sensor_configs WHERE id = $1 FOR UPDATE`,
+      [config.id],
+    );
+
     const readingRes = await client.query<TemperatureReadingRow>(
       `INSERT INTO temperature_readings (
         company_id, sensor_config_id, temperature, humidity, alert_triggered, recorded_at, is_manual, recorded_by
@@ -389,22 +411,23 @@ export async function ingestDeviceReading(
   if (!key) {
     throw new UnauthorizedError('Sensor kaliti talab qilinadi (X-Sensor-Key yoki apiKey)');
   }
+  const keyHash = hashApiKey(key);
 
   let sensorRes;
   if (input.sensorConfigId) {
     sensorRes = await query<SensorConfigRow>(
       `SELECT * FROM sensor_configs WHERE id = $1 AND api_key = $2`,
-      [input.sensorConfigId, key],
+      [input.sensorConfigId, keyHash],
     );
   } else if (input.sensorId) {
     sensorRes = await query<SensorConfigRow>(
       `SELECT * FROM sensor_configs WHERE sensor_id = $1 AND api_key = $2`,
-      [input.sensorId, key],
+      [input.sensorId, keyHash],
     );
   } else {
     sensorRes = await query<SensorConfigRow>(
       `SELECT * FROM sensor_configs WHERE api_key = $1`,
-      [key],
+      [keyHash],
     );
   }
 

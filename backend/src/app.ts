@@ -29,6 +29,11 @@ import {
   createExpensesRouter,
   createReagentsRouter,
 } from './modules/reagents/reagents.router.js';
+import {
+  createIngestLimiter,
+  INGEST_LIMIT,
+  type IngestLimitOptions,
+} from './modules/temperature/ingestLimiter.js';
 import { createTemperatureRouter } from './modules/temperature/temperature.router.js';
 import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
@@ -46,6 +51,8 @@ export interface AppDeps {
   logger?: Logger;
   /** Login rate-limit (D-66) — testlarda kichik/katta qiymat bilan almashtiriladi. */
   loginLimit?: LoginLimitOptions;
+  /** Ingest rate-limit (D-141) — testlarda kichik/katta qiymat bilan almashtiriladi. */
+  ingestLimit?: IngestLimitOptions;
   /** Fayl xotirasi (R2); `null`/berilmagan — fayl endpointlari 503 (D-121). Testlarda xotiradagi adapter. */
   storage?: FileStorage | null;
 }
@@ -56,6 +63,7 @@ export function createApp({
   pingDb,
   logger = defaultLogger,
   loginLimit = LOGIN_LIMIT,
+  ingestLimit = INGEST_LIMIT,
   storage = null,
 }: AppDeps): Express {
   const app = express();
@@ -119,7 +127,10 @@ export function createApp({
   api.use('/dashboard', createDashboardRouter({ auth }));
   api.use('/reagents', createReagentsRouter({ auth, storage }));
   api.use('/expenses', createExpensesRouter({ auth, storage }));
-  api.use('/temperature', createTemperatureRouter({ auth }));
+  api.use(
+    '/temperature',
+    createTemperatureRouter({ auth, ingestLimiter: createIngestLimiter(ingestLimit) }),
+  );
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {
