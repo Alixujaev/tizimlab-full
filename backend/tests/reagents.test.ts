@@ -194,29 +194,31 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
       expect(check.body.data.quantity).toBe(20);
     });
 
-    it('parallel chiqimda (race condition) SELECT ... FOR UPDATE orqali zaxira manfiy bo‘lmaydi', async () => {
+    it('parallel chiqim (Promise.all, 2 ta chiqim, qoldiq faqat bittasiga yetadi) SELECT ... FOR UPDATE orqali zaxira manfiy bo‘lmaydi', async () => {
       const r = await request(app)
         .post('/api/v1/reagents')
         .set(auth('labHead'))
-        .send({ name: 'Toluol', unit: 'l', quantity: 100 });
+        .send({ name: 'Toluol', unit: 'l', quantity: 10 });
       const id = r.body.data.id as string;
 
-      // 3 ta bir vaqtda 60 dan chiqim (jami 180 kerak, lekin zaxira 100)
+      // 2 ta bir vaqtda 6 dan chiqim (jami 12 kerak, lekin zaxira 10 — faqat bittasiga yetadi)
       const results = await Promise.all([
-        request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('admin')).send({ type: 'out', quantity: 60 }),
-        request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('labHead')).send({ type: 'out', quantity: 60 }),
-        request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('admin')).send({ type: 'out', quantity: 60 }),
+        request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('admin')).send({ type: 'out', quantity: 6 }),
+        request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('labHead')).send({ type: 'out', quantity: 6 }),
       ]);
 
       const successCount = results.filter((res) => res.status === 201).length;
       const failCount = results.filter((res) => res.status === 400).length;
 
       expect(successCount).toBe(1);
-      expect(failCount).toBe(2);
+      expect(failCount).toBe(1);
 
-      // Yakuniy qoldiq aynan 40 bo'ladi
+      const failed = results.find((res) => res.status === 400);
+      expect(failed?.body?.error?.code).toBe('INSUFFICIENT_STOCK');
+
+      // Yakuniy qoldiq aynan 4 bo'ladi (10 - 6)
       const finalCheck = await request(app).get(`/api/v1/reagents/${id}`).set(auth('chemist'));
-      expect(finalCheck.body.data.quantity).toBe(40);
+      expect(finalCheck.body.data.quantity).toBe(4);
     });
 
     it('kirim, chiqim, tuzatish (adjustment) va utilizatsiya (disposal) to‘g‘ri loglanadi (R-REAG-05..09)', async () => {
