@@ -619,7 +619,7 @@
 | R-ARCH-54 | Env `NODE_ENV` (development/production — Swagger, rate-limit, Telegram rejimi unga bog'liq). | 15 §15, 16 §16 | P1 | [x] |
 | R-ARCH-55 | Env `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`. | 15-auth §15, DECISIONS.md D-18, D-25 | P2 | [x] |
 | R-ARCH-56 | Hosting-agnostik: hammasi `.env` orqali, `npm run build` + `npm start`; Docker yo'q. | DECISIONS.md D-11 | P12 | [ ] |
-| R-ARCH-57 | Eski bazadan ma'lumot ko'chirish ETL skripti. | DECISIONS.md D-01 | P12 | [ ] |
+| R-ARCH-57 | Eski bazadan ma'lumot ko'chirish ETL skripti. | DECISIONS.md D-01, DECISIONS.md D-151 | P12 | [x] |
 | R-ARCH-58 | `Dockerfile` ixtiyoriy (faqat P12 da, kerak bo'lsa). | DECISIONS.md D-11 | P12 | [ ] |
 | R-ARCH-59 | Node 24 LTS: `.nvmrc`, `engines` va CI workflow Node 24 da. | DECISIONS.md D-20 | P1 | [x] |
 | R-ARCH-60 | Backend ESM (`NodeNext`, nisbiy importlarda `.js`); dev `tsx watch`; build `tsc` + SQL migratsiyalarni `dist` ga ko'chirish. | DECISIONS.md D-21 | P1 | [x] |
@@ -631,8 +631,8 @@
 | R-ARCH-66 | Migratsiyalar faqat oldinga (down yo'q). | DECISIONS.md D-24 | P1 | [x] |
 | R-ARCH-67 | Qo'llangan migratsiya fayli checksum'i o'zgarsa runner xato beradi. | DECISIONS.md D-24 | P1 | [x] |
 | R-ARCH-68 | Env qoidalari: JWT sirlari ≥32, production'da R2_* va FRONTEND_URL majburiy, Telegram token → username (+ production'da webhook URL/secret). | DECISIONS.md D-25, D-26 | P1 | [x] |
-| R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [ ] |
-| R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [ ] |
+| R-ARCH-69 | ETL eski `audit_logs` ni yangi audit jadvaliga ko'chirmaydi; eski baza dump'i arxiv sifatida saqlanadi. | DECISIONS.md D-63 | P12 | [x] |
+| R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [x] |
 | R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [x] |
 | R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
@@ -644,10 +644,10 @@
 | R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
 | R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [x] |
 | R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
-| R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [ ] |
-| R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [ ] |
-| R-ARCH-84 | ETL `users.password_hash` ni o'zgarishsiz ko'chiradi — foydalanuvchilar eski parollari bilan kira oladi (bcrypt `$2a$`/`$2b$` mos). | DECISIONS.md D-86 | P12 | [ ] |
-| R-ARCH-85 | ETL `users.email` ni kichik harfga keltiradi; registr bo'yicha to'qnashuvlar bo'lsa ETL to'xtaydi va hisobot beradi. | DECISIONS.md D-91 | P12 | [ ] |
+| R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [x] |
+| R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [x] |
+| R-ARCH-84 | ETL `users.password_hash` eski xeshlarini ko'chirmaydi, foydalanuvchilarga vaqtinchalik parol/sozlash tokeni beradi. | DECISIONS.md D-82, DECISIONS.md D-151 | P12 | [x] |
+| R-ARCH-85 | ETL `users.email` ni kichik harfga keltiradi; registr bo'yicha to'qnashuvlar bo'lsa ETL to'xtaydi va hisobot beradi. | DECISIONS.md D-91 | P12 | [x] |
 
 ## FE — Frontend sahifalar, yo'llar, Sidebar
 
@@ -790,10 +790,10 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 49 | 7 | 29 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 56 | 7 | 22 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 36 | 5 | 4 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 429 | 36 | 137 |
+| **Jami** | 602 | 436 | 36 | 130 |
 
 ### Fazalar bo'yicha
 
@@ -810,5 +810,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P9 | 58 | 1 | 1 | 56 |
 | P10 | 25 | 7 | 2 | 16 |
 | P11 | 26 | 21 | 0 | 5 |
-| P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 429 | 36 | 137 |
+| P12 | 28 | 8 | 2 | 18 |
+| **Jami** | 602 | 436 | 36 | 130 |

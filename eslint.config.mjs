@@ -11,7 +11,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['backend/**/*.{ts,mjs}', 'scripts/**/*.mjs', '*.mjs'],
+    files: ['backend/**/*.{ts,mjs}', 'scripts/**/*.{ts,mjs}', '*.mjs'],
     languageOptions: { globals: globals.node },
   },
   {
@@ -48,7 +48,7 @@ export default tseslint.config(
   },
   {
     // CLI skriptlar konsolga yozadi
-    files: ['**/scripts/**/*.mjs'],
+    files: ['**/scripts/**/*.{mjs,ts}'],
     rules: { 'no-console': 'off' },
   },
   prettier,

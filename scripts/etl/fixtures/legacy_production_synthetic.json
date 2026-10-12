@@ -1,0 +1,442 @@
+{
+  "companies": [
+    {
+      "id": "c1000000-0000-4000-8000-000000000001",
+      "name": "Grand Pharm LIMS",
+      "slug": "grand-pharm",
+      "is_active": true,
+      "created_at": "2026-01-01T08:00:00.000Z",
+      "updated_at": "2026-01-01T08:00:00.000Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "email": "superadmin@tizimlab.uz",
+      "password_hash": "$2a$10$LegacyHashForSuperAdmin123456789012345678901234567890",
+      "full_name": "Global Super Administrator",
+      "role": "super_admin",
+      "is_active": true,
+      "company_id": null,
+      "created_at": "2026-01-01T08:00:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "email": "admin@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForAdmin1234567890123456789012345678901234",
+      "full_name": "Ali Valiyev (Admin)",
+      "role": "admin",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T08:30:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "email": "labhead@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForLabHead123456789012345678901234567890123",
+      "full_name": "Dilnoza Rahimova (Lab Head)",
+      "role": "lab_head",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T09:00:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "email": "director@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForDirector12345678901234567890123456789012",
+      "full_name": "Bahrom Karimov (Director)",
+      "role": "director",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T09:15:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "email": "kontrolyor@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForKontrolyor1234567890123456789012345678901",
+      "full_name": "Malika Yusupova (Inspector)",
+      "role": "kontrolyor",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T09:30:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "email": "chemist1@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForChemist112345678901234567890123456789012",
+      "full_name": "Aziz Qodirov (Chemist 1)",
+      "role": "chemist",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T10:00:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "email": "chemist2@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForChemist212345678901234567890123456789012",
+      "full_name": "Nargiza Odilova (Chemist 2)",
+      "role": "chemist",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T10:30:00.000Z"
+    },
+    {
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "email": "chemist3@grandpharm.uz",
+      "password_hash": "$2a$10$LegacyHashForChemist312345678901234567890123456789012",
+      "full_name": "Jasur Sobirov (Chemist 3)",
+      "role": "chemist",
+      "is_active": true,
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-01T11:00:00.000Z"
+    }
+  ],
+  "user_permissions": [
+    {
+      "id": "a2000000-0000-4000-8000-000000000001",
+      "user_id": "a1000000-0000-4000-8000-000000000006",
+      "resource": "samples",
+      "action": "export",
+      "granted_by": "a1000000-0000-4000-8000-000000000002",
+      "created_at": "2026-01-02T10:00:00.000Z"
+    }
+  ],
+  "substances": [
+    {
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "name_uz": "Paratsetamol",
+      "name_ru": "Парацетамол",
+      "name_en": "Paracetamol",
+      "pharmacopoeia": "EP",
+      "cas_number": "103-90-2",
+      "description": "Antipiretik va analgetik vosita",
+      "is_active": true,
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-02T08:00:00.000Z",
+      "updated_at": "2026-01-02T08:00:00.000Z"
+    },
+    {
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "name_uz": "Amoksitsillin Trihidrat",
+      "name_ru": "Амоксициллин тригидрат",
+      "name_en": "Amoxicillin Trihydrate",
+      "pharmacopoeia": "USP",
+      "cas_number": "61336-70-7",
+      "description": "Keng spektrli yarimsintetik penitsillin",
+      "is_active": true,
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "created_at": "2026-01-02T08:30:00.000Z",
+      "updated_at": "2026-01-02T08:30:00.000Z"
+    }
+  ],
+  "substance_parameters": [
+    {
+      "id": "b2000000-0000-4000-8000-000000000001",
+      "substance_id": "b1000000-0000-4000-8000-000000000001",
+      "parameter_name": "Tavsif (Tashqi ko'rinish)",
+      "unit": null,
+      "spec_min": null,
+      "spec_max": null,
+      "method": "Vizual",
+      "sort_order": 1,
+      "created_at": "2026-01-02T09:00:00.000Z"
+    },
+    {
+      "id": "b2000000-0000-4000-8000-000000000002",
+      "substance_id": "b1000000-0000-4000-8000-000000000001",
+      "parameter_name": "Miqdoriy tahlil (Assay)",
+      "unit": "%",
+      "spec_min": 98.5,
+      "spec_max": 101.5,
+      "method": "HPLC",
+      "sort_order": 2,
+      "created_at": "2026-01-02T09:10:00.000Z"
+    }
+  ],
+  "samples": [
+    {
+      "id": "d1000000-0000-4000-8000-000000000001",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "raw_material",
+      "status": "pending_assignment",
+      "substance_id": "b1000000-0000-4000-8000-000000000001",
+      "substance_name": "Paratsetamol Xomashyo",
+      "serial_number": "PAR-2026-001",
+      "lot_number": "LOT-9901",
+      "quantity": "50 kg",
+      "manufacturer": "Zhejiang Chemical Co",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "created_at": "2026-01-03T08:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000002",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "finished_product",
+      "status": "in_progress",
+      "substance_id": "b1000000-0000-4000-8000-000000000001",
+      "substance_name": "Paratsetamol Tabletka 500mg",
+      "serial_number": "TAB-2026-002",
+      "lot_number": "LOT-9902",
+      "quantity": "10000 quti",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000006",
+      "assigned_by": "a1000000-0000-4000-8000-000000000003",
+      "assigned_at": "2026-01-03T09:00:00.000Z",
+      "created_at": "2026-01-03T08:30:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000003",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "finished_product",
+      "status": "submitted",
+      "substance_id": "b1000000-0000-4000-8000-000000000002",
+      "substance_name": "Amoksitsillin Kapsula 250mg",
+      "serial_number": "AMX-2026-003",
+      "lot_number": "LOT-9903",
+      "quantity": "5000 quti",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000007",
+      "assigned_by": "a1000000-0000-4000-8000-000000000003",
+      "assigned_at": "2026-01-03T10:00:00.000Z",
+      "created_at": "2026-01-03T09:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000004",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "finished_product",
+      "status": "approved",
+      "substance_id": "b1000000-0000-4000-8000-000000000001",
+      "substance_name": "Paratsetamol Sirop 100ml",
+      "serial_number": "SIR-2026-004",
+      "lot_number": "LOT-9904",
+      "quantity": "2000 flakon",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000008",
+      "assigned_by": "a1000000-0000-4000-8000-000000000003",
+      "assigned_at": "2026-01-03T11:00:00.000Z",
+      "created_at": "2026-01-03T09:30:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000005",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "raw_material",
+      "status": "rejected",
+      "substance_id": "b1000000-0000-4000-8000-000000000002",
+      "substance_name": "Amoksitsillin Substantssiya",
+      "serial_number": "AMX-2026-005",
+      "lot_number": "LOT-9905",
+      "quantity": "25 kg",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000006",
+      "created_at": "2026-01-04T08:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000006",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "reagent",
+      "status": "pending_assignment",
+      "substance_name": "Metanol HPLC darajali",
+      "serial_number": "REA-2026-006",
+      "lot_number": "LOT-9906",
+      "quantity": "10 L",
+      "passport_status": "approved",
+      "passport_file_name": "metanol_passport.pdf",
+      "passport_file_path": "c1000000-0000-4000-8000-000000000001/passport/metanol.pdf",
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "created_at": "2026-01-04T09:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000007",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "standard_substance",
+      "status": "pending_assignment",
+      "substance_name": "Paratsetamol Standart Namunasi (CRS)",
+      "serial_number": "STD-2026-007",
+      "lot_number": "LOT-9907",
+      "quantity": "5 g",
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "created_at": "2026-01-04T10:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000008",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "other",
+      "status": "stopped",
+      "substance_name": "Laboratoriya yordamchi moddasi",
+      "serial_number": "OTH-2026-008",
+      "lot_number": "LOT-9908",
+      "stop_reason": "Reaktiv yetishmovchiligi sababli tahlil to'xtatildi",
+      "stopped_at": "2026-01-04T12:00:00.000Z",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000007",
+      "created_at": "2026-01-04T11:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000009",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "raw_material",
+      "status": "in_progress",
+      "substance_name": "Kraxmal makkajo'xori",
+      "serial_number": "KRX-2026-009",
+      "lot_number": "LOT-9909",
+      "quantity": "100 kg",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000006",
+      "created_at": "2026-01-05T08:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000010",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "finished_product",
+      "status": "pending_assignment",
+      "substance_name": "Askorbin kislotasi draje",
+      "serial_number": "VIT-2026-010",
+      "lot_number": "LOT-9910",
+      "quantity": "20000 quti",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "created_at": "2026-01-05T09:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000011",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "raw_material",
+      "status": "approved",
+      "substance_name": "Magneziy stearat",
+      "serial_number": "MGN-2026-011",
+      "lot_number": "LOT-9911",
+      "quantity": "20 kg",
+      "expires_at": "2027-12-31",
+      "deadline": "2027-12-25",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000007",
+      "created_at": "2026-01-05T10:00:00.000Z"
+    },
+    {
+      "id": "d1000000-0000-4000-8000-000000000012",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "type": "finished_product",
+      "status": "approved",
+      "substance_name": "Analgin in'eksiya 50%",
+      "serial_number": "ANL-2026-012",
+      "lot_number": "LOT-9912",
+      "quantity": "3000 ampula",
+      "created_by": "a1000000-0000-4000-8000-000000000005",
+      "assigned_to": "a1000000-0000-4000-8000-000000000008",
+      "created_at": "2026-01-05T11:00:00.000Z"
+    }
+  ],
+  "protocols": [
+    {
+      "id": "e1000000-0000-4000-8000-000000000001",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "sample_id": "d1000000-0000-4000-8000-000000000002",
+      "created_by": "a1000000-0000-4000-8000-000000000006",
+      "status": "draft",
+      "protocol_role": "final",
+      "created_at": "2026-01-03T09:10:00.000Z"
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000002",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "sample_id": "d1000000-0000-4000-8000-000000000003",
+      "created_by": "a1000000-0000-4000-8000-000000000007",
+      "status": "submitted",
+      "protocol_role": "final",
+      "submitted_at": "2026-01-03T15:00:00.000Z",
+      "created_at": "2026-01-03T10:10:00.000Z"
+    },
+    {
+      "id": "e1000000-0000-4000-8000-000000000003",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "sample_id": "d1000000-0000-4000-8000-000000000004",
+      "created_by": "a1000000-0000-4000-8000-000000000008",
+      "status": "approved",
+      "protocol_role": "final",
+      "submitted_at": "2026-01-03T14:00:00.000Z",
+      "approved_at": "2026-01-03T16:00:00.000Z",
+      "created_at": "2026-01-03T11:10:00.000Z"
+    }
+  ],
+  "protocol_signatures": [
+    {
+      "id": "e2000000-0000-4000-8000-000000000001",
+      "protocol_id": "e1000000-0000-4000-8000-000000000003",
+      "user_id": "a1000000-0000-4000-8000-000000000008",
+      "role": "chemist",
+      "signature_hash": "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90",
+      "signed_at": "2026-01-03T14:00:00.000Z"
+    },
+    {
+      "id": "e2000000-0000-4000-8000-000000000002",
+      "protocol_id": "e1000000-0000-4000-8000-000000000003",
+      "user_id": "a1000000-0000-4000-8000-000000000003",
+      "role": "lab_head",
+      "signature_hash": "b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1",
+      "signed_at": "2026-01-03T16:00:00.000Z"
+    }
+  ],
+  "files": [],
+  "notifications": [],
+  "reagents": [
+    {
+      "id": "f1000000-0000-4000-8000-000000000001",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "name": "Xlorid kislota (HCl) 37%",
+      "cas_number": "7647-01-0",
+      "unit": "L",
+      "quantity": 25.0,
+      "low_stock_threshold": 5.0,
+      "expires_at": "2027-06-30",
+      "is_hazardous": true,
+      "is_active": true,
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "created_at": "2026-01-02T12:00:00.000Z"
+    }
+  ],
+  "reagent_transactions": [
+    {
+      "id": "f2000000-0000-4000-8000-000000000001",
+      "reagent_id": "f1000000-0000-4000-8000-000000000001",
+      "type": "in",
+      "quantity": 25.0,
+      "quantity_before": 0.0,
+      "quantity_after": 25.0,
+      "notes": "Boshlang'ich qoldiq",
+      "performed_by": "a1000000-0000-4000-8000-000000000003",
+      "created_at": "2026-01-02T12:05:00.000Z"
+    }
+  ],
+  "sensor_configs": [
+    {
+      "id": "f3000000-0000-4000-8000-000000000001",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "sensor_id": "SENSOR-LAB-01",
+      "location_name": "HPLC xonasi",
+      "temp_min": 18.0,
+      "temp_max": 25.0,
+      "is_active": true,
+      "created_at": "2026-01-02T14:00:00.000Z"
+    }
+  ],
+  "temperature_readings": [
+    {
+      "id": "f4000000-0000-4000-8000-000000000001",
+      "sensor_id": "SENSOR-LAB-01",
+      "temperature": 21.5,
+      "humidity": 45.0,
+      "alert_triggered": false,
+      "recorded_at": "2026-01-03T08:00:00.000Z",
+      "is_manual": true,
+      "recorded_by": "a1000000-0000-4000-8000-000000000003"
+    }
+  ],
+  "temperature_alerts": [],
+  "stability_studies": [],
+  "stability_checkpoints": [],
+  "stability_results": [],
+  "sample_documents": [],
+  "protocol_values": [],
+  "protocol_files": []
+}

@@ -2,6 +2,7 @@
   "name": "tizimlab",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "TizimLab (LabControl) — farmatsevtika LIMS, multi-tenant SaaS",
   "workspaces": [
     "backend",
@@ -20,7 +21,8 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "checklist:stats": "node scripts/checklist-stats.mjs"
+    "checklist:stats": "node scripts/checklist-stats.mjs",
+    "etl": "tsx scripts/etl/cli.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
