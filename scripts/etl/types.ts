@@ -264,9 +264,20 @@ export interface LegacyTemperatureReading {
 export interface LegacyTemperatureAlert {
   id: string;
   sensor_id: string;
+  reading_id?: string;
   temperature: number;
   alert_type: string;
   notified_at?: string | null;
+  created_at?: string;
+}
+
+export interface LegacyTelegramLinkToken {
+  id: string;
+  user_id: string;
+  token?: string;
+  token_hash?: string;
+  expires_at: string;
+  used_at?: string | null;
   created_at?: string;
 }
 
@@ -274,9 +285,11 @@ export interface LegacyStabilityStudy {
   id: string;
   company_id: string;
   sample_id: string;
-  study_type: string;
-  storage_condition: string;
-  start_date: string;
+  study_type?: string;
+  storage_condition?: string;
+  storage_conditions?: string;
+  start_date?: string;
+  started_at?: string;
   status: string; // 'active' | 'completed' | 'cancelled'
   notes?: string | null;
   created_by: string;
@@ -287,10 +300,13 @@ export interface LegacyStabilityStudy {
 export interface LegacyStabilityCheckpoint {
   id: string;
   study_id: string;
-  interval_months: number;
-  planned_date: string;
+  interval_months?: number;
+  interval_tag?: string;
+  planned_date?: string;
+  due_date?: string;
   status: string;
   actual_date?: string | null;
+  completed_at?: string | null;
   completed_by?: string | null;
   assigned_to?: string | null;
   notes?: string | null;
@@ -301,11 +317,14 @@ export interface LegacyStabilityCheckpoint {
 export interface LegacyStabilityResult {
   id: string;
   checkpoint_id: string;
-  parameter_name: string;
-  specification: string;
-  initial_value: string;
+  parameter?: string;
+  parameter_name?: string;
+  specification?: string | null;
+  initial_value?: string | null;
   current_value?: string | null;
-  result_status?: string | null;
+  result_status?: 'pass' | 'fail' | 'warning' | null;
+  recorded_by?: string | null;
+  recorded_at?: string | null;
   tested_by?: string | null;
   tested_at?: string | null;
   created_at?: string;
@@ -332,11 +351,11 @@ export interface LegacyDataset {
   stability_studies?: LegacyStabilityStudy[];
   stability_checkpoints?: LegacyStabilityCheckpoint[];
   stability_results?: LegacyStabilityResult[];
+  telegram_link_tokens?: LegacyTelegramLinkToken[];
   sample_documents?: unknown[];
   protocol_values?: unknown[];
   audit_logs?: unknown[];
   sessions?: unknown[];
-  telegram_link_tokens?: unknown[];
 }
 
 export interface UserSetupInfo {
@@ -344,6 +363,7 @@ export interface UserSetupInfo {
   email: string;
   temporaryPassword: string;
   setupToken: string;
+  setupTokenHash: string;
 }
 
 export interface ETLValidationResult {
@@ -385,9 +405,11 @@ export interface ETLReport {
     stability_studies: number;
     stability_checkpoints: number;
     stability_results: number;
+    telegram_link_tokens: number;
   };
   userSetupCredentials: UserSetupInfo[];
   problematicRows: Array<{ entity: string; id: string; reason: string }>;
   warnings: string[];
   errors: string[];
 }
+

@@ -13,6 +13,7 @@ export interface ETLOptions {
   copyLegacyPasswords?: boolean;
   breakCompanyIdMapping?: boolean;
   throwInTransaction?: boolean;
+  breakTargetTableName?: boolean;
 }
 
 /**
@@ -50,6 +51,7 @@ export async function runETL(
   const mapped = mapLegacyDataset(dataset, {
     copyLegacyPasswords: options.copyLegacyPasswords,
     breakCompanyIdMapping: options.breakCompanyIdMapping,
+    breakTargetTableName: options.breakTargetTableName,
   });
 
   // Tracking ID larini deterministik qilish (idempotentlik uchun)
@@ -83,6 +85,7 @@ export async function runETL(
     stability_studies: mapped.stability_studies.length,
     stability_checkpoints: mapped.stability_checkpoints.length,
     stability_results: mapped.stability_results.length,
+    telegram_link_tokens: mapped.telegram_link_tokens.length,
   };
 
   // DRY-RUN REJIMI: Bazaga hech narsa yozilmaydi, hisobot qaytariladi
@@ -233,9 +236,10 @@ export async function runETL(
     }
 
     // 6. Samples
+    const samplesTableName = options.breakTargetTableName ? 'non_existent_samples_table' : 'samples';
     for (const sm of mapped.samples) {
       const sql = `
-        INSERT INTO samples (id, company_id, type, status, substance_id, substance_name, serial_number, lot_number, quantity, manufacturer, manufactured_at, analysis_start, analysis_end, notes, created_by, assigned_to, assigned_by, assigned_at, stop_reason, stopped_at, passport_file_name, passport_file_path, passport_file_size, passport_status, passport_uploaded_by, deleted_at, created_at, updated_at)
+        INSERT INTO ${samplesTableName} (id, company_id, type, status, substance_id, substance_name, serial_number, lot_number, quantity, manufacturer, manufactured_at, analysis_start, analysis_end, notes, created_by, assigned_to, assigned_by, assigned_at, stop_reason, stopped_at, passport_file_name, passport_file_path, passport_file_size, passport_status, passport_uploaded_by, deleted_at, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
         ${conflictClause(
           'samples',
@@ -498,7 +502,7 @@ export async function runETL(
         ta.id,
         ta.company_id,
         ta.sensor_config_id,
-        ta.id, // using alert id as reading reference in test fixture or reading_id
+        ta.reading_id,
         ta.temperature,
         ta.alert_type,
         ta.notified_at,
@@ -558,11 +562,11 @@ export async function runETL(
     // 19. Stability Results
     for (const sr of mapped.stability_results) {
       const sql = `
-        INSERT INTO stability_results (id, company_id, checkpoint_id, parameter, initial_value, current_value, specification, tested_by, tested_at, created_at)
+        INSERT INTO stability_results (id, company_id, checkpoint_id, parameter, initial_value, current_value, specification, result_status, recorded_by, recorded_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         ${conflictClause(
           'stability_results',
-          'ON CONFLICT (id) DO UPDATE SET parameter = EXCLUDED.parameter',
+          'ON CONFLICT (id) DO UPDATE SET parameter = EXCLUDED.parameter, current_value = EXCLUDED.current_value, result_status = EXCLUDED.result_status',
         )}
       `;
       await client.query(sql, [
@@ -573,9 +577,26 @@ export async function runETL(
         sr.initial_value,
         sr.current_value,
         sr.specification,
-        sr.tested_by,
-        sr.tested_at,
-        sr.created_at,
+        sr.result_status,
+        sr.recorded_by,
+        sr.recorded_at,
+      ]);
+    }
+
+    // 20. Telegram Link Tokens (Bazada faqat SHA-256 xesh)
+    for (const tlt of mapped.telegram_link_tokens) {
+      const sql = `
+        INSERT INTO telegram_link_tokens (id, user_id, token_hash, expires_at, used_at, created_at)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        ${conflictClause('telegram_link_tokens', 'ON CONFLICT (id) DO NOTHING')}
+      `;
+      await client.query(sql, [
+        tlt.id,
+        tlt.user_id,
+        tlt.token_hash,
+        tlt.expires_at,
+        tlt.used_at,
+        tlt.created_at,
       ]);
     }
 

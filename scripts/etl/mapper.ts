@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import type {
   LegacyDataset,
@@ -221,6 +221,7 @@ export interface MappedDataset {
     id: string;
     company_id: string;
     sensor_config_id: string;
+    reading_id: string;
     temperature: number;
     alert_type: string;
     notified_at: string | null;
@@ -256,11 +257,19 @@ export interface MappedDataset {
     company_id: string;
     checkpoint_id: string;
     parameter: string;
-    specification: string;
-    initial_value: string;
+    specification: string | null;
+    initial_value: string | null;
     current_value: string | null;
-    tested_by: string | null;
-    tested_at: string | null;
+    result_status: 'pass' | 'fail' | 'warning';
+    recorded_by: string;
+    recorded_at: string;
+  }>;
+  telegram_link_tokens: Array<{
+    id: string;
+    user_id: string;
+    token_hash: string;
+    expires_at: string;
+    used_at: string | null;
     created_at: string;
   }>;
   userSetupCredentials: UserSetupInfo[];
@@ -273,7 +282,11 @@ export interface MappedDataset {
  */
 export function mapLegacyDataset(
   dataset: LegacyDataset,
-  options: { copyLegacyPasswords?: boolean; breakCompanyIdMapping?: boolean } = {},
+  options: {
+    copyLegacyPasswords?: boolean;
+    breakCompanyIdMapping?: boolean;
+    breakTargetTableName?: boolean;
+  } = {},
 ): MappedDataset {
   const now = () => new Date().toISOString();
   const problematicRows: Array<{ entity: string; id: string; reason: string }> = [];
@@ -301,6 +314,7 @@ export function mapLegacyDataset(
     let passwordHash: string;
     let tempPassword = '';
     const setupToken = `tok_${randomUUID()}`;
+    const setupTokenHash = createHash('sha256').update(setupToken).digest('hex');
 
     if (options.copyLegacyPasswords) {
       // Mutatsiya (c) uchun buzg'unchi holat
@@ -316,6 +330,7 @@ export function mapLegacyDataset(
       email: u.email.trim().toLowerCase(),
       temporaryPassword: tempPassword,
       setupToken,
+      setupTokenHash,
     });
 
     const isSuperAdmin = u.role === 'super_admin';
@@ -648,20 +663,27 @@ export function mapLegacyDataset(
   // =========================================================================
   // 9. Sensor Configs & Readings (D-78: sensor_config_id FK)
   // =========================================================================
-  const sensor_configs = (dataset.sensor_configs || []).map((sc) => ({
-    id: sc.id,
-    company_id: options.breakCompanyIdMapping ? randomUUID() : sc.company_id,
-    sensor_id: sc.sensor_id,
-    location_name: sc.location_name,
-    temp_min: sc.temp_min,
-    temp_max: sc.temp_max,
-    humidity_min: sc.humidity_min ?? null,
-    humidity_max: sc.humidity_max ?? null,
-    is_active: sc.is_active ?? true,
-    api_key: sc.api_key ?? null,
-    created_at: sc.created_at || now(),
-    updated_at: sc.updated_at || now(),
-  }));
+  const sensor_configs = (dataset.sensor_configs || []).map((sc) => {
+    let apiKey = sc.api_key ?? null;
+    if (apiKey && apiKey.length !== 64) {
+      apiKey = createHash('sha256').update(apiKey).digest('hex');
+    }
+
+    return {
+      id: sc.id,
+      company_id: options.breakCompanyIdMapping ? randomUUID() : sc.company_id,
+      sensor_id: sc.sensor_id,
+      location_name: sc.location_name,
+      temp_min: sc.temp_min,
+      temp_max: sc.temp_max,
+      humidity_min: sc.humidity_min ?? null,
+      humidity_max: sc.humidity_max ?? null,
+      is_active: sc.is_active ?? true,
+      api_key: apiKey,
+      created_at: sc.created_at || now(),
+      updated_at: sc.updated_at || now(),
+    };
+  });
 
   const sensorConfigBySensorId = new Map(sensor_configs.map((sc) => [sc.sensor_id, sc]));
 
@@ -684,16 +706,26 @@ export function mapLegacyDataset(
     };
   });
 
+  const readingMap = new Map(temperature_readings.map((r) => [r.id, r]));
+
   const temperature_alerts = (dataset.temperature_alerts || []).map((ta) => {
     const sc = sensorConfigBySensorId.get(ta.sensor_id);
     const companyId = options.breakCompanyIdMapping
       ? randomUUID()
       : (sc?.company_id ?? companies[0]?.id ?? '');
 
+    // D-78: reading_id references temperature_readings(id)
+    const readingId =
+      (ta.reading_id && readingMap.has(ta.reading_id) ? ta.reading_id : null) ||
+      temperature_readings.find((r) => r.sensor_config_id === sc?.id)?.id ||
+      temperature_readings[0]?.id ||
+      randomUUID();
+
     return {
       id: ta.id,
       company_id: companyId,
       sensor_config_id: sc?.id ?? randomUUID(),
+      reading_id: readingId,
       temperature: ta.temperature,
       alert_type: ta.alert_type,
       notified_at: ta.notified_at ?? null,
@@ -708,8 +740,12 @@ export function mapLegacyDataset(
     id: ss.id,
     company_id: options.breakCompanyIdMapping ? randomUUID() : ss.company_id,
     sample_id: ss.sample_id,
-    started_at: ss.start_date ? ss.start_date.slice(0, 10) : now().slice(0, 10),
-    storage_conditions: ss.storage_condition,
+    started_at: ss.started_at
+      ? ss.started_at.slice(0, 10)
+      : ss.start_date
+        ? ss.start_date.slice(0, 10)
+        : now().slice(0, 10),
+    storage_conditions: ss.storage_conditions || ss.storage_condition || '25°C / 60% RH',
     status: ss.status,
     created_by: ss.created_by,
     created_at: ss.created_at || now(),
@@ -728,11 +764,15 @@ export function mapLegacyDataset(
       id: cp.id,
       company_id: companyId,
       study_id: cp.study_id,
-      interval_tag: `M${cp.interval_months}`,
-      due_date: cp.planned_date ? cp.planned_date.slice(0, 10) : now().slice(0, 10),
+      interval_tag: cp.interval_tag || (cp.interval_months !== undefined ? `M${cp.interval_months}` : 'M0'),
+      due_date: cp.due_date
+        ? cp.due_date.slice(0, 10)
+        : cp.planned_date
+          ? cp.planned_date.slice(0, 10)
+          : now().slice(0, 10),
       status: cp.status,
       assigned_to: cp.assigned_to ?? null,
-      completed_at: cp.actual_date ?? null,
+      completed_at: cp.completed_at || cp.actual_date || null,
       completed_by: cp.completed_by ?? null,
       notes: cp.notes ?? null,
       created_at: cp.created_at || now(),
@@ -748,17 +788,44 @@ export function mapLegacyDataset(
       ? randomUUID()
       : (cp?.company_id ?? companies[0]?.id ?? '');
 
+    const parameter = sr.parameter || sr.parameter_name || 'Standart parametr';
+    const resultStatus = (sr.result_status || 'pass') as 'pass' | 'fail' | 'warning';
+    const recordedBy = sr.recorded_by || sr.tested_by || users[0]?.id || '';
+    const recordedAt = sr.recorded_at || sr.tested_at || sr.created_at || now();
+
     return {
       id: sr.id,
       company_id: companyId,
       checkpoint_id: sr.checkpoint_id,
-      parameter: sr.parameter_name,
-      specification: sr.specification,
-      initial_value: sr.initial_value,
+      parameter,
+      specification: sr.specification ?? null,
+      initial_value: sr.initial_value ?? null,
       current_value: sr.current_value ?? null,
-      tested_by: sr.tested_by ?? null,
-      tested_at: sr.tested_at ?? null,
-      created_at: sr.created_at || now(),
+      result_status: resultStatus,
+      recorded_by: recordedBy,
+      recorded_at: recordedAt,
+    };
+  });
+
+  // =========================================================================
+  // 11. Telegram Link Tokens (D-65: bazada faqat sha256 xesh)
+  // =========================================================================
+  const telegram_link_tokens = (dataset.telegram_link_tokens || []).map((t) => {
+    let tokenHash = t.token_hash || '';
+    if (!tokenHash && t.token) {
+      tokenHash = t.token.length === 64 ? t.token : createHash('sha256').update(t.token).digest('hex');
+    }
+    if (!tokenHash) {
+      tokenHash = createHash('sha256').update(`link_${randomUUID()}`).digest('hex');
+    }
+
+    return {
+      id: t.id,
+      user_id: t.user_id,
+      token_hash: tokenHash,
+      expires_at: t.expires_at || new Date(Date.now() + 86400000).toISOString(),
+      used_at: t.used_at ?? null,
+      created_at: t.created_at || now(),
     };
   });
 
@@ -793,6 +860,7 @@ export function mapLegacyDataset(
     stability_studies,
     stability_checkpoints,
     stability_results,
+    telegram_link_tokens,
     userSetupCredentials,
     problematicRows,
   };

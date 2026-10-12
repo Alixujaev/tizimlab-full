@@ -254,6 +254,46 @@ describeDb('P12a: ETL Legacy Migration (Database Integration & Transactions)', (
         const legacyMatch = (baseDataset.users || []).find((u) => u.email === dbUser.email);
         expect(dbUser.password_hash).not.toBe(legacyMatch?.password_hash);
       }
+
+      // Reaktivlar va tranzaksiyalar (P7, 008_reagents):
+      const { rows: reagents } = await db.pool.query('SELECT * FROM reagents');
+      expect(reagents).toHaveLength(1);
+      const { rows: rTransactions } = await db.pool.query('SELECT * FROM reagent_transactions');
+      expect(rTransactions).toHaveLength(1);
+      expect(rTransactions[0].reagent_id).toBe(reagents[0].id);
+      expect(['in', 'out', 'adjustment', 'disposal']).toContain(rTransactions[0].type);
+
+      // Sensor va harorat monitoringi (P8, 009_temperature, 010_sensor_key_hash):
+      const { rows: sensors } = await db.pool.query('SELECT * FROM sensor_configs');
+      expect(sensors).toHaveLength(1);
+      const { rows: readings } = await db.pool.query('SELECT * FROM temperature_readings');
+      expect(readings).toHaveLength(1);
+      expect(readings[0].sensor_config_id).toBe(sensors[0].id);
+      const { rows: alerts } = await db.pool.query('SELECT * FROM temperature_alerts');
+      expect(alerts).toHaveLength(1);
+      expect(alerts[0].sensor_config_id).toBe(sensors[0].id);
+      expect(alerts[0].reading_id).toBe(readings[0].id);
+
+      // Stabilizatsiya tekshiruvlari (P9, 011_stability):
+      const { rows: studies } = await db.pool.query('SELECT * FROM stability_studies');
+      expect(studies).toHaveLength(1);
+      expect(['active', 'completed']).toContain(studies[0].status);
+      const { rows: checkpoints } = await db.pool.query('SELECT * FROM stability_checkpoints');
+      expect(checkpoints).toHaveLength(1);
+      expect(checkpoints[0].study_id).toBe(studies[0].id);
+      expect(['pending', 'in_progress', 'completed', 'overdue']).toContain(checkpoints[0].status);
+      const { rows: results } = await db.pool.query('SELECT * FROM stability_results');
+      expect(results).toHaveLength(1);
+      expect(results[0].checkpoint_id).toBe(checkpoints[0].id);
+      expect(['pass', 'fail', 'warning']).toContain(results[0].result_status);
+
+      // Protokol imzolari (005_protocols):
+      const { rows: signatures } = await db.pool.query('SELECT * FROM protocol_signatures');
+      expect(signatures).toHaveLength(2);
+      for (const sig of signatures) {
+        expect(['chemist', 'lab_head', 'director']).toContain(sig.role);
+        expect(['submitted', 'approved', 'finalized']).toContain(sig.action);
+      }
     } finally {
       await db.drop();
     }
@@ -421,6 +461,76 @@ describeDb('P12a: ETL Legacy Migration (Database Integration & Transactions)', (
           breakCompanyIdMapping: true,
         }),
       ).rejects.toThrow(/foreign key constraint/);
+    } finally {
+      await db.drop();
+    }
+  });
+
+  it('20. Mutatsiya isboti (nishon jadval nomini buz -> FAIL): Nishon jadval nomi xato bo‘lsa SQL FAIL bo‘ladi', async () => {
+    const db = await createIsolatedDb();
+    try {
+      await runMigrations({ pool: db.pool });
+
+      // breakTargetTableName: true bilan samples jadvali nomi buziladi
+      await expect(
+        runETL(baseDataset, {
+          dryRun: false,
+          pool: db.pool,
+          breakTargetTableName: true,
+        }),
+      ).rejects.toThrow(/relation "non_existent_samples_table" does not exist/);
+    } finally {
+      await db.drop();
+    }
+  });
+
+  it('21. Sozlash va link tokenlari xavfsizligi: DB da faqat SHA-256 xesh, ochiq token fayl/logga chiqmaydi', async () => {
+    const db = await createIsolatedDb();
+    try {
+      await runMigrations({ pool: db.pool });
+
+      const report = await runETL(baseDataset, {
+        dryRun: false,
+        pool: db.pool,
+      });
+
+      // 1) report.userSetupCredentials: har bir sozlash tokeni uchun 64 belgili SHA-256 xesh mavjud
+      expect(report.userSetupCredentials).toHaveLength(8);
+      for (const cred of report.userSetupCredentials) {
+        expect(cred.setupToken).toMatch(/^tok_/);
+        expect(cred.setupTokenHash).toHaveLength(64);
+        expect(cred.setupTokenHash).not.toBe(cred.setupToken);
+      }
+
+      // 2) DB dagi tokenlar (telegram_link_tokens): faqat 64 belgili SHA-256 xesh saqlanadi
+      const { rows: linkTokens } = await db.pool.query(
+        'SELECT token_hash FROM telegram_link_tokens',
+      );
+      expect(linkTokens.length).toBeGreaterThan(0);
+      for (const t of linkTokens) {
+        expect(t.token_hash).toHaveLength(64);
+        expect(t.token_hash).not.toContain('open_raw_token');
+      }
+
+      // 3) Ochiq tokenlar konsol yoki loglarga sizib chiqmasligi:
+      const capturedLogs: string[] = [];
+      /* eslint-disable no-console */
+      const origLog = console.log;
+      console.log = (...args: unknown[]) => {
+        capturedLogs.push(args.map(String).join(' '));
+      };
+      try {
+        // Run dry-run to check logs
+        await runETL(baseDataset, { dryRun: true });
+        const logContent = capturedLogs.join('\n');
+        for (const cred of report.userSetupCredentials) {
+          expect(logContent).not.toContain(cred.setupToken);
+          expect(logContent).not.toContain(cred.temporaryPassword);
+        }
+      } finally {
+        console.log = origLog;
+        /* eslint-enable no-console */
+      }
     } finally {
       await db.drop();
     }

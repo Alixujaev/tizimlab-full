@@ -432,10 +432,68 @@
       "recorded_by": "a1000000-0000-4000-8000-000000000003"
     }
   ],
-  "temperature_alerts": [],
-  "stability_studies": [],
-  "stability_checkpoints": [],
-  "stability_results": [],
+  "temperature_alerts": [
+    {
+      "id": "f5000000-0000-4000-8000-000000000001",
+      "sensor_id": "SENSOR-LAB-01",
+      "reading_id": "f4000000-0000-4000-8000-000000000001",
+      "temperature": 26.5,
+      "alert_type": "temp_high",
+      "notified_at": "2026-01-03T08:05:00.000Z",
+      "created_at": "2026-01-03T08:05:00.000Z"
+    }
+  ],
+  "stability_studies": [
+    {
+      "id": "f6000000-0000-4000-8000-000000000001",
+      "company_id": "c1000000-0000-4000-8000-000000000001",
+      "sample_id": "d1000000-0000-4000-8000-000000000012",
+      "started_at": "2026-01-05",
+      "storage_conditions": "25°C ± 2°C / 60% RH ± 5% RH",
+      "status": "active",
+      "created_by": "a1000000-0000-4000-8000-000000000003",
+      "created_at": "2026-01-05T11:30:00.000Z",
+      "updated_at": "2026-01-05T11:30:00.000Z"
+    }
+  ],
+  "stability_checkpoints": [
+    {
+      "id": "f7000000-0000-4000-8000-000000000001",
+      "study_id": "f6000000-0000-4000-8000-000000000001",
+      "interval_tag": "M0",
+      "due_date": "2026-01-05",
+      "status": "completed",
+      "assigned_to": "a1000000-0000-4000-8000-000000000006",
+      "completed_at": "2026-01-05T15:00:00.000Z",
+      "completed_by": "a1000000-0000-4000-8000-000000000006",
+      "notes": "Boshlang'ich tahlil natijasi (T0)",
+      "created_at": "2026-01-05T11:30:00.000Z",
+      "updated_at": "2026-01-05T15:00:00.000Z"
+    }
+  ],
+  "stability_results": [
+    {
+      "id": "f8000000-0000-4000-8000-000000000001",
+      "checkpoint_id": "f7000000-0000-4000-8000-000000000001",
+      "parameter": "Tashqi ko'rinishi",
+      "initial_value": "Tiniq rangsiz eritma",
+      "current_value": "Tiniq rangsiz eritma",
+      "specification": "Tiniq rangsiz eritma bo'lishi kerak",
+      "result_status": "pass",
+      "recorded_by": "a1000000-0000-4000-8000-000000000006",
+      "recorded_at": "2026-01-05T15:00:00.000Z"
+    }
+  ],
+  "telegram_link_tokens": [
+    {
+      "id": "f9000000-0000-4000-8000-000000000001",
+      "user_id": "a1000000-0000-4000-8000-000000000006",
+      "token": "open_raw_token_from_legacy_system_which_must_be_hashed",
+      "expires_at": "2026-12-31T23:59:59.000Z",
+      "used_at": null,
+      "created_at": "2026-01-02T12:00:00.000Z"
+    }
+  ],
   "sample_documents": [],
   "protocol_values": [],
   "protocol_files": []
