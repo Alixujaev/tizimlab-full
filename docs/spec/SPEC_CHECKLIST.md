@@ -410,9 +410,9 @@
 | R-NOTIF-17 | Frontend `notification:new` ni React Query keshiga yozadi (sahifa yangilanmasdan). | 09-notifications §9 | P6 | [x] |
 | R-NOTIF-18 | Frontend `notification:new` da toast ko'rsatadi. | 09-notifications §9 | P6 | [x] |
 | R-NOTIF-19 | Socket handshake JWT access-token bilan tasdiqlanadi; tokensiz/yaroqsiz ulanish rad etiladi. | 09-notifications §9, 15 §15 | P6 | [x] |
-| R-NOTIF-20 | Kanal 3: Telegram push — faqat Telegram akkaunti ulangan foydalanuvchiga. | 09-notifications §9, 13 §13 | P11 | [ ] |
-| R-NOTIF-21 | Bitta `createNotification()` funksiyasi DB yozuvi, socket push va Telegram push'ni bajaradi. | 13-telegram §13, 16 §16 | P6 | [~] |
-| R-NOTIF-22 | `stability_due_soon` / `stability_overdue` checkpointga biriktirilgan kimyogarga (bor bo'lsa) va kompaniyaning `lab_head`'lariga yuboriladi. | DECISIONS.md D-13 | P9 | [ ] |
+| R-NOTIF-20 | Kanal 3: Telegram push — faqat Telegram akkaunti ulangan foydalanuvchiga. | 09-notifications §9, 13 §13 | P11 | [x] |
+| R-NOTIF-21 | Bitta `createNotification()` funksiyasi DB yozuvi, socket push va Telegram push'ni bajaradi. | 13-telegram §13, 16 §16 | P6 | [x] |
+| R-NOTIF-22 | `stability_due_soon` / `stability_overdue` checkpointga biriktirilgan kimyogarga (bor bo'lsa) va kompaniyaning `lab_head`'lariga yuboriladi. | DECISIONS.md D-13 | P9 | [x] |
 | R-NOTIF-23 | Harakatni bajargan foydalanuvchining o'ziga xabarnoma yuborilmaydi. | DECISIONS.md D-13 | P6 | [x] |
 | R-NOTIF-24 | Xabarnoma faqat hodisa sodir bo'lgan kompaniya foydalanuvchilariga yuboriladi. | DECISIONS.md D-13, D-12 | P6 | [x] |
 | R-NOTIF-25 | Xabarnomani bittalab o'qilgan deb belgilash. | DECISIONS.md D-59 | P6 | [x] |
@@ -430,14 +430,14 @@
 | R-USER-04 | Admin panelda foydalanuvchilar statistikasi. | 10-users §10 | P2 | [x] |
 | R-USER-05 | Admin panelda yangi foydalanuvchi yaratish: `admin` — istalgan kompaniya roli; `lab_head` — faqat `kontrolyor`/`chemist`. | 10-users §10, DECISIONS.md D-16 | P2 | [x] |
 | R-USER-06 | `admin` istalgan foydalanuvchi parolini, `lab_head` faqat `kontrolyor`/`chemist` parolini tiklay oladi. | 10-users §10, 15 §15, DECISIONS.md D-16 | P2 | [x] |
-| R-USER-07 | Admin panelda foydalanuvchi loglarini ko'rish (Q-52). | 10-users §10 | P10 | [ ] |
+| R-USER-07 | Admin panelda foydalanuvchi loglarini ko'rish (Q-52). | 10-users §10 | P10 | [x] |
 | R-USER-08 | `user_permissions` jadvali orqali `resource`+`action` darajasida ruxsat berish. | 10-users §10 | P2 | [x] |
 | R-USER-09 | `user_permissions` dan ruxsatni olib tashlash = individual grant'ni o'chirish (rol ruxsatini deny qilib bo'lmaydi). | 10-users §10, DECISIONS.md D-32 | P2 | [x] |
 | R-USER-10 | `requirePermission` natijasi so'rov davomida keshlanadi (bitta so'rovda takroriy DB so'rovi yo'q). | 10-users §10 | P2 | [x] |
 | R-USER-11 | `resource:action` katalogi P2 da tuziladi va foydalanuvchiga tasdiqlatiladi. | DECISIONS.md D-10 | P2 | [x] |
 | R-USER-12 | Har foydalanuvchi `/profile` da o'z parolini o'zgartira oladi. | 10-users §10, 15 §15 | P2 | [x] |
-| R-USER-13 | Har foydalanuvchi `/profile` da Telegram akkauntini ulay oladi. | 10-users §10 | P11 | [ ] |
-| R-USER-14 | Har foydalanuvchi `/profile` da Telegram akkauntini uza oladi. | 10-users §10 | P11 | [ ] |
+| R-USER-13 | Har foydalanuvchi `/profile` da Telegram akkauntini ulay oladi. | 10-users §10 | P11 | [x] |
+| R-USER-14 | Har foydalanuvchi `/profile` da Telegram akkauntini uza oladi. | 10-users §10 | P11 | [x] |
 | R-USER-15 | `lab_head` `admin`/`lab_head`/`director` rolidagi foydalanuvchini yarata, tahrirlay va parolini tiklay olmaydi (403). | DECISIONS.md D-16 | P2 | [x] |
 | R-USER-16 | `user_permissions` ni faqat `admin` boshqaradi; `lab_head`/`director` urinishi rad etiladi. | DECISIONS.md D-16 | P2 | [x] |
 | R-USER-17 | `director` foydalanuvchilarni faqat ko'radi (yaratish/tahrirlash/parol tiklash — 403). | DECISIONS.md D-16, 01 §1 | P2 | [x] |
@@ -483,24 +483,24 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-TG-01 | Bot `grammy` kutubxonasida. | 13-telegram §13 | P11 | [ ] |
-| R-TG-02 | Bot buyrug'i `/start` (shu jumladan `/start <token>` bilan akkaunt ulash). | 13-telegram §13 | P11 | [ ] |
-| R-TG-03 | Bot buyrug'i `/help` (Q-57). | 13-telegram §13 | P11 | [ ] |
-| R-TG-04 | Bot buyrug'i `/status` (Q-57). | 13-telegram §13 | P11 | [ ] |
-| R-TG-05 | Bot buyrug'i `/unlink`. | 13-telegram §13 | P11 | [ ] |
-| R-TG-06 | Mini App: mavjud React frontend Telegram WebApp sifatida ochiladi (to'liq LIMS). | 13-telegram §13 | P11 | [ ] |
-| R-TG-07 | Ulash oqimi: veb-login → Profil → "Telegram ulash" → `POST /telegram/link-token`. | 13-telegram §13 | P11 | [ ] |
-| R-TG-08 | Link-tokenlar `telegram_link_tokens` jadvalida SHA-256 xesh sifatida saqlanadi (xom token bazaga yozilmaydi); token bir martalik. | 16-architecture §16, DECISIONS.md D-65 | P11 | [ ] |
-| R-TG-09 | Bot `/start <token>` ni qabul qilib akkauntni foydalanuvchiga bog'laydi (`users` dagi Telegram maydonlari). | 13-telegram §13, 16 §16 | P11 | [ ] |
-| R-TG-10 | WebApp login: `initData` → `POST /telegram/webapp-auth` → avtomatik kirish. | 13-telegram §13 | P11 | [ ] |
-| R-TG-11 | `webapp-auth` `initData` ni HMAC-SHA256 bilan tekshiradi; noto'g'ri imzo rad etiladi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-12 | Ulanmagan Telegram akkaunti bilan `webapp-auth` kirish bermaydi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-13 | `createNotification()` Telegram'ga fire-and-forget yuboradi — Telegram xatosi asosiy amalni buzmaydi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-14 | Dasturlash muhitida bot polling rejimida avtomatik ishga tushadi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-15 | Production'da webhook rejimi: `TELEGRAM_WEBHOOK_URL` + `TELEGRAM_WEBHOOK_SECRET`. | 13-telegram §13 | P11 | [ ] |
-| R-TG-16 | Webhook so'rovlari secret bilan tekshiriladi; noto'g'ri secret rad etiladi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-17 | `TELEGRAM_BOT_TOKEN` yo'q bo'lsa bot ishga tushmaydi, ilova ishlashda davom etadi. | 13-telegram §13 | P11 | [ ] |
-| R-TG-18 | Ishlatilgan yoki muddati o'tgan link token bilan `/start <token>` rad etiladi (muddat — Q-55). | DECISIONS.md D-65 | P11 | [ ] |
+| R-TG-01 | Bot `grammy` kutubxonasida. | 13-telegram §13 | P11 | [x] |
+| R-TG-02 | Bot buyrug'i `/start` (shu jumladan `/start <token>` bilan akkaunt ulash). | 13-telegram §13 | P11 | [x] |
+| R-TG-03 | Bot buyrug'i `/help` (Q-57). | 13-telegram §13 | P11 | [x] |
+| R-TG-04 | Bot buyrug'i `/status` (Q-57). | 13-telegram §13 | P11 | [x] |
+| R-TG-05 | Bot buyrug'i `/unlink`. | 13-telegram §13 | P11 | [x] |
+| R-TG-06 | Mini App: mavjud React frontend Telegram WebApp sifatida ochiladi (to'liq LIMS). | 13-telegram §13 | P11 | [x] |
+| R-TG-07 | Ulash oqimi: veb-login → Profil → "Telegram ulash" → `POST /telegram/link-token`. | 13-telegram §13 | P11 | [x] |
+| R-TG-08 | Link-tokenlar `telegram_link_tokens` jadvalida SHA-256 xesh sifatida saqlanadi (xom token bazaga yozilmaydi); token bir martalik. | 16-architecture §16, DECISIONS.md D-65 | P11 | [x] |
+| R-TG-09 | Bot `/start <token>` ni qabul qilib akkauntni foydalanuvchiga bog'laydi (`users` dagi Telegram maydonlari). | 13-telegram §13, 16 §16 | P11 | [x] |
+| R-TG-10 | WebApp login: `initData` → `POST /telegram/webapp-auth` → avtomatik kirish. | 13-telegram §13 | P11 | [x] |
+| R-TG-11 | `webapp-auth` `initData` ni HMAC-SHA256 bilan tekshiradi; noto'g'ri imzo rad etiladi. | 13-telegram §13 | P11 | [x] |
+| R-TG-12 | Ulanmagan Telegram akkaunti bilan `webapp-auth` kirish bermaydi. | 13-telegram §13 | P11 | [x] |
+| R-TG-13 | `createNotification()` Telegram'ga fire-and-forget yuboradi — Telegram xatosi asosiy amalni buzmaydi. | 13-telegram §13 | P11 | [x] |
+| R-TG-14 | Dasturlash muhitida bot polling rejimida avtomatik ishga tushadi. | 13-telegram §13 | P11 | [x] |
+| R-TG-15 | Production'da webhook rejimi: `TELEGRAM_WEBHOOK_URL` + `TELEGRAM_WEBHOOK_SECRET`. | 13-telegram §13 | P11 | [x] |
+| R-TG-16 | Webhook so'rovlari secret bilan tekshiriladi; noto'g'ri secret rad etiladi. | 13-telegram §13 | P11 | [x] |
+| R-TG-17 | `TELEGRAM_BOT_TOKEN` yo'q bo'lsa bot ishga tushmaydi, ilova ishlashda davom etadi. | 13-telegram §13 | P11 | [x] |
+| R-TG-18 | Ishlatilgan yoki muddati o'tgan link token bilan `/start <token>` rad etiladi (muddat — Q-55). | DECISIONS.md D-65 | P11 | [x] |
 
 ## I18N — Ko'p tillilik
 
@@ -782,18 +782,18 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 23 | 0 | 0 |
 | TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
 | STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
-| NOTIF — Xabarnomalar | 28 | 21 | 1 | 6 |
-| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 15 | 0 | 3 |
+| NOTIF — Xabarnomalar | 28 | 24 | 0 | 4 |
+| USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 18 | 0 | 0 |
 | AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
 | FILE — Fayllarni saqlash | 11 | 10 | 1 | 0 |
-| TG — Telegram | 18 | 0 | 0 | 18 |
+| TG — Telegram | 18 | 18 | 0 | 0 |
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 49 | 7 | 29 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 36 | 5 | 4 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 405 | 37 | 160 |
+| **Jami** | 602 | 429 | 36 | 137 |
 
 ### Fazalar bo'yicha
 
@@ -804,11 +804,11 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
 | P5 | 131 | 109 | 17 | 5 |
-| P6 | 40 | 37 | 3 | 0 |
+| P6 | 40 | 38 | 2 | 0 |
 | P7 | 36 | 35 | 0 | 1 |
 | P8 | 30 | 1 | 0 | 29 |
-| P9 | 58 | 0 | 1 | 57 |
-| P10 | 25 | 6 | 2 | 17 |
-| P11 | 26 | 0 | 0 | 26 |
+| P9 | 58 | 1 | 1 | 56 |
+| P10 | 25 | 7 | 2 | 16 |
+| P11 | 26 | 21 | 0 | 5 |
 | P12 | 28 | 1 | 2 | 25 |
-| **Jami** | 602 | 405 | 37 | 160 |
+| **Jami** | 602 | 429 | 36 | 137 |

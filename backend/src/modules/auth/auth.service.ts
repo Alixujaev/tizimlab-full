@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AUTH_AUDIT_TABLE, writeAudit } from '../audit/audit.service.js';
-import { ValidationError } from '../../utils/errors.js';
+import { UnauthorizedError, ValidationError } from '../../utils/errors.js';
 import {
   AccountInactiveError,
   InvalidCredentialsError,
@@ -123,6 +123,23 @@ export async function login(
     throw new AccountInactiveError();
   }
 
+  return createSessionForUser(cfg, user, meta, 'login_success');
+}
+
+export async function createSessionForUser(
+  cfg: AuthConfig,
+  user: {
+    id: string;
+    role: Role;
+    company_id: string | null;
+    company_name?: string | null;
+    company_slug?: string | null;
+    email: string;
+    full_name: string;
+  },
+  meta: RequestMeta,
+  action = 'login_success',
+): Promise<IssuedTokens & { user: MeDto }> {
   return withTransaction(async (client) => {
     // Bir foydalanuvchining parallel login'lari sessiya limitini buzmasligi uchun
     await client.query('SELECT id FROM users WHERE id = $1 FOR UPDATE', [user.id]);
@@ -155,7 +172,7 @@ export async function login(
     await writeAudit(client, {
       tableName: SESSIONS_TABLE,
       recordId: sessionId,
-      action: 'login_success',
+      action,
       userId: user.id,
       companyId: user.company_id,
       ...auditMeta(meta),
@@ -164,9 +181,34 @@ export async function login(
     return {
       accessToken: issueAccessToken(user, sessionId, cfg),
       refreshToken,
-      user: toMe(user),
+      user: toMe({
+        ...user,
+        password_hash: '',
+        is_active: true,
+        company_name: user.company_name ?? null,
+        company_slug: user.company_slug ?? null,
+        company_active: true,
+      }),
     };
   });
+}
+
+export async function loginViaTelegram(
+  cfg: AuthConfig,
+  telegramChatId: number,
+  meta: RequestMeta,
+): Promise<IssuedTokens & { user: MeDto }> {
+  const { rows } = await query<UserRow>(`${USER_SELECT} WHERE u.telegram_chat_id = $1`, [
+    telegramChatId,
+  ]);
+  const user = rows[0];
+  if (!user) {
+    throw new UnauthorizedError('Telegram akkaunti hech qaysi profilga ulanmagan');
+  }
+  if (!isAccountActive(user)) {
+    throw new AccountInactiveError();
+  }
+  return createSessionForUser(cfg, user, meta, 'login_telegram');
 }
 
 interface SessionStateRow {

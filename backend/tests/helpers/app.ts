@@ -41,6 +41,10 @@ export const TEST_ENV: AppEnv = {
   SESSION_IDLE_TIMEOUT_MINUTES: 30,
   SWAGGER_USER: undefined,
   SWAGGER_PASSWORD: undefined,
+  TELEGRAM_BOT_TOKEN: undefined,
+  TELEGRAM_BOT_USERNAME: undefined,
+  TELEGRAM_WEBHOOK_URL: undefined,
+  TELEGRAM_WEBHOOK_SECRET: undefined,
 };
 
 export const TEST_AUTH_CONFIG = authConfigFromEnv(TEST_ENV);

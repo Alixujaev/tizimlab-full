@@ -326,6 +326,27 @@
       "newPasswordSameAsOld": "Yangi parol joriy parol bilan bir xil bo'lishi mumkin emas.",
       "passwordMismatch": "Yangi parollar bir-biriga mos kelmadi.",
       "nameRequired": "Ism-sharif bo'sh bo'lishi mumkin emas."
+    },
+    "telegram": {
+      "title": "Telegram integratsiyasi",
+      "subtitle": "Bildirishnomalarni Telegram orqali qabul qilish uchun hisobingizni botga ulang",
+      "linked": "Telegram hisobi ulangan",
+      "notLinked": "Telegram hisobi ulanmagan",
+      "username": "Telegram username",
+      "linkedAt": "Ulangan sana",
+      "linkButton": "Telegram ulash",
+      "generatingLink": "Havola yaratilmoqda…",
+      "unlinkButton": "Telegramni uzish",
+      "unlinking": "Uzilmoqda…",
+      "unlinkConfirm": "Haqiqatan ham Telegram akkauntingizni uzmoqchimisiz? Tizim bildirishnomalari Telegramga bormaydi.",
+      "linkModalTitle": "Telegram hisobini ulash",
+      "linkModalInstruction": "Quyidagi tugma orqali botga o'ting va Start tugmasini bosing:",
+      "openBotButton": "Botni ochish",
+      "tokenExpires": "Ushbu havola 15 daqiqa davomida amal qiladi.",
+      "close": "Yopish",
+      "startCommand": "/start",
+      "linkSuccess": "Telegram hisobingiz muvaffaqiyatli bog'landi.",
+      "unlinkSuccess": "Telegram hisobi uzildi."
     }
   },
   "substances": {

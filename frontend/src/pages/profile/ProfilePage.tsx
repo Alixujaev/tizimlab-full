@@ -1,8 +1,15 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toApiError } from '@/api/client';
+import type { TelegramLinkToken } from '@/api/telegram';
+import { Modal } from '@/components/ui/Modal';
 import { Spinner } from '@/components/ui/Spinner';
 import { useChangePasswordMutation, useUpdateProfileMutation } from '@/hooks/useProfile';
+import {
+  useCreateTelegramLinkTokenMutation,
+  useTelegramStatusQuery,
+  useUnlinkTelegramMutation,
+} from '@/hooks/useTelegram';
 import { LANGUAGE_STORAGE_KEY } from '@/i18n';
 import { isPasswordValid } from '@/lib/validation';
 import { useAuthStore } from '@/store/authStore';
@@ -25,6 +32,57 @@ export function ProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState(false);
   const [passwordError, setPasswordError] = useState<string | undefined>();
+
+  // Telegram state
+  const [linkModalOpen, setLinkModalOpen] = useState(false);
+  const [linkTokenData, setLinkTokenData] = useState<TelegramLinkToken | null>(null);
+  const [telegramFeedback, setTelegramFeedback] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  const [unlinkConfirmOpen, setUnlinkConfirmOpen] = useState(false);
+
+  const telegramStatusQuery = useTelegramStatusQuery();
+  const createLinkTokenMutation = useCreateTelegramLinkTokenMutation();
+  const unlinkTelegramMutation = useUnlinkTelegramMutation();
+
+  const handleCreateLinkToken = () => {
+    setTelegramFeedback(null);
+    createLinkTokenMutation.mutate(undefined, {
+      onSuccess: (data) => {
+        setLinkTokenData(data);
+        setLinkModalOpen(true);
+      },
+      onError: (err) => {
+        const apiErr = toApiError(err);
+        setTelegramFeedback({
+          type: 'error',
+          message: apiErr?.message ?? t('errors.generic'),
+        });
+      },
+    });
+  };
+
+  const handleUnlink = () => {
+    setTelegramFeedback(null);
+    unlinkTelegramMutation.mutate(undefined, {
+      onSuccess: () => {
+        setUnlinkConfirmOpen(false);
+        setTelegramFeedback({
+          type: 'success',
+          message: t('profile.telegram.unlinkSuccess'),
+        });
+        setTimeout(() => setTelegramFeedback(null), 4000);
+      },
+      onError: (err) => {
+        const apiErr = toApiError(err);
+        setTelegramFeedback({
+          type: 'error',
+          message: apiErr?.message ?? t('errors.generic'),
+        });
+      },
+    });
+  };
 
   useEffect(() => {
     if (user?.fullName) {
@@ -281,6 +339,162 @@ export function ProfilePage() {
           </button>
         </form>
       </div>
+
+      {/* Telegram Integration */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">{t('profile.telegram.title')}</h2>
+            <p className="mt-1 text-xs text-slate-500">{t('profile.telegram.subtitle')}</p>
+          </div>
+          {telegramStatusQuery.data?.linked ? (
+            <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+              {t('profile.telegram.linked')}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+              {t('profile.telegram.notLinked')}
+            </span>
+          )}
+        </div>
+
+        {telegramFeedback && (
+          <div
+            role={telegramFeedback.type === 'error' ? 'alert' : 'status'}
+            className={`mt-4 rounded-md p-3 text-sm ${
+              telegramFeedback.type === 'error'
+                ? 'bg-red-50 text-red-700'
+                : 'bg-emerald-50 text-emerald-800'
+            }`}
+          >
+            {telegramFeedback.message}
+          </div>
+        )}
+
+        {telegramStatusQuery.isLoading ? (
+          <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
+            <Spinner size="sm" />
+            <span>{t('common.loading')}</span>
+          </div>
+        ) : telegramStatusQuery.data?.linked ? (
+          <div className="mt-4 space-y-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {telegramStatusQuery.data.telegramUsername && (
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                    {t('profile.telegram.username')}
+                  </span>
+                  <p className="mt-1 text-sm font-medium text-slate-900">
+                    @{telegramStatusQuery.data.telegramUsername}
+                  </p>
+                </div>
+              )}
+              {telegramStatusQuery.data.linkedAt && (
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
+                    {t('profile.telegram.linkedAt')}
+                  </span>
+                  <p className="mt-1 text-sm font-medium text-slate-900">
+                    {new Date(telegramStatusQuery.data.linkedAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setUnlinkConfirmOpen(true)}
+                disabled={unlinkTelegramMutation.isPending}
+                className="inline-flex items-center justify-center rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50"
+              >
+                {unlinkTelegramMutation.isPending && <Spinner size="sm" />}
+                {t('profile.telegram.unlinkButton')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleCreateLinkToken}
+              disabled={createLinkTokenMutation.isPending}
+              className="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50"
+            >
+              {createLinkTokenMutation.isPending && <Spinner size="sm" />}
+              {createLinkTokenMutation.isPending
+                ? t('profile.telegram.generatingLink')
+                : t('profile.telegram.linkButton')}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Telegram Link Modal */}
+      {linkModalOpen && linkTokenData && (
+        <Modal
+          open={linkModalOpen}
+          onClose={() => setLinkModalOpen(false)}
+          title={t('profile.telegram.linkModalTitle')}
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">
+              {t('profile.telegram.linkModalInstruction')}
+            </p>
+
+            {linkTokenData.linkUrl ? (
+              <div className="flex flex-col gap-2">
+                <a
+                  href={linkTokenData.linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-sky-700"
+                >
+                  {t('profile.telegram.openBotButton')}
+                </a>
+                <p className="text-xs text-slate-400">
+                  {t('profile.telegram.tokenExpires')}
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-md bg-slate-50 p-3 text-xs text-slate-700">
+                <code>{t('profile.telegram.startCommand')} {linkTokenData.token}</code>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
+      {/* Unlink Confirmation Modal */}
+      {unlinkConfirmOpen && (
+        <Modal
+          open={unlinkConfirmOpen}
+          onClose={() => setUnlinkConfirmOpen(false)}
+          title={t('profile.telegram.unlinkButton')}
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setUnlinkConfirmOpen(false)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                {t('profile.telegram.close')}
+              </button>
+              <button
+                type="button"
+                onClick={handleUnlink}
+                disabled={unlinkTelegramMutation.isPending}
+                className="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {unlinkTelegramMutation.isPending && <Spinner size="sm" />}
+                {t('profile.telegram.unlinkButton')}
+              </button>
+            </div>
+          }
+        >
+          <p className="text-sm text-slate-600">{t('profile.telegram.unlinkConfirm')}</p>
+        </Modal>
+      )}
 
       {/* Language Selector */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">

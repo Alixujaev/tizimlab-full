@@ -54,6 +54,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'stability_studies',
       'substance_parameters',
       'substances',
+      'telegram_link_tokens',
       'temperature_alerts',
       'temperature_readings',
       'user_permissions',
@@ -73,6 +74,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 9, name: 'temperature', state: 'applied' }),
       expect.objectContaining({ version: 10, name: 'sensor_key_hash', state: 'applied' }),
       expect.objectContaining({ version: 11, name: 'stability', state: 'applied' }),
+      expect.objectContaining({ version: 12, name: 'telegram', state: 'applied' }),
     ]);
   });
 

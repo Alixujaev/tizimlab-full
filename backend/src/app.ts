@@ -38,6 +38,10 @@ import { createTemperatureRouter } from './modules/temperature/temperature.route
 import { createStabilityRouter } from './modules/stability/stability.router.js';
 import { createAuditRouter } from './modules/audit/audit.router.js';
 import { createActivityRouter } from './modules/audit/activity.router.js';
+import { createTelegramRouter } from './modules/telegram/telegram.router.js';
+import { getTelegramBot } from './modules/telegram/telegram.bot.js';
+import type { TelegramLimitOptions } from './modules/telegram/telegram.limiter.js';
+import type { Bot } from 'grammy';
 import type { FileStorage } from './modules/files/files.storage.js';
 import { logger as defaultLogger } from './utils/logger.js';
 
@@ -45,7 +49,17 @@ export const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 export const RATE_LIMIT_MAX = 2000;
 
 export type AppEnv = AuthEnv &
-  Pick<Env, 'FRONTEND_URL' | 'TRUST_PROXY' | 'SWAGGER_USER' | 'SWAGGER_PASSWORD'>;
+  Pick<
+    Env,
+    | 'FRONTEND_URL'
+    | 'TRUST_PROXY'
+    | 'SWAGGER_USER'
+    | 'SWAGGER_PASSWORD'
+    | 'TELEGRAM_BOT_TOKEN'
+    | 'TELEGRAM_BOT_USERNAME'
+    | 'TELEGRAM_WEBHOOK_URL'
+    | 'TELEGRAM_WEBHOOK_SECRET'
+  >;
 
 export interface AppDeps {
   env: AppEnv;
@@ -56,6 +70,12 @@ export interface AppDeps {
   loginLimit?: LoginLimitOptions;
   /** Ingest rate-limit (D-141) — testlarda kichik/katta qiymat bilan almashtiriladi. */
   ingestLimit?: IngestLimitOptions;
+  /** Telegram rate-limit — testlarda kichik qiymat bilan almashtiriladi. */
+  telegramLimits?: {
+    linkToken?: TelegramLimitOptions;
+    webAppAuth?: TelegramLimitOptions;
+  };
+  bot?: Bot | null;
   /** Fayl xotirasi (R2); `null`/berilmagan — fayl endpointlari 503 (D-121). Testlarda xotiradagi adapter. */
   storage?: FileStorage | null;
 }
@@ -67,6 +87,8 @@ export function createApp({
   logger = defaultLogger,
   loginLimit = LOGIN_LIMIT,
   ingestLimit = INGEST_LIMIT,
+  telegramLimits,
+  bot,
   storage = null,
 }: AppDeps): Express {
   const app = express();
@@ -137,6 +159,19 @@ export function createApp({
   api.use('/stability', createStabilityRouter({ auth }));
   api.use('/audit', createAuditRouter({ auth }));
   api.use('/activity', createActivityRouter({ auth }));
+  api.use(
+    '/telegram',
+    createTelegramRouter({
+      auth,
+      config: authConfig,
+      botToken: env.TELEGRAM_BOT_TOKEN,
+      botUsername: env.TELEGRAM_BOT_USERNAME,
+      webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
+      bot: bot ?? getTelegramBot(),
+      linkTokenLimit: telegramLimits?.linkToken,
+      webAppAuthLimit: telegramLimits?.webAppAuth,
+    }),
+  );
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

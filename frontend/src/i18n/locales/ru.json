@@ -326,6 +326,27 @@
       "newPasswordSameAsOld": "Новый пароль не может совпадать с текущим.",
       "passwordMismatch": "Новые пароли не совпадают.",
       "nameRequired": "ФИО не может быть пустым."
+    },
+    "telegram": {
+      "title": "Интеграция с Telegram",
+      "subtitle": "Привяжите аккаунт к боту для получения уведомлений в Telegram",
+      "linked": "Telegram аккаунт привязан",
+      "notLinked": "Telegram аккаунт не привязан",
+      "username": "Имя пользователя Telegram",
+      "linkedAt": "Дата привязки",
+      "linkButton": "Привязать Telegram",
+      "generatingLink": "Создание ссылки…",
+      "unlinkButton": "Отвязать Telegram",
+      "unlinking": "Отвязка…",
+      "unlinkConfirm": "Вы уверены, что хотите отвязать Telegram аккаунт? Уведомления системы перестанут поступать в Telegram.",
+      "linkModalTitle": "Привязка Telegram аккаунта",
+      "linkModalInstruction": "Перейдите в бот по кнопке ниже и нажмите «Запустить» (Start):",
+      "openBotButton": "Открыть бота",
+      "tokenExpires": "Эта ссылка действительна в течение 15 минут.",
+      "close": "Закрыть",
+      "startCommand": "/start",
+      "linkSuccess": "Ваш Telegram аккаунт успешно привязан.",
+      "unlinkSuccess": "Telegram аккаунт отвязан."
     }
   },
   "substances": {

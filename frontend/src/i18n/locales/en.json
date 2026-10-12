@@ -326,6 +326,27 @@
       "newPasswordSameAsOld": "New password cannot be the same as the current password.",
       "passwordMismatch": "New passwords do not match.",
       "nameRequired": "Full name cannot be empty."
+    },
+    "telegram": {
+      "title": "Telegram Integration",
+      "subtitle": "Link your account to the bot to receive notifications in Telegram",
+      "linked": "Telegram account linked",
+      "notLinked": "Telegram account not linked",
+      "username": "Telegram username",
+      "linkedAt": "Linked at",
+      "linkButton": "Link Telegram",
+      "generatingLink": "Generating link…",
+      "unlinkButton": "Unlink Telegram",
+      "unlinking": "Unlinking…",
+      "unlinkConfirm": "Are you sure you want to unlink your Telegram account? You will no longer receive notifications in Telegram.",
+      "linkModalTitle": "Link Telegram Account",
+      "linkModalInstruction": "Open the bot using the button below and click Start:",
+      "openBotButton": "Open Bot",
+      "tokenExpires": "This link is valid for 15 minutes.",
+      "close": "Close",
+      "startCommand": "/start",
+      "linkSuccess": "Your Telegram account has been linked successfully.",
+      "unlinkSuccess": "Telegram account has been unlinked."
     }
   },
   "substances": {

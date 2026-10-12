@@ -112,9 +112,9 @@ describe('ProfilePage', () => {
     expect(await screen.findByRole('heading', { name: 'Профиль' })).toBeInTheDocument();
   });
 
-  it("Telegram bo'limi profil sahifasida UMUMAN yo'q (spec bo'yicha stubsiz)", () => {
+  it("Telegram integratsiyasi bloki profil sahifasida mavjud (P11, R-USER-13, R-USER-14)", () => {
     renderAt('/profile');
 
-    expect(screen.queryByText(/telegram/i)).toBeNull();
+    expect(screen.getByRole('heading', { name: /Telegram integratsiyasi/i })).toBeInTheDocument();
   });
 });
