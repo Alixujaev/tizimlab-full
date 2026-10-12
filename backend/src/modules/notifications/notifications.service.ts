@@ -13,7 +13,11 @@ import type {
 } from './notifications.types.js';
 
 /** Yetkazish kanali (Socket.IO, keyinroq Telegram — P11). Faqat COMMIT dan keyin chaqiriladi. */
-export type NotificationChannel = (userId: string, notification: NotificationDto) => void;
+export type NotificationChannel = (
+  userId: string,
+  notification: NotificationDto,
+  companyId?: string,
+) => void;
 
 const channels = new Map<string, NotificationChannel>();
 
@@ -99,7 +103,7 @@ export async function createNotification(
       for (const [i, dto] of dtos.entries()) {
         for (const [name, channel] of channels) {
           try {
-            channel(rows[i]!.user_id, dto);
+            channel(rows[i]!.user_id, dto, rows[i]!.company_id);
           } catch (err) {
             logger.error(`Xabarnoma kanali xatosi (${name})`, { err });
           }

@@ -24,12 +24,13 @@ function linksFor(role: Role) {
 const BASE = [
   ['Bosh sahifa', '/'],
   ['Namunalar', '/samples'],
+  ['Moddalar', '/substances'],
   ['Reyestr', '/registry'],
   ['Harorat', '/temperature'],
 ];
 const MANAGER = [...BASE, ['Foydalanuvchilar', '/users'], ['Faoliyat', '/activity']];
 
-describe('Sidebar (D-28)', () => {
+describe('Sidebar (D-28, D-149)', () => {
   it.each([
     ['kontrolyor', BASE],
     ['chemist', BASE],
@@ -47,7 +48,7 @@ describe('Sidebar (D-28)', () => {
     expect(linksFor(role)).toEqual(expected);
   });
 
-  it("hech bir rolda Moddalar, Reaktivlar, Stabilizatsiya yo'q", () => {
+  it("hech bir rolda Reaktivlar, Stabilizatsiya yo'q", () => {
     for (const role of [
       'super_admin',
       'kontrolyor',
@@ -57,7 +58,6 @@ describe('Sidebar (D-28)', () => {
       'admin',
     ] as Role[]) {
       const hrefs = linksFor(role).map(([, href]) => href);
-      expect(hrefs).not.toContain('/substances');
       expect(hrefs).not.toContain('/reagents');
       expect(hrefs).not.toContain('/stability');
       document.body.innerHTML = '';

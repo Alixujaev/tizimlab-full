@@ -1,4 +1,5 @@
 import { createHash, createHmac } from 'node:crypto';
+import type { Bot } from 'grammy';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { query } from '../src/config/database.js';
@@ -381,6 +382,16 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
         .send({ initData });
       expect(res1.status).toBe(200);
 
+      // DB tekshiruvi: used_init_data jadvaliga sha256 xesh bilan yozilgan
+      const hash = sha256(initData);
+      const usedRows = await query<{ hash: string; auth_date: Date; expires_at: Date }>(
+        `SELECT * FROM used_init_data WHERE hash = $1`,
+        [hash],
+      );
+      expect(usedRows.rows.length).toBe(1);
+      expect(usedRows.rows[0]?.hash).toBe(hash);
+      expect(usedRows.rows[0]?.expires_at).toBeDefined();
+
       // 2-marta xuddi shu initData bilan so'rov -> replay himoyasi (401)
       const res2 = await request(app)
         .post('/api/v1/telegram/webapp-auth')
@@ -388,6 +399,29 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
       expect(res2.status).toBe(401);
       expect(res2.body.error.code).toBe('UNAUTHORIZED');
       expect(res2.body.error.message).toContain('replay');
+    });
+
+    it('parallel so\'rovda faqat bittasi o\'tadi (concurrency va DB replay himoyasi)', async () => {
+      const { app } = testApp({
+        env: { TELEGRAM_BOT_TOKEN: BOT_TOKEN, TELEGRAM_BOT_USERNAME: BOT_USERNAME },
+      });
+      const company = await createCompany();
+      const user = await createUser({ role: 'chemist', company });
+      const token = await generateLinkToken(user.id, company.id);
+      const tgChatId = 12345682;
+      await linkTelegramAccount(token.token, { id: tgChatId });
+
+      const initData = makeInitData(BOT_TOKEN, { id: tgChatId });
+
+      // Bir vaqtning o'zida ikkita parallel so'rov yuboramiz
+      const [resA, resB] = await Promise.all([
+        request(app).post('/api/v1/telegram/webapp-auth').send({ initData }),
+        request(app).post('/api/v1/telegram/webapp-auth').send({ initData }),
+      ]);
+
+      const statuses = [resA.status, resB.status].sort();
+      // Aniq bittasi 200, ikkinchisi 401 bo'lishi shart!
+      expect(statuses).toEqual([200, 401]);
     });
 
     it('ulanmagan Telegram akkaunti bilan kirish rad etiladi (401)', async () => {
@@ -453,8 +487,57 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
         createdAt: new Date().toISOString(),
       };
 
-      await sendTelegramNotification(chemist.id, dto, { sendMessage: mockSendMessage });
+      const sent = await sendTelegramNotification(
+        chemist.id,
+        dto,
+        { sendMessage: mockSendMessage },
+        company.id,
+      );
+      expect(sent).toBe(false);
       expect(mockSendMessage).not.toHaveBeenCalled();
+    });
+
+    it('boshqa kompaniya foydalanuvchisiga xabar ketmaydi (tenant izolyatsiyasi)', async () => {
+      const companyA = await createCompany();
+      const companyB = await createCompany();
+
+      // Chemist B companyB ga tegishli va Telegram bog'langan
+      const chemistB = await createUser({ role: 'chemist', company: companyB });
+      const link = await generateLinkToken(chemistB.id, companyB.id);
+      await linkTelegramAccount(link.token, { id: 999111 });
+
+      const mockSendMessage = vi.fn().mockResolvedValue(true);
+
+      const dto = {
+        id: 'notif-other-company',
+        type: 'sample_assigned' as const,
+        title: 'Kompaniya A namunasi',
+        message: 'Maxfiy namuna',
+        referenceId: null,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Kompaniya A bildirishnomasi B kompaniya xodimiga yuborilmasligi shart!
+      const sent = await sendTelegramNotification(
+        chemistB.id,
+        dto,
+        { sendMessage: mockSendMessage },
+        companyA.id,
+      );
+
+      expect(sent).toBe(false);
+      expect(mockSendMessage).not.toHaveBeenCalled();
+
+      // Kompaniya B bilan yuborilsa muvaffaqiyatli ketadi
+      const sentCorrect = await sendTelegramNotification(
+        chemistB.id,
+        dto,
+        { sendMessage: mockSendMessage },
+        companyB.id,
+      );
+      expect(sentCorrect).toBe(true);
+      expect(mockSendMessage).toHaveBeenCalledTimes(1);
     });
 
     it('Telegram yuborishdagi tarmoq xatosi asosiy oqimni buzmaydi (fire-and-forget)', async () => {
@@ -480,7 +563,7 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
       // Xato tashlanmasligi kerak!
       await expect(
         sendTelegramNotification(chemist.id, dto, faultySender),
-      ).resolves.toBeUndefined();
+      ).resolves.toBe(false);
     });
 
     it('createNotification P6 oqimida Telegram kanali chaqiriladi', async () => {
@@ -506,6 +589,7 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
         expect(channelFn).toHaveBeenCalledWith(
           chemist.id,
           expect.objectContaining({ type: 'sample_assigned' }),
+          company.id,
         );
       } finally {
         setNotificationChannel('test_tg', null);
@@ -514,28 +598,52 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
   });
 
   describe('6. Webhook himoyasi (R-TG-15, R-TG-16)', () => {
-    it('noto\'g\'ri secret 401 qaytaradi, to\'g\'ri secret 200 qaytaradi', async () => {
+    it('webhook siri timingSafeEqual orqali tekshiriladi: header yo\'q, noto\'g\'ri uzunlik, noto\'g\'ri qiymat va to\'g\'ri holatlar', async () => {
+      const webhookSecret = 'super-secret-token-1234567890abcdef';
+      const mockBot = {
+        handleUpdate: vi.fn().mockResolvedValue(true),
+      };
+
       const { app } = testApp({
         env: {
           TELEGRAM_BOT_TOKEN: BOT_TOKEN,
           TELEGRAM_WEBHOOK_URL: 'https://api.tizimlab.uz/api/v1/telegram/webhook',
-          TELEGRAM_WEBHOOK_SECRET: 'super-secret-token-1234567890abcdef',
+          TELEGRAM_WEBHOOK_SECRET: webhookSecret,
         },
+        bot: mockBot as unknown as Bot,
       });
 
-      // Secret'siz yoki noto'g'ri secret
-      const resBad = await request(app)
+      // 1) Header umuman yo'q
+      const resNoHeader = await request(app)
         .post('/api/v1/telegram/webhook')
-        .set('x-telegram-bot-api-secret-token', 'wrong-secret')
-        .send({ update_id: 100 });
-      expect(resBad.status).toBe(401);
+        .send({ update_id: 101 });
+      expect(resNoHeader.status).toBe(401);
+      expect(mockBot.handleUpdate).not.toHaveBeenCalled();
 
-      // To'g'ri secret
+      // 2) Noto'g'ri uzunlik
+      const resWrongLen = await request(app)
+        .post('/api/v1/telegram/webhook')
+        .set('x-telegram-bot-api-secret-token', 'short')
+        .send({ update_id: 102 });
+      expect(resWrongLen.status).toBe(401);
+      expect(mockBot.handleUpdate).not.toHaveBeenCalled();
+
+      // 3) Bir xil uzunlik, lekin boshqa qiymat (timingSafeEqual tekshiruvi)
+      const tamperedSecret = 'super-secret-token-1234567890abcdeg';
+      const resTampered = await request(app)
+        .post('/api/v1/telegram/webhook')
+        .set('x-telegram-bot-api-secret-token', tamperedSecret)
+        .send({ update_id: 103 });
+      expect(resTampered.status).toBe(401);
+      expect(mockBot.handleUpdate).not.toHaveBeenCalled();
+
+      // 4) To'g'ri secret
       const resGood = await request(app)
         .post('/api/v1/telegram/webhook')
-        .set('x-telegram-bot-api-secret-token', 'super-secret-token-1234567890abcdef')
-        .send({ update_id: 100 });
+        .set('x-telegram-bot-api-secret-token', webhookSecret)
+        .send({ update_id: 104 });
       expect(resGood.status).toBe(200);
+      expect(mockBot.handleUpdate).toHaveBeenCalledWith({ update_id: 104 });
     });
   });
 });

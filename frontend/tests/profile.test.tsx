@@ -117,4 +117,73 @@ describe('ProfilePage', () => {
 
     expect(screen.getByRole('heading', { name: /Telegram integratsiyasi/i })).toBeInTheDocument();
   });
+
+  it("Telegram ulanmagan holat: 'Telegram hisobi ulanmagan' holati, 'Telegram ulash' tugmasi va token yaratish modali ochiladi", async () => {
+    const user = userEvent.setup();
+    api.onGet('/telegram/status').reply(200, {
+      data: {
+        linked: false,
+        telegramChatId: null,
+        telegramUsername: null,
+        linkedAt: null,
+      },
+    });
+    api.onPost('/telegram/link-token').reply(200, {
+      data: {
+        token: 'test-link-token-12345',
+        expiresAt: new Date(Date.now() + 15 * 60000).toISOString(),
+        linkUrl: 'https://t.me/TizimLab_bot?start=test-link-token-12345',
+      },
+    });
+
+    renderAt('/profile');
+
+    expect(await screen.findByText("Telegram hisobi ulanmagan")).toBeInTheDocument();
+    const linkBtn = await screen.findByRole('button', { name: 'Telegram ulash' });
+    expect(linkBtn).toBeInTheDocument();
+
+    await user.click(linkBtn);
+
+    expect(await screen.findByRole('heading', { name: 'Telegram hisobini ulash' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: "Botni ochish" })).toHaveAttribute(
+      'href',
+      'https://t.me/TizimLab_bot?start=test-link-token-12345',
+    );
+  });
+
+  it("Telegram ulangan holat: username ko'rsatiladi, 'Telegramni uzish' tugmasi tasdiqlash bilan POST /telegram/unlink yuboradi", async () => {
+    const user = userEvent.setup();
+    api.onGet('/telegram/status').reply(200, {
+      data: {
+        linked: true,
+        telegramChatId: 12345678,
+        telegramUsername: 'aziz_kimyogar',
+        linkedAt: '2026-10-12T10:00:00.000Z',
+      },
+    });
+    api.onPost('/telegram/unlink').reply(200, {
+      data: { success: true },
+    });
+
+    renderAt('/profile');
+
+    expect(await screen.findByText("Telegram hisobi ulangan")).toBeInTheDocument();
+    expect(screen.getByText('@aziz_kimyogar')).toBeInTheDocument();
+
+    const unlinkBtn = screen.getByRole('button', { name: 'Telegramni uzish' });
+    expect(unlinkBtn).toBeInTheDocument();
+
+    await user.click(unlinkBtn);
+
+    expect(await screen.findByText(/Telegram akkauntingizni uzmoqchimisiz/i)).toBeInTheDocument();
+
+    // Tasdiqlash modalidagi "Telegramni uzish" tugmasini bosish
+    const confirmButtons = screen.getAllByRole('button', { name: 'Telegramni uzish' });
+    const modalConfirmBtn = confirmButtons[confirmButtons.length - 1]!;
+    await user.click(modalConfirmBtn);
+
+    await waitFor(() => {
+      expect(api.history.post.some((p) => p.url === '/telegram/unlink')).toBe(true);
+    });
+  });
 });

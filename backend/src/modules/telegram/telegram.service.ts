@@ -16,6 +16,7 @@ import type {
 const sha256 = (val: string): string => createHash('sha256').update(val).digest('hex');
 
 const LINK_TOKEN_TTL_MS = 15 * 60 * 1000; // 15 daqiqa
+export const INIT_DATA_MAX_AGE_SECONDS = 86400; // 24 soat
 
 // Replay himoyasi uchun xotiradagi kesh: hash -> yaroqlilik muddati (ms)
 const replayCache = new Map<string, number>();
@@ -428,7 +429,27 @@ export function validateInitData(
 }
 
 /**
+ * DB asosidagi initData replay himoyasi (013_telegram_hardening, used_init_data jadvali).
+ * Atomik INSERT ON CONFLICT DO NOTHING: parallel so'rovda faqat bittasi o'tadi.
+ */
+export async function consumeInitDataHash(
+  hash: string,
+  authDate: Date,
+  expiresAt: Date,
+): Promise<boolean> {
+  const res = await query(
+    `INSERT INTO used_init_data (hash, auth_date, expires_at)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (hash) DO NOTHING
+     RETURNING id`,
+    [hash, authDate, expiresAt],
+  );
+  return (res.rowCount ?? 0) > 0;
+}
+
+/**
  * 8. WebApp orqali to'liq autentifikatsiya va sessiya ochish (R-TG-10, R-TG-11, R-TG-12).
+ * DB darajasidagi initData replay himoyasi bilan: parallel so'rovlarda faqat bitta tranzaksiya o'tadi.
  */
 export async function authenticateWebApp(
   cfg: AuthConfig,
@@ -436,7 +457,18 @@ export async function authenticateWebApp(
   botToken: string,
   meta: RequestMeta = { ip: null, userAgent: null },
 ): Promise<WebAppAuthResult> {
-  const { telegramUser } = validateInitData(initData, botToken);
+  const { telegramUser, authDate } = validateInitData(initData, botToken, { checkReplay: false });
+  const authDateObj = new Date(authDate * 1000);
+  const expiresAtObj = new Date(authDateObj.getTime() + INIT_DATA_MAX_AGE_SECONDS * 1000);
+  const dataHash = sha256(initData);
+
+  const consumed = await consumeInitDataHash(dataHash, authDateObj, expiresAtObj);
+  if (!consumed) {
+    throw new UnauthorizedError(
+      "Ushbu Telegram avtorizatsiya ma'lumotlari allaqachon ishlatilgan (replay himoyasi)",
+    );
+  }
+
   return loginViaTelegram(cfg, telegramUser.id, meta);
 }
 
@@ -522,9 +554,10 @@ export async function sendTelegramNotification(
   userId: string,
   dto: NotificationDto,
   customSender?: TelegramSender | null,
-): Promise<void> {
+  companyId?: string | null,
+): Promise<boolean> {
   const sender = customSender !== undefined ? customSender : activeSender;
-  if (!sender) return;
+  if (!sender) return false;
 
   try {
     const { rows } = await query<{
@@ -533,12 +566,13 @@ export async function sendTelegramNotification(
     }>(
       `SELECT telegram_chat_id, telegram_language
        FROM users
-       WHERE id = $1 AND telegram_chat_id IS NOT NULL AND is_active = true`,
-      [userId],
+       WHERE id = $1 AND telegram_chat_id IS NOT NULL AND is_active = true
+         AND ($2::uuid IS NULL OR company_id = $2)`,
+      [userId, companyId ?? null],
     );
 
     const user = rows[0];
-    if (!user || !user.telegram_chat_id) return;
+    if (!user || !user.telegram_chat_id) return false;
 
     const lang = (user.telegram_language === 'ru' || user.telegram_language === 'en'
       ? user.telegram_language
@@ -546,7 +580,9 @@ export async function sendTelegramNotification(
 
     const text = formatTelegramNotification(dto, lang);
     await sender.sendMessage(Number(user.telegram_chat_id), text, { parse_mode: 'HTML' });
+    return true;
   } catch (err) {
     logger.error('Telegramga xabarnoma yuborishda xatolik:', { err, userId, notificationId: dto.id });
+    return false;
   }
 }

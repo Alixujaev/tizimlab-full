@@ -25,8 +25,8 @@ const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
   startStabilityScheduler();
   startTelegramBot(env);
-  setNotificationChannel('telegram', (userId, dto) => {
-    void sendTelegramNotification(userId, dto);
+  setNotificationChannel('telegram', (userId, dto, companyId) => {
+    void sendTelegramNotification(userId, dto, undefined, companyId);
   });
 });
 // Socket.IO — bir xil HTTP server ustida (spec §16)

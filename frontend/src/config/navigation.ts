@@ -17,6 +17,7 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { key: 'dashboard', path: '/', labelKey: 'nav.dashboard', roles: COMPANY_ROLES },
   { key: 'samples', path: '/samples', labelKey: 'nav.samples', roles: COMPANY_ROLES },
+  { key: 'substances', path: '/substances', labelKey: 'nav.substances', roles: COMPANY_ROLES },
   { key: 'registry', path: '/registry', labelKey: 'nav.registry', roles: COMPANY_ROLES },
   { key: 'temperature', path: '/temperature', labelKey: 'nav.temperature', roles: COMPANY_ROLES },
   { key: 'users', path: '/users', labelKey: 'nav.users', roles: MANAGER_ROLES },

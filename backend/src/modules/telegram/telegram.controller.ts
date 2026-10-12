@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type { CookieOptions, Request, Response } from 'express';
 import type { Bot } from 'grammy';
 import { UnauthorizedError } from '../../utils/errors.js';
@@ -92,8 +93,15 @@ export function createTelegramController(deps: {
     /** POST /telegram/webhook (production Telegram webhook) */
     async webhook(req: Request, res: Response) {
       const secretHeader = req.headers['x-telegram-bot-api-secret-token'];
-      if (!deps.webhookSecret || secretHeader !== deps.webhookSecret) {
-        res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Webhook secret noto\'g\'ri' } });
+      const expectedSecret = deps.webhookSecret;
+      if (!expectedSecret || typeof secretHeader !== 'string') {
+        res.status(401).json({ error: { code: 'UNAUTHORIZED', message: "Webhook secret noto'g'ri" } });
+        return;
+      }
+      const providedBuf = Buffer.from(secretHeader);
+      const expectedBuf = Buffer.from(expectedSecret);
+      if (providedBuf.length !== expectedBuf.length || !timingSafeEqual(providedBuf, expectedBuf)) {
+        res.status(401).json({ error: { code: 'UNAUTHORIZED', message: "Webhook secret noto'g'ri" } });
         return;
       }
       if (deps.bot) {
