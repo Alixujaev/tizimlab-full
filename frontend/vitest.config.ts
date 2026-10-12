@@ -1,3 +1,4 @@
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -15,5 +16,7 @@ export default defineConfig({
     // Sekin forma testlari (userEvent.type) to'liq to'plamda 5s dan oshadi; vitest shu faylni o'qiydi
     testTimeout: 20000,
     hookTimeout: 20000,
+    // Sekin kompyuterlarda parallel jsdom CPU ni bo'g'ib qo'ymasligi uchun workerlar cheklovi (tez kompyuterda ham barqaror)
+    maxWorkers: Math.max(1, Math.min(os.cpus().length, 4)),
   },
 });

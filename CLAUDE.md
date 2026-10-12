@@ -125,3 +125,4 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 - `protocol_values` jadvali (D-09).
 - Spec'da yoki DECISIONS'da yo'q funksiyalar, sahifalar, rollar, xabarnoma turlari.
 - `docs/LOYIHA.md` ni tahrirlash.
+- Test bazasiga (tizimlab_test) qo'lda migrate yurgizma; testlar o'z izolyatsiyalangan sxemasini yaratadi.
