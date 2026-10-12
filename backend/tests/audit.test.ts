@@ -445,5 +445,127 @@ describeDb('Audit and Activity APIs (P10, D-147)', () => {
       );
       expect(Number(auditStudy.rows[0]!.count)).toBeGreaterThanOrEqual(1);
     });
+
+    it('samples (assign) audit_log ga yoziladi', async () => {
+      const sampleRes = await query<{ id: string }>(
+        `INSERT INTO samples (company_id, type, substance_name, status, created_by)
+         VALUES ($1, 'raw_material', 'Namuna Assign Test', 'pending_assignment', $2)
+         RETURNING id`,
+        [companyA.id, adminA.id],
+      );
+      const sampleId = sampleRes.rows[0]!.id;
+
+      const assignRes = await request(app)
+        .post(`/api/v1/samples/${sampleId}/assign`)
+        .set('Authorization', `Bearer ${tokenLabHeadA}`)
+        .send({ chemistId: chemistA.id });
+      expect(assignRes.status).toBe(200);
+
+      const auditRes = await query<{ count: string }>(
+        `SELECT count(*) FROM audit_log
+         WHERE table_name = 'samples' AND record_id = $1 AND action = 'update'
+           AND (new_values->>'assigned_to') = $2`,
+        [sampleId, chemistA.id],
+      );
+      expect(Number(auditRes.rows[0]!.count)).toBeGreaterThanOrEqual(1);
+    });
+
+    it('protocols (submit/approve) audit_log ga yoziladi', async () => {
+      const sampleRes = await query<{ id: string }>(
+        `INSERT INTO samples (company_id, type, substance_name, status, created_by)
+         VALUES ($1, 'raw_material', 'Protokol Modda', 'pending_assignment', $2)
+         RETURNING id`,
+        [companyA.id, adminA.id],
+      );
+      const sampleId = sampleRes.rows[0]!.id;
+
+      await request(app)
+        .post(`/api/v1/samples/${sampleId}/assign`)
+        .set('Authorization', `Bearer ${tokenLabHeadA}`)
+        .send({ chemistId: chemistA.id });
+
+      const protoRes = await query<{ id: string }>(
+        `SELECT id FROM protocols WHERE sample_id = $1 AND company_id = $2`,
+        [sampleId, companyA.id],
+      );
+      const protocolId = protoRes.rows[0]!.id;
+
+      await query(
+        `UPDATE protocols SET file_path = 'protocols/test.pdf' WHERE id = $1`,
+        [protocolId],
+      );
+
+      const submitRes = await request(app)
+        .post(`/api/v1/protocols/${protocolId}/submit`)
+        .set('Authorization', `Bearer ${tokenChemistA}`);
+      expect(submitRes.status).toBe(200);
+
+      const submitAudit = await query<{ count: string }>(
+        `SELECT count(*) FROM audit_log
+         WHERE table_name = 'protocols' AND record_id = $1 AND action = 'submit'`,
+        [protocolId],
+      );
+      expect(Number(submitAudit.rows[0]!.count)).toBeGreaterThanOrEqual(1);
+
+      const approveRes = await request(app)
+        .post(`/api/v1/protocols/${protocolId}/approve`)
+        .set('Authorization', `Bearer ${tokenLabHeadA}`);
+      expect(approveRes.status).toBe(200);
+
+      const approveAudit = await query<{ count: string }>(
+        `SELECT count(*) FROM audit_log
+         WHERE table_name = 'protocols' AND record_id = $1 AND action = 'approve'`,
+        [protocolId],
+      );
+      expect(Number(approveAudit.rows[0]!.count)).toBeGreaterThanOrEqual(1);
+    });
+
+    it('reagents (tranzaksiya) audit_log ga yoziladi', async () => {
+      const createRes = await request(app)
+        .post('/api/v1/reagents')
+        .set('Authorization', `Bearer ${tokenAdminA}`)
+        .send({
+          name: 'Audit Reagent HCl',
+          unit: 'litr',
+          quantity: 10,
+          lowStockThreshold: 2,
+        });
+      expect(createRes.status).toBe(201);
+      const reagentId = createRes.body.data.id;
+
+      const txRes = await request(app)
+        .post(`/api/v1/reagents/${reagentId}/transactions`)
+        .set('Authorization', `Bearer ${tokenAdminA}`)
+        .send({
+          type: 'in',
+          quantity: 5,
+          note: 'Yangi partiya keldi',
+        });
+      expect(txRes.status).toBe(201);
+
+      const auditRes = await query<{ count: string }>(
+        `SELECT count(*) FROM audit_log
+         WHERE table_name = 'reagent_transactions' AND record_id = $1 AND action = 'create'`,
+        [txRes.body.data.id],
+      );
+      expect(Number(auditRes.rows[0]!.count)).toBeGreaterThanOrEqual(1);
+    });
+
+    it('auth (login) audit_log ga yoziladi', async () => {
+      const loginRes = await request(app)
+        .post('/api/v1/auth/login')
+        .send({
+          email: adminA.email,
+          password: 'Parol12345',
+        });
+      expect(loginRes.status).toBe(200);
+
+      const auditRes = await query<{ count: string }>(
+        `SELECT count(*) FROM audit_log
+         WHERE table_name = 'sessions' AND action = 'login_success' AND user_id = $1`,
+        [adminA.id],
+      );
+      expect(Number(auditRes.rows[0]!.count)).toBeGreaterThanOrEqual(1);
+    });
   });
 });
