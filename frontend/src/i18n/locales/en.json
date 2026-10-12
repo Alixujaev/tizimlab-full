@@ -784,5 +784,56 @@
     "noParams": "No parameters specified",
     "notRecorded": "Not recorded",
     "noSerial": "No serial"
+  },
+  "audit": {
+    "description": "History of all security and data modifications in the system",
+    "empty": "No audit log entries found",
+    "table": {
+      "time": "Time",
+      "user": "User",
+      "company": "Company",
+      "action": "Action",
+      "resource": "Resource",
+      "recordId": "ID",
+      "ip": "IP Address"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, action, resource...",
+      "action": "Action",
+      "resource": "Resource",
+      "from": "From",
+      "to": "To"
+    },
+    "details": {
+      "title": "Audit Log Details",
+      "action": "Action",
+      "table": "Resource (table)",
+      "recordId": "Record ID",
+      "createdAt": "Date / Time",
+      "user": "User",
+      "company": "Company",
+      "ip": "IP Address",
+      "userAgent": "User Agent",
+      "oldValues": "Old Values",
+      "newValues": "New Values"
+    }
+  },
+  "activity": {
+    "description": "Laboratory personnel activity and data modification history",
+    "empty": "No activity log entries found",
+    "table": {
+      "time": "Time",
+      "user": "User",
+      "action": "Action",
+      "resource": "Resource",
+      "recordId": "ID"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, action, resource...",
+      "action": "Action",
+      "resource": "Resource",
+      "from": "From",
+      "to": "To"
+    }
   }
 }

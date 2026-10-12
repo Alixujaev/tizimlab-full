@@ -4,7 +4,6 @@ import { ProtectedRoute } from '@/components/routing/ProtectedRoute';
 import { RoleRoute } from '@/components/routing/RoleRoute';
 import { MANAGER_ROLES } from '@/config/navigation';
 import { LoginPage } from '@/pages/auth/LoginPage';
-import { ComingSoonPage } from '@/pages/common/ComingSoonPage';
 import { CompaniesPage } from '@/pages/companies/CompaniesPage';
 import { NotFoundPage } from '@/pages/errors/NotFoundPage';
 import { HomePage } from '@/pages/HomePage';
@@ -22,12 +21,9 @@ import { ExpensesPage } from '@/pages/reagents/ExpensesPage';
 import { TemperaturePage } from '@/pages/temperature/TemperaturePage';
 import { StabilityPage } from '@/pages/stability/StabilityPage';
 import { StabilityDetailPage } from '@/pages/stability/StabilityDetailPage';
+import { AuditLogPage } from '@/pages/audit/AuditLogPage';
+import { ActivityPage } from '@/pages/activity/ActivityPage';
 import { COMPANY_ROLES } from '@/types';
-
-const stub = (path: string, titleKey: string): RouteObject => ({
-  path,
-  element: <ComingSoonPage titleKey={titleKey} />,
-});
 
 /**
  * Barcha yo'llar (spec §3, §6, §10, §11, §16; D-29). Sahifalar hozircha stub —
@@ -70,14 +66,14 @@ export const routes: RouteObject[] = [
             element: <RoleRoute roles={MANAGER_ROLES} />,
             children: [
               { path: '/users', element: <UsersPage /> },
-              stub('/activity', 'pages.activity'),
+              { path: '/activity', element: <ActivityPage /> },
             ],
           },
           {
             element: <RoleRoute roles={['super_admin']} />,
             children: [
               { path: '/companies', element: <CompaniesPage /> },
-              stub('/logs', 'pages.auditLog'),
+              { path: '/logs', element: <AuditLogPage /> },
             ],
           },
           { path: '*', element: <NotFoundPage /> },

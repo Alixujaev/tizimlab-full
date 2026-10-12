@@ -860,4 +860,38 @@ export interface ListStabilityStudiesQuery {
   limit?: number;
 }
 
+// ---------------------------------------------------------------------------
+// P10: Audit and Activity Logs (spec §16, D-147)
+// ---------------------------------------------------------------------------
+
+export interface AuditLogDto {
+  id: string;
+  userId: string | null;
+  userFullName?: string | null;
+  userEmail?: string | null;
+  companyId: string | null;
+  companyName?: string | null;
+  action: string;
+  tableName: string;
+  recordId: string | null;
+  oldValues: Record<string, unknown> | null;
+  newValues: Record<string, unknown> | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+}
+
+export interface ListAuditLogsQuery {
+  userId?: string;
+  companyId?: string;
+  action?: string;
+  tableName?: string;
+  from?: string;
+  to?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+
 

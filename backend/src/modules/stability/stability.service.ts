@@ -1,6 +1,7 @@
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AppError, ForbiddenError, NotFoundError } from '../../utils/errors.js';
+import { writeAudit } from '../audit/audit.service.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
 import type { Role } from '../auth/auth.types.js';
 import type {
@@ -366,6 +367,21 @@ export async function createStudy(
       }
     }
 
+    await writeAudit(tx, {
+      tableName: 'stability_studies',
+      recordId: study.id,
+      action: 'create',
+      companyId,
+      userId,
+      newValues: {
+        sampleId: input.sampleId,
+        startedAt: study.started_at,
+        storageConditions: study.storage_conditions,
+        parametersCount: parameters.length,
+        checkpointsCount: input.checkpoints?.length ?? 0,
+      },
+    });
+
     return getStudyByIdInternal(tx, companyId, study.id);
   });
 }
@@ -441,6 +457,20 @@ export async function createCheckpoint(
         [companyId, cp.id, p.parameter, p.initial_value, p.specification, userId],
       );
     }
+
+    await writeAudit(tx, {
+      tableName: 'stability_checkpoints',
+      recordId: cp.id,
+      action: 'create',
+      companyId,
+      userId,
+      newValues: {
+        studyId,
+        intervalTag: cp.interval_tag,
+        dueDate: cp.due_date,
+        assignedTo: cp.assigned_to,
+      },
+    });
 
     return getCheckpointByIdInternal(tx, companyId, cp.id);
   });
@@ -519,6 +549,27 @@ export async function updateCheckpoint(
       [intervalTag, dueDate, assignedTo, notes, status, checkpointId, companyId],
     );
 
+    await writeAudit(tx, {
+      tableName: 'stability_checkpoints',
+      recordId: checkpointId,
+      action: 'update',
+      companyId,
+      oldValues: {
+        intervalTag: existing.interval_tag,
+        dueDate: existing.due_date,
+        assignedTo: existing.assigned_to,
+        notes: existing.notes,
+        status: existing.status,
+      },
+      newValues: {
+        intervalTag,
+        dueDate,
+        assignedTo,
+        notes,
+        status,
+      },
+    });
+
     return getCheckpointByIdInternal(tx, companyId, checkpointId);
   });
 }
@@ -556,6 +607,18 @@ export async function deleteCheckpoint(
       checkpointId,
       companyId,
     ]);
+
+    await writeAudit(tx, {
+      tableName: 'stability_checkpoints',
+      recordId: checkpointId,
+      action: 'delete',
+      companyId,
+      oldValues: {
+        intervalTag: existing.interval_tag,
+        dueDate: existing.due_date,
+        studyId: existing.study_id,
+      },
+    });
   });
 }
 
@@ -700,6 +763,18 @@ export async function recordResults(
       );
     }
 
+    await writeAudit(tx, {
+      tableName: 'stability_results',
+      recordId: checkpointId,
+      action: 'record',
+      companyId,
+      userId: user.userId,
+      newValues: {
+        checkpointId,
+        recordedCount: input.results.length,
+      },
+    });
+
     return getCheckpointByIdInternal(tx, companyId, checkpointId);
   });
 }
@@ -772,6 +847,18 @@ export async function completeCheckpoint(
         [cp.study_id, companyId],
       );
     }
+
+    await writeAudit(tx, {
+      tableName: 'stability_checkpoints',
+      recordId: checkpointId,
+      action: 'complete',
+      companyId,
+      userId: user.userId,
+      newValues: {
+        status: 'completed',
+        completedBy: user.userId,
+      },
+    });
 
     return getCheckpointByIdInternal(tx, companyId, checkpointId);
   });

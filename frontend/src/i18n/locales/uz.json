@@ -784,5 +784,56 @@
     "noParams": "Parametrlar kiritilmagan",
     "notRecorded": "Kiritilmagan",
     "noSerial": "Seriyasiz"
+  },
+  "audit": {
+    "description": "Tizimdagi barcha xavfsizlik va ma'lumotlar o'zgarishlari tarixi",
+    "empty": "Audit yozuvlari topilmadi",
+    "table": {
+      "time": "Vaqt",
+      "user": "Foydalanuvchi",
+      "company": "Kompaniya",
+      "action": "Amal",
+      "resource": "Resurs",
+      "recordId": "ID",
+      "ip": "IP manzil"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, amal, resurs...",
+      "action": "Amal",
+      "resource": "Resurs",
+      "from": "Dan",
+      "to": "Gacha"
+    },
+    "details": {
+      "title": "Audit yozuvi tafsiloti",
+      "action": "Amal",
+      "table": "Resurs (jadval)",
+      "recordId": "Yozuv ID",
+      "createdAt": "Sana / Vaqt",
+      "user": "Foydalanuvchi",
+      "company": "Kompaniya",
+      "ip": "IP manzil",
+      "userAgent": "User Agent",
+      "oldValues": "Eski qiymatlar",
+      "newValues": "Yangi qiymatlar"
+    }
+  },
+  "activity": {
+    "description": "Laboratoriya xodimlarining faoliyati va ma'lumotlar tarixi",
+    "empty": "Faoliyat yozuvlari topilmadi",
+    "table": {
+      "time": "Vaqt",
+      "user": "Foydalanuvchi",
+      "action": "Amal",
+      "resource": "Resurs",
+      "recordId": "ID"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, amal, resurs...",
+      "action": "Amal",
+      "resource": "Resurs",
+      "from": "Dan",
+      "to": "Gacha"
+    }
   }
 }

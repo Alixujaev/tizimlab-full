@@ -784,5 +784,56 @@
     "noParams": "Параметры не указаны",
     "notRecorded": "Не введено",
     "noSerial": "Без серии"
+  },
+  "audit": {
+    "description": "История всех изменений безопасности и данных в системе",
+    "empty": "Записи аудита не найдены",
+    "table": {
+      "time": "Время",
+      "user": "Пользователь",
+      "company": "Компания",
+      "action": "Действие",
+      "resource": "Ресурс",
+      "recordId": "ID",
+      "ip": "IP адрес"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, действие, ресурс...",
+      "action": "Действие",
+      "resource": "Ресурс",
+      "from": "С",
+      "to": "По"
+    },
+    "details": {
+      "title": "Детали записи аудита",
+      "action": "Действие",
+      "table": "Ресурс (таблица)",
+      "recordId": "ID записи",
+      "createdAt": "Дата / Время",
+      "user": "Пользователь",
+      "company": "Компания",
+      "ip": "IP адрес",
+      "userAgent": "User Agent",
+      "oldValues": "Старые значения",
+      "newValues": "Новые значения"
+    }
+  },
+  "activity": {
+    "description": "История действий сотрудников лаборатории и изменений данных",
+    "empty": "Записи журнала активности не найдены",
+    "table": {
+      "time": "Время",
+      "user": "Пользователь",
+      "action": "Действие",
+      "resource": "Ресурс",
+      "recordId": "ID"
+    },
+    "filters": {
+      "searchPlaceholder": "ID, действие, ресурс...",
+      "action": "Действие",
+      "resource": "Ресурс",
+      "from": "С",
+      "to": "По"
+    }
   }
 }
