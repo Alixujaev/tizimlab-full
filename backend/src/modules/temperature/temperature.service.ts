@@ -3,6 +3,7 @@ import { query, withTransaction } from '../../config/database.js';
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../../utils/errors.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
 import { createNotification } from '../notifications/notifications.service.js';
+import { writeAudit } from '../audit/audit.service.js';
 
 export function hashApiKey(key: string): string {
   return createHash('sha256').update(key.trim()).digest('hex');
@@ -130,6 +131,22 @@ export async function createSensorConfig(
     ],
   );
 
+  await writeAudit(undefined, {
+    tableName: 'sensor_configs',
+    recordId: rows[0]!.id,
+    action: 'create',
+    companyId,
+    newValues: {
+      sensorId: input.sensorId,
+      locationName: input.locationName,
+      tempMin: input.tempMin,
+      tempMax: input.tempMax,
+      humidityMin: input.humidityMin ?? null,
+      humidityMax: input.humidityMax ?? null,
+      isActive: input.isActive ?? true,
+    },
+  });
+
   return toSensorConfigDto(rows[0]!);
 }
 
@@ -216,12 +233,37 @@ export async function updateSensorConfig(
     ],
   );
 
+  await writeAudit(undefined, {
+    tableName: 'sensor_configs',
+    recordId: id,
+    action: 'update',
+    companyId,
+    oldValues: {
+      sensorId: existing.rows[0]!.sensor_id,
+      locationName: existing.rows[0]!.location_name,
+      tempMin: Number(existing.rows[0]!.temp_min),
+      tempMax: Number(existing.rows[0]!.temp_max),
+      humidityMin: existing.rows[0]!.humidity_min != null ? Number(existing.rows[0]!.humidity_min) : null,
+      humidityMax: existing.rows[0]!.humidity_max != null ? Number(existing.rows[0]!.humidity_max) : null,
+      isActive: existing.rows[0]!.is_active,
+    },
+    newValues: {
+      sensorId: rows[0]!.sensor_id,
+      locationName: rows[0]!.location_name,
+      tempMin: Number(rows[0]!.temp_min),
+      tempMax: Number(rows[0]!.temp_max),
+      humidityMin: rows[0]!.humidity_min != null ? Number(rows[0]!.humidity_min) : null,
+      humidityMax: rows[0]!.humidity_max != null ? Number(rows[0]!.humidity_max) : null,
+      isActive: rows[0]!.is_active,
+    },
+  });
+
   return toSensorConfigDto(rows[0]!);
 }
 
 export async function deleteSensorConfig(companyId: string, id: string): Promise<void> {
   const existing = await query<SensorConfigRow>(
-    `SELECT id FROM sensor_configs WHERE id = $1 AND company_id = $2`,
+    `SELECT id, sensor_id, location_name FROM sensor_configs WHERE id = $1 AND company_id = $2`,
     [id, companyId],
   );
   if (!existing.rows[0]) {
@@ -239,6 +281,17 @@ export async function deleteSensorConfig(companyId: string, id: string): Promise
   }
 
   await query(`DELETE FROM sensor_configs WHERE id = $1 AND company_id = $2`, [id, companyId]);
+
+  await writeAudit(undefined, {
+    tableName: 'sensor_configs',
+    recordId: id,
+    action: 'delete',
+    companyId,
+    oldValues: {
+      sensorId: existing.rows[0]!.sensor_id,
+      locationName: existing.rows[0]!.location_name,
+    },
+  });
 }
 
 // ------------------- READINGS & ALERTS -------------------
@@ -372,6 +425,23 @@ export async function recordReading(
           actorId: userId ?? null,
         });
       }
+    }
+
+    if (input.isManual && userId) {
+      await writeAudit(client, {
+        tableName: 'temperature_readings',
+        recordId: reading.id,
+        action: 'create',
+        companyId,
+        userId,
+        newValues: {
+          sensorConfigId: config.id,
+          sensorId: config.sensor_id,
+          temperature: input.temperature,
+          humidity: input.humidity,
+          isManual: true,
+        },
+      });
     }
 
     return {
@@ -609,6 +679,24 @@ export async function resolveAlert(
 
   const updated = rows[0]!;
   const userRes = await query<{ full_name: string }>(`SELECT full_name FROM users WHERE id = $1`, [userId]);
+
+  await writeAudit(undefined, {
+    tableName: 'temperature_alerts',
+    recordId: alertId,
+    action: 'resolve',
+    companyId,
+    userId,
+    oldValues: {
+      resolvedAt: existing.rows[0].resolved_at,
+      resolvedBy: existing.rows[0].resolved_by,
+      resolutionNote: existing.rows[0].resolution_note,
+    },
+    newValues: {
+      resolvedAt: updated.resolved_at,
+      resolvedBy: userId,
+      resolutionNote: input.resolutionNote ?? null,
+    },
+  });
 
   return toTemperatureAlertDto({
     ...updated,
