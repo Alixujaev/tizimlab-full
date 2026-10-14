@@ -15,11 +15,6 @@ const LEGACY_UI_FILES = [
   'frontend/src/pages/companies/CompanyConfirmModal.tsx',
   'frontend/src/pages/companies/CompanyFormModal.tsx',
   'frontend/src/pages/profile/ProfilePage.tsx',
-  'frontend/src/pages/users/PermissionsModal.tsx',
-  'frontend/src/pages/users/ResetPasswordModal.tsx',
-  'frontend/src/pages/users/UserFormModal.tsx',
-  'frontend/src/pages/users/UserLogsModal.tsx',
-  'frontend/src/pages/users/UsersPage.tsx',
 ];
 
 export default tseslint.config(

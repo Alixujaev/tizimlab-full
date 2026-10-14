@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toApiError } from '@/api/client';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import {
   usePermissionsCatalogQuery,
   useSetUserPermissionsMutation,
   useUserPermissionsQuery,
 } from '@/hooks/useAdminUsers';
 import type { AdminUserDto } from '@/types';
+import { Alert, Badge, Button, Checkbox, Modal, Skeleton } from '@/ui';
 
 interface PermissionsModalProps {
   open: boolean;
@@ -18,12 +17,9 @@ interface PermissionsModalProps {
 
 export function PermissionsModal({ open, onClose, user }: PermissionsModalProps) {
   const { t } = useTranslation();
-
-  const userId = user?.id ?? '';
   const catalogQuery = usePermissionsCatalogQuery();
-  const userPermsQuery = useUserPermissionsQuery(userId);
+  const userPermsQuery = useUserPermissionsQuery(user?.id ?? '');
   const setPermsMutation = useSetUserPermissionsMutation();
-
   const [selectedGrants, setSelectedGrants] = useState<string[]>([]);
   const [generalError, setGeneralError] = useState<string | undefined>();
   const [success, setSuccess] = useState(false);
@@ -40,21 +36,18 @@ export function PermissionsModal({ open, onClose, user }: PermissionsModalProps)
 
   const catalog = catalogQuery.data?.catalog ?? [];
   const rolePermissions = userPermsQuery.data?.rolePermissions ?? [];
-
-  // Group items by their resource prefix (e.g. 'samples' from 'samples:create')
-  const groupedItems = catalog.reduce<Record<string, string[]>>((acc, permKey) => {
-    const resource = permKey.split(':')[0] ?? 'other';
-    const list = acc[resource] ?? [];
-    list.push(permKey);
-    acc[resource] = list;
+  // Ruxsatlar resurs bo'yicha guruhlanadi ('samples:create' → 'samples')
+  const grouped = catalog.reduce<Record<string, string[]>>((acc, key) => {
+    const resource = key.split(':')[0] ?? 'other';
+    (acc[resource] ??= []).push(key);
     return acc;
   }, {});
+  const isLoading = catalogQuery.isLoading || userPermsQuery.isLoading;
 
-  const handleToggle = (permKey: string) => {
+  const toggle = (key: string) =>
     setSelectedGrants((prev) =>
-      prev.includes(permKey) ? prev.filter((k) => k !== permKey) : [...prev, permKey],
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
     );
-  };
 
   const handleSave = () => {
     setGeneralError(undefined);
@@ -63,124 +56,84 @@ export function PermissionsModal({ open, onClose, user }: PermissionsModalProps)
       {
         onSuccess: () => {
           setSuccess(true);
-          setTimeout(() => {
-            onClose();
-          }, 1000);
+          setTimeout(onClose, 1000);
         },
-        onError: (err) => {
-          const apiError = toApiError(err);
-          setGeneralError(apiError?.message ?? t('errors.generic'));
-        },
+        onError: (err) => setGeneralError(toApiError(err)?.message ?? t('errors.generic')),
       },
     );
   };
-
-  const isLoading = catalogQuery.isLoading || userPermsQuery.isLoading;
 
   return (
     <Modal
       open={open}
       onClose={onClose}
+      size="lg"
       title={t('users.permissionsModal.title')}
+      description={`${t('users.permissionsModal.user')}: ${user.fullName} (${user.email})`}
       footer={
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={setPermsMutation.isPending}
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={setPermsMutation.isPending}>
             {t('companies.cancel')}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
             onClick={handleSave}
-            disabled={setPermsMutation.isPending || isLoading || success}
-            className="flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+            loading={setPermsMutation.isPending}
+            disabled={isLoading || success}
           >
-            {setPermsMutation.isPending && <Spinner size="sm" />}
             {setPermsMutation.isPending
               ? t('users.permissionsModal.saving')
               : t('users.permissionsModal.save')}
-          </button>
-        </div>
+          </Button>
+        </>
       }
     >
-      <div className="space-y-4">
-        <div className="rounded-md bg-slate-50 p-3 text-sm">
-          <p className="font-semibold text-slate-900">
-            {t('users.permissionsModal.user')}: {user.fullName} ({user.email})
-          </p>
-          <p className="mt-1 text-xs text-slate-600">
-            {t('users.permissionsModal.roleNotice')}
-          </p>
-          <p className="text-xs text-slate-600">
-            {t('users.permissionsModal.grantNotice')}
-          </p>
-        </div>
-
-        {generalError && (
-          <div role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-            {generalError}
-          </div>
-        )}
-
-        {success && (
-          <div role="status" className="rounded-md bg-emerald-50 p-3 text-sm text-emerald-800">
-            {t('users.permissionsModal.success')}
-          </div>
-        )}
-
+      <div className="flex flex-col gap-4">
+        <Alert tone="info">
+          <p>{t('users.permissionsModal.roleNotice')}</p>
+          <p>{t('users.permissionsModal.grantNotice')}</p>
+        </Alert>
+        {generalError && <Alert tone="danger">{generalError}</Alert>}
+        {success && <Alert tone="success">{t('users.permissionsModal.success')}</Alert>}
         {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Spinner />
+          <div role="status" className="flex flex-col gap-3">
+            <span className="sr-only">{t('common.loading')}</span>
+            <Skeleton variant="rect" className="h-24 w-full" />
+            <Skeleton variant="rect" className="h-24 w-full" />
           </div>
         ) : (
-          <div className="max-h-96 space-y-4 overflow-y-auto pr-1">
-            {Object.entries(groupedItems).map(([group, permKeys]) => (
-              <div key={group} className="rounded-md border border-slate-200 p-3">
-                <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="flex flex-col gap-3">
+            {Object.entries(grouped).map(([group, keys]) => (
+              <fieldset key={group} className="rounded-lg border border-line p-3">
+                <legend className="px-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">
                   {t(`permissions.groups.${group}`)}
-                </h4>
-                <div className="space-y-2">
-                  {permKeys.map((permKey) => {
-                    const isRoleDefault = rolePermissions.includes(permKey);
-                    const isChecked = isRoleDefault || selectedGrants.includes(permKey);
-
+                </legend>
+                <ul className="flex flex-col gap-1">
+                  {keys.map((key) => {
+                    const isRoleDefault = rolePermissions.includes(key);
+                    const isGranted = selectedGrants.includes(key);
                     return (
-                      <label
-                        key={permKey}
-                        className={`flex items-center justify-between rounded p-1.5 text-sm hover:bg-slate-50 ${
-                          isRoleDefault ? 'cursor-default opacity-80' : 'cursor-pointer'
-                        }`}
+                      <li
+                        key={key}
+                        className="flex items-center justify-between gap-3 rounded-md px-1.5 py-1 hover:bg-surface-muted"
                       >
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            disabled={isRoleDefault || setPermsMutation.isPending}
-                            onChange={() => !isRoleDefault && handleToggle(permKey)}
-                            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-60"
-                          />
-                          <span className="text-slate-800">
-                            {t(`permissions.items.${permKey}`)}
-                          </span>
-                        </div>
-
+                        <Checkbox
+                          label={t(`permissions.items.${key}`)}
+                          checked={isRoleDefault || isGranted}
+                          disabled={isRoleDefault || setPermsMutation.isPending}
+                          onChange={() => !isRoleDefault && toggle(key)}
+                        />
                         {isRoleDefault ? (
-                          <span className="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                            {t('users.permissionsModal.roleDefault')}
-                          </span>
-                        ) : selectedGrants.includes(permKey) ? (
-                          <span className="inline-flex items-center rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                          <Badge size="sm">{t('users.permissionsModal.roleDefault')}</Badge>
+                        ) : isGranted ? (
+                          <Badge size="sm" tone="primary">
                             {t('users.permissionsModal.customGrant')}
-                          </span>
+                          </Badge>
                         ) : null}
-                      </label>
+                      </li>
                     );
                   })}
-                </div>
-              </div>
+                </ul>
+              </fieldset>
             ))}
           </div>
         )}

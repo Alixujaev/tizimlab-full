@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
-import { Pagination } from '@/components/ui/Pagination';
-import { Spinner } from '@/components/ui/Spinner';
-import { type Column, Table } from '@/components/ui/Table';
 import { useUserLogsQuery } from '@/hooks/useAdminUsers';
 import type { AdminUserDto, UserAuditLogDto } from '@/types';
+import { Button, DataTable, type DataTableColumn, Modal, Pagination } from '@/ui';
+import { ActionBadge } from '../audit/logsShared';
 
 interface UserLogsModalProps {
   open: boolean;
@@ -16,34 +14,30 @@ interface UserLogsModalProps {
 export function UserLogsModal({ open, onClose, user }: UserLogsModalProps) {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
-
-  const userId = user?.id ?? '';
-  const { data, isLoading } = useUserLogsQuery(userId, { page, limit: 10 });
+  const { data, isLoading, isError, refetch } = useUserLogsQuery(user?.id ?? '', {
+    page,
+    limit: 10,
+  });
 
   if (!user) return null;
 
-  const logs = data?.data ?? [];
-
-  const columns: Column<UserAuditLogDto>[] = [
+  const columns: DataTableColumn<UserAuditLogDto>[] = [
     {
       key: 'action',
       header: t('users.logsModal.action'),
-      render: (row) => (
-        <span className="font-mono text-xs font-semibold text-slate-800">{row.action}</span>
-      ),
+      render: (row) => <ActionBadge action={row.action} />,
     },
     {
       key: 'tableName',
       header: t('users.logsModal.table'),
-      render: (row) => (
-        <span className="font-mono text-xs text-slate-600">{row.tableName}</span>
-      ),
+      primary: true,
+      render: (row) => <span className="font-mono text-xs text-fg">{row.tableName}</span>,
     },
     {
       key: 'createdAt',
       header: t('users.logsModal.time'),
       render: (row) => (
-        <span className="text-xs text-slate-500">
+        <span className="text-xs tabular-nums text-fg-muted">
           {new Date(row.createdAt).toLocaleString()}
         </span>
       ),
@@ -51,20 +45,23 @@ export function UserLogsModal({ open, onClose, user }: UserLogsModalProps) {
     {
       key: 'ipAddress',
       header: t('users.logsModal.ip'),
+      hideOnMobile: true,
       render: (row) => (
-        <span className="font-mono text-xs text-slate-500">{row.ipAddress ?? '-'}</span>
+        <span className="font-mono text-xs text-fg-subtle">{row.ipAddress ?? '—'}</span>
       ),
     },
     {
       key: 'details',
       header: t('users.logsModal.details'),
+      hideOnMobile: true,
       render: (row) => {
         const details = row.newValues ?? row.oldValues;
-        if (!details) return <span className="text-slate-400">-</span>;
-        return (
-          <code className="block max-w-xs truncate text-xs text-slate-600">
+        return details ? (
+          <code className="block max-w-xs truncate text-xs text-fg-muted">
             {JSON.stringify(details)}
           </code>
+        ) : (
+          '—'
         );
       },
     },
@@ -74,46 +71,25 @@ export function UserLogsModal({ open, onClose, user }: UserLogsModalProps) {
     <Modal
       open={open}
       onClose={onClose}
+      size="xl"
       title={t('users.logsModal.title')}
+      description={`${user.fullName} (${user.email})`}
       footer={
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {t('common.close')}
-          </button>
-        </div>
+        <Button variant="secondary" onClick={onClose}>
+          {t('common.close')}
+        </Button>
       }
     >
-      <div className="space-y-4">
-        <div className="rounded-md bg-slate-50 p-3 text-sm">
-          <p className="font-semibold text-slate-900">
-            {user.fullName} ({user.email})
-          </p>
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Spinner />
-          </div>
-        ) : (
-          <>
-            <Table
-              columns={columns}
-              rows={logs}
-              rowKey={(r) => r.id}
-              emptyText={t('users.logsModal.noLogs')}
-            />
-            {data?.meta && data.meta.total > 10 && (
-              <div className="flex justify-end">
-                <Pagination meta={data.meta} onPageChange={setPage} />
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      <DataTable
+        columns={columns}
+        rows={data?.data ?? []}
+        rowKey={(r) => r.id}
+        loading={isLoading}
+        error={isError}
+        onRetry={() => void refetch()}
+        emptyText={t('users.logsModal.noLogs')}
+      />
+      {data?.meta && data.meta.total > 10 && <Pagination meta={data.meta} onPageChange={setPage} />}
     </Modal>
   );
 }
