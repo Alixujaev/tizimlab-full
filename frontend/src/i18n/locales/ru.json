@@ -1,6 +1,8 @@
 {
   "app": {
     "name": "TizimLab",
+    "namePrimary": "Tizim",
+    "nameSecondary": "Lab",
     "tagline": "Система управления лабораторией"
   },
   "nav": {
