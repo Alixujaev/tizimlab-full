@@ -20,6 +20,24 @@ export default defineConfig(({ mode }) => {
         '/socket.io': { target, changeOrigin: true, ws: true },
       },
     },
+    build: {
+      rolldownOptions: {
+        output: {
+          // Kesh uchun barqaror bo'laklar: kutubxonalar va tarjimalar ilova kodidan alohida
+          // (sahifalar, jumladan P13 analitika, o'z lazy chunk'larida — D-165)
+          codeSplitting: {
+            groups: [
+              {
+                name: 'react',
+                test: /node_modules[\\/](react|react-dom|react-router|scheduler)[\\/]/,
+              },
+              { name: 'vendor', test: /node_modules[\\/]/ },
+              { name: 'locales', test: /src[\\/]i18n[\\/]locales[\\/]/ },
+            ],
+          },
+        },
+      },
+    },
     test: {
       testTimeout: 20000,
       hookTimeout: 20000,

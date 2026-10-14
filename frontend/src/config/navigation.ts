@@ -1,3 +1,4 @@
+import { ANALYTICS_ROLES, TEAM_ANALYTICS_ROLES } from '@/config/analytics';
 import { COMPANY_ROLES, type Role } from '@/types';
 import type { IconName } from '@/ui';
 
@@ -46,6 +47,14 @@ export const NAV_ITEMS: readonly NavItem[] = [
     icon: 'thermometer',
     roles: COMPANY_ROLES,
   },
+  {
+    key: 'myResults',
+    path: '/me',
+    labelKey: 'nav.myResults',
+    icon: 'check-circle',
+    roles: ANALYTICS_ROLES,
+  },
+  { key: 'team', path: '/team', labelKey: 'nav.team', icon: 'layers', roles: TEAM_ANALYTICS_ROLES },
   { key: 'users', path: '/users', labelKey: 'nav.users', icon: 'users', roles: MANAGER_ROLES },
   {
     key: 'activity',

@@ -16,7 +16,9 @@
     "auditLog": "Audit jurnali",
     "collapse": "Menyuni yig'ish",
     "expand": "Menyuni yoyish",
-    "open": "Menyuni ochish"
+    "open": "Menyuni ochish",
+    "myResults": "Mening natijalarim",
+    "team": "Jamoa"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -302,7 +304,8 @@
       "stability": "Stabilizatsiya",
       "users": "Foydalanuvchilar",
       "permissions": "Ruxsatlar",
-      "activity": "Faoliyat jurnali"
+      "activity": "Faoliyat jurnali",
+      "analytics": "Xodimlar analitikasi"
     },
     "items": {
       "samples:create": "Namuna yaratish",
@@ -325,7 +328,10 @@
       "users:view": "Foydalanuvchilarni ko'rish",
       "users:manage": "Foydalanuvchilarni boshqarish",
       "permissions:manage": "Ruxsatlarni boshqarish",
-      "activity:view": "Faoliyat jurnalini ko'rish"
+      "activity:view": "Faoliyat jurnalini ko'rish",
+      "analytics:view": "O'z natijalarini ko'rish",
+      "analytics:team": "Jamoa natijalarini ko'rish",
+      "analytics:company": "Kompaniya analitikasini ko'rish"
     }
   },
   "profile": {
@@ -973,11 +979,286 @@
     "toast": {
       "dismiss": "Xabarni yopish",
       "region": "Xabarlar"
+    },
+    "chart": {
+      "showTable": "Jadval",
+      "showChart": "Grafik",
+      "noData": "Davr uchun ma'lumot yo'q"
+    },
+    "trend": {
+      "up": "Oldingi davrga nisbatan {{value}}% oshgan",
+      "down": "Oldingi davrga nisbatan {{value}}% kamaygan",
+      "flat": "Oldingi davrga nisbatan o'zgarmagan",
+      "noCompare": "Taqqoslash yo'q"
     }
   },
   "theme": {
     "light": "Yorug'",
     "dark": "Qorong'i",
     "system": "Tizim sozlamasi"
+  },
+  "analytics": {
+    "myResults": "Mening natijalarim",
+    "myResultsDescription": "Tanlangan davr bo'yicha ko'rsatkichlaringiz",
+    "team": "Xodimlar ko'rsatkichlari",
+    "teamDescription": "Ko'rinish doirangizdagi xodimlarning formulali ko'rsatkichlari",
+    "companyAnalytics": "Kompaniya analitikasi",
+    "openMyResults": "Barcha natijalarim",
+    "openTeam": "Butun jamoa",
+    "openCard": "Xodim kartasini ochish",
+    "backToTeam": "Jamoa",
+    "exportCsv": "CSV eksport",
+    "noData": "Ma'lumot yo'q",
+    "snapshot": "Joriy holat",
+    "previousValue": "Oldingi davr: {{value}}",
+    "inactive": "Nofaol",
+    "hours": "{{value}} soat",
+    "percent": "{{value}}%",
+    "days": "{{value}} kun",
+    "total": "Jami",
+    "other": "Boshqa",
+    "formulaFor": "«{{name}}» qanday hisoblanadi",
+    "period": {
+      "label": "Davr",
+      "7d": "7 kun",
+      "30d": "30 kun",
+      "90d": "90 kun",
+      "custom": "Maxsus",
+      "from": "Dan",
+      "to": "Gacha",
+      "apply": "Qo'llash",
+      "invalid": "Ikkala sanani tanlang (dan ≤ gacha, ko'pi bilan 366 kun, kelajak emas)",
+      "range": "{{from}} – {{to}}",
+      "compare": "{{from}} – {{to}} bilan taqqoslanadi"
+    },
+    "sections": {
+      "kpis": "Asosiy ko'rsatkichlar",
+      "trend": "Trend",
+      "outcomes": "Natijalar taqsimoti",
+      "reasons": "Rad etish sabablari",
+      "samples": "Ishlagan namunalari",
+      "activity": "Oxirgi faoliyat",
+      "funnel": "Namunalar voronkasi",
+      "byType": "Namuna turlari bo'yicha",
+      "late": "Kechikayotgan namunalar",
+      "workload": "Yuklama: kimyogarlardagi ochiq namunalar",
+      "teamTable": "Xodimlar",
+      "temperature": "Harorat ogohlantirishlari",
+      "stability": "Stabilizatsiya",
+      "queue": "Tasdiqlash navbati",
+      "heatmap": "Kunlik faollik"
+    },
+    "trendSeries": {
+      "completed": "Bajarilgan",
+      "created": "Kiritilgan",
+      "reviewed": "Ko'rib chiqilgan",
+      "finalized": "Yakunlangan",
+      "approved": "Tasdiqlangan",
+      "none": "—"
+    },
+    "chartAria": {
+      "trend": "{{series}}, {{bucket}} bo'yicha, {{from}} – {{to}}",
+      "funnel": "Davr bo'yicha namunalar voronkasi",
+      "reasons": "Rad etish sabablari taqsimoti",
+      "byType": "Namunalar turlar bo'yicha",
+      "workload": "Kimyogarlar bo'yicha ochiq namunalar",
+      "outcomes": "Natijalar taqsimoti",
+      "sparkline": "{{name}}: davr bo'yicha trend",
+      "heatmap": "Kunlik faollik kalendari"
+    },
+    "bucket": {
+      "day": "kunlar",
+      "week": "haftalar"
+    },
+    "funnel": {
+      "created": "Kiritilgan",
+      "assigned": "Biriktirilgan",
+      "inAnalysis": "Tahlilda",
+      "submitted": "Yuborilgan",
+      "approved": "Tasdiqlangan",
+      "finalized": "Yakunlangan",
+      "ofCreated": "kiritilganlarning {{value}}%"
+    },
+    "reasons": {
+      "unspecified": "Ko'rsatilmagan",
+      "other": "Boshqa"
+    },
+    "outcomes": {
+      "approved": "Tasdiqlangan",
+      "rejected": "Rad etilgan",
+      "inProgress": "Jarayonda",
+      "finalized": "Yakunlangan"
+    },
+    "result": {
+      "approved": "Tasdiqlangan",
+      "rejected": "Rad etilgan",
+      "open": "Ochiq"
+    },
+    "cards": {
+      "unresolvedAlerts": "Yopilmagan ogohlantirishlar",
+      "alertsInPeriod": "Davrdagi ogohlantirishlar",
+      "activeStudies": "Faol tadqiqotlar",
+      "overdueCheckpoints": "Muddati o'tgan nazorat nuqtalari",
+      "dueSoonCheckpoints": "14 kun ichida muddati"
+    },
+    "columns": {
+      "name": "Xodim",
+      "role": "Rol",
+      "openSamples": "Ochiq namunalar",
+      "substance": "Modda",
+      "type": "Tur",
+      "lotSerial": "Lot / seriya",
+      "status": "Holat",
+      "result": "Natija",
+      "assignedAt": "Biriktirilgan",
+      "approvedAt": "Tasdiqlangan",
+      "duration": "Muddat",
+      "rejectionReason": "Rad sababi",
+      "analysisEnd": "Rejadagi tugash",
+      "daysLate": "Kechikish",
+      "assignee": "Kimyogar",
+      "date": "Sana",
+      "value": "Qiymat",
+      "stage": "Bosqich",
+      "reason": "Sabab",
+      "count": "Soni",
+      "share": "Ulush",
+      "late": "Kechikkan"
+    },
+    "filters": {
+      "role": "Rol",
+      "allRoles": "Barcha rollar",
+      "result": "Natija",
+      "allResults": "Barcha natijalar"
+    },
+    "activity": {
+      "empty": "Hali faoliyat yo'q",
+      "sample_created": "Namuna kiritdi",
+      "assigned": "Namuna biriktirdi",
+      "reassigned": "Namunani qayta biriktirdi",
+      "stopped": "Tahlilni to'xtatdi",
+      "resumed": "Tahlilni davom ettirdi",
+      "submitted": "Protokol yubordi",
+      "approved": "Protokolni tasdiqladi",
+      "rejected": "Protokolni rad etdi",
+      "finalized": "Protokolni yakunladi",
+      "passport_uploaded": "Pasport yukladi",
+      "passport_reviewed": "Pasportni ko'rib chiqdi",
+      "deleted": "Namunani o'chirdi"
+    },
+    "metrics": {
+      "assigned": {
+        "label": "Biriktirilgan namunalar",
+        "formula": "Kimyogarga biriktirilgan, biriktirish vaqti davr ichida bo'lgan namunalar."
+      },
+      "completed": {
+        "label": "Bajarilgan",
+        "formula": "Ulardan protokoli birinchi marta tasdiqlangan (namuna \"tasdiqlangan\") vaqti davr ichida bo'lganlari."
+      },
+      "inProgress": {
+        "label": "Jarayonda",
+        "formula": "Joriy holat: \"jarayonda\", \"to'xtatilgan\", \"yuborilgan\" yoki \"rad etilgan\" holatidagi biriktirilgan namunalar."
+      },
+      "rejected": {
+        "label": "Rad etilgan",
+        "formula": "Davrdagi protokol rad etishlari, ulardan oldingi yuborishni shu kimyogar qilgan."
+      },
+      "rejectionRate": {
+        "label": "Rad etish foizi",
+        "formula": "Kimyogar yuborishlari bo'yicha davrdagi qarorlar: rad ÷ (tasdiq + rad) × 100. Qaror bo'lmasa — ma'lumot yo'q."
+      },
+      "firstPassRate": {
+        "label": "Birinchi urinishda tasdiq",
+        "formula": "Shu protokol avval rad etilmagan tasdiqlar ÷ kimyogar yuborishlarining barcha tasdiqlari × 100 (davr bo'yicha)."
+      },
+      "resubmissions": {
+        "label": "Qayta yuborishlar",
+        "formula": "Avval rad etilgan protokollarning davrdagi yuborilishlari."
+      },
+      "avgCompletionHours": {
+        "label": "O'rtacha bajarish muddati",
+        "formula": "Bajarilgan namunalar bo'yicha (birinchi tasdiq − biriktirish) o'rtachasi, soatda; to'xtatilgan vaqt chiqarib tashlanadi."
+      },
+      "overdueCheckpoints": {
+        "label": "Muddati o'tgan nazorat nuqtalari",
+        "formula": "Joriy holat: kimyogarga biriktirilgan, yakunlanmagan, \"muddati o'tgan\" yoki sanasi o'tgan stabilizatsiya nazorat nuqtalari."
+      },
+      "created": {
+        "label": "Kiritgan namunalar",
+        "formula": "Foydalanuvchi davr ichida kiritgan namunalar."
+      },
+      "passportsUploaded": {
+        "label": "Yuklangan pasportlar",
+        "formula": "Foydalanuvchining davrdagi \"pasport yuklandi\" voqealari."
+      },
+      "createdApproved": {
+        "label": "Tasdiqlangan (o'z namunalari)",
+        "formula": "Foydalanuvchi kiritgan, birinchi tasdig'i davr ichida bo'lgan namunalar."
+      },
+      "createdRejected": {
+        "label": "Rad etilgan (o'z namunalari)",
+        "formula": "Foydalanuvchi kiritgan, davr ichida kamida bir marta rad etilgan namunalar."
+      },
+      "avgIntakeHours": {
+        "label": "O'rtacha kiritish → biriktirish",
+        "formula": "Davrdagi biriktirishlar bo'yicha (birinchi biriktirish − kiritish) o'rtachasi, soatda; to'xtatilgan vaqt chiqarib tashlanadi."
+      },
+      "reviewedApproved": {
+        "label": "Tasdiqlagan protokollar",
+        "formula": "Foydalanuvchi davr ichida imzolagan tasdiqlar."
+      },
+      "reviewedRejected": {
+        "label": "Rad etgan protokollar",
+        "formula": "Foydalanuvchi davr ichida imzolagan rad etishlar."
+      },
+      "avgReviewHours": {
+        "label": "O'rtacha ko'rib chiqish vaqti",
+        "formula": "Foydalanuvchining davrdagi qarorlari bo'yicha (qaror − oldingi yuborish) o'rtachasi, soatda."
+      },
+      "assignedByMe": {
+        "label": "Biriktirgan namunalar",
+        "formula": "Foydalanuvchining davrdagi biriktirish va qayta biriktirish voqealari."
+      },
+      "queueApprovals": {
+        "label": "Tasdiq kutayotganlar",
+        "formula": "Joriy holat: kompaniyadagi \"yuborilgan\" holatidagi protokollar."
+      },
+      "queueAssignments": {
+        "label": "Biriktirish kutayotganlar",
+        "formula": "Joriy holat: kompaniyadagi \"biriktirish kutilmoqda\" holatidagi namunalar."
+      },
+      "finalized": {
+        "label": "Yakunlagan protokollar",
+        "formula": "Foydalanuvchi davr ichida yakunlagan protokollar."
+      },
+      "avgFinalizeHours": {
+        "label": "Yakunlash kechikishi",
+        "formula": "(Yakunlash − shu protokol tasdig'i) o'rtachasi, soatda."
+      },
+      "samplesCreated": {
+        "label": "Kiritilgan namunalar",
+        "formula": "Davr ichida kiritilgan kompaniya namunalari (o'chirilganlar hisoblanmaydi)."
+      },
+      "samplesApproved": {
+        "label": "Tasdiqlangan namunalar",
+        "formula": "Birinchi tasdig'i davr ichida bo'lgan namunalar."
+      },
+      "protocolsFinalized": {
+        "label": "Yakunlangan protokollar",
+        "formula": "Davrdagi yakunlash imzolari."
+      },
+      "avgTatHours": {
+        "label": "O'rtacha aylanish vaqti (TAT)",
+        "formula": "Davrda tasdiqlangan namunalar bo'yicha (birinchi tasdiq − kiritish) o'rtachasi, soatda; to'xtatilgan vaqt chiqarib tashlanadi."
+      },
+      "openSamples": {
+        "label": "Ochiq namunalar",
+        "formula": "Joriy holat: hali tasdiqlanmagan namunalar."
+      },
+      "lateSamples": {
+        "label": "Kechikayotgan namunalar",
+        "formula": "Joriy holat: rejadagi tahlil tugash sanasi o'tgan ochiq namunalar."
+      }
+    }
   }
 }
