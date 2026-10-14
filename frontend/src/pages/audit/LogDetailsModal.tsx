@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
 import type { AuditLogDto } from '@/types';
+import { Button, DescriptionList, Modal } from '@/ui';
+import { ActionBadge } from './logsShared';
 
 interface LogDetailsModalProps {
   open: boolean;
@@ -8,97 +9,74 @@ interface LogDetailsModalProps {
   log: AuditLogDto | null;
 }
 
+function JsonBlock({ title, value, empty }: { title: string; value: unknown; empty: string }) {
+  return (
+    <section className="flex min-w-0 flex-col gap-1.5">
+      <h3 className="text-xs font-semibold text-fg-muted">{title}</h3>
+      <div className="max-h-60 overflow-auto rounded-lg border border-line bg-surface-sunken p-3 font-mono text-xs text-fg">
+        {value ? (
+          <pre className="whitespace-pre-wrap break-all">{JSON.stringify(value, null, 2)}</pre>
+        ) : (
+          <span className="text-fg-subtle">{empty}</span>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function LogDetailsModal({ open, onClose, log }: LogDetailsModalProps) {
   const { t } = useTranslation();
-
   if (!log) return null;
-
   return (
     <Modal
       open={open}
       onClose={onClose}
+      size="xl"
       title={
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-slate-800">{t('audit.details.title')}</span>
-          <span className="font-mono text-xs text-slate-400">#{log.id.slice(0, 8)}</span>
-        </div>
+        <span className="flex items-center gap-2">
+          <span>{t('audit.details.title')}</span>
+          <span className="font-mono text-xs font-normal text-fg-subtle">
+            #{log.id.slice(0, 8)}
+          </span>
+        </span>
       }
       footer={
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
-          >
-            {t('common.close')}
-          </button>
-        </div>
+        <Button variant="secondary" onClick={onClose}>
+          {t('common.close')}
+        </Button>
       }
     >
-      <div className="space-y-4 text-sm text-slate-700">
-        <div className="grid grid-cols-2 gap-4 rounded-lg bg-slate-50 p-3 text-xs">
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.action')}: </span>
-            <span className="font-semibold text-slate-900">{log.action}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.table')}: </span>
-            <span className="font-mono font-medium text-slate-900">{log.tableName}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.recordId')}: </span>
-            <span className="font-mono text-slate-900">{log.recordId ?? '-'}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.createdAt')}: </span>
-            <span>{new Date(log.createdAt).toLocaleString()}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.user')}: </span>
-            <span>{log.userFullName ?? log.userEmail ?? log.userId ?? '-'}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.company')}: </span>
-            <span>{log.companyName ?? log.companyId ?? '-'}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.ip')}: </span>
-            <span className="font-mono">{log.ipAddress ?? '-'}</span>
-          </div>
-          <div>
-            <span className="font-medium text-slate-500">{t('audit.details.userAgent')}: </span>
-            <span className="truncate" title={log.userAgent ?? ''}>
-              {log.userAgent ?? '-'}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h4 className="mb-1 text-xs font-semibold text-slate-600">
-              {t('audit.details.oldValues')}
-            </h4>
-            <div className="max-h-60 overflow-auto rounded border border-slate-200 bg-slate-900 p-2 text-xs font-mono text-amber-300">
-              {log.oldValues ? (
-                <pre>{JSON.stringify(log.oldValues, null, 2)}</pre>
-              ) : (
-                <span className="text-slate-500 italic">{t('common.none')}</span>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="mb-1 text-xs font-semibold text-slate-600">
-              {t('audit.details.newValues')}
-            </h4>
-            <div className="max-h-60 overflow-auto rounded border border-slate-200 bg-slate-900 p-2 text-xs font-mono text-emerald-300">
-              {log.newValues ? (
-                <pre>{JSON.stringify(log.newValues, null, 2)}</pre>
-              ) : (
-                <span className="text-slate-500 italic">{t('common.none')}</span>
-              )}
-            </div>
-          </div>
+      <div className="flex flex-col gap-5">
+        <DescriptionList
+          className="rounded-lg border border-line bg-surface-muted p-4"
+          items={[
+            { label: t('audit.details.action'), value: <ActionBadge action={log.action} /> },
+            { label: t('audit.details.table'), value: log.tableName, mono: true },
+            { label: t('audit.details.recordId'), value: log.recordId, mono: true },
+            {
+              label: t('audit.details.createdAt'),
+              value: new Date(log.createdAt).toLocaleString(),
+            },
+            {
+              label: t('audit.details.user'),
+              value: log.userFullName ?? log.userEmail ?? log.userId,
+            },
+            { label: t('audit.details.company'), value: log.companyName ?? log.companyId },
+            { label: t('audit.details.ip'), value: log.ipAddress, mono: true },
+            { label: t('audit.details.userAgent'), value: log.userAgent, wide: true },
+          ]}
+        />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <JsonBlock
+            title={t('audit.details.oldValues')}
+            value={log.oldValues}
+            empty={t('common.none')}
+          />
+          <JsonBlock
+            title={t('audit.details.newValues')}
+            value={log.newValues}
+            empty={t('common.none')}
+          />
         </div>
       </div>
     </Modal>
