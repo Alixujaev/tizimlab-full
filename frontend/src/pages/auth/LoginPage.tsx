@@ -2,10 +2,13 @@ import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import { toApiError } from '@/api/client';
+import { AppSkeleton } from '@/components/layout/AppSkeleton';
+import { BrandMark } from '@/components/layout/BrandMark';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
-import { Spinner } from '@/components/ui/Spinner';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { useLogin } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
+import { Alert, Button, FormField, IconButton, Input } from '@/ui';
 
 // Server xato kodlari → tarjima kalitlari (qolganlari umumiy xabar)
 const KNOWN_ERRORS = ['INVALID_CREDENTIALS', 'ACCOUNT_INACTIVE', 'RATE_LIMITED'] as const;
@@ -30,9 +33,10 @@ export function LoginPage() {
   const loginMutation = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  if (status === 'unknown') return <Spinner className="min-h-screen" />;
+  if (status === 'unknown') return <AppSkeleton variant="auth" />;
   if (status === 'authenticated') return <Navigate to={redirectTarget(location.state)} replace />;
 
   const serverError = (() => {
@@ -61,72 +65,55 @@ export function LoginPage() {
   const pending = loginMutation.isPending;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <section className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">{t('pages.login')}</h1>
-          <LanguageSwitcher />
-        </div>
-        <form className="space-y-4" onSubmit={onSubmit} noValidate>
-          <div>
-            <label htmlFor="login-email" className="mb-1 block text-sm font-medium text-slate-700">
-              {t('auth.email')}
-            </label>
-            <input
-              id="login-email"
-              type="email"
-              autoComplete="username"
-              className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-invalid={!!fieldErrors.email}
-              aria-describedby={fieldErrors.email ? 'login-email-error' : undefined}
-              disabled={pending}
-            />
-            {fieldErrors.email && (
-              <p id="login-email-error" className="mt-1 text-sm text-red-600">
-                {fieldErrors.email}
-              </p>
-            )}
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-canvas px-4 py-12">
+      <div className="absolute right-3 top-3 flex items-center gap-1">
+        <LanguageSwitcher />
+        <ThemeToggle />
+      </div>
+      <div className="flex w-full max-w-modal-sm animate-slide-up flex-col items-center gap-8">
+        <BrandMark large />
+        <section className="w-full rounded-2xl border border-line bg-surface p-6 shadow-md sm:p-8">
+          <div className="mb-6 flex flex-col gap-1">
+            <h1 className="text-xl font-semibold text-fg">{t('pages.login')}</h1>
+            <p className="text-sm text-fg-muted">{t('auth.welcome')}</p>
           </div>
-          <div>
-            <label
-              htmlFor="login-password"
-              className="mb-1 block text-sm font-medium text-slate-700"
-            >
-              {t('auth.password')}
-            </label>
-            <input
-              id="login-password"
-              type="password"
-              autoComplete="current-password"
-              className="w-full rounded border border-slate-300 px-3 py-2 text-sm"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              aria-invalid={!!fieldErrors.password}
-              aria-describedby={fieldErrors.password ? 'login-password-error' : undefined}
-              disabled={pending}
-            />
-            {fieldErrors.password && (
-              <p id="login-password-error" className="mt-1 text-sm text-red-600">
-                {fieldErrors.password}
-              </p>
-            )}
-          </div>
-          {serverError && (
-            <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
-              {serverError}
-            </p>
-          )}
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-            disabled={pending}
-          >
-            {pending ? t('auth.submitting') : t('auth.submit')}
-          </button>
-        </form>
-      </section>
+          <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
+            <FormField label={t('auth.email')} error={fieldErrors.email} disabled={pending}>
+              <Input
+                type="email"
+                autoComplete="username"
+                inputMode="email"
+                leftIcon="user"
+                size="lg"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormField>
+            <FormField label={t('auth.password')} error={fieldErrors.password} disabled={pending}>
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                size="lg"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                rightSlot={
+                  <IconButton
+                    icon={showPassword ? 'eye-off' : 'eye'}
+                    label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                    size="sm"
+                    aria-pressed={showPassword}
+                    onClick={() => setShowPassword((v) => !v)}
+                  />
+                }
+              />
+            </FormField>
+            {serverError && <Alert tone="danger">{serverError}</Alert>}
+            <Button type="submit" size="lg" fullWidth loading={pending} className="mt-2">
+              {pending ? t('auth.submitting') : t('auth.submit')}
+            </Button>
+          </form>
+        </section>
+      </div>
     </main>
   );
 }

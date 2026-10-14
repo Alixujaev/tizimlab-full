@@ -1,6 +1,7 @@
 {
   "app": {
-    "name": "TizimLab"
+    "name": "TizimLab",
+    "tagline": "Laboratoriya boshqaruv tizimi"
   },
   "nav": {
     "label": "Asosiy menyu",
@@ -12,7 +13,10 @@
     "users": "Foydalanuvchilar",
     "activity": "Faoliyat",
     "companies": "Kompaniyalar",
-    "auditLog": "Audit jurnali"
+    "auditLog": "Audit jurnali",
+    "collapse": "Menyuni yig'ish",
+    "expand": "Menyuni yoyish",
+    "open": "Menyuni ochish"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -71,14 +75,20 @@
       "emailRequired": "Email kiriting.",
       "emailInvalid": "Email formati noto'g'ri.",
       "passwordRequired": "Parol kiriting."
-    }
+    },
+    "welcome": "Hisobingizga kiring",
+    "showPassword": "Parolni ko'rsatish",
+    "hidePassword": "Parolni yashirish"
   },
   "topbar": {
     "language": "Til",
     "notifications": "Bildirishnomalar",
     "noNotifications": "Yangi bildirishnoma yo'q",
     "profile": "Profil",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "theme": "Mavzu",
+    "account": "Hisob",
+    "skipToContent": "Asosiy mazmunga o'tish"
   },
   "languages": {
     "uz": "O'zbekcha",
@@ -126,7 +136,10 @@
       "PASSPORT_REVIEW_NOT_APPLICABLE": "Bu turdagi namuna pasporti ko'rib chiqilmaydi",
       "SELF_REVIEW_FORBIDDEN": "O'zingiz yuklagan pasportni o'zingiz ko'rib chiqa olmaysiz",
       "FILE_NOT_FOUND": "Yuklab olinadigan fayl topilmadi"
-    }
+    },
+    "boundaryTitle": "Sahifani ko'rsatib bo'lmadi",
+    "boundaryText": "Kutilmagan xatolik yuz berdi. Qayta urinib ko'ring yoki sahifani yangilang.",
+    "reload": "Sahifani yangilash"
   },
   "companies": {
     "title": "Kompaniyalar",
@@ -899,5 +912,10 @@
       "dismiss": "Xabarni yopish",
       "region": "Xabarlar"
     }
+  },
+  "theme": {
+    "light": "Yorug'",
+    "dark": "Qorong'i",
+    "system": "Tizim sozlamasi"
   }
 }

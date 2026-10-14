@@ -59,6 +59,8 @@ frontend/src/
 | --- | --- | --- |
 | `Button` | Har qanday amal | `variant` primary/secondary/ghost/danger/danger-ghost, `size` sm/md/lg, `loading`, `leftIcon`, `rightIcon` |
 | `IconButton` | Faqat ikonli amal (yopish, tahrirlash) | `icon`, `label` (majburiy), `variant`, `size` |
+| `ButtonLink` | Navigatsiya, ko'rinishi tugma ("Bosh sahifaga", "Ochish") | `to`, `variant`, `size`, `leftIcon` |
+| `Pressable` | Boy mazmunli bosiladigan qator/karta (bildirishnoma, tanlov) | `variant` row/card, `highlighted` |
 | `Input` | Bir qatorli matn/son/email/parol | `size`, `invalid`, `leftIcon`, `rightSlot` |
 | `Textarea` | Ko'p qatorli matn (izoh, sabab) | `rows`, `invalid` |
 | `Select` | Ro'yxatdan bitta qiymat (≤ ~50 variant) | `options`, `value`, `onChange`, `placeholder`, `name` |
@@ -80,6 +82,7 @@ frontend/src/
 | Komponent | Qachon |
 | --- | --- |
 | `FormField` | Har bir forma maydoni: label, hint, inline xato; ichidagi elementga id/aria avtomatik |
+| `Alert` | Sahifa/forma ichidagi xabar (server xatosi, ogohlantirish); `danger`/`warning` — `role=alert` |
 | `Modal` | Diqqatni to'liq talab qiladigan forma/tafsilot (`size` sm–xl) |
 | `Drawer` | Yon panel: mobil navigatsiya, filtrlar |
 | `ConfirmDialog` | `confirm()` o'rniga — o'chirish, to'xtatish, rad etish (`tone="danger"`) |
@@ -136,3 +139,11 @@ frontend/src/
 `eslint.config.mjs` (D-158): `src/ui` dan tashqarida `<select> <button> <input> <textarea> <table>` va
 `alert/confirm/prompt` — xato. Hali ko'chirilmagan fayllar `LEGACY_UI_FILES` ro'yxatida; ro'yxat faqat qisqaradi.
 Test: `frontend/tests/lint-ui.test.ts`.
+
+## 7. Qobiq (`components/layout`)
+
+- `AppLayout`: "asosiy mazmunga o'tish" havolasi, desktop `Sidebar` (ixchamlashadi, `tizimlab.sidebar`), mobil `Drawer`,
+  `TopBar` (til, mavzu, bildirishnomalar, profil, chiqish), `ErrorBoundary` ichida `PageContainer` — sahifalar
+  o'zi `PageContainer` qo'ymaydi, faqat `PageHeader` dan boshlaydi. Sahifa almashganda `animate-slide-up`.
+- Sessiya aniqlanguncha `AppSkeleton` (spinner emas). Router `errorElement` — `RouteErrorPage`.
+- Mavzu: `store/themeStore.ts` (D-154), `ThemeToggle`; til: `LanguageSwitcher` (Menu, `menuitemradio`).

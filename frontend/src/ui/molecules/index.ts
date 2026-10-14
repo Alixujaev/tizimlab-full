@@ -1,3 +1,4 @@
+export * from './Alert';
 export * from './ConfirmDialog';
 export * from './DataTable';
 export * from './Drawer';

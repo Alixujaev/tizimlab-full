@@ -1,6 +1,7 @@
 {
   "app": {
-    "name": "TizimLab"
+    "name": "TizimLab",
+    "tagline": "Laboratory management system"
   },
   "nav": {
     "label": "Main menu",
@@ -12,7 +13,10 @@
     "users": "Users",
     "activity": "Activity",
     "companies": "Companies",
-    "auditLog": "Audit log"
+    "auditLog": "Audit log",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "open": "Open menu"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -71,14 +75,20 @@
       "emailRequired": "Enter your email.",
       "emailInvalid": "Invalid email format.",
       "passwordRequired": "Enter your password."
-    }
+    },
+    "welcome": "Sign in to your account",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "topbar": {
     "language": "Language",
     "notifications": "Notifications",
     "noNotifications": "No new notifications",
     "profile": "Profile",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "theme": "Theme",
+    "account": "Account",
+    "skipToContent": "Skip to main content"
   },
   "languages": {
     "uz": "O'zbekcha",
@@ -126,7 +136,10 @@
       "PASSPORT_REVIEW_NOT_APPLICABLE": "Passports of this sample type are not reviewed",
       "SELF_REVIEW_FORBIDDEN": "You cannot review a passport you uploaded yourself",
       "FILE_NOT_FOUND": "No downloadable file found"
-    }
+    },
+    "boundaryTitle": "This page couldn't be displayed",
+    "boundaryText": "An unexpected error occurred. Try again or reload the page.",
+    "reload": "Reload page"
   },
   "companies": {
     "title": "Companies",
@@ -899,5 +912,10 @@
       "dismiss": "Dismiss notification",
       "region": "Notifications"
     }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

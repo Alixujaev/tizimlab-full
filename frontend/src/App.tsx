@@ -1,11 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { Toaster } from 'sonner';
 import { setAuthFailureHandler } from '@/api/client';
 import { useBootstrapAuth } from '@/hooks/useBootstrapAuth';
 import { createQueryClient } from '@/lib/queryClient';
 import { routes } from '@/router';
+import { Toaster } from '@/ui';
 
 const router = createBrowserRouter(routes);
 
@@ -22,7 +22,7 @@ export function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <Toaster position="top-right" richColors />
+      <Toaster />
     </QueryClientProvider>
   );
 }

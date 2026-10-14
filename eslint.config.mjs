@@ -11,14 +11,10 @@ import tseslint from 'typescript-eslint';
  * Har ko'chirishdan keyin ro'yxat qisqaradi; UI qayta qurish oxirida BO'SH bo'lishi shart.
  */
 const LEGACY_UI_FILES = [
-  'frontend/src/components/layout/LanguageSwitcher.tsx',
-  'frontend/src/components/layout/TopBar.tsx',
   'frontend/src/components/substances/SubstanceSelect.tsx',
-  'frontend/src/components/ui/NotificationBell.tsx',
   'frontend/src/pages/activity/ActivityPage.tsx',
   'frontend/src/pages/audit/AuditLogPage.tsx',
   'frontend/src/pages/audit/LogDetailsModal.tsx',
-  'frontend/src/pages/auth/LoginPage.tsx',
   'frontend/src/pages/companies/CompaniesPage.tsx',
   'frontend/src/pages/companies/CompanyConfirmModal.tsx',
   'frontend/src/pages/companies/CompanyFormModal.tsx',

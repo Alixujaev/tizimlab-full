@@ -1,6 +1,7 @@
 {
   "app": {
-    "name": "TizimLab"
+    "name": "TizimLab",
+    "tagline": "Система управления лабораторией"
   },
   "nav": {
     "label": "Главное меню",
@@ -12,7 +13,10 @@
     "users": "Пользователи",
     "activity": "Активность",
     "companies": "Компании",
-    "auditLog": "Журнал аудита"
+    "auditLog": "Журнал аудита",
+    "collapse": "Свернуть меню",
+    "expand": "Развернуть меню",
+    "open": "Открыть меню"
   },
   "pages": {
     "dashboard": "Главная",
@@ -71,14 +75,20 @@
       "emailRequired": "Введите email.",
       "emailInvalid": "Неверный формат email.",
       "passwordRequired": "Введите пароль."
-    }
+    },
+    "welcome": "Войдите в свой аккаунт",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль"
   },
   "topbar": {
     "language": "Язык",
     "notifications": "Уведомления",
     "noNotifications": "Новых уведомлений нет",
     "profile": "Профиль",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "theme": "Тема",
+    "account": "Аккаунт",
+    "skipToContent": "Перейти к основному содержимому"
   },
   "languages": {
     "uz": "O'zbekcha",
@@ -126,7 +136,10 @@
       "PASSPORT_REVIEW_NOT_APPLICABLE": "Паспорт образца этого типа не рассматривается",
       "SELF_REVIEW_FORBIDDEN": "Нельзя рассматривать паспорт, загруженный вами",
       "FILE_NOT_FOUND": "Файл для скачивания не найден"
-    }
+    },
+    "boundaryTitle": "Не удалось отобразить страницу",
+    "boundaryText": "Произошла непредвиденная ошибка. Попробуйте ещё раз или обновите страницу.",
+    "reload": "Обновить страницу"
   },
   "companies": {
     "title": "Компании",
@@ -899,5 +912,10 @@
       "dismiss": "Закрыть уведомление",
       "region": "Уведомления"
     }
+  },
+  "theme": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Как в системе"
   }
 }

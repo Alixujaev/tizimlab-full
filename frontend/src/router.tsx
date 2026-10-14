@@ -1,5 +1,6 @@
 import { Navigate, type RouteObject } from 'react-router';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { RouteErrorPage } from '@/components/routing/ErrorBoundary';
 import { ProtectedRoute } from '@/components/routing/ProtectedRoute';
 import { RoleRoute } from '@/components/routing/RoleRoute';
 import { MANAGER_ROLES } from '@/config/navigation';
@@ -30,9 +31,10 @@ import { COMPANY_ROLES } from '@/types';
  * tegishli fazada almashtiriladi. Rol cheklovlari spec §1 matritsasi bo'yicha.
  */
 export const routes: RouteObject[] = [
-  { path: '/login', element: <LoginPage /> },
+  { path: '/login', element: <LoginPage />, errorElement: <RouteErrorPage /> },
   {
     element: <ProtectedRoute />,
+    errorElement: <RouteErrorPage />,
     children: [
       {
         element: <AppLayout />,

@@ -1,27 +1,31 @@
-import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import { changeLanguage, LANGUAGES, type Language } from '@/i18n';
+import { changeLanguage, LANGUAGES } from '@/i18n';
+import { Button, Menu } from '@/ui';
 
+/** Til tanlovi (D-27): joriy til belgilangan menyu, tanlov saqlanadi. */
 export function LanguageSwitcher() {
   const { t, i18n } = useTranslation();
-  const id = useId();
   return (
-    <div className="flex items-center gap-2">
-      <label htmlFor={id} className="sr-only">
-        {t('topbar.language')}
-      </label>
-      <select
-        id={id}
-        value={i18n.language}
-        onChange={(e) => void changeLanguage(e.target.value as Language)}
-        className="rounded border border-slate-300 bg-white px-2 py-1 text-sm"
-      >
-        {LANGUAGES.map((lng) => (
-          <option key={lng} value={lng}>
-            {t(`languages.${lng}`)}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Menu
+      items={LANGUAGES.map((lng) => ({
+        id: lng,
+        label: t(`languages.${lng}`),
+        checked: i18n.language === lng,
+        onSelect: () => void changeLanguage(lng),
+      }))}
+      trigger={(props) => (
+        <Button
+          {...props}
+          variant="ghost"
+          size="sm"
+          leftIcon="globe"
+          aria-label={t('topbar.language')}
+        >
+          <span aria-hidden="true" className="uppercase">
+            {i18n.language}
+          </span>
+        </Button>
+      )}
+    />
   );
 }

@@ -32,7 +32,7 @@ describe('Toast', () => {
   it('error/warning/info sonner orqali (global xato oqimi bilan mos)', () => {
     const spy = vi.spyOn(toast, 'error');
     notify.error('Xato');
-    expect(spy).toHaveBeenCalledWith('Xato', undefined);
+    expect(spy).toHaveBeenCalledWith('Xato');
     spy.mockRestore();
   });
 });

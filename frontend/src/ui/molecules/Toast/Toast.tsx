@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type ExternalToast, Toaster as SonnerToaster, toast } from 'sonner';
+import { Toaster as SonnerToaster, toast } from 'sonner';
 import { Icon } from '../../atoms/Icon';
 import { Spinner } from '../../atoms/Spinner';
 
@@ -8,12 +7,14 @@ import { Spinner } from '../../atoms/Spinner';
  * Global xabarnomalar (D-155): sonner — faqat dvigatel (navbat, taymer, aria-live), ko'rinish — tokenlardan
  * (`unstyled`). Sahifalar `alert()` yoki sonner o'rniga `notify` dan foydalanadi.
  */
+// Argumentlar o'zgarishsiz uzatiladi (sonner chaqiruvlari bilan bir xil imzo)
 export const notify = {
-  success: (message: ReactNode, opts?: ExternalToast) => toast.success(message, opts),
-  error: (message: ReactNode, opts?: ExternalToast) => toast.error(message, opts),
-  warning: (message: ReactNode, opts?: ExternalToast) => toast.warning(message, opts),
-  info: (message: ReactNode, opts?: ExternalToast) => toast.info(message, opts),
-  dismiss: (id?: string | number) => toast.dismiss(id),
+  message: (...args: Parameters<typeof toast>) => toast(...args),
+  success: (...args: Parameters<typeof toast.success>) => toast.success(...args),
+  error: (...args: Parameters<typeof toast.error>) => toast.error(...args),
+  warning: (...args: Parameters<typeof toast.warning>) => toast.warning(...args),
+  info: (...args: Parameters<typeof toast.info>) => toast.info(...args),
+  dismiss: (...args: Parameters<typeof toast.dismiss>) => toast.dismiss(...args),
 };
 
 const toneIcon = 'mt-0.5';

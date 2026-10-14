@@ -1,6 +1,6 @@
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import { notify } from '@/ui';
 import { isAxiosError } from 'axios';
-import { toast } from 'sonner';
 import { toApiError } from '@/api/client';
 import i18n from '@/i18n';
 import type { ApiError } from '@/types';
@@ -119,7 +119,7 @@ export function createQueryClient(): QueryClient {
     queryCache: new QueryCache({
       onError: (error, query) => {
         if (query.meta?.showToast) {
-          toast.error(errorMessage(error));
+          notify.error(errorMessage(error));
         }
       },
     }),
@@ -127,7 +127,7 @@ export function createQueryClient(): QueryClient {
     mutationCache: new MutationCache({
       onError: (error, _vars, _ctx, mutation) => {
         if (mutation.meta?.silentError) return;
-        toast.error(errorMessage(error));
+        notify.error(errorMessage(error));
       },
     }),
     defaultOptions: {
