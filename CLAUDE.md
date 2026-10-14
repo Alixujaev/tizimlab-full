@@ -113,6 +113,9 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 
 - Har feature/faza uchun `main` dan yangi branch och (nomi: `p6-notifications` kabi).
 - Ish tugagach `npm run check` yashil bo'lsa: commit, `main` ga merge, push, branch'ni o'chir.
+- `main` ga faqat CI (GitHub Actions, `.github/workflows/ci.yml`) yashil bo'lganda merge qilinadi:
+  branch'ni push qil → `main` ga PR och (CI `pull_request` da ishlaydi) → CI yashil bo'lgach merge.
+  CI qizil bo'lsa — merge qilma, tuzat.
 - Git status/log bilan foydalanuvchini chalg'itma. Faqat xato chiqsa xabar ber.
 - `package-lock.json` o'zgarishini feature commit'iga qo'sh, alohida masala qilma.
 - Qo'llangan migratsiyani tahrirlama, faqat yangi 00N fayl.

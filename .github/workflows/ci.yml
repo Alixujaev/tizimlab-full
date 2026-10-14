@@ -4,32 +4,35 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   check:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17
+        image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          # Faqat CI uchun vaqtinchalik konteyner paroli — production siri emas
+          POSTGRES_USER: tizimlab_ci
+          POSTGRES_PASSWORD: ci_test_7Hq2vN9xLp4R
           POSTGRES_DB: tizimlab_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd "pg_isready -U tizimlab_ci -d tizimlab_test"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
     env:
       # DB testlari CI'da majburiy (tests/helpers/db.ts: CI=true va URL yo'q bo'lsa — xato)
-      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/tizimlab_test
+      TEST_DATABASE_URL: postgres://tizimlab_ci:ci_test_7Hq2vN9xLp4R@localhost:5432/tizimlab_test
+      # Qolgan test env (JWT, TTL...) testlarda TEST_ENV dan beriladi — bu yerda sir yo'q
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run check
