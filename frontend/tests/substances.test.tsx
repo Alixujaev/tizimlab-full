@@ -8,7 +8,7 @@ import { SubstanceSelect } from '@/components/substances/SubstanceSelect';
 import i18n from '@/i18n';
 import { createQueryClient } from '@/lib/queryClient';
 import type { SubstanceDetailDto, SubstanceDto } from '@/types';
-import { loginAs, renderAt } from './helpers';
+import { loginAs, renderAt, selectOption } from './helpers';
 
 let api: MockAdapter;
 
@@ -116,7 +116,7 @@ describe('SubstancesPage & Components', () => {
     loginAs('director');
     const { unmount: unmountDirector } = renderAt('/substances');
     expect(await screen.findByText('Paratsetamol')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /\+ Yangi modda/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Yangi modda/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Tahrirlash' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /o'?chirish/i })).not.toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /ko'?rish/i }).length).toBeGreaterThanOrEqual(1);
@@ -125,7 +125,7 @@ describe('SubstancesPage & Components', () => {
     // 2. Lab Head: Yangi modda va Tahrirlash bor, O'chirish yo'q
     loginAs('lab_head');
     const { unmount: unmountLabHead } = renderAt('/substances');
-    expect(await screen.findByRole('button', { name: /\+ Yangi modda/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /Yangi modda/i })).toBeInTheDocument();
     expect(await screen.findByText('Paratsetamol')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Tahrirlash' }).length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByRole('button', { name: /o'?chirish/i })).not.toBeInTheDocument();
@@ -134,7 +134,7 @@ describe('SubstancesPage & Components', () => {
     // 3. Admin: Yangi modda, Tahrirlash va O'chirish hammasi mavjud
     loginAs('admin');
     const { unmount: unmountAdmin } = renderAt('/substances');
-    expect(await screen.findByRole('button', { name: /\+ Yangi modda/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /Yangi modda/i })).toBeInTheDocument();
     expect(await screen.findByText('Paratsetamol')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Tahrirlash' }).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByRole('button', { name: /o'?chirish/i }).length).toBeGreaterThanOrEqual(1);
@@ -151,7 +151,7 @@ describe('SubstancesPage & Components', () => {
 
     renderAt('/substances');
 
-    const newBtn = await screen.findByRole('button', { name: /\+ Yangi modda/i });
+    const newBtn = await screen.findByRole('button', { name: /Yangi modda/i });
     await user.click(newBtn);
 
     expect(await screen.findByRole('heading', { name: 'Yangi modda' })).toBeInTheDocument();
@@ -159,7 +159,9 @@ describe('SubstancesPage & Components', () => {
     // 1. Bo'sh nom bilan submit qilish
     const saveBtn = screen.getByRole('button', { name: 'Saqlash' });
     await user.click(saveBtn);
-    expect(await screen.findByText(/Modda nomi \(o'?zbekcha\) kiritilishi shart/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Modda nomi \(o'?zbekcha\) kiritilishi shart/i),
+    ).toBeInTheDocument();
 
     // 2. Nom kiritish
     await user.type(screen.getByLabelText(/Nomi \(O'?zbekcha\)/i), 'Ibuprofen');
@@ -191,7 +193,9 @@ describe('SubstancesPage & Components', () => {
     await user.type(paramInputs[1]!, 'zichlik'); // bir xil nom kichik harfda
 
     await user.click(saveBtn);
-    expect((await screen.findAllByText(/Takror parametr nomi kiritilgan/i)).length).toBeGreaterThanOrEqual(1);
+    expect(
+      (await screen.findAllByText(/Takror parametr nomi kiritilgan/i)).length,
+    ).toBeGreaterThanOrEqual(1);
 
     // 5. Takror nomni olib tashlash va muvaffaqiyatli submit qilish
     const removeBtns = screen.getAllByRole('button', { name: 'Olib tashlash' });
@@ -253,13 +257,15 @@ describe('SubstancesPage & Components', () => {
     expect(await screen.findByRole('heading', { name: /Moddani o'?chirish/i })).toBeInTheDocument();
     expect(screen.getByText(/Haqiqatan ham «Paratsetamol»/i)).toBeInTheDocument();
 
-    const confirmBtn = within(screen.getByRole('dialog')).getByRole('button', {
+    const confirmBtn = within(screen.getByRole('alertdialog')).getByRole('button', {
       name: /o'?chirish/i,
     });
     await user.click(confirmBtn);
 
     await waitFor(() => {
-      expect(screen.queryByRole('heading', { name: /Moddani o'?chirish/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('heading', { name: /Moddani o'?chirish/i }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -287,11 +293,8 @@ describe('SubstancesPage & Components', () => {
     expect(screen.getByText('Modda tanlang')).toBeInTheDocument();
     const select = await screen.findByRole('combobox');
 
-    await waitFor(() => {
-      expect(screen.getByText(/Paratsetamol/i)).toBeInTheDocument();
-    });
-
-    await user.selectOptions(select, 'sub-1');
+    // Variantlar yuklangach tanlanadi (helper kutadi)
+    await selectOption(user, select, 'sub-1');
     expect(handleChange).toHaveBeenCalledWith('sub-1', expect.objectContaining({ id: 'sub-1' }));
   });
 });

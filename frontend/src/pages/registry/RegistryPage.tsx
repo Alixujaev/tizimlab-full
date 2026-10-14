@@ -112,6 +112,9 @@ export function RegistryPage() {
     </FormField>
   );
 
+  const approvedFromField = dateField('approvedFrom');
+  const approvedToField = dateField('approvedTo');
+
   const columns: DataTableColumn<RegistryItemDto>[] = [
     {
       key: 'substance',
@@ -222,8 +225,8 @@ export function RegistryPage() {
         <FormField label={t('registry.filters.lotNumber')}>
           <Input value={form.lotNumber} onChange={(e) => setField('lotNumber', e.target.value)} />
         </FormField>
-        {dateField('approvedFrom')}
-        {dateField('approvedTo')}
+        {approvedFromField}
+        {approvedToField}
       </FilterBar>
 
       <div>
