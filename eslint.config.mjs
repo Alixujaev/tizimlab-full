@@ -6,6 +6,64 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+/**
+ * D-158: hali @/ui ga ko'chirilmagan fayllar (native element qoidasi vaqtincha o'chiq).
+ * Har ko'chirishdan keyin ro'yxat qisqaradi; UI qayta qurish oxirida BO'SH bo'lishi shart.
+ */
+const LEGACY_UI_FILES = [
+  'frontend/src/components/layout/LanguageSwitcher.tsx',
+  'frontend/src/components/layout/TopBar.tsx',
+  'frontend/src/components/substances/SubstanceSelect.tsx',
+  'frontend/src/components/ui/NotificationBell.tsx',
+  'frontend/src/pages/activity/ActivityPage.tsx',
+  'frontend/src/pages/audit/AuditLogPage.tsx',
+  'frontend/src/pages/audit/LogDetailsModal.tsx',
+  'frontend/src/pages/auth/LoginPage.tsx',
+  'frontend/src/pages/companies/CompaniesPage.tsx',
+  'frontend/src/pages/companies/CompanyConfirmModal.tsx',
+  'frontend/src/pages/companies/CompanyFormModal.tsx',
+  'frontend/src/pages/profile/ProfilePage.tsx',
+  'frontend/src/pages/reagents/ExpensesPage.tsx',
+  'frontend/src/pages/reagents/ReagentDetailPage.tsx',
+  'frontend/src/pages/reagents/ReagentDocumentModal.tsx',
+  'frontend/src/pages/reagents/ReagentFormModal.tsx',
+  'frontend/src/pages/reagents/ReagentJournalPage.tsx',
+  'frontend/src/pages/reagents/ReagentTransactionModal.tsx',
+  'frontend/src/pages/reagents/ReagentsPage.tsx',
+  'frontend/src/pages/registry/RegistryDeleteModal.tsx',
+  'frontend/src/pages/registry/RegistryDetailPage.tsx',
+  'frontend/src/pages/registry/RegistryPage.tsx',
+  'frontend/src/pages/samples/PassportDeleteModal.tsx',
+  'frontend/src/pages/samples/PassportRejectModal.tsx',
+  'frontend/src/pages/samples/PassportSection.tsx',
+  'frontend/src/pages/samples/ProtocolRejectModal.tsx',
+  'frontend/src/pages/samples/ProtocolSection.tsx',
+  'frontend/src/pages/samples/SampleAssignModal.tsx',
+  'frontend/src/pages/samples/SampleDetailPage.tsx',
+  'frontend/src/pages/samples/SampleFormModal.tsx',
+  'frontend/src/pages/samples/SampleResumeModal.tsx',
+  'frontend/src/pages/samples/SampleStopModal.tsx',
+  'frontend/src/pages/samples/SamplesPage.tsx',
+  'frontend/src/pages/stability/CreateCheckpointModal.tsx',
+  'frontend/src/pages/stability/CreateStudyModal.tsx',
+  'frontend/src/pages/stability/RecordResultsModal.tsx',
+  'frontend/src/pages/stability/StabilityDetailPage.tsx',
+  'frontend/src/pages/stability/StabilityPage.tsx',
+  'frontend/src/pages/substances/SubstanceDeleteModal.tsx',
+  'frontend/src/pages/substances/SubstanceDetailModal.tsx',
+  'frontend/src/pages/substances/SubstanceFormModal.tsx',
+  'frontend/src/pages/substances/SubstancesPage.tsx',
+  'frontend/src/pages/temperature/ManualReadingModal.tsx',
+  'frontend/src/pages/temperature/ResolveAlertModal.tsx',
+  'frontend/src/pages/temperature/SensorConfigModal.tsx',
+  'frontend/src/pages/temperature/TemperaturePage.tsx',
+  'frontend/src/pages/users/PermissionsModal.tsx',
+  'frontend/src/pages/users/ResetPasswordModal.tsx',
+  'frontend/src/pages/users/UserFormModal.tsx',
+  'frontend/src/pages/users/UserLogsModal.tsx',
+  'frontend/src/pages/users/UsersPage.tsx',
+];
+
 export default tseslint.config(
   { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**'] },
   js.configs.recommended,
@@ -37,6 +95,50 @@ export default tseslint.config(
             include: ['title', 'placeholder', 'alt', 'aria-label', 'aria-description', 'label'],
           },
         },
+      ],
+    },
+  },
+  {
+    // src/ui komponentlari ham foydalanuvchiga ko'rinadigan matnni faqat t() orqali chiqaradi
+    files: ['frontend/src/ui/**/*.tsx'],
+    ignores: ['**/*.test.tsx'],
+    plugins: { i18next },
+    rules: {
+      'i18next/no-literal-string': [
+        'error',
+        {
+          mode: 'jsx-only',
+          'jsx-attributes': {
+            include: ['title', 'placeholder', 'alt', 'aria-label', 'aria-description', 'label'],
+          },
+        },
+      ],
+    },
+  },
+  {
+    // D-158: yangi UI faqat @/ui komponentlaridan — native element va brauzer dialoglari taqiqlangan
+    files: ['frontend/src/**/*.{ts,tsx}'],
+    ignores: ['frontend/src/ui/**', ...LEGACY_UI_FILES],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'JSXOpeningElement[name.name=/^(select|button|input|textarea|table)$/]',
+          message:
+            "Native <select>/<button>/<input>/<textarea>/<table> o'rniga @/ui komponentini ishlating (Select, Button, Input, Textarea, DataTable ...).",
+        },
+        {
+          selector:
+            "CallExpression[callee.object.name='window'][callee.property.name=/^(alert|confirm|prompt)$/]",
+          message:
+            "window.alert/confirm/prompt o'rniga notify (Toast) yoki ConfirmDialog ishlating.",
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        { name: 'alert', message: "alert() o'rniga notify (Toast) ishlating." },
+        { name: 'confirm', message: "confirm() o'rniga ConfirmDialog ishlating." },
+        { name: 'prompt', message: "prompt() o'rniga Modal + FormField ishlating." },
       ],
     },
   },

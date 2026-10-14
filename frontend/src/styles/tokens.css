@@ -1,0 +1,270 @@
+/*
+ * TizimLab dizayn tokenlari — UI'dagi BARCHA rang, o'lcham, soya, shrift, qatlam va harakat qiymatlari
+ * shu faylda. Komponentlar faqat semantik tokenlar (Tailwind `@theme` orqali: bg-surface, text-fg,
+ * border-line, bg-primary ...) bilan ishlaydi; xom hex/px qiymat komponentda yozilmaydi.
+ * Qorong'i rejim (D-154): tizim sozlamasi (`prefers-color-scheme`) yoki `<html data-theme>` (qo'lda).
+ */
+
+:root {
+  /* ── Palitra (faqat shu yerda; komponentlar to'g'ridan ishlatmaydi) ── */
+  --tl-neutral-0: #ffffff;
+  --tl-neutral-50: #f8fafc;
+  --tl-neutral-100: #f1f5f9;
+  --tl-neutral-200: #e2e8f0;
+  --tl-neutral-300: #cbd5e1;
+  --tl-neutral-400: #94a3b8;
+  --tl-neutral-500: #64748b;
+  --tl-neutral-600: #475569;
+  --tl-neutral-700: #334155;
+  --tl-neutral-800: #1e293b;
+  --tl-neutral-850: #162032;
+  --tl-neutral-900: #0f172a;
+  --tl-neutral-950: #0b1120;
+
+  --tl-blue-50: #eff6ff;
+  --tl-blue-100: #dbeafe;
+  --tl-blue-200: #bfdbfe;
+  --tl-blue-300: #93c5fd;
+  --tl-blue-400: #60a5fa;
+  --tl-blue-500: #3b82f6;
+  --tl-blue-600: #2563eb;
+  --tl-blue-700: #1d4ed8;
+  --tl-blue-800: #1e40af;
+  --tl-blue-950: #172554;
+
+  --tl-green-50: #ecfdf5;
+  --tl-green-200: #a7f3d0;
+  --tl-green-300: #6ee7b7;
+  --tl-green-600: #059669;
+  --tl-green-700: #047857;
+  --tl-green-800: #065f46;
+  --tl-green-950: #0b2e24;
+
+  --tl-amber-50: #fffbeb;
+  --tl-amber-200: #fde68a;
+  --tl-amber-300: #fcd34d;
+  --tl-amber-600: #d97706;
+  --tl-amber-700: #b45309;
+  --tl-amber-900: #78350f;
+  --tl-amber-950: #2d1f05;
+
+  --tl-red-50: #fef2f2;
+  --tl-red-200: #fecaca;
+  --tl-red-300: #fca5a5;
+  --tl-red-600: #dc2626;
+  --tl-red-700: #b91c1c;
+  --tl-red-900: #7f1d1d;
+  --tl-red-950: #2c0f12;
+
+  --tl-sky-50: #f0f9ff;
+  --tl-sky-200: #bae6fd;
+  --tl-sky-300: #7dd3fc;
+  --tl-sky-600: #0284c7;
+  --tl-sky-700: #0369a1;
+  --tl-sky-800: #075985;
+  --tl-sky-950: #082436;
+
+  --tl-violet-50: #f5f3ff;
+  --tl-violet-200: #ddd6fe;
+  --tl-violet-300: #c4b5fd;
+  --tl-violet-600: #7c3aed;
+  --tl-violet-700: #6d28d9;
+  --tl-violet-900: #4c1d95;
+  --tl-violet-950: #1e1538;
+
+  /* ── Tipografiya ── */
+  --tl-font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+  --tl-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --tl-text-xs: 0.75rem;
+  --tl-leading-xs: 1rem;
+  --tl-text-sm: 0.875rem;
+  --tl-leading-sm: 1.25rem;
+  --tl-text-base: 1rem;
+  --tl-leading-base: 1.5rem;
+  --tl-text-lg: 1.125rem;
+  --tl-leading-lg: 1.75rem;
+  --tl-text-xl: 1.25rem;
+  --tl-leading-xl: 1.75rem;
+  --tl-text-2xl: 1.5rem;
+  --tl-leading-2xl: 2rem;
+  --tl-text-3xl: 1.875rem;
+  --tl-leading-3xl: 2.25rem;
+
+  /* ── O'lchamlar ── */
+  --tl-space-unit: 0.25rem; /* Tailwind spacing shkalasi: p-1 = 0.25rem, p-4 = 1rem ... */
+  --tl-radius-sm: 0.25rem;
+  --tl-radius-md: 0.375rem;
+  --tl-radius-lg: 0.5rem;
+  --tl-radius-xl: 0.75rem;
+  --tl-radius-2xl: 1rem;
+
+  --tl-sidebar-width: 16rem;
+  --tl-sidebar-collapsed-width: 4.5rem;
+  --tl-topbar-height: 3.5rem;
+  --tl-page-max-width: 80rem;
+  --tl-table-max-height: 70vh;
+  --tl-popover-max-height: 18rem;
+  --tl-popover-min-width: 12rem;
+  --tl-tooltip-max-width: 16rem;
+  --tl-modal-sm: 24rem;
+  --tl-modal-md: 32rem;
+  --tl-modal-lg: 42rem;
+  --tl-modal-xl: 56rem;
+  --tl-drawer-width: 20rem;
+
+  /* ── Qatlamlar ── */
+  --tl-z-sticky: 10;
+  --tl-z-drawer: 40;
+  --tl-z-modal: 50;
+  --tl-z-popover: 60;
+  --tl-z-toast: 70;
+  --tl-z-tooltip: 80;
+
+  /* ── Harakat (150–250ms, faqat transform/opacity/rang) ── */
+  --tl-duration-fast: 150ms;
+  --tl-duration-base: 200ms;
+  --tl-duration-slow: 250ms;
+  --tl-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --tl-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --tl-ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ── Semantik ranglar: yorug' rejim ── */
+  color-scheme: light;
+  --tl-canvas: var(--tl-neutral-50);
+  --tl-surface: var(--tl-neutral-0);
+  --tl-surface-muted: var(--tl-neutral-50);
+  --tl-surface-sunken: var(--tl-neutral-100);
+  --tl-fg: var(--tl-neutral-900);
+  --tl-fg-muted: var(--tl-neutral-600);
+  --tl-fg-subtle: var(--tl-neutral-500);
+  --tl-line: var(--tl-neutral-200);
+  --tl-line-strong: var(--tl-neutral-300);
+  --tl-focus: var(--tl-blue-500);
+  --tl-overlay: rgb(15 23 42 / 0.5);
+  --tl-skeleton: var(--tl-neutral-200);
+
+  --tl-primary: var(--tl-blue-600);
+  --tl-primary-hover: var(--tl-blue-700);
+  --tl-primary-fg: var(--tl-neutral-0);
+  --tl-primary-subtle: var(--tl-blue-50);
+  --tl-primary-subtle-fg: var(--tl-blue-700);
+  --tl-primary-line: var(--tl-blue-200);
+
+  --tl-success: var(--tl-green-600);
+  --tl-success-subtle: var(--tl-green-50);
+  --tl-success-fg: var(--tl-green-700);
+  --tl-success-line: var(--tl-green-200);
+
+  --tl-warning: var(--tl-amber-600);
+  --tl-warning-subtle: var(--tl-amber-50);
+  --tl-warning-fg: var(--tl-amber-700);
+  --tl-warning-line: var(--tl-amber-200);
+
+  --tl-danger: var(--tl-red-600);
+  --tl-danger-hover: var(--tl-red-700);
+  --tl-danger-subtle: var(--tl-red-50);
+  --tl-danger-fg: var(--tl-red-700);
+  --tl-danger-line: var(--tl-red-200);
+
+  --tl-info: var(--tl-sky-600);
+  --tl-info-subtle: var(--tl-sky-50);
+  --tl-info-fg: var(--tl-sky-700);
+  --tl-info-line: var(--tl-sky-200);
+
+  --tl-accent: var(--tl-violet-600);
+  --tl-accent-subtle: var(--tl-violet-50);
+  --tl-accent-fg: var(--tl-violet-700);
+  --tl-accent-line: var(--tl-violet-200);
+
+  --tl-shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.06);
+  --tl-shadow-md: 0 4px 8px -2px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.06);
+  --tl-shadow-lg: 0 12px 24px -6px rgb(15 23 42 / 0.16), 0 4px 8px -4px rgb(15 23 42 / 0.08);
+  --tl-shadow-xl: 0 24px 48px -12px rgb(15 23 42 / 0.28);
+}
+
+/* Qorong'i rejim qiymatlari bir joyda: tizim sozlamasi (qo'lda "light" tanlanmagan bo'lsa) va qo'lda "dark" */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --tl-canvas: var(--tl-neutral-950);
+    --tl-surface: var(--tl-neutral-900);
+    --tl-surface-muted: var(--tl-neutral-850);
+    --tl-surface-sunken: var(--tl-neutral-800);
+    --tl-fg: var(--tl-neutral-100);
+    --tl-fg-muted: var(--tl-neutral-400);
+    --tl-fg-subtle: var(--tl-neutral-400);
+    --tl-line: var(--tl-neutral-800);
+    --tl-line-strong: var(--tl-neutral-700);
+    --tl-focus: var(--tl-blue-400);
+    --tl-overlay: rgb(2 6 23 / 0.7);
+    --tl-skeleton: var(--tl-neutral-800);
+    --tl-primary: var(--tl-blue-600);
+    --tl-primary-hover: var(--tl-blue-500);
+    --tl-primary-subtle: var(--tl-blue-950);
+    --tl-primary-subtle-fg: var(--tl-blue-300);
+    --tl-primary-line: var(--tl-blue-800);
+    --tl-success-subtle: var(--tl-green-950);
+    --tl-success-fg: var(--tl-green-300);
+    --tl-success-line: var(--tl-green-800);
+    --tl-warning-subtle: var(--tl-amber-950);
+    --tl-warning-fg: var(--tl-amber-300);
+    --tl-warning-line: var(--tl-amber-900);
+    --tl-danger-hover: var(--tl-red-700);
+    --tl-danger-subtle: var(--tl-red-950);
+    --tl-danger-fg: var(--tl-red-300);
+    --tl-danger-line: var(--tl-red-900);
+    --tl-info-subtle: var(--tl-sky-950);
+    --tl-info-fg: var(--tl-sky-300);
+    --tl-info-line: var(--tl-sky-800);
+    --tl-accent-subtle: var(--tl-violet-950);
+    --tl-accent-fg: var(--tl-violet-300);
+    --tl-accent-line: var(--tl-violet-900);
+    --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
+    --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
+    --tl-shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --tl-canvas: var(--tl-neutral-950);
+  --tl-surface: var(--tl-neutral-900);
+  --tl-surface-muted: var(--tl-neutral-850);
+  --tl-surface-sunken: var(--tl-neutral-800);
+  --tl-fg: var(--tl-neutral-100);
+  --tl-fg-muted: var(--tl-neutral-400);
+  --tl-fg-subtle: var(--tl-neutral-400);
+  --tl-line: var(--tl-neutral-800);
+  --tl-line-strong: var(--tl-neutral-700);
+  --tl-focus: var(--tl-blue-400);
+  --tl-overlay: rgb(2 6 23 / 0.7);
+  --tl-skeleton: var(--tl-neutral-800);
+  --tl-primary: var(--tl-blue-600);
+  --tl-primary-hover: var(--tl-blue-500);
+  --tl-primary-subtle: var(--tl-blue-950);
+  --tl-primary-subtle-fg: var(--tl-blue-300);
+  --tl-primary-line: var(--tl-blue-800);
+  --tl-success-subtle: var(--tl-green-950);
+  --tl-success-fg: var(--tl-green-300);
+  --tl-success-line: var(--tl-green-800);
+  --tl-warning-subtle: var(--tl-amber-950);
+  --tl-warning-fg: var(--tl-amber-300);
+  --tl-warning-line: var(--tl-amber-900);
+  --tl-danger-hover: var(--tl-red-700);
+  --tl-danger-subtle: var(--tl-red-950);
+  --tl-danger-fg: var(--tl-red-300);
+  --tl-danger-line: var(--tl-red-900);
+  --tl-info-subtle: var(--tl-sky-950);
+  --tl-info-fg: var(--tl-sky-300);
+  --tl-info-line: var(--tl-sky-800);
+  --tl-accent-subtle: var(--tl-violet-950);
+  --tl-accent-fg: var(--tl-violet-300);
+  --tl-accent-line: var(--tl-violet-900);
+  --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
+  --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
+  --tl-shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+}
