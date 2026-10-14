@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import { useCreateTransactionMutation } from '@/hooks/useReagents';
+import { errorMessage } from '@/lib/queryClient';
 import type { ReagentDto, ReagentTransactionType } from '@/types';
+import { Alert, Button, DatePicker, FormField, Input, Modal, Select, Textarea } from '@/ui';
 
 interface Props {
   open: boolean;
@@ -11,8 +11,12 @@ interface Props {
   reagent: ReagentDto;
 }
 
+const TYPES: ReagentTransactionType[] = ['out', 'in', 'adjustment', 'disposal'];
+const today = () => new Date().toISOString().slice(0, 10);
+
 export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
   const { t } = useTranslation();
+  const formId = useId();
   const createMutation = useCreateTransactionMutation();
 
   const [type, setType] = useState<ReagentTransactionType>('out');
@@ -20,27 +24,24 @@ export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
   const [note, setNote] = useState('');
   const [protocolId, setProtocolId] = useState('');
   const [analysisPurpose, setAnalysisPurpose] = useState('');
-  const [recordedDate, setRecordedDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [recordedDate, setRecordedDate] = useState(today);
+  const [qtyError, setQtyError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const qty = Number(quantity);
     if (!qty || qty <= 0) {
-      setError(t('reagents.errors.qtyPositive', "Miqdor 0 dan katta bo'lishi shart"));
+      setQtyError(t('reagents.errors.qtyPositive', "Miqdor 0 dan katta bo'lishi shart"));
       return;
     }
-
     if ((type === 'out' || type === 'disposal') && qty > reagent.quantity) {
-      setError(
-        t(
-          'reagents.errors.insufficientStock',
-          "Mavjud zaxiradan ko'p chiqim qilib bo'lmaydi",
-        ),
+      setQtyError(
+        t('reagents.errors.insufficientStock', "Mavjud zaxiradan ko'p chiqim qilib bo'lmaydi"),
       );
       return;
     }
-
+    setQtyError(null);
     try {
       await createMutation.mutateAsync({
         reagentId: reagent.id,
@@ -59,133 +60,81 @@ export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
       setAnalysisPurpose('');
       setError(null);
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error', 'Xatolik yuz berdi');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={t('reagents.newTransaction')}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-rose-50 p-3 text-sm text-rose-700">
-            {error}
-          </div>
-        )}
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={t('reagents.newTransaction')}
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={createMutation.isPending}>
+            {t('common.cancel', 'Bekor qilish')}
+          </Button>
+          <Button type="submit" form={formId} loading={createMutation.isPending}>
+            {t('common.save', 'Saqlash')}
+          </Button>
+        </>
+      }
+    >
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
 
-        <div className="rounded-lg bg-slate-50 p-3 border border-slate-200 text-sm">
-          <div className="font-semibold text-slate-800">{reagent.name}</div>
-          <div className="text-slate-600">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface-muted px-4 py-3 text-sm">
+          <span className="font-medium text-fg">{reagent.name}</span>
+          <span className="text-fg-muted">
             {t('reagents.currentStockLabel', 'Joriy zaxira:')}{' '}
-            <span className="font-bold text-slate-900">
+            <span className="font-semibold tabular-nums text-fg">
               {reagent.quantity} {reagent.unit}
             </span>
-          </div>
+          </span>
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.transactionType')} *
-          </label>
-          <select
+        <FormField label={t('reagents.transactionType')} required>
+          <Select
+            options={TYPES.map((v) => ({ value: v, label: t(`reagents.types.${v}`) }))}
             value={type}
-            onChange={(e) => setType(e.target.value as ReagentTransactionType)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            <option value="out">{t('reagents.types.out')}</option>
-            <option value="in">{t('reagents.types.in')}</option>
-            <option value="adjustment">{t('reagents.types.adjustment')}</option>
-            <option value="disposal">{t('reagents.types.disposal')}</option>
-          </select>
-        </div>
+            onChange={setType}
+          />
+        </FormField>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.amount', 'Miqdor')} {`(${reagent.unit})`} <span className="text-red-500">*</span>
-            </label>
-            <input
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            label={`${t('reagents.amount', 'Miqdor')} (${reagent.unit})`}
+            required
+            error={qtyError}
+          >
+            <Input
               type="number"
               step="any"
               min="0.0001"
-              required
               value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              onChange={(e) => {
+                setQuantity(e.target.value);
+                if (qtyError) setQtyError(null);
+              }}
             />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.recordedDate')} *
-            </label>
-            <input
-              type="date"
-              required
-              value={recordedDate}
-              onChange={(e) => setRecordedDate(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
+          </FormField>
+          <FormField label={t('reagents.recordedDate')} required>
+            <DatePicker value={recordedDate} onChange={setRecordedDate} />
+          </FormField>
         </div>
 
         {type === 'out' && (
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.analysisPurpose')}
-            </label>
-            <input
-              type="text"
-              value={analysisPurpose}
-              onChange={(e) => setAnalysisPurpose(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
+          <FormField label={t('reagents.analysisPurpose')}>
+            <Input value={analysisPurpose} onChange={(e) => setAnalysisPurpose(e.target.value)} />
+          </FormField>
         )}
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.protocolId')}
-          </label>
-          <input
-            type="text"
-            value={protocolId}
-            onChange={(e) => setProtocolId(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.note')}
-          </label>
-          <textarea
-            rows={2}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={createMutation.isPending}
-            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {t('common.cancel', 'Bekor qilish')}
-          </button>
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {createMutation.isPending && <Spinner className="h-4 w-4 text-white" />}
-            {t('common.save', 'Saqlash')}
-          </button>
-        </div>
+        <FormField label={t('reagents.protocolId')}>
+          <Input value={protocolId} onChange={(e) => setProtocolId(e.target.value)} />
+        </FormField>
+        <FormField label={t('reagents.note')}>
+          <Textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
+        </FormField>
       </form>
     </Modal>
   );

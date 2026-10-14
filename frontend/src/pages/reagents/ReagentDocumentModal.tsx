@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import { useUploadDocumentMutation } from '@/hooks/useReagents';
+import { errorMessage } from '@/lib/queryClient';
 import type { ReagentDocType } from '@/types';
+import { Alert, Button, FileDropzone, FormField, Input, Modal, Select } from '@/ui';
 
 interface Props {
   open: boolean;
@@ -11,123 +11,80 @@ interface Props {
   reagentId: string;
 }
 
+const DOC_TYPES: ReagentDocType[] = ['passport', 'analysis_result', 'other'];
+
+interface FieldErrors {
+  title?: string;
+  file?: string;
+}
+
 export function ReagentDocumentModal({ open, onClose, reagentId }: Props) {
   const { t } = useTranslation();
+  const formId = useId();
   const uploadMutation = useUploadDocumentMutation();
-
   const [docType, setDocType] = useState<ReagentDocType>('passport');
   const [title, setTitle] = useState('');
   const [file, setFile] = useState<File | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) {
-      setError(t('reagents.docTitleRequired', 'Hujjat nomi kiritilishi shart'));
-      return;
-    }
-    if (!file) {
-      setError(t('reagents.fileRequired', 'Fayl tanlanishi shart'));
-      return;
-    }
-
-    if (file.size > 20 * 1024 * 1024) {
-      setError(t('reagents.fileTooLarge', 'Fayl hajmi 20MB dan oshmasligi kerak'));
-      return;
-    }
+    const next: FieldErrors = {};
+    if (!title.trim()) next.title = t('reagents.docTitleRequired', 'Hujjat nomi kiritilishi shart');
+    if (!file) next.file = t('reagents.fileRequired', 'Fayl tanlanishi shart');
+    setFieldErrors(next);
+    if (next.title || !file) return;
 
     try {
-      await uploadMutation.mutateAsync({
-        reagentId,
-        docType,
-        title: title.trim(),
-        file,
-      });
+      await uploadMutation.mutateAsync({ reagentId, docType, title: title.trim(), file });
       setTitle('');
       setFile(null);
       setError(null);
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.uploadError', 'Fayl yuklashda xatolik yuz berdi');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={t('reagents.uploadDocument')}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-rose-50 p-3 text-sm text-rose-700">
-            {error}
-          </div>
-        )}
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.docType')} *
-          </label>
-          <select
-            value={docType}
-            onChange={(e) => setDocType(e.target.value as ReagentDocType)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            <option value="passport">{t('reagents.docTypes.passport')}</option>
-            <option value="analysis_result">{t('reagents.docTypes.analysis_result')}</option>
-            <option value="other">{t('reagents.docTypes.other')}</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.docTitle')} *
-          </label>
-          <input
-            type="text"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.file')} *
-          </label>
-          <input
-            type="file"
-            required
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
-            onChange={(e) => {
-              const selected = e.target.files?.[0] ?? null;
-              setFile(selected);
-              if (selected && !title) {
-                const nameWithoutExt = selected.name.replace(/\.[^/.]+$/, "");
-                setTitle(nameWithoutExt);
-              }
-            }}
-            className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={uploadMutation.isPending}
-            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={t('reagents.uploadDocument')}
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={uploadMutation.isPending}>
             {t('common.cancel', 'Bekor qilish')}
-          </button>
-          <button
-            type="submit"
-            disabled={uploadMutation.isPending}
-            className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {uploadMutation.isPending && <Spinner className="h-4 w-4 text-white" />}
-            {t('common.save', 'Yuklash')}
-          </button>
-        </div>
+          </Button>
+          <Button type="submit" form={formId} leftIcon="upload" loading={uploadMutation.isPending}>
+            {t('reagents.uploadDocument')}
+          </Button>
+        </>
+      }
+    >
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
+        <FormField label={t('reagents.docType')} required>
+          <Select
+            options={DOC_TYPES.map((v) => ({ value: v, label: t(`reagents.docTypes.${v}`) }))}
+            value={docType}
+            onChange={setDocType}
+          />
+        </FormField>
+        <FormField label={t('reagents.docTitle')} required error={fieldErrors.title}>
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+        </FormField>
+        <FormField label={t('reagents.file')} required error={fieldErrors.file}>
+          <FileDropzone
+            value={file}
+            onChange={(selected) => {
+              setFile(selected);
+              // Nom bo'sh bo'lsa — fayl nomidan (kengaytmasiz) taklif
+              if (selected && !title) setTitle(selected.name.replace(/\.[^/.]+$/, ''));
+            }}
+          />
+        </FormField>
       </form>
     </Modal>
   );

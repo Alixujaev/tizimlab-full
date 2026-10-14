@@ -1,12 +1,9 @@
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
-import {
-  useCreateReagentMutation,
-  useUpdateReagentMutation,
-} from '@/hooks/useReagents';
+import { useCreateReagentMutation, useUpdateReagentMutation } from '@/hooks/useReagents';
+import { errorMessage } from '@/lib/queryClient';
 import type { ReagentDto } from '@/types';
+import { Alert, Button, Checkbox, DatePicker, FormField, Input, Modal } from '@/ui';
 
 interface Props {
   open: boolean;
@@ -14,12 +11,18 @@ interface Props {
   reagent?: ReagentDto | null;
 }
 
+interface FieldErrors {
+  name?: string;
+  unit?: string;
+}
+
 export function ReagentFormModal({ open, onClose, reagent }: Props) {
   const { t } = useTranslation();
+  const formId = useId();
   const createMutation = useCreateReagentMutation();
   const updateMutation = useUpdateReagentMutation();
-
   const isEditing = Boolean(reagent);
+  const isPending = createMutation.isPending || updateMutation.isPending;
 
   const [name, setName] = useState('');
   const [casNumber, setCasNumber] = useState('');
@@ -30,235 +33,121 @@ export function ReagentFormModal({ open, onClose, reagent }: Props) {
   const [supplier, setSupplier] = useState('');
   const [storageConditions, setStorageConditions] = useState('');
   const [isHazardous, setIsHazardous] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (reagent) {
-      setName(reagent.name);
-      setCasNumber(reagent.casNumber ?? '');
-      setUnit(reagent.unit);
-      setQuantity(String(reagent.quantity));
-      setLowStockThreshold(String(reagent.lowStockThreshold));
-      setExpiresAt(reagent.expiresAt ?? '');
-      setSupplier(reagent.supplier ?? '');
-      setStorageConditions(reagent.storageConditions ?? '');
-      setIsHazardous(reagent.isHazardous);
-    } else {
-      setName('');
-      setCasNumber('');
-      setUnit('g');
-      setQuantity('0');
-      setLowStockThreshold('0');
-      setExpiresAt('');
-      setSupplier('');
-      setStorageConditions('');
-      setIsHazardous(false);
-    }
+    setName(reagent?.name ?? '');
+    setCasNumber(reagent?.casNumber ?? '');
+    setUnit(reagent?.unit ?? 'g');
+    setQuantity(reagent ? String(reagent.quantity) : '0');
+    setLowStockThreshold(reagent ? String(reagent.lowStockThreshold) : '0');
+    setExpiresAt(reagent?.expiresAt ?? '');
+    setSupplier(reagent?.supplier ?? '');
+    setStorageConditions(reagent?.storageConditions ?? '');
+    setIsHazardous(reagent?.isHazardous ?? false);
+    setFieldErrors({});
     setError(null);
   }, [reagent, open]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setError(t('reagents.nameRequired', 'Reaktiv nomi kiritilishi shart'));
-      return;
-    }
-    if (!unit.trim()) {
-      setError(t('reagents.unitRequired', "O'lchov birligi kiritilishi shart"));
-      return;
-    }
+    const next: FieldErrors = {};
+    if (!name.trim()) next.name = t('reagents.nameRequired', 'Reaktiv nomi kiritilishi shart');
+    if (!unit.trim()) next.unit = t('reagents.unitRequired', "O'lchov birligi kiritilishi shart");
+    setFieldErrors(next);
+    if (next.name || next.unit) return;
 
+    const common = {
+      name: name.trim(),
+      casNumber: casNumber.trim() || null,
+      unit: unit.trim(),
+      lowStockThreshold: Number(lowStockThreshold) || 0,
+      expiresAt: expiresAt || null,
+      supplier: supplier.trim() || null,
+      storageConditions: storageConditions.trim() || null,
+      isHazardous,
+    };
     try {
       if (isEditing && reagent) {
-        await updateMutation.mutateAsync({
-          id: reagent.id,
-          input: {
-            name: name.trim(),
-            casNumber: casNumber.trim() || null,
-            unit: unit.trim(),
-            lowStockThreshold: Number(lowStockThreshold) || 0,
-            expiresAt: expiresAt || null,
-            supplier: supplier.trim() || null,
-            storageConditions: storageConditions.trim() || null,
-            isHazardous,
-          },
-        });
+        await updateMutation.mutateAsync({ id: reagent.id, input: common });
       } else {
-        await createMutation.mutateAsync({
-          name: name.trim(),
-          casNumber: casNumber.trim() || null,
-          unit: unit.trim(),
-          quantity: Number(quantity) || 0,
-          lowStockThreshold: Number(lowStockThreshold) || 0,
-          expiresAt: expiresAt || null,
-          supplier: supplier.trim() || null,
-          storageConditions: storageConditions.trim() || null,
-          isHazardous,
-        });
+        await createMutation.mutateAsync({ ...common, quantity: Number(quantity) || 0 });
       }
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error', 'Xatolik yuz berdi');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
-
-  const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Modal
       open={open}
       onClose={onClose}
+      size="lg"
       title={isEditing ? t('reagents.edit') : t('reagents.create')}
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={isPending}>
+            {t('common.cancel', 'Bekor qilish')}
+          </Button>
+          <Button type="submit" form={formId} loading={isPending}>
+            {t('common.save', 'Saqlash')}
+          </Button>
+        </>
+      }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-rose-50 p-3 text-sm text-rose-700">
-            {error}
-          </div>
-        )}
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.name')} *
-          </label>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
+        <FormField label={t('reagents.name')} required error={fieldErrors.name}>
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
+        </FormField>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.casNumber')}
-            </label>
-            <input
-              type="text"
-              value={casNumber}
-              onChange={(e) => setCasNumber(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.unit')} *
-            </label>
-            <input
-              type="text"
-              required
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label={t('reagents.casNumber')}>
+            <Input value={casNumber} onChange={(e) => setCasNumber(e.target.value)} />
+          </FormField>
+          <FormField label={t('reagents.unit')} required error={fieldErrors.unit}>
+            <Input value={unit} onChange={(e) => setUnit(e.target.value)} />
+          </FormField>
           {!isEditing && (
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                {t('reagents.quantity')}
-              </label>
-              <input
+            <FormField label={t('reagents.quantity')}>
+              <Input
                 type="number"
                 step="any"
                 min="0"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
-            </div>
+            </FormField>
           )}
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.lowStockThreshold')}
-            </label>
-            <input
+          <FormField label={t('reagents.lowStockThreshold')}>
+            <Input
               type="number"
               step="any"
               min="0"
               value={lowStockThreshold}
               onChange={(e) => setLowStockThreshold(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
-          </div>
+          </FormField>
+          <FormField label={t('reagents.expiresAt')}>
+            <DatePicker value={expiresAt} onChange={setExpiresAt} />
+          </FormField>
+          <FormField label={t('reagents.supplier')}>
+            <Input value={supplier} onChange={(e) => setSupplier(e.target.value)} />
+          </FormField>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.expiresAt')}
-            </label>
-            <input
-              type="date"
-              value={expiresAt}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
+        <FormField label={t('reagents.storageConditions')}>
+          <Input value={storageConditions} onChange={(e) => setStorageConditions(e.target.value)} />
+        </FormField>
 
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-              {t('reagents.supplier')}
-            </label>
-            <input
-              type="text"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-            {t('reagents.storageConditions')}
-          </label>
-          <input
-            type="text"
-            value={storageConditions}
-            onChange={(e) => setStorageConditions(e.target.value)}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-
-        <div className="flex items-center gap-2 pt-1">
-          <input
-            type="checkbox"
-            id="isHazardous"
-            checked={isHazardous}
-            onChange={(e) => setIsHazardous(e.target.checked)}
-            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-          />
-          <label htmlFor="isHazardous" className="text-sm font-medium text-slate-700">
-            {t('reagents.isHazardous')}
-          </label>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4 border-t border-slate-200">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {t('common.cancel', 'Bekor qilish')}
-          </button>
-          <button
-            type="submit"
-            disabled={isPending}
-            className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {isPending && <Spinner className="h-4 w-4 text-white" />}
-            {t('common.save', 'Saqlash')}
-          </button>
-        </div>
+        <Checkbox
+          label={t('reagents.isHazardous')}
+          checked={isHazardous}
+          onChange={(e) => setIsHazardous(e.target.checked)}
+        />
       </form>
     </Modal>
   );

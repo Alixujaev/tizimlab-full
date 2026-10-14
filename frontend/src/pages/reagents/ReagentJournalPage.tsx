@@ -1,249 +1,226 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
-import { Spinner } from '@/components/ui/Spinner';
 import { useExpenseCalendarQuery } from '@/hooks/useReagents';
 import { formatDate } from '@/lib/date';
 import type { ExpenseCalendarDayDto } from '@/types';
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  cx,
+  IconButton,
+  PageHeader,
+  Pressable,
+  Skeleton,
+} from '@/ui';
+
+const pad = (n: number) => String(n).padStart(2, '0');
 
 export function ReagentJournalPage() {
-  const { t } = useTranslation();
-
+  const { t, i18n } = useTranslation();
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedDay, setSelectedDay] = useState<ExpenseCalendarDayDto | null>(null);
 
   const year = currentDate.getFullYear();
-  const month = currentDate.getMonth(); // 0-indexed
-
-  // First day of month and last day of month
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-
-  const fromStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-  const toStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
-
+  const month = currentDate.getMonth();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const fromStr = `${year}-${pad(month + 1)}-01`;
+  const toStr = `${year}-${pad(month + 1)}-${pad(lastDay)}`;
   const { data: calendarData = [], isLoading } = useExpenseCalendarQuery(fromStr, toStr);
 
-  const prevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
+  const goTo = (date: Date) => {
+    setCurrentDate(date);
     setSelectedDay(null);
   };
 
-  const nextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-    setSelectedDay(null);
-  };
+  // Oy va hafta kunlari nomlari joriy tilda (Intl)
+  const monthLabel = new Intl.DateTimeFormat(i18n.language, {
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(year, month, 1));
+  const weekdayFmt = new Intl.DateTimeFormat(i18n.language, { weekday: 'short' });
+  const weekdays = Array.from({ length: 7 }, (_, i) => weekdayFmt.format(new Date(2024, 0, 1 + i)));
 
-  const today = () => {
-    setCurrentDate(new Date());
-    setSelectedDay(null);
-  };
-
-  // Month name formatting
-  const monthNames = [
-    'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun',
-    'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'
+  const daysMap = new Map(calendarData.map((d) => [d.date, d]));
+  const leading = (new Date(year, month, 1).getDay() + 6) % 7;
+  const cells: Array<{ dayNum?: number; dateStr?: string; data?: ExpenseCalendarDayDto }> = [
+    ...Array.from({ length: leading }, () => ({})),
+    ...Array.from({ length: lastDay }, (_, i) => {
+      const dateStr = `${year}-${pad(month + 1)}-${pad(i + 1)}`;
+      return { dayNum: i + 1, dateStr, data: daysMap.get(dateStr) };
+    }),
   ];
 
-  // Map calendar data by date string YYYY-MM-DD
-  const daysMap = new Map<string, ExpenseCalendarDayDto>();
-  for (const item of calendarData) {
-    daysMap.set(item.date, item);
-  }
-
-  let startDayOfWeek = firstDay.getDay() - 1;
-  if (startDayOfWeek === -1) startDayOfWeek = 6;
-
-  const totalDaysInMonth = lastDay.getDate();
-  const calendarCells: Array<{ dayNum?: number; dateStr?: string; data?: ExpenseCalendarDayDto }> = [];
-
-  for (let i = 0; i < startDayOfWeek; i++) {
-    calendarCells.push({});
-  }
-
-  for (let d = 1; d <= totalDaysInMonth; d++) {
-    const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    calendarCells.push({
-      dayNum: d,
-      dateStr: dStr,
-      data: daysMap.get(dStr),
-    });
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Sarlavha va Navigatsiya */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Link to="/reagents" className="hover:text-indigo-600 hover:underline">
-              {t('reagents.title')}
-            </Link>
-            <span>/</span>
-            <span className="text-slate-700">{t('reagents.expenseLog')}</span>
-          </div>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
-            {t('reagents.expenseLog')}
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            {t('reagents.journalSubtitle', "Reaktivlarning oylik sarf-xarajati kalendar ko'rinishida")}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            to="/expenses"
-            className="rounded-md border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
-          >
+    <>
+      <PageHeader
+        back={{ to: '/reagents', label: t('reagents.title') }}
+        title={t('reagents.expenseLog')}
+        description={t(
+          'reagents.journalSubtitle',
+          "Reaktivlarning oylik sarf-xarajati kalendar ko'rinishida",
+        )}
+        actions={
+          <ButtonLink to="/expenses" leftIcon="file-text">
             {t('reagents.listView', "Ro'yxat ko'rinishi")}
-          </Link>
-        </div>
-      </div>
+          </ButtonLink>
+        }
+      />
 
-      {/* Oylar nazorati */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-2">
-          <h2 className="text-lg font-bold text-slate-900">
-            {monthNames[month]} {year}
-          </h2>
-          <button
-            onClick={today}
-            className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-200"
-          >
-            {t('calendar.today', 'Bugun')}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={prevMonth}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {t('calendar.prev', '← Oldingi')}
-          </button>
-          <button
-            onClick={nextMonth}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {t('calendar.next', 'Keyingi →')}
-          </button>
-        </div>
-      </div>
-
-      {/* Kalendar jadvali */}
-      {isLoading ? (
-        <div className="flex h-64 items-center justify-center">
-          <Spinner className="h-8 w-8 text-indigo-600" />
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          {/* Hafta kunlari */}
-          <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-xs font-semibold text-slate-600 py-2">
-            <div>{t('days.mon', 'Dush')}</div>
-            <div>{t('days.tue', 'Sesh')}</div>
-            <div>{t('days.wed', 'Chor')}</div>
-            <div>{t('days.thu', 'Pay')}</div>
-            <div>{t('days.fri', 'Jum')}</div>
-            <div>{t('days.sat', 'Shan')}</div>
-            <div>{t('days.sun', 'Yak')}</div>
+      <Card flush>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
+          <div className="flex items-center gap-3">
+            <h2 aria-live="polite" className="text-lg font-semibold capitalize text-fg">
+              {monthLabel}
+            </h2>
+            <Button variant="secondary" size="sm" onClick={() => goTo(new Date())}>
+              {t('ui.date.today')}
+            </Button>
           </div>
-
-          {/* Kalendar kataklari */}
-          <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-slate-100">
-            {calendarCells.map((cell, idx) => {
-              if (!cell.dayNum) {
-                return <div key={`empty-${idx}`} className="h-28 bg-slate-50/50 p-2" />;
-              }
-
-              const hasExpense = cell.data && cell.data.itemsCount > 0;
-              const isSelected = selectedDay?.date === cell.dateStr;
-
-              return (
-                <div
-                  key={cell.dateStr}
-                  onClick={() => cell.data && setSelectedDay(cell.data)}
-                  className={`h-28 p-2 flex flex-col justify-between transition-colors ${
-                    hasExpense
-                      ? 'cursor-pointer hover:bg-indigo-50/40'
-                      : 'hover:bg-slate-50/60'
-                  } ${isSelected ? 'bg-indigo-50 ring-2 ring-indigo-500 ring-inset' : ''}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-700">
-                      {cell.dayNum}
-                    </span>
-                    {hasExpense && (
-                      <span className="rounded-full bg-amber-100 px-1.5 py-0.2 text-[10px] font-semibold text-amber-800">
-                        {cell.data?.itemsCount} {t('reagents.expenseUnit', 'ta chiqim')}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="overflow-hidden space-y-1">
-                    {hasExpense &&
-                      cell.data?.reagents.slice(0, 2).map((r, rIdx) => (
-                        <div
-                          key={rIdx}
-                          className="truncate rounded bg-amber-50 px-1 py-0.5 text-[10px] text-amber-900 font-medium"
-                        >
-                          {r.name} ({r.quantity} {r.unit})
-                        </div>
-                      ))}
-                    {hasExpense && (cell.data?.reagents.length ?? 0) > 2 && (
-                      <div className="text-[10px] text-slate-500 font-medium pl-0.5">
-                        +{(cell.data?.reagents.length ?? 0) - 2} {t('common.more', 'boshqa')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex items-center gap-1">
+            <IconButton
+              icon="chevron-left"
+              label={t('ui.date.prevMonth')}
+              variant="secondary"
+              size="sm"
+              onClick={() => goTo(new Date(year, month - 1, 1))}
+            />
+            <IconButton
+              icon="chevron-right"
+              label={t('ui.date.nextMonth')}
+              variant="secondary"
+              size="sm"
+              onClick={() => goTo(new Date(year, month + 1, 1))}
+            />
           </div>
         </div>
-      )}
 
-      {/* Tanlangan kun tafsiloti */}
-      {selectedDay && (
-        <div className="rounded-xl border border-indigo-200 bg-white p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-900">
-              {formatDate(selectedDay.date)} {t('reagents.expensesOnDate', 'sanasidagi xarajatlar')}
-            </h3>
-            <button
-              onClick={() => setSelectedDay(null)}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800"
-            >
-              {t('common.close', 'Yopish')}
-            </button>
+        {isLoading ? (
+          <div role="status" className="p-4">
+            <span className="sr-only">{t('common.loading')}</span>
+            <Skeleton variant="rect" className="h-96 w-full" />
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {selectedDay.reagents.map((r, rIdx) => (
-              <div
-                key={rIdx}
-                className="rounded-lg border border-slate-200 bg-slate-50 p-3 flex justify-between items-center"
-              >
-                <div>
-                  <div className="font-semibold text-slate-800 text-sm">{r.name}</div>
-                  <div className="text-xs text-slate-500">{r.id.slice(0, 8)}</div>
-                </div>
-                <div className="font-bold text-amber-700 text-sm">
-                  {r.quantity} {r.unit}
-                </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <div className="min-w-2xl">
+              <div className="grid grid-cols-7 border-b border-line bg-surface-muted py-2 text-center text-xs font-semibold capitalize text-fg-muted">
+                {weekdays.map((w) => (
+                  <div key={w}>{w}</div>
+                ))}
               </div>
-            ))}
+              <div className="grid grid-cols-7">
+                {cells.map((cell, idx) => {
+                  if (!cell.dayNum) {
+                    return (
+                      <div
+                        key={`empty-${idx}`}
+                        className="h-28 border-b border-r border-line bg-surface-muted"
+                      />
+                    );
+                  }
+                  const hasExpense = !!cell.data && cell.data.itemsCount > 0;
+                  const isSelected = selectedDay?.date === cell.dateStr;
+                  const body = (
+                    <>
+                      <span className="flex w-full items-center justify-between gap-1">
+                        <span className="text-xs font-semibold text-fg">{cell.dayNum}</span>
+                        {hasExpense && (
+                          <Badge
+                            tone="warning"
+                            size="sm"
+                          >{`${cell.data!.itemsCount} ${t('reagents.expenseUnit', 'ta chiqim')}`}</Badge>
+                        )}
+                      </span>
+                      {hasExpense && (
+                        <span className="flex w-full flex-col gap-1 overflow-hidden">
+                          {cell.data!.reagents.slice(0, 2).map((r, i) => (
+                            <span
+                              key={i}
+                              className="truncate rounded bg-warning-subtle px-1.5 py-0.5 text-xs text-warning-fg"
+                            >
+                              {r.name} ({r.quantity} {r.unit})
+                            </span>
+                          ))}
+                          {cell.data!.reagents.length > 2 && (
+                            <span className="text-xs text-fg-muted">
+                              +{cell.data!.reagents.length - 2} {t('common.more', 'boshqa')}
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </>
+                  );
+                  return hasExpense ? (
+                    <Pressable
+                      key={cell.dateStr}
+                      variant="row"
+                      aria-pressed={isSelected}
+                      onClick={() => setSelectedDay(cell.data!)}
+                      className={cx(
+                        'h-28 flex-col justify-between gap-1 border-b border-r border-line px-2 py-2',
+                        isSelected && 'bg-primary-subtle',
+                      )}
+                    >
+                      {body}
+                    </Pressable>
+                  ) : (
+                    <div
+                      key={cell.dateStr}
+                      className="flex h-28 flex-col border-b border-r border-line p-2"
+                    >
+                      {body}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
+        )}
+      </Card>
 
-          <div className="pt-2 text-right">
-            <Link
-              to={`/expenses?from=${selectedDay.date}&to=${selectedDay.date}`}
-              className="text-xs font-semibold text-indigo-600 hover:underline"
-            >
-              {t('reagents.viewInFullList', "To'liq ro'yxatda ko'rish →")}
-            </Link>
-          </div>
-        </div>
+      {selectedDay && (
+        <Card
+          title={`${formatDate(selectedDay.date)} ${t('reagents.expensesOnDate', 'sanasidagi xarajatlar')}`}
+          actions={
+            <IconButton
+              icon="x"
+              label={t('common.close', 'Yopish')}
+              size="sm"
+              onClick={() => setSelectedDay(null)}
+            />
+          }
+          footer={
+            <div className="flex justify-end">
+              <ButtonLink
+                to={`/expenses?from=${selectedDay.date}&to=${selectedDay.date}`}
+                variant="ghost"
+                size="sm"
+                rightIcon="chevron-right"
+              >
+                {t('reagents.viewInFullList', "To'liq ro'yxatda ko'rish")}
+              </ButtonLink>
+            </div>
+          }
+        >
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {selectedDay.reagents.map((r, i) => (
+              <li
+                key={i}
+                className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface-muted px-3 py-2.5"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-medium text-fg">{r.name}</span>
+                  <span className="block font-mono text-xs text-fg-subtle">{r.id.slice(0, 8)}</span>
+                </span>
+                <span className="text-sm font-semibold tabular-nums text-warning-fg">
+                  {r.quantity} {r.unit}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
       )}
-    </div>
+    </>
   );
 }
