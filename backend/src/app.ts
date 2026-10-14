@@ -93,7 +93,9 @@ export function createApp({
 }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
-  app.set('trust proxy', env.TRUST_PROXY);
+  // Production doim reverse proxy ortida — rate-limit va audit haqiqiy mijoz IP'sini ko'rishi uchun.
+  // `true` emas, faqat 1 hop: aks holda mijoz X-Forwarded-For bilan IP'ni soxtalashtira oladi.
+  app.set('trust proxy', env.TRUST_PROXY || env.NODE_ENV === 'production' ? 1 : false);
 
   app.use(requestId(logger));
   app.use(helmet());
@@ -138,6 +140,11 @@ export function createApp({
   const authConfig = authConfigFromEnv(env);
   const auth = createAuthMiddleware(authConfig);
   const api = Router();
+  // Hosting health-check (autentifikatsiyasiz) — platformalar oddiy { status } kutadi
+  api.get('/health', async (_req, res) => {
+    const dbUp = await pingDb();
+    res.status(dbUp ? 200 : 503).json({ status: dbUp ? 'ok' : 'error' });
+  });
   api.use(
     '/auth',
     createAuthRouter({ config: authConfig, auth, loginLimiter: createLoginLimiter(loginLimit) }),
