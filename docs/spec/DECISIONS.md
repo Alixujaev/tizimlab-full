@@ -160,3 +160,4 @@ Checklist'da ularga `DECISIONS.md D-NN` deb havola qilinadi.
 
 
 
+| D-152 | (texnik qaror — production proxy) `trust proxy` production'da doim `1` (bitta hop; `true` emas — aks holda X-Forwarded-For soxtalashtiriladi), boshqa muhitda `TRUST_PROXY=true` bo'lsa `1`, aks holda `false` — rate-limit va audit haqiqiy mijoz IP'sini ko'radi. Hosting health-check uchun `GET /api/v1/health` (autentifikatsiyasiz, `SELECT 1`): 200 `{ status: "ok" }` / 503 `{ status: "error" }` — platformalar uchun D-22 konvertisiz; eski `GET /health` saqlanadi. |

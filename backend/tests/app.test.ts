@@ -59,6 +59,41 @@ describe('createApp', () => {
     }
   });
 
+  it('GET /api/v1/health — autentifikatsiyasiz, DB ishlasa 200 { status: "ok" }', async () => {
+    const res = await request(testApp().app).get('/api/v1/health');
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ status: 'ok' });
+  });
+
+  it("GET /api/v1/health — DB yo'q bo'lsa 503", async () => {
+    const res = await request(testApp({ pingDb: async () => false }).app).get('/api/v1/health');
+    expect(res.status).toBe(503);
+    expect(res.body).toEqual({ status: 'error' });
+  });
+
+  it("production'da trust proxy = 1: rate-limit X-Forwarded-For dagi oxirgi hop IP'sini ko'radi", async () => {
+    const prod = testApp({
+      env: { NODE_ENV: 'production', FRONTEND_URL: 'https://app.example.com', TRUST_PROXY: false },
+    }).app;
+    expect(prod.get('trust proxy')).toBe(1);
+    const remaining = async (xff: string): Promise<number> => {
+      const res = await request(prod).get('/health').set('X-Forwarded-For', xff);
+      return Number(/r=(\d+)/.exec(String(res.headers['ratelimit']))?.[1]);
+    };
+    expect(await remaining('203.0.113.1')).toBe(RATE_LIMIT_MAX - 1);
+    expect(await remaining('203.0.113.1')).toBe(RATE_LIMIT_MAX - 2);
+    // Boshqa mijoz — alohida hisoblagich (proxy IP'si bo'yicha umumiy emas)
+    expect(await remaining('203.0.113.2')).toBe(RATE_LIMIT_MAX - 1);
+    // Faqat 1 hop ishoniladi: mijoz qo'shgan soxta chap qiymat hisobga olinmaydi
+    expect(await remaining('6.6.6.6, 203.0.113.2')).toBe(RATE_LIMIT_MAX - 2);
+    expect(await remaining('7.7.7.7, 203.0.113.2')).toBe(RATE_LIMIT_MAX - 3);
+  });
+
+  it("dev/test'da TRUST_PROXY=false — proxy'ga ishonilmaydi; true — 1 hop", () => {
+    expect(testApp().app.get('trust proxy')).toBe(false);
+    expect(testApp({ env: { TRUST_PROXY: true } }).app.get('trust proxy')).toBe(1);
+  });
+
   it("swagger /docs faqat development'da va HTTP Basic bilan (D-93)", async () => {
     const creds = { SWAGGER_USER: 'docs', SWAGGER_PASSWORD: 'docs-pass-1' };
     const dev = testApp({ env: { NODE_ENV: 'development', ...creds } }).app;
