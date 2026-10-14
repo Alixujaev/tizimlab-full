@@ -1,8 +1,6 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { Modal } from '@/components/ui/Modal';
 import { useDeleteRegistryItemMutation } from '@/hooks/useRegistry';
+import { ConfirmDialog, notify } from '@/ui';
 
 interface RegistryDeleteModalProps {
   sample: { id: string; substanceName: string } | null;
@@ -10,11 +8,7 @@ interface RegistryDeleteModalProps {
   onDeleted?: () => void;
 }
 
-export const RegistryDeleteModal: React.FC<RegistryDeleteModalProps> = ({
-  sample,
-  onClose,
-  onDeleted,
-}) => {
+export function RegistryDeleteModal({ sample, onClose, onDeleted }: RegistryDeleteModalProps) {
   const { t } = useTranslation();
   const mutation = useDeleteRegistryItemMutation();
 
@@ -22,7 +16,7 @@ export const RegistryDeleteModal: React.FC<RegistryDeleteModalProps> = ({
     if (!sample) return;
     try {
       await mutation.mutateAsync(sample.id);
-      toast.success(t('registry.deleted'));
+      notify.success(t('registry.deleted'));
       onClose();
       onDeleted?.();
     } catch {
@@ -31,33 +25,15 @@ export const RegistryDeleteModal: React.FC<RegistryDeleteModalProps> = ({
   };
 
   return (
-    <Modal
+    <ConfirmDialog
       open={Boolean(sample)}
-      onClose={onClose}
       title={t('registry.deleteTitle')}
-      footer={
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3 py-1.5 text-sm rounded border border-slate-300"
-          >
-            {t('common.cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={confirm}
-            disabled={mutation.isPending}
-            className="px-3 py-1.5 text-sm font-medium rounded bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
-          >
-            {t('registry.confirmDelete')}
-          </button>
-        </div>
-      }
-    >
-      <p className="text-sm text-slate-700">
-        {t('registry.deleteConfirm', { name: sample?.substanceName ?? '' })}
-      </p>
-    </Modal>
+      description={t('registry.deleteConfirm', { name: sample?.substanceName ?? '' })}
+      confirmLabel={t('registry.confirmDelete')}
+      cancelLabel={t('common.cancel')}
+      loading={mutation.isPending}
+      onConfirm={() => void confirm()}
+      onCancel={onClose}
+    />
   );
-};
+}

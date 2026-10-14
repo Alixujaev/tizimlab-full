@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useParams } from 'react-router';
-import { Spinner } from '@/components/ui/Spinner';
+import { useNavigate, useParams } from 'react-router';
 import { useFinalizeProtocolMutation, useProtocolsBySampleQuery } from '@/hooks/useProtocols';
 import { useRegistryItemQuery } from '@/hooks/useRegistry';
 import { formatDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
+import {
+  Button,
+  ButtonLink,
+  Card,
+  DescriptionList,
+  DetailLayout,
+  EmptyState,
+  PageHeader,
+  PageSkeleton,
+} from '@/ui';
 import { SampleTrackingTimeline } from '../samples/SampleTrackingTimeline';
 import { SampleTypeBadge } from '../samples/SampleTypeBadge';
 import { RegistryDeleteModal } from './RegistryDeleteModal';
 import { canDeleteFromRegistry, downloadRegistryFile } from './registryActions';
 
-export const RegistryDetailPage: React.FC = () => {
+export function RegistryDetailPage() {
   const { t } = useTranslation();
   const { id = '' } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -24,102 +33,88 @@ export const RegistryDetailPage: React.FC = () => {
   const approvedProtocol = protocols?.find((p) => p.status === 'approved');
   const isDirector = role === 'director';
 
-  const back = (
-    <Link to="/registry" className="text-xs font-medium text-slate-500 hover:text-slate-800">
-      ← {t('registry.backToList')}
-    </Link>
-  );
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-24">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
+  if (isLoading) return <PageSkeleton variant="detail" />;
 
   if (isError || !item) {
     return (
-      <div className="py-12 text-center space-y-4">
-        <h1 className="text-xl font-semibold text-slate-900">{t('registry.notFound')}</h1>
-        {back}
-      </div>
+      <EmptyState
+        titleAs="h1"
+        icon="clipboard"
+        title={t('registry.notFound')}
+        action={
+          <ButtonLink to="/registry" leftIcon="arrow-left">
+            {t('registry.backToList')}
+          </ButtonLink>
+        }
+        className="py-20"
+      />
     );
   }
 
-  const fields: [string, React.ReactNode][] = [
-    [t('registry.columns.type'), <SampleTypeBadge key="type" type={item.type} />],
-    [t('registry.columns.serialNumber'), item.serialNumber ?? '—'],
-    [t('registry.columns.lotNumber'), item.lotNumber ?? '—'],
-    [t('samples.quantity'), item.quantity ?? '—'],
-    [t('samples.manufacturer'), item.manufacturer ?? '—'],
-    [t('registry.columns.approvedAt'), formatDate(item.approvedAt)],
-  ];
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          {back}
-          <h1 className="mt-2 text-2xl font-semibold text-slate-900">{item.substanceName}</h1>
-          <p className="text-sm text-slate-500">{t('pages.registryDetail')}</p>
-        </div>
-        <div className="flex gap-2">
-          {item.downloadKind && (
-            <button
-              type="button"
-              onClick={() => void downloadRegistryFile(item.id)}
-              className="px-3 py-1.5 text-sm font-medium rounded border border-slate-300 bg-white hover:bg-slate-50"
-            >
-              {item.downloadKind === 'passport'
-                ? t('registry.downloadPassport')
-                : t('registry.downloadProtocol')}
-            </button>
-          )}
-          {isDirector && approvedProtocol && (
-            <button
-              type="button"
-              onClick={() => finalizeMutation.mutate(approvedProtocol.id)}
-              disabled={finalizeMutation.isPending}
-              className="px-3 py-1.5 text-sm font-medium rounded bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-colors disabled:opacity-50"
-            >
-              {finalizeMutation.isPending ? t('common.loading', 'Yuklanmoqda...') : t('protocols.finalize', 'Yakunlash')}
-            </button>
-          )}
-          {canDeleteFromRegistry(role) && (
-            <button
-              type="button"
-              onClick={() => setDeleteOpen(true)}
-              className="px-3 py-1.5 text-sm font-medium rounded border border-rose-300 text-rose-700 hover:bg-rose-50"
-            >
-              {t('registry.delete')}
-            </button>
-          )}
-        </div>
-      </div>
+    <>
+      <PageHeader
+        back={{ to: '/registry', label: t('registry.backToList') }}
+        title={item.substanceName}
+        description={t('pages.registryDetail')}
+        meta={<SampleTypeBadge type={item.type} />}
+        actions={
+          <>
+            {item.downloadKind && (
+              <Button
+                variant="secondary"
+                leftIcon="download"
+                onClick={() => void downloadRegistryFile(item.id)}
+              >
+                {item.downloadKind === 'passport'
+                  ? t('registry.downloadPassport')
+                  : t('registry.downloadProtocol')}
+              </Button>
+            )}
+            {isDirector && approvedProtocol && (
+              <Button
+                leftIcon="shield-check"
+                loading={finalizeMutation.isPending}
+                onClick={() => finalizeMutation.mutate(approvedProtocol.id)}
+              >
+                {t('protocols.finalize', 'Yakunlash')}
+              </Button>
+            )}
+            {canDeleteFromRegistry(role) && (
+              <Button variant="danger-ghost" leftIcon="trash" onClick={() => setDeleteOpen(true)}>
+                {t('registry.delete')}
+              </Button>
+            )}
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <dl className="lg:col-span-2 grid grid-cols-1 gap-4 rounded-lg border border-slate-200 bg-white p-6 sm:grid-cols-2">
-          {fields.map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-xs font-medium text-slate-500">{label}</dt>
-              <dd className="mt-1 text-sm text-slate-900">{value}</dd>
-            </div>
-          ))}
-        </dl>
-        <div className="rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="mb-4 border-b border-slate-100 pb-4 text-base font-semibold text-slate-900">
-            {t('samples.timelineTitle')}
-          </h2>
-          <SampleTrackingTimeline tracking={item.tracking} />
-        </div>
-      </div>
+      <DetailLayout
+        aside={
+          <Card title={t('samples.timelineTitle')}>
+            <SampleTrackingTimeline tracking={item.tracking} />
+          </Card>
+        }
+      >
+        <Card>
+          <DescriptionList
+            items={[
+              { label: t('registry.columns.type'), value: <SampleTypeBadge type={item.type} /> },
+              { label: t('registry.columns.serialNumber'), value: item.serialNumber, mono: true },
+              { label: t('registry.columns.lotNumber'), value: item.lotNumber, mono: true },
+              { label: t('samples.quantity'), value: item.quantity },
+              { label: t('samples.manufacturer'), value: item.manufacturer },
+              { label: t('registry.columns.approvedAt'), value: formatDate(item.approvedAt) },
+            ]}
+          />
+        </Card>
+      </DetailLayout>
 
       <RegistryDeleteModal
         sample={deleteOpen ? item : null}
         onClose={() => setDeleteOpen(false)}
         onDeleted={() => void navigate('/registry')}
       />
-    </div>
+    </>
   );
-};
+}

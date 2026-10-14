@@ -58,17 +58,43 @@ describe('DatePicker', () => {
     expect(screen.getByRole('textbox', { name: 'Sana' })).toHaveValue('14.10.2026');
   });
 
-  it("yozib kiritish: blur'da ISO ga o'giriladi; noto'g'ri sana qabul qilinmaydi", async () => {
+  it("yozib kiritish: ISO ga o'giriladi; noto'g'ri sana — matn qoladi, aria-invalid, qiymat bo'sh", async () => {
     const onChange = vi.fn();
     render(<Harness onChange={onChange} />);
     const input = screen.getByRole('textbox');
     await userEvent.type(input, '05.03.2026');
-    fireEvent.blur(input);
-    expect(onChange).toHaveBeenCalledWith('2026-03-05');
+    expect(onChange).toHaveBeenLastCalledWith('2026-03-05');
     await userEvent.clear(input);
     await userEvent.type(input, '31.02.2026{Enter}');
+    expect(screen.getByTestId('value')).toBeEmptyDOMElement();
+    expect(input).toHaveValue('31.02.2026');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    // ISO ko'rinishi yozib kiritilmaydi (D-110)
+    await userEvent.clear(input);
+    await userEvent.type(input, '2026-03-05');
+    fireEvent.blur(input);
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    // Tuzatilsa — xato yo'qoladi
+    await userEvent.clear(input);
+    await userEvent.type(input, '05032026');
+    expect(input).not.toHaveAttribute('aria-invalid');
     expect(screen.getByTestId('value')).toHaveTextContent('2026-03-05');
-    expect(input).toHaveValue('05.03.2026');
+  });
+
+  it("onInputChange xom matnni beradi; tashqi qiymat o'zgarsa matn yangilanadi", async () => {
+    const onInputChange = vi.fn();
+    const { rerender } = render(
+      <DatePicker
+        aria-label="d"
+        value=""
+        onChange={() => undefined}
+        onInputChange={onInputChange}
+      />,
+    );
+    await userEvent.type(screen.getByRole('textbox'), '1');
+    expect(onInputChange).toHaveBeenLastCalledWith('1');
+    rerender(<DatePicker aria-label="d" value="2026-01-02" onChange={() => undefined} />);
+    expect(screen.getByRole('textbox')).toHaveValue('02.01.2026');
   });
 
   it("bo'shatilsa — bo'sh qator", async () => {

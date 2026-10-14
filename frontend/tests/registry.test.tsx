@@ -7,7 +7,7 @@ import { apiClient } from '@/api/client';
 import uz from '@/i18n/locales/uz.json';
 import { formatDate, parseDisplayDate } from '@/lib/date';
 import type { RegistryDetailDto, RegistryItemDto, Role } from '@/types';
-import { loginAs, renderAt, resetAuth } from './helpers';
+import { loginAs, renderAt, resetAuth, selectOption } from './helpers';
 
 const R = uz.registry;
 let api: MockAdapter;
@@ -107,7 +107,7 @@ describe('/registry (R-FE-26)', () => {
 
   it('filtrlar ISO formatida API ga yuboriladi (har biri va birgalikda)', async () => {
     await openList('chemist');
-    await userEvent.selectOptions(screen.getByLabelText(R.filters.type), 'finished_product');
+    await selectOption(userEvent, screen.getByLabelText(R.filters.type), 'finished_product');
     await userEvent.type(screen.getByLabelText(R.filters.substanceName), 'Parats');
     await userEvent.type(screen.getByLabelText(R.filters.serialNumber), 'SER');
     await userEvent.type(screen.getByLabelText(R.filters.lotNumber), 'LOT-1');
@@ -164,7 +164,7 @@ describe('/registry (R-FE-26)', () => {
     await openList('lab_head');
     const r1 = screen.getByText('Natriy xlorid').closest('tr')!;
     await userEvent.click(within(r1).getByRole('button', { name: R.delete }));
-    const dialog = await screen.findByRole('dialog', { name: R.deleteTitle });
+    const dialog = await screen.findByRole('alertdialog', { name: R.deleteTitle });
     expect(dialog).toHaveTextContent('Natriy xlorid');
     await userEvent.click(within(dialog).getByRole('button', { name: R.confirmDelete }));
     await waitFor(() => expect(api.history.delete.map((r) => r.url)).toEqual(['/registry/r1']));
@@ -198,7 +198,7 @@ describe('/registry/:id (R-FE-27)', () => {
     expect(screen.getByRole('button', { name: R.downloadPassport })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: uz.samples.timelineTitle })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: R.delete }));
-    const dialog = await screen.findByRole('dialog', { name: R.deleteTitle });
+    const dialog = await screen.findByRole('alertdialog', { name: R.deleteTitle });
     await userEvent.click(within(dialog).getByRole('button', { name: R.confirmDelete }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/registry'));
   });
