@@ -9,6 +9,7 @@ export * from './FileDropzone';
 export * from './Icon';
 export * from './IconButton';
 export * from './Input';
+export * from './Logo';
 export * from './Pressable';
 export * from './Radio';
 export * from './Select';

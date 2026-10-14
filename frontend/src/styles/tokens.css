@@ -72,6 +72,13 @@
   --tl-violet-900: #4c1d95;
   --tl-violet-950: #1e1538;
 
+  /* Brend (logotip) ranglari — docs/brand/ dagi asl logolardan olingan */
+  --tl-brand-violet: #5b21b6;
+  --tl-brand-violet-bright: #7c3aed;
+  --tl-brand-violet-soft: #8b5cf6;
+  --tl-brand-violet-deep: #3c1a78;
+  --tl-brand-violet-muted: #592baa;
+
   /* ── Tipografiya ── */
   --tl-font-sans:
     ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
@@ -178,6 +185,12 @@
   --tl-accent-fg: var(--tl-violet-700);
   --tl-accent-line: var(--tl-violet-200);
 
+  /* Logotip: belgi (asosiy olti burchak + shaffof qo'shnilar) va "Tizim" / "Lab" so'z belgisi */
+  --tl-brand: var(--tl-brand-violet);
+  --tl-brand-tint: var(--tl-brand-violet-soft);
+  --tl-brand-word: var(--tl-brand-violet-deep);
+  --tl-brand-word-accent: var(--tl-brand-violet-soft);
+
   --tl-shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.06);
   --tl-shadow-md: 0 4px 8px -2px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.06);
   --tl-shadow-lg: 0 12px 24px -6px rgb(15 23 42 / 0.16), 0 4px 8px -4px rgb(15 23 42 / 0.08);
@@ -238,6 +251,10 @@
     --tl-accent-subtle: var(--tl-violet-950);
     --tl-accent-fg: var(--tl-violet-300);
     --tl-accent-line: var(--tl-violet-900);
+    --tl-brand: var(--tl-brand-violet-bright);
+    --tl-brand-tint: var(--tl-brand-violet-bright);
+    --tl-brand-word: var(--tl-neutral-0);
+    --tl-brand-word-accent: var(--tl-brand-violet-muted);
     --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
     --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
     --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
@@ -293,6 +310,10 @@
   --tl-accent-subtle: var(--tl-violet-950);
   --tl-accent-fg: var(--tl-violet-300);
   --tl-accent-line: var(--tl-violet-900);
+  --tl-brand: var(--tl-brand-violet-bright);
+  --tl-brand-tint: var(--tl-brand-violet-bright);
+  --tl-brand-word: var(--tl-neutral-0);
+  --tl-brand-word-accent: var(--tl-brand-violet-muted);
   --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
   --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
   --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);

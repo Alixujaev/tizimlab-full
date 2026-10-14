@@ -99,6 +99,11 @@
   --color-accent-fg: var(--tl-accent-fg);
   --color-accent-line: var(--tl-accent-line);
 
+  --color-brand: var(--tl-brand);
+  --color-brand-tint: var(--tl-brand-tint);
+  --color-brand-word: var(--tl-brand-word);
+  --color-brand-word-accent: var(--tl-brand-word-accent);
+
   --animate-fade-in: tl-fade-in var(--tl-duration-base) var(--tl-ease-out) both;
   --animate-scale-in: tl-scale-in var(--tl-duration-base) var(--tl-ease-out) both;
   --animate-slide-in-left: tl-slide-in-left var(--tl-duration-slow) var(--tl-ease-out) both;
