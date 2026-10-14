@@ -11,6 +11,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { notFound } from './middleware/notFound.js';
 import { requestId } from './middleware/requestId.js';
 import { createAdminRouter } from './modules/admin/admin.router.js';
+import { createAnalyticsRouter } from './modules/analytics/analytics.router.js';
 import { createAuthRouter } from './modules/auth/auth.router.js';
 import { authConfigFromEnv, type AuthEnv } from './modules/auth/auth.types.js';
 import {
@@ -25,10 +26,7 @@ import { createNotificationsRouter } from './modules/notifications/notifications
 import { createProtocolsRouter } from './modules/protocols/protocols.router.js';
 import { createSamplesRouter } from './modules/samples/samples.router.js';
 import { createSubstancesRouter } from './modules/substances/substances.router.js';
-import {
-  createExpensesRouter,
-  createReagentsRouter,
-} from './modules/reagents/reagents.router.js';
+import { createExpensesRouter, createReagentsRouter } from './modules/reagents/reagents.router.js';
 import {
   createIngestLimiter,
   INGEST_LIMIT,
@@ -157,6 +155,7 @@ export function createApp({
   api.use('/registry', createRegistryRouter({ auth, storage }));
   api.use('/notifications', createNotificationsRouter({ auth }));
   api.use('/dashboard', createDashboardRouter({ auth }));
+  api.use('/analytics', createAnalyticsRouter({ auth }));
   api.use('/reagents', createReagentsRouter({ auth, storage }));
   api.use('/expenses', createExpensesRouter({ auth, storage }));
   api.use(

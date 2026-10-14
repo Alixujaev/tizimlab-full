@@ -33,6 +33,9 @@ describeDb('001_core baseline migratsiyasi', () => {
       [db.schema],
     );
     expect(rows.map((r) => r.table_name)).toEqual([
+      'analytics_decisions',
+      'analytics_samples',
+      'analytics_signatures',
       'audit_log',
       'companies',
       'files',
@@ -77,6 +80,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 11, name: 'stability', state: 'applied' }),
       expect.objectContaining({ version: 12, name: 'telegram', state: 'applied' }),
       expect.objectContaining({ version: 13, name: 'telegram_hardening', state: 'applied' }),
+      expect.objectContaining({ version: 14, name: 'analytics', state: 'applied' }),
     ]);
   });
 
