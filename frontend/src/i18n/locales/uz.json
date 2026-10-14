@@ -767,7 +767,9 @@
     "min": "Min:",
     "max": "Maks:",
     "save": "Saqlash",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "allSensors": "Barcha sensorlar",
+    "alertTypeLabel": "Xavf turi"
   },
   "stability": {
     "title": "Stabilizatsiya tekshiruvlari",

@@ -767,7 +767,9 @@
     "min": "Min:",
     "max": "Max:",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "allSensors": "All sensors",
+    "alertTypeLabel": "Alert type"
   },
   "stability": {
     "title": "Stability Studies",
