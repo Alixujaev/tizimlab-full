@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const file = path.join(root, 'docs/spec/SPEC_CHECKLIST.md');
-const PHASES = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12'];
+const PHASES = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13'];
 const STATES = ['[ ]', '[~]', '[x]'];
 const ROW = /^\| (R-[A-Z0-9]+-\d+) \| (.+?) \| (.+?) \| (P\d+) \| (\[.\]) \|$/;
 

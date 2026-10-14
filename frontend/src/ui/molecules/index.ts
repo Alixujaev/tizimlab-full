@@ -1,4 +1,5 @@
 export * from './Alert';
+export * from './Charts';
 export * from './ConfirmDialog';
 export * from './DataTable';
 export * from './DescriptionList';
@@ -8,6 +9,7 @@ export * from './EmptyState';
 export * from './ErrorState';
 export * from './FormField';
 export * from './Menu';
+export * from './MetricInfo';
 export * from './Modal';
 export * from './Pagination';
 export * from './SearchInput';

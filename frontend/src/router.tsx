@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { RouteErrorPage } from '@/components/routing/ErrorBoundary';
 import { ProtectedRoute } from '@/components/routing/ProtectedRoute';
 import { RoleRoute } from '@/components/routing/RoleRoute';
+import { ANALYTICS_ROLES, TEAM_ANALYTICS_ROLES } from '@/config/analytics';
 import { MANAGER_ROLES } from '@/config/navigation';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { CompaniesPage } from '@/pages/companies/CompaniesPage';
@@ -69,6 +70,35 @@ export const routes: RouteObject[] = [
             children: [
               { path: '/users', element: <UsersPage /> },
               { path: '/activity', element: <ActivityPage /> },
+            ],
+          },
+          // P13 analitika (D-165): alohida lazy chunk; admin/super_admin — ForbiddenPage
+          {
+            element: <RoleRoute roles={ANALYTICS_ROLES} />,
+            children: [
+              {
+                path: '/me',
+                lazy: async () => ({
+                  Component: (await import('@/pages/analytics/MyResultsPage')).MyResultsPage,
+                }),
+              },
+            ],
+          },
+          {
+            element: <RoleRoute roles={TEAM_ANALYTICS_ROLES} />,
+            children: [
+              {
+                path: '/team',
+                lazy: async () => ({
+                  Component: (await import('@/pages/analytics/TeamPage')).TeamPage,
+                }),
+              },
+              {
+                path: '/team/:id',
+                lazy: async () => ({
+                  Component: (await import('@/pages/analytics/TeamMemberPage')).TeamMemberPage,
+                }),
+              },
             ],
           },
           {

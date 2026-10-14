@@ -23,12 +23,15 @@ export const PERMISSION_CATALOG = [
   'users:manage',
   'permissions:manage',
   'activity:view',
+  'analytics:view',
+  'analytics:team',
+  'analytics:company',
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_CATALOG)[number];
 export type RolePermissionCatalog = Record<Role, readonly PermissionKey[]>;
 
-/** Rol asosidagi ruxsatlar katalogi (spec §1 matritsasi). */
+/** Rol asosidagi ruxsatlar katalogi (spec §1 matritsasi; analytics:* — D-159, admin'da yo'q). */
 export const ROLE_PERMISSIONS: RolePermissionCatalog = {
   super_admin: [],
   kontrolyor: [
@@ -39,6 +42,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'reagents:view',
     'temperature:view',
     'stability:view',
+    'analytics:view',
   ],
   chemist: [
     'samples:view',
@@ -49,6 +53,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'temperature:view',
     'stability:view',
     'stability:record',
+    'analytics:view',
   ],
   lab_head: [
     'samples:view',
@@ -68,6 +73,8 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'users:view',
     'users:manage',
     'activity:view',
+    'analytics:view',
+    'analytics:team',
   ],
   director: [
     'samples:view',
@@ -81,6 +88,9 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'stability:record',
     'users:view',
     'activity:view',
+    'analytics:view',
+    'analytics:team',
+    'analytics:company',
   ],
   admin: [
     'samples:view',

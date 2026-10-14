@@ -39,6 +39,20 @@
   --ease-out: var(--tl-ease-out);
   --ease-in: var(--tl-ease-in);
 
+  --color-chart-1: var(--tl-chart-1);
+  --color-chart-2: var(--tl-chart-2);
+  --color-chart-3: var(--tl-chart-3);
+  --color-chart-4: var(--tl-chart-4);
+  --color-chart-5: var(--tl-chart-5);
+  --color-chart-6: var(--tl-chart-6);
+  --color-chart-seq-0: var(--tl-chart-seq-0);
+  --color-chart-seq-1: var(--tl-chart-seq-1);
+  --color-chart-seq-2: var(--tl-chart-seq-2);
+  --color-chart-seq-3: var(--tl-chart-seq-3);
+  --color-chart-seq-4: var(--tl-chart-seq-4);
+  --color-chart-grid: var(--tl-chart-grid);
+  --color-chart-axis: var(--tl-chart-axis);
+
   --color-canvas: var(--tl-canvas);
   --color-surface: var(--tl-surface);
   --color-surface-muted: var(--tl-surface-muted);

@@ -16,7 +16,9 @@
     "auditLog": "Audit log",
     "collapse": "Collapse menu",
     "expand": "Expand menu",
-    "open": "Open menu"
+    "open": "Open menu",
+    "myResults": "My results",
+    "team": "Team"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -302,7 +304,8 @@
       "stability": "Stability",
       "users": "Users",
       "permissions": "Permissions",
-      "activity": "Activity log"
+      "activity": "Activity log",
+      "analytics": "Staff analytics"
     },
     "items": {
       "samples:create": "Create sample",
@@ -325,7 +328,10 @@
       "users:view": "View users",
       "users:manage": "Manage users",
       "permissions:manage": "Manage permissions",
-      "activity:view": "View activity log"
+      "activity:view": "View activity log",
+      "analytics:view": "View own results",
+      "analytics:team": "View team results",
+      "analytics:company": "View company analytics"
     }
   },
   "profile": {
@@ -973,11 +979,286 @@
     "toast": {
       "dismiss": "Dismiss notification",
       "region": "Notifications"
+    },
+    "chart": {
+      "showTable": "Table",
+      "showChart": "Chart",
+      "noData": "No data for this period"
+    },
+    "trend": {
+      "up": "Up {{value}}% vs previous period",
+      "down": "Down {{value}}% vs previous period",
+      "flat": "No change vs previous period",
+      "noCompare": "No comparison"
     }
   },
   "theme": {
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "analytics": {
+    "myResults": "My results",
+    "myResultsDescription": "Your indicators for the selected period",
+    "team": "Team performance",
+    "teamDescription": "Formula-based indicators of staff in your scope",
+    "companyAnalytics": "Company analytics",
+    "openMyResults": "All my results",
+    "openTeam": "Whole team",
+    "openCard": "Open staff card",
+    "backToTeam": "Team",
+    "exportCsv": "Export CSV",
+    "noData": "No data",
+    "snapshot": "Current state",
+    "previousValue": "Previous period: {{value}}",
+    "inactive": "Inactive",
+    "hours": "{{value}} h",
+    "percent": "{{value}}%",
+    "days": "{{value}} d",
+    "total": "Total",
+    "other": "Other",
+    "formulaFor": "How \"{{name}}\" is calculated",
+    "period": {
+      "label": "Period",
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days",
+      "custom": "Custom",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "invalid": "Choose both dates (from ≤ to, at most 366 days, not in the future)",
+      "range": "{{from}} – {{to}}",
+      "compare": "compared with {{from}} – {{to}}"
+    },
+    "sections": {
+      "kpis": "Key indicators",
+      "trend": "Trend",
+      "outcomes": "Results distribution",
+      "reasons": "Rejection reasons",
+      "samples": "Samples worked on",
+      "activity": "Recent activity",
+      "funnel": "Sample funnel",
+      "byType": "By sample type",
+      "late": "Overdue samples",
+      "workload": "Workload: open samples per chemist",
+      "teamTable": "Staff",
+      "temperature": "Temperature alerts",
+      "stability": "Stability",
+      "queue": "Pending approvals",
+      "heatmap": "Daily activity"
+    },
+    "trendSeries": {
+      "completed": "Completed",
+      "created": "Registered",
+      "reviewed": "Reviewed",
+      "finalized": "Finalized",
+      "approved": "Approved",
+      "none": "—"
+    },
+    "chartAria": {
+      "trend": "{{series}} by {{bucket}}, {{from}} – {{to}}",
+      "funnel": "Sample funnel for the period",
+      "reasons": "Rejection reasons distribution",
+      "byType": "Samples by type",
+      "workload": "Open samples per chemist",
+      "outcomes": "Results distribution",
+      "sparkline": "{{name}}: trend for the period",
+      "heatmap": "Daily activity calendar"
+    },
+    "bucket": {
+      "day": "day",
+      "week": "week"
+    },
+    "funnel": {
+      "created": "Registered",
+      "assigned": "Assigned",
+      "inAnalysis": "In analysis",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "finalized": "Finalized",
+      "ofCreated": "{{value}}% of registered"
+    },
+    "reasons": {
+      "unspecified": "Not specified",
+      "other": "Other"
+    },
+    "outcomes": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "inProgress": "In progress",
+      "finalized": "Finalized"
+    },
+    "result": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "open": "Open"
+    },
+    "cards": {
+      "unresolvedAlerts": "Unresolved alerts",
+      "alertsInPeriod": "Alerts in period",
+      "activeStudies": "Active studies",
+      "overdueCheckpoints": "Overdue checkpoints",
+      "dueSoonCheckpoints": "Due within 14 days"
+    },
+    "columns": {
+      "name": "Staff member",
+      "role": "Role",
+      "openSamples": "Open samples",
+      "substance": "Substance",
+      "type": "Type",
+      "lotSerial": "Lot / series",
+      "status": "Status",
+      "result": "Result",
+      "assignedAt": "Assigned",
+      "approvedAt": "Approved",
+      "duration": "Duration",
+      "rejectionReason": "Rejection reason",
+      "analysisEnd": "Planned end",
+      "daysLate": "Overdue by",
+      "assignee": "Chemist",
+      "date": "Date",
+      "value": "Value",
+      "stage": "Stage",
+      "reason": "Reason",
+      "count": "Count",
+      "share": "Share",
+      "late": "Overdue"
+    },
+    "filters": {
+      "role": "Role",
+      "allRoles": "All roles",
+      "result": "Result",
+      "allResults": "All results"
+    },
+    "activity": {
+      "empty": "No activity yet",
+      "sample_created": "Registered sample",
+      "assigned": "Assigned sample",
+      "reassigned": "Reassigned sample",
+      "stopped": "Stopped analysis",
+      "resumed": "Resumed analysis",
+      "submitted": "Submitted protocol",
+      "approved": "Approved protocol",
+      "rejected": "Rejected protocol",
+      "finalized": "Finalized protocol",
+      "passport_uploaded": "Uploaded passport",
+      "passport_reviewed": "Reviewed passport",
+      "deleted": "Deleted sample"
+    },
+    "metrics": {
+      "assigned": {
+        "label": "Assigned samples",
+        "formula": "Samples currently assigned to the chemist whose assignment time falls within the period."
+      },
+      "completed": {
+        "label": "Completed",
+        "formula": "Of those samples — ones whose first protocol approval (sample \"approved\") falls within the period."
+      },
+      "inProgress": {
+        "label": "In progress",
+        "formula": "Current state: assigned samples in \"in progress\", \"stopped\", \"submitted\" or \"rejected\" status."
+      },
+      "rejected": {
+        "label": "Rejected",
+        "formula": "Protocol rejections in the period whose preceding submission was made by this chemist."
+      },
+      "rejectionRate": {
+        "label": "Rejection rate",
+        "formula": "Rejected ÷ (approved + rejected) decisions on this chemist's submissions in the period × 100. No decisions — no data."
+      },
+      "firstPassRate": {
+        "label": "First-pass approval",
+        "formula": "Approvals in the period with no earlier rejection of the same protocol ÷ all approvals of this chemist's submissions × 100."
+      },
+      "resubmissions": {
+        "label": "Resubmissions",
+        "formula": "Submissions in the period of protocols that had been rejected before."
+      },
+      "avgCompletionHours": {
+        "label": "Avg. completion time",
+        "formula": "Average of (first approval − assignment) for completed samples, in hours; stopped time is excluded."
+      },
+      "overdueCheckpoints": {
+        "label": "Overdue checkpoints",
+        "formula": "Current state: stability checkpoints assigned to the chemist, not completed, with status \"overdue\" or due date in the past."
+      },
+      "created": {
+        "label": "Registered samples",
+        "formula": "Samples registered by this user within the period."
+      },
+      "passportsUploaded": {
+        "label": "Passports uploaded",
+        "formula": "\"Passport uploaded\" events by this user within the period."
+      },
+      "createdApproved": {
+        "label": "Approved (own samples)",
+        "formula": "Samples registered by this user whose first approval falls within the period."
+      },
+      "createdRejected": {
+        "label": "Rejected (own samples)",
+        "formula": "Samples registered by this user that received at least one rejection within the period."
+      },
+      "avgIntakeHours": {
+        "label": "Avg. registration → assignment",
+        "formula": "Average of (first assignment − registration) in hours, for assignments in the period; stopped time is excluded."
+      },
+      "reviewedApproved": {
+        "label": "Approved protocols",
+        "formula": "Protocol approvals signed by this user within the period."
+      },
+      "reviewedRejected": {
+        "label": "Rejected protocols",
+        "formula": "Protocol rejections signed by this user within the period."
+      },
+      "avgReviewHours": {
+        "label": "Avg. review time",
+        "formula": "Average of (decision − preceding submission) in hours for this user's decisions in the period."
+      },
+      "assignedByMe": {
+        "label": "Samples assigned",
+        "formula": "Assignment and reassignment events by this user within the period."
+      },
+      "queueApprovals": {
+        "label": "Awaiting approval",
+        "formula": "Current state: company protocols in \"submitted\" status."
+      },
+      "queueAssignments": {
+        "label": "Awaiting assignment",
+        "formula": "Current state: company samples in \"pending assignment\" status."
+      },
+      "finalized": {
+        "label": "Finalized protocols",
+        "formula": "Protocols finalized by this user within the period."
+      },
+      "avgFinalizeHours": {
+        "label": "Finalization delay",
+        "formula": "Average of (finalization − approval of the same protocol) in hours."
+      },
+      "samplesCreated": {
+        "label": "Registered samples",
+        "formula": "Company samples registered within the period (deleted ones excluded)."
+      },
+      "samplesApproved": {
+        "label": "Approved samples",
+        "formula": "Samples whose first approval falls within the period."
+      },
+      "protocolsFinalized": {
+        "label": "Finalized protocols",
+        "formula": "Finalization signatures within the period."
+      },
+      "avgTatHours": {
+        "label": "Avg. turnaround time (TAT)",
+        "formula": "Average of (first approval − registration) in hours for samples approved in the period; stopped time is excluded."
+      },
+      "openSamples": {
+        "label": "Open samples",
+        "formula": "Current state: samples not yet approved."
+      },
+      "lateSamples": {
+        "label": "Overdue samples",
+        "formula": "Current state: open samples whose planned analysis end date has passed."
+      }
+    }
   }
 }

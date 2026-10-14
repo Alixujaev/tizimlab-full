@@ -715,6 +715,27 @@
 | R-FLOW-10 | E2E: rad etish oqimi — rad → protokol va namuna `rejected` (sabab saqlangan, xabarnomalar) → kimyogar faylni yangilab qayta yuboradi → `submitted` → tasdiq. | DECISIONS.md D-14 | P12 | [ ] |
 | R-FLOW-11 | E2E: `reagent`/`standard_substance` namunasi lab_head pasporti bilan protokolsiz `approved` bo'ladi. | 03-samples §3 | P12 | [ ] |
 
+## ANALYTICS — Xodimlar analitikasi (P13)
+
+| ID | Talab | Manba | Faza | Holat |
+|---|---|---|---|---|
+| R-ANALYTICS-01 | Ruxsatlar `analytics:view`, `analytics:team`, `analytics:company` katalogda; kontrolyor/chemist — view, lab_head — view+team, director — hammasi; admin/super_admin — yo'q. | DECISIONS.md D-159 | P13 | [x] |
+| R-ANALYTICS-02 | Har rol × har analitika endpointi ruxsat matritsasi (ruxsat va taqiq); admin grant bilan ham 403. | DECISIONS.md D-159 | P13 | [x] |
+| R-ANALYTICS-03 | Ierarxiya: lab_head faqat chemist/kontrolyor va o'zini, director lab_head/chemist/kontrolyor va o'zini ko'radi; chemist/kontrolyor faqat o'zini; doiradan tashqari — 403. | DECISIONS.md D-160 | P13 | [x] |
+| R-ANALYTICS-04 | Tenant izolyatsiyasi: boshqa kompaniya xodimi 404, boshqa kompaniya ma'lumoti sonlarga tushmaydi; kesh kaliti tenant bo'yicha. | DECISIONS.md D-160, D-164 | P13 | [x] |
+| R-ANALYTICS-05 | Davr: 7d/30d/90d/custom, custom validatsiyasi (format, mavjud sana, from ≤ to, ≤ 366 kun, kelajak emas) — 400. | DECISIONS.md D-161 | P13 | [x] |
+| R-ANALYTICS-06 | Chemist ko'rsatkichlari: biriktirilgan, bajarilgan, jarayonda, rad etilgan, rad etish %, birinchi urinish %, qayta yuborishlar, o'rtacha bajarish muddati, muddati o'tgan checkpointlar, trend. | DECISIONS.md D-163 | P13 | [x] |
+| R-ANALYTICS-07 | Kontrolyor ko'rsatkichlari: kiritgan, pasport yuklagan, tasdiqlangan/rad etilgan, o'rtacha kiritish→biriktirish. | DECISIONS.md D-163 | P13 | [x] |
+| R-ANALYTICS-08 | Lab_head ko'rsatkichlari: tasdiqlagan/rad etgan, o'rtacha ko'rib chiqish, biriktirgan, navbat; director: yakunlagan, yakunlash kechikishi. | DECISIONS.md D-163 | P13 | [x] |
+| R-ANALYTICS-09 | Kompaniya overview: KPI (oldingi davr bilan), voronka, rad sabablari ("ko'rsatilmagan"), turlar, TAT, kechikayotganlar, yuklama, harorat va stabilizatsiya kartalari. | DECISIONS.md D-163 | P13 | [x] |
+| R-ANALYTICS-10 | Muddatlarda to'xtatilgan vaqt chiqarib tashlanadi (bajarish muddati, TAT). | DECISIONS.md D-162 | P13 | [x] |
+| R-ANALYTICS-11 | Bo'sh davr va nolga bo'lish: sonlar 0, foiz va o'rtachalar `null`. | DECISIONS.md D-163 | P13 | [x] |
+| R-ANALYTICS-12 | `GET /analytics/team` sahifalash va formulali ko'rsatkich bo'yicha saralash (null oxirida); `GET /analytics/users/:id/samples` sahifalash, status/natija filtri, namuna kodisiz. | DECISIONS.md D-163, D-84 | P13 | [x] |
+| R-ANALYTICS-13 | Migratsiya `014_analytics.sql`: indekslar, view'lar, `analytics_net_hours()`; eski migratsiyalar o'zgarmagan. | DECISIONS.md D-164 | P13 | [x] |
+| R-ANALYTICS-14 | Frontend: rolga qarab dashboard bloklari (director, lab_head, chemist/kontrolyor), `/me`, `/team`, `/team/:id`; ruxsatsiz rol — ForbiddenPage va so'rov yo'q. | DECISIONS.md D-165 | P13 | [x] |
+| R-ANALYTICS-15 | SVG grafiklar (Line, Bar, Donut, StackedBar, Heatmap, Sparkline): aria, klaviatura, jadval muqobili, bo'sh/yuklanish/xato holatlari, token ranglari. | DECISIONS.md D-165 | P13 | [x] |
+| R-ANALYTICS-16 | Davr tanlagich (URL'da) va almashtirishda yangi so'rov; oldingi davrga nisbatan ▲▼ foiz; (i) formula izohi; CSV eksport; uz/ru/en. | DECISIONS.md D-165 | P13 | [x] |
+
 ## Holat izohlari
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
@@ -793,7 +814,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 56 | 7 | 22 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 37 | 4 | 4 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 437 | 35 | 130 |
+| ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
+| **Jami** | 618 | 453 | 35 | 130 |
 
 ### Fazalar bo'yicha
 
@@ -811,4 +833,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 7 | 2 | 16 |
 | P11 | 26 | 21 | 0 | 5 |
 | P12 | 28 | 8 | 2 | 18 |
-| **Jami** | 602 | 437 | 35 | 130 |
+| P13 | 16 | 16 | 0 | 0 |
+| **Jami** | 618 | 453 | 35 | 130 |
