@@ -8,6 +8,11 @@ import { fakeSocketFactory, fakeSockets } from './fakeSocket';
 
 expect.extend(matchers);
 
+// jsdom'da Pointer Capture API yo'q — sonner toast'ni bosganda chaqiradi
+Element.prototype.setPointerCapture ??= () => undefined;
+Element.prototype.releasePointerCapture ??= () => undefined;
+Element.prototype.hasPointerCapture ??= () => false;
+
 // Sekin kompyuter / parallel jsdom yuklamasida async kutishlar uchun barqaror timeout (5000ms)
 configure({ asyncUtilTimeout: 5000 });
 

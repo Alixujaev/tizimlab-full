@@ -857,5 +857,47 @@
       "from": "From",
       "to": "To"
     }
+  },
+  "ui": {
+    "close": "Close",
+    "clear": "Clear",
+    "select": "Select",
+    "noOptions": "No options",
+    "loading": "Loading…",
+    "more": "More",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "errorTitle": "Something went wrong",
+    "errorText": "Could not load data. Please try again.",
+    "emptyTitle": "No data yet",
+    "resetFilters": "Reset filters",
+    "filters": "Filters",
+    "back": "Back",
+    "sortAsc": "Sort ascending",
+    "sortDesc": "Sort descending",
+    "sortedAsc": "Sorted ascending",
+    "sortedDesc": "Sorted descending",
+    "date": {
+      "placeholder": "DD.MM.YYYY",
+      "open": "Open calendar",
+      "dialog": "Choose a date",
+      "prevMonth": "Previous month",
+      "nextMonth": "Next month",
+      "today": "Today",
+      "invalid": "Invalid date (DD.MM.YYYY)"
+    },
+    "file": {
+      "drop": "Drop a file here or",
+      "browse": "browse",
+      "remove": "Remove file",
+      "badType": "This file type is not allowed",
+      "tooLarge": "File size must not exceed {{max}} MB",
+      "hint": "Allowed: {{types}} · max {{max}} MB"
+    },
+    "toast": {
+      "dismiss": "Dismiss notification",
+      "region": "Notifications"
+    }
   }
 }

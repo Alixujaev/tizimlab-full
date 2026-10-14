@@ -857,5 +857,47 @@
       "from": "Dan",
       "to": "Gacha"
     }
+  },
+  "ui": {
+    "close": "Yopish",
+    "clear": "Tozalash",
+    "select": "Tanlang",
+    "noOptions": "Variant yo'q",
+    "loading": "Yuklanmoqda…",
+    "more": "Ko'proq",
+    "confirm": "Tasdiqlash",
+    "cancel": "Bekor qilish",
+    "retry": "Qayta urinish",
+    "errorTitle": "Xatolik yuz berdi",
+    "errorText": "Ma'lumotni yuklab bo'lmadi. Qayta urinib ko'ring.",
+    "emptyTitle": "Hozircha ma'lumot yo'q",
+    "resetFilters": "Filtrlarni tozalash",
+    "filters": "Filtrlar",
+    "back": "Orqaga",
+    "sortAsc": "O'sish bo'yicha saralash",
+    "sortDesc": "Kamayish bo'yicha saralash",
+    "sortedAsc": "O'sish bo'yicha saralangan",
+    "sortedDesc": "Kamayish bo'yicha saralangan",
+    "date": {
+      "placeholder": "KK.OO.YYYY",
+      "open": "Kalendarni ochish",
+      "dialog": "Sanani tanlang",
+      "prevMonth": "Oldingi oy",
+      "nextMonth": "Keyingi oy",
+      "today": "Bugun",
+      "invalid": "Sana noto'g'ri (KK.OO.YYYY)"
+    },
+    "file": {
+      "drop": "Faylni shu yerga tashlang yoki",
+      "browse": "tanlang",
+      "remove": "Faylni olib tashlash",
+      "badType": "Bu turdagi fayl ruxsat etilmagan",
+      "tooLarge": "Fayl hajmi {{max}} MB dan oshmasligi kerak",
+      "hint": "Ruxsat etilgan: {{types}} · maksimal {{max}} MB"
+    },
+    "toast": {
+      "dismiss": "Xabarni yopish",
+      "region": "Xabarlar"
+    }
   }
 }

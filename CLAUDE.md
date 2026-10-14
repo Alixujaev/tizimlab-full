@@ -29,7 +29,10 @@ backend/src/
   db/migrator.ts, cli.ts # migratsiya runner; db/migrations/NNN_nom.sql
   utils/                 # errors.ts, http.ts (sendOk/sendPaginated), pagination.ts, logger.ts
 backend/tests/           # Vitest + supertest; helpers/db.ts (describeDb, createIsolatedDb)
-frontend/src/            # api/ hooks/ lib/ store/ i18n/ config/ components/{ui,layout,routing} pages/ types/ router.tsx
+frontend/src/            # api/ hooks/ lib/ store/ i18n/ config/ components/{layout,routing} pages/ types/ router.tsx
+  ui/{atoms,molecules,templates,lib}  # dizayn tizimi (D-153), barrel `@/ui`
+  styles/tokens.css      # dizayn tokenlari (rang, o'lcham, soya, z-index, harakat)
+docs/ui/                 # DESIGN_SYSTEM.md, AUDIT.md
 docs/spec/               # bo'limlar, DECISIONS, OPEN_QUESTIONS, SPEC_CHECKLIST
 scripts/                 # checklist-stats.mjs
 ```
@@ -77,6 +80,10 @@ npm run checklist:stats  # SPEC_CHECKLIST statistikasini qayta hisoblash
 - Barcha ko'rinadigan matn `t('key')`; kalit `uz.json`, `ru.json`, `en.json` UCHALASIGA qo'shiladi (parity testi bor).
   ESLint `i18next/no-literal-string` pages/components'da xato beradi.
 - Yangi sahifa: `router.tsx` dagi to'g'ri `RoleRoute` guruhiga; menyu elementi bo'lsa — `config/navigation.ts`.
+- **Yangi UI faqat `src/ui` komponentlaridan (`import { ... } from '@/ui'`); native default element
+  (`<select> <button> <input> <textarea> <table>`, `alert/confirm/prompt`) va tasodifiy stil (hex, `[Npx]`,
+  Tailwind standart palitrasi) taqiqlangan.** Rang/o'lcham faqat `styles/tokens.css` tokenlari orqali
+  (`bg-surface`, `text-fg-muted`, `bg-primary` ...). Qo'llanma: `docs/ui/DESIGN_SYSTEM.md`. ESLint majburlaydi (D-158).
 
 ### Umumiy
 

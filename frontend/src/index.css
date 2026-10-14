@@ -1,1 +1,256 @@
 @import 'tailwindcss';
+@import './styles/tokens.css';
+
+/* Tailwind tema → dizayn tokenlari. Klasslar: bg-surface, text-fg-muted, border-line, bg-primary, text-danger-fg ... */
+@theme inline {
+  --font-sans: var(--tl-font-sans);
+  --font-mono: var(--tl-font-mono);
+  --spacing: var(--tl-space-unit);
+
+  --text-xs: var(--tl-text-xs);
+  --text-xs--line-height: var(--tl-leading-xs);
+  --text-sm: var(--tl-text-sm);
+  --text-sm--line-height: var(--tl-leading-sm);
+  --text-base: var(--tl-text-base);
+  --text-base--line-height: var(--tl-leading-base);
+  --text-lg: var(--tl-text-lg);
+  --text-lg--line-height: var(--tl-leading-lg);
+  --text-xl: var(--tl-text-xl);
+  --text-xl--line-height: var(--tl-leading-xl);
+  --text-2xl: var(--tl-text-2xl);
+  --text-2xl--line-height: var(--tl-leading-2xl);
+  --text-3xl: var(--tl-text-3xl);
+  --text-3xl--line-height: var(--tl-leading-3xl);
+
+  --radius-sm: var(--tl-radius-sm);
+  --radius-md: var(--tl-radius-md);
+  --radius-lg: var(--tl-radius-lg);
+  --radius-xl: var(--tl-radius-xl);
+  --radius-2xl: var(--tl-radius-2xl);
+
+  --shadow-sm: var(--tl-shadow-sm);
+  --shadow-md: var(--tl-shadow-md);
+  --shadow-lg: var(--tl-shadow-lg);
+  --shadow-xl: var(--tl-shadow-xl);
+
+  --ease-standard: var(--tl-ease-standard);
+  --ease-out: var(--tl-ease-out);
+  --ease-in: var(--tl-ease-in);
+
+  --color-canvas: var(--tl-canvas);
+  --color-surface: var(--tl-surface);
+  --color-surface-muted: var(--tl-surface-muted);
+  --color-surface-sunken: var(--tl-surface-sunken);
+  --color-fg: var(--tl-fg);
+  --color-fg-muted: var(--tl-fg-muted);
+  --color-fg-subtle: var(--tl-fg-subtle);
+  --color-line: var(--tl-line);
+  --color-line-strong: var(--tl-line-strong);
+  --color-focus: var(--tl-focus);
+  --color-overlay: var(--tl-overlay);
+  --color-skeleton: var(--tl-skeleton);
+
+  --color-primary: var(--tl-primary);
+  --color-primary-hover: var(--tl-primary-hover);
+  --color-primary-fg: var(--tl-primary-fg);
+  --color-primary-subtle: var(--tl-primary-subtle);
+  --color-primary-subtle-fg: var(--tl-primary-subtle-fg);
+  --color-primary-line: var(--tl-primary-line);
+
+  --color-success: var(--tl-success);
+  --color-success-subtle: var(--tl-success-subtle);
+  --color-success-fg: var(--tl-success-fg);
+  --color-success-line: var(--tl-success-line);
+
+  --color-warning: var(--tl-warning);
+  --color-warning-subtle: var(--tl-warning-subtle);
+  --color-warning-fg: var(--tl-warning-fg);
+  --color-warning-line: var(--tl-warning-line);
+
+  --color-danger: var(--tl-danger);
+  --color-danger-hover: var(--tl-danger-hover);
+  --color-danger-subtle: var(--tl-danger-subtle);
+  --color-danger-fg: var(--tl-danger-fg);
+  --color-danger-line: var(--tl-danger-line);
+
+  --color-info: var(--tl-info);
+  --color-info-subtle: var(--tl-info-subtle);
+  --color-info-fg: var(--tl-info-fg);
+  --color-info-line: var(--tl-info-line);
+
+  --color-accent: var(--tl-accent);
+  --color-accent-subtle: var(--tl-accent-subtle);
+  --color-accent-fg: var(--tl-accent-fg);
+  --color-accent-line: var(--tl-accent-line);
+
+  --animate-fade-in: tl-fade-in var(--tl-duration-base) var(--tl-ease-out) both;
+  --animate-scale-in: tl-scale-in var(--tl-duration-base) var(--tl-ease-out) both;
+  --animate-slide-in-left: tl-slide-in-left var(--tl-duration-slow) var(--tl-ease-out) both;
+  --animate-slide-in-right: tl-slide-in-right var(--tl-duration-slow) var(--tl-ease-out) both;
+  --animate-slide-up: tl-slide-up var(--tl-duration-base) var(--tl-ease-out) both;
+  --animate-pulse-soft: tl-pulse-soft 1.4s ease-in-out infinite;
+}
+
+@keyframes tl-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes tl-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes tl-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes tl-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes tl-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+}
+@keyframes tl-pulse-soft {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Qatlamlar — faqat token orqali */
+@utility z-sticky {
+  z-index: var(--tl-z-sticky);
+}
+@utility z-drawer {
+  z-index: var(--tl-z-drawer);
+}
+@utility z-modal {
+  z-index: var(--tl-z-modal);
+}
+@utility z-popover {
+  z-index: var(--tl-z-popover);
+}
+@utility z-toast {
+  z-index: var(--tl-z-toast);
+}
+@utility z-tooltip {
+  z-index: var(--tl-z-tooltip);
+}
+
+/* Harakat davomiyligi + easing (transition-* bilan birga) */
+@utility motion-fast {
+  transition-duration: var(--tl-duration-fast);
+  transition-timing-function: var(--tl-ease-standard);
+}
+@utility motion-base {
+  transition-duration: var(--tl-duration-base);
+  transition-timing-function: var(--tl-ease-standard);
+}
+@utility motion-slow {
+  transition-duration: var(--tl-duration-slow);
+  transition-timing-function: var(--tl-ease-standard);
+}
+
+/* Klaviatura fokusi doim ko'rinadi (sichqonchada emas) */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--tl-focus);
+    outline-offset: 2px;
+  }
+}
+
+/* Token o'lchamlari (layout) */
+@utility w-sidebar {
+  width: var(--tl-sidebar-width);
+}
+@utility w-sidebar-collapsed {
+  width: var(--tl-sidebar-collapsed-width);
+}
+@utility h-topbar {
+  height: var(--tl-topbar-height);
+}
+@utility max-w-page {
+  max-width: var(--tl-page-max-width);
+}
+@utility max-h-table {
+  max-height: var(--tl-table-max-height);
+}
+@utility max-h-popover {
+  max-height: var(--tl-popover-max-height);
+}
+@utility min-w-popover {
+  min-width: var(--tl-popover-min-width);
+}
+@utility max-w-tooltip {
+  max-width: var(--tl-tooltip-max-width);
+}
+@utility max-w-modal-sm {
+  max-width: var(--tl-modal-sm);
+}
+@utility max-w-modal-md {
+  max-width: var(--tl-modal-md);
+}
+@utility max-w-modal-lg {
+  max-width: var(--tl-modal-lg);
+}
+@utility max-w-modal-xl {
+  max-width: var(--tl-modal-xl);
+}
+@utility w-drawer {
+  width: min(var(--tl-drawer-width), 100vw);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--tl-canvas);
+    color: var(--tl-fg);
+    font-family: var(--tl-font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background-color: var(--tl-primary-subtle);
+    color: var(--tl-primary-subtle-fg);
+  }
+  /* Maxsus scrollbar (tokenlar bilan) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tl-line-strong) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--tl-line-strong);
+    border-radius: var(--tl-radius-lg);
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  input[type='search']::-webkit-search-cancel-button,
+  input[type='search']::-webkit-search-decoration {
+    appearance: none;
+  }
+}
+
+/* Harakatni kamaytirish so'ralsa — animatsiya va o'tishlar o'chadi */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

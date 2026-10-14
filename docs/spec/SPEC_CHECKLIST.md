@@ -660,7 +660,7 @@
 | R-FE-05 | `hooks/useNotificationSocket.ts` — Socket.IO ulanishi va real vaqtli yangilash. | 16-architecture §16 | P6 | [x] |
 | R-FE-06 | `lib/socket.ts` — Socket.IO client ulanish/uzish (logout'da uziladi). | 16-architecture §16 | P6 | [x] |
 | R-FE-07 | `types/index.ts` — TypeScript interfeyslari. | 16-architecture §16 | P1 | [~] |
-| R-FE-08 | UI komponentlari: Table, Modal, Spinner, Pagination, NotificationBell. | 16-architecture §16 | P1 | [~] |
+| R-FE-08 | UI komponentlari `src/ui` dizayn tizimida (D-153): DataTable, Modal, Spinner, Pagination va boshqalar; NotificationBell — layout. | 16-architecture §16 | P1 | [~] |
 | R-FE-09 | Layout: `AppLayout`, `Sidebar` (rol bo'yicha; super_admin uchun alohida menyu). | 16-architecture §16 | P1 | [x] |
 | R-FE-10 | Sidebar elementi: Dashboard (Q-64). | 16-architecture §16 | P1 | [x] |
 | R-FE-11 | Sidebar elementi: Namunalar. | 16-architecture §16 | P4 | [x] |
