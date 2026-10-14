@@ -118,7 +118,7 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
 
         // Ruxsatsiz rol 403 so'rov yubormasligi uchun tugma ko'rinmaydi
         expect(
-          screen.queryByRole('button', { name: /\+ Yangi tekshiruv boshlash/i }),
+          screen.queryByRole('button', { name: /Yangi tekshiruv boshlash/i }),
         ).not.toBeInTheDocument();
       }
     });
@@ -135,7 +135,7 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
         });
 
         expect(
-          screen.getByRole('button', { name: /\+ Yangi tekshiruv boshlash/i }),
+          screen.getByRole('button', { name: /Yangi tekshiruv boshlash/i }),
         ).toBeInTheDocument();
       }
     });
@@ -149,7 +149,9 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
         expect(screen.getByText('T3')).toBeInTheDocument();
       });
 
-      expect(screen.queryByRole('button', { name: /\+ Checkpoint qo'shish/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /Checkpoint qo'shish/i }),
+      ).not.toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /Natija kiritish/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('button', { name: /Yakunlash/i })).not.toBeInTheDocument();
     });
@@ -169,7 +171,9 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
       expect(recordButtons.length).toBe(1);
 
       // Checkpoint qo'shish tugmasi chemistda yo'q
-      expect(screen.queryByRole('button', { name: /\+ Checkpoint qo'shish/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /Checkpoint qo'shish/i }),
+      ).not.toBeInTheDocument();
     });
 
     it('lab_head va admin: detal sahifasida barcha boshqaruv tugmalariga ega', async () => {
@@ -181,7 +185,7 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
         expect(screen.getByText('T3')).toBeInTheDocument();
       });
 
-      expect(screen.getByRole('button', { name: /\+ Checkpoint qo'shish/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Checkpoint qo'shish/i })).toBeInTheDocument();
       const recordButtons = screen.getAllByRole('button', { name: /Natija kiritish/i });
       expect(recordButtons.length).toBeGreaterThan(0);
     });

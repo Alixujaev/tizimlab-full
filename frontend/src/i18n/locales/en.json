@@ -828,7 +828,8 @@
     "resultPlaceholder": "Result...",
     "noParams": "No parameters specified",
     "notRecorded": "Not recorded",
-    "noSerial": "No serial"
+    "noSerial": "No serial",
+    "paramRequired": "At least one parameter is required"
   },
   "audit": {
     "description": "History of all security and data modifications in the system",

@@ -828,7 +828,8 @@
     "resultPlaceholder": "Natija...",
     "noParams": "Parametrlar kiritilmagan",
     "notRecorded": "Kiritilmagan",
-    "noSerial": "Seriyasiz"
+    "noSerial": "Seriyasiz",
+    "paramRequired": "Kamida bitta parametr talab qilinadi"
   },
   "audit": {
     "description": "Tizimdagi barcha xavfsizlik va ma'lumotlar o'zgarishlari tarixi",
