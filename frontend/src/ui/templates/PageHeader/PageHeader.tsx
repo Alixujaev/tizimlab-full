@@ -27,7 +27,7 @@ export function PageHeader({
 }: PageHeaderProps) {
   const { t } = useTranslation();
   return (
-    <header className={cx('flex flex-col gap-3', className)}>
+    <div className={cx('flex flex-col gap-3', className)}>
       {back && (
         <Link
           to={back.to}
@@ -49,6 +49,6 @@ export function PageHeader({
           <div className="flex flex-wrap items-center gap-2 sm:justify-end">{actions}</div>
         )}
       </div>
-    </header>
+    </div>
   );
 }

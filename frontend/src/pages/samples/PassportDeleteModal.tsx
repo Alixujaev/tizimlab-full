@@ -1,8 +1,6 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { Modal } from '@/components/ui/Modal';
 import { useDeletePassportMutation } from '@/hooks/useSamples';
+import { ConfirmDialog, notify } from '@/ui';
 
 interface PassportDeleteModalProps {
   open: boolean;
@@ -13,20 +11,20 @@ interface PassportDeleteModalProps {
   approved: boolean;
 }
 
-export const PassportDeleteModal: React.FC<PassportDeleteModalProps> = ({
+export function PassportDeleteModal({
   open,
   onClose,
   sampleId,
   fileName,
   approved,
-}) => {
+}: PassportDeleteModalProps) {
   const { t } = useTranslation();
   const mutation = useDeletePassportMutation();
 
-  const confirm = async () => {
+  const handleConfirm = async () => {
     try {
       await mutation.mutateAsync(sampleId);
-      toast.success(t('samples.passport.deleted'));
+      notify.success(t('samples.passport.deleted'));
       onClose();
     } catch {
       // Xato global toast orqali ko'rsatiladi
@@ -34,36 +32,19 @@ export const PassportDeleteModal: React.FC<PassportDeleteModalProps> = ({
   };
 
   return (
-    <Modal
+    <ConfirmDialog
       open={open}
-      onClose={onClose}
       title={t('samples.passport.deleteTitle')}
-      footer={
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3 py-1.5 text-sm rounded border border-slate-300"
-          >
-            {t('common.cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={confirm}
-            disabled={mutation.isPending}
-            className="px-3 py-1.5 text-sm font-medium rounded bg-rose-600 text-white hover:bg-rose-700 disabled:opacity-50"
-          >
-            {t('samples.passport.delete')}
-          </button>
-        </div>
-      }
+      description={t('samples.passport.deleteConfirm', { name: fileName })}
+      confirmLabel={t('samples.passport.delete')}
+      cancelLabel={t('common.cancel')}
+      loading={mutation.isPending}
+      onConfirm={() => void handleConfirm()}
+      onCancel={onClose}
     >
-      <p className="text-sm text-slate-700">
-        {t('samples.passport.deleteConfirm', { name: fileName })}
-      </p>
       {approved && (
-        <p className="mt-2 text-xs text-amber-700">{t('samples.passport.deleteApprovedWarning')}</p>
+        <p className="text-sm text-warning-fg">{t('samples.passport.deleteApprovedWarning')}</p>
       )}
-    </Modal>
+    </ConfirmDialog>
   );
-};
+}

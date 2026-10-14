@@ -37,14 +37,13 @@ export interface DatePickerProps {
   className?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
+  /** Yozilayotgan xom matn (sahifa o'z validatsiyasini qilsa — masalan, reyestr filtri). */
+  onInputChange?: (text: string) => void;
 }
 
-/** Yozilgan matnni ISO ga o'giradi: DD.MM.YYYY, DD/MM/YYYY, DDMMYYYY yoki YYYY-MM-DD. */
+/** Yozilgan matnni ISO ga o'giradi — faqat D-110 ko'rinishi: DD.MM.YYYY (ajratuvchi . / - yoki yo'q). */
 function parseTyped(text: string): string | null {
-  const trimmed = text.trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed))
-    return fromIso(trimmed) ? parseDisplayDate(formatDate(trimmed)) : null;
-  const digits = /^(\d{2})\D?(\d{2})\D?(\d{4})$/.exec(trimmed);
+  const digits = /^(\d{2})[./-]?(\d{2})[./-]?(\d{4})$/.exec(text.trim());
   return digits ? parseDisplayDate(`${digits[1]}.${digits[2]}.${digits[3]}`) : null;
 }
 
@@ -68,6 +67,7 @@ export function DatePicker({
   className,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
+  onInputChange,
 }: DatePickerProps) {
   const { t, i18n } = useTranslation();
   const field = useFieldProps({
@@ -80,26 +80,41 @@ export function DatePicker({
   const autoId = useId();
   const inputId = field.id ?? `${autoId}-input`;
   const [text, setText] = useState(value ? formatDate(value) : '');
+  const [typedInvalid, setTypedInvalid] = useState(false);
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  // O'zimiz yuborgan qiymat qaytib kelganda matn qayta yozilmaydi (noto'g'ri matn ko'rinib tursin)
+  const emitted = useRef<string | null>(null);
+
+  const emit = (next: string) => {
+    emitted.current = next;
+    if (next !== (value ?? '')) onChange(next);
+  };
 
   useEffect(() => {
-    setText(value ? formatDate(value) : '');
+    const current = value ?? '';
+    if (emitted.current === current) return;
+    emitted.current = null;
+    setText(current ? formatDate(current) : '');
+    setTypedInvalid(false);
   }, [value]);
 
   const commit = () => {
     if (!text.trim()) {
-      if (value) onChange('');
+      setTypedInvalid(false);
+      emit('');
       return;
     }
     const iso = parseTyped(text);
     if (iso && inRange(iso, min, max)) {
-      if (iso !== value) onChange(iso);
+      setTypedInvalid(false);
       setText(formatDate(iso));
+      emit(iso);
     } else {
-      // Noto'g'ri sana qabul qilinmaydi — oxirgi to'g'ri qiymat tiklanadi
-      setText(value ? formatDate(value) : '');
+      // Noto'g'ri sana: matn joyida qoladi (xato ko'rinadi), qiymat bo'shatiladi
+      setTypedInvalid(true);
+      emit('');
     }
   };
 
@@ -114,12 +129,20 @@ export function DatePicker({
         autoComplete="off"
         aria-label={ariaLabel}
         aria-describedby={field['aria-describedby']}
-        aria-invalid={field['aria-invalid']}
+        aria-invalid={field.invalid || typedInvalid || undefined}
         required={field.required}
         disabled={isDisabled}
         placeholder={placeholder ?? t('ui.date.placeholder')}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          const next = e.target.value;
+          setText(next);
+          setTypedInvalid(false);
+          onInputChange?.(next);
+          // To'liq va to'g'ri sana yozilishi bilan qiymat yangilanadi (blur kutilmaydi)
+          const iso = parseTyped(next);
+          if (iso && inRange(iso, min, max)) emit(iso);
+        }}
         onBlur={commit}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -130,7 +153,11 @@ export function DatePicker({
             setOpen(true);
           }
         }}
-        className={cx(fieldClasses(field.invalid), fieldSizes[size], 'pr-10 tabular-nums')}
+        className={cx(
+          fieldClasses(field.invalid || typedInvalid),
+          fieldSizes[size],
+          'pr-10 tabular-nums',
+        )}
       />
       <button
         ref={toggleRef}
@@ -154,8 +181,9 @@ export function DatePicker({
           max={max}
           locale={i18n.language}
           onSelect={(iso) => {
-            onChange(iso);
             setText(formatDate(iso));
+            setTypedInvalid(false);
+            emit(iso);
             setOpen(false);
           }}
           onClose={() => setOpen(false)}

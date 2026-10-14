@@ -1,11 +1,10 @@
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toApiError } from '@/api/client';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import { useCreateCompanyMutation, useUpdateCompanyMutation } from '@/hooks/useCompanies';
 import { EMAIL_REGEX, isPasswordValid, SLUG_REGEX } from '@/lib/validation';
 import type { CompanyDto } from '@/types';
+import { Alert, Button, FormField, Input, Modal } from '@/ui';
 
 interface CompanyFormModalProps {
   open: boolean;
@@ -24,8 +23,8 @@ interface FormErrors {
 
 export function CompanyFormModal({ open, onClose, company }: CompanyFormModalProps) {
   const { t } = useTranslation();
+  const formId = useId();
   const isEdit = Boolean(company);
-
   const createMutation = useCreateCompanyMutation();
   const updateMutation = useUpdateCompanyMutation();
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -38,77 +37,53 @@ export function CompanyFormModal({ open, onClose, company }: CompanyFormModalPro
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    if (open) {
-      if (company) {
-        setName(company.name);
-        setSlug(company.slug);
-      } else {
-        setName('');
-        setSlug('');
-        setAdminEmail('');
-        setAdminFullName('');
-        setAdminPassword('');
-      }
-      setErrors({});
-    }
+    if (!open) return;
+    setName(company?.name ?? '');
+    setSlug(company?.slug ?? '');
+    setAdminEmail('');
+    setAdminFullName('');
+    setAdminPassword('');
+    setErrors({});
   }, [open, company]);
+
+  const clear = (key: keyof FormErrors) =>
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const newErrors: FormErrors = {};
-
+    const next: FormErrors = {};
     const trimmedName = name.trim();
     const trimmedSlug = slug.trim().toLowerCase();
-
-    if (!trimmedName) {
-      newErrors.name = t('companies.errors.nameRequired');
+    if (!trimmedName) next.name = t('companies.errors.nameRequired');
+    if (!trimmedSlug) next.slug = t('companies.errors.slugRequired');
+    else if (!SLUG_REGEX.test(trimmedSlug) || trimmedSlug.length < 3 || trimmedSlug.length > 50) {
+      next.slug = t('companies.errors.slugInvalid');
     }
-
-    if (!trimmedSlug) {
-      newErrors.slug = t('companies.errors.slugRequired');
-    } else if (!SLUG_REGEX.test(trimmedSlug) || trimmedSlug.length < 3 || trimmedSlug.length > 50) {
-      newErrors.slug = t('companies.errors.slugInvalid');
-    }
-
     if (!isEdit) {
-      const trimmedEmail = adminEmail.trim().toLowerCase();
-      const trimmedFullName = adminFullName.trim();
-
-      if (!trimmedEmail) {
-        newErrors.adminEmail = t('companies.errors.adminEmailRequired');
-      } else if (!EMAIL_REGEX.test(trimmedEmail)) {
-        newErrors.adminEmail = t('auth.validation.emailInvalid');
-      }
-
-      if (!trimmedFullName) {
-        newErrors.adminFullName = t('companies.errors.adminFullNameRequired');
-      }
-
-      if (!adminPassword) {
-        newErrors.adminPassword = t('companies.errors.adminPasswordRequired');
-      } else if (!isPasswordValid(adminPassword)) {
-        newErrors.adminPassword = t('users.errors.passwordPolicy');
-      }
+      const email = adminEmail.trim().toLowerCase();
+      if (!email) next.adminEmail = t('companies.errors.adminEmailRequired');
+      else if (!EMAIL_REGEX.test(email)) next.adminEmail = t('auth.validation.emailInvalid');
+      if (!adminFullName.trim()) next.adminFullName = t('companies.errors.adminFullNameRequired');
+      if (!adminPassword) next.adminPassword = t('companies.errors.adminPasswordRequired');
+      else if (!isPasswordValid(adminPassword))
+        next.adminPassword = t('users.errors.passwordPolicy');
     }
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+    const onError = (err: unknown) => {
+      const apiError = toApiError(err);
+      const msg = apiError?.message?.toLowerCase() ?? '';
+      if (msg.includes('slug')) setErrors({ slug: t('companies.errors.slugExists') });
+      else if (!isEdit && msg.includes('email'))
+        setErrors({ adminEmail: t('companies.errors.emailExists') });
+      else setErrors({ general: apiError?.message ?? t('errors.generic') });
+    };
 
     if (isEdit && company) {
       updateMutation.mutate(
         { id: company.id, input: { name: trimmedName, slug: trimmedSlug } },
-        {
-          onSuccess: () => onClose(),
-          onError: (err) => {
-            const apiError = toApiError(err);
-            const msg = apiError?.message?.toLowerCase() ?? '';
-            if (msg.includes('slug')) {
-              setErrors({ slug: t('companies.errors.slugExists') });
-            } else {
-              setErrors({ general: apiError?.message ?? t('errors.generic') });
-            }
-          },
-        },
+        { onSuccess: () => onClose(), onError },
       );
     } else {
       createMutation.mutate(
@@ -121,177 +96,112 @@ export function CompanyFormModal({ open, onClose, company }: CompanyFormModalPro
             password: adminPassword,
           },
         },
-        {
-          onSuccess: () => onClose(),
-          onError: (err) => {
-            const apiError = toApiError(err);
-            const msg = apiError?.message?.toLowerCase() ?? '';
-            if (msg.includes('slug')) {
-              setErrors({ slug: t('companies.errors.slugExists') });
-            } else if (msg.includes('email')) {
-              setErrors({ adminEmail: t('companies.errors.emailExists') });
-            } else {
-              setErrors({ general: apiError?.message ?? t('errors.generic') });
-            }
-          },
-        },
+        { onSuccess: () => onClose(), onError },
       );
     }
   };
-
-  const title = isEdit ? t('companies.editCompany') : t('companies.createCompany');
 
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={title}
+      title={isEdit ? t('companies.editCompany') : t('companies.createCompany')}
       footer={
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={isPending}>
             {t('companies.cancel')}
-          </button>
-          <button
-            type="submit"
-            form="company-form"
-            disabled={isPending}
-            className="flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            {isPending && <Spinner size="sm" />}
+          </Button>
+          <Button type="submit" form={formId} loading={isPending}>
             {isPending ? t('companies.form.saving') : t('companies.form.save')}
-          </button>
-        </div>
+          </Button>
+        </>
       }
     >
-      <form id="company-form" onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {errors.general && (
-          <div role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-            {errors.general}
-          </div>
-        )}
-
-        <div>
-          <label htmlFor="company-name" className="block text-sm font-medium text-slate-700">
-            {t('companies.form.companyName')}
-          </label>
-          <input
-            id="company-name"
-            type="text"
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {errors.general && <Alert tone="danger">{errors.general}</Alert>}
+        <FormField
+          id="company-name"
+          label={t('companies.form.companyName')}
+          error={errors.name}
+          disabled={isPending}
+        >
+          <Input
             value={name}
             onChange={(e) => {
               setName(e.target.value);
-              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+              clear('name');
             }}
-            disabled={isPending}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="company-slug" className="block text-sm font-medium text-slate-700">
-            {t('companies.form.slug')}
-          </label>
-          <input
-            id="company-slug"
-            type="text"
+        </FormField>
+        <FormField
+          id="company-slug"
+          label={t('companies.form.slug')}
+          hint={t('companies.form.slugHint')}
+          error={errors.slug}
+          disabled={isPending}
+        >
+          <Input
+            className="font-mono"
             value={slug}
             onChange={(e) => {
               setSlug(e.target.value);
-              if (errors.slug) setErrors((prev) => ({ ...prev, slug: undefined }));
+              clear('slug');
             }}
-            disabled={isPending}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <p className="mt-1 text-xs text-slate-500">{t('companies.form.slugHint')}</p>
-          {errors.slug && <p className="mt-1 text-xs text-red-600">{errors.slug}</p>}
-        </div>
+        </FormField>
 
         {!isEdit && (
-          <div className="border-t border-slate-200 pt-4">
-            <h3 className="mb-3 text-sm font-semibold text-slate-900">
+          <fieldset className="flex flex-col gap-4 border-t border-line pt-4">
+            <legend className="mb-1 text-sm font-semibold text-fg">
               {t('companies.form.adminSection')}
-            </h3>
-
-            <div className="space-y-3">
-              <div>
-                <label
-                  htmlFor="admin-full-name"
-                  className="block text-sm font-medium text-slate-700"
-                >
-                  {t('companies.form.adminFullName')}
-                </label>
-                <input
-                  id="admin-full-name"
-                  type="text"
-                  value={adminFullName}
-                  onChange={(e) => {
-                    setAdminFullName(e.target.value);
-                    if (errors.adminFullName) {
-                      setErrors((prev) => ({ ...prev, adminFullName: undefined }));
-                    }
-                  }}
-                  disabled={isPending}
-                  className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-                {errors.adminFullName && (
-                  <p className="mt-1 text-xs text-red-600">{errors.adminFullName}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="admin-email" className="block text-sm font-medium text-slate-700">
-                  {t('companies.form.adminEmail')}
-                </label>
-                <input
-                  id="admin-email"
-                  type="email"
-                  value={adminEmail}
-                  onChange={(e) => {
-                    setAdminEmail(e.target.value);
-                    if (errors.adminEmail) {
-                      setErrors((prev) => ({ ...prev, adminEmail: undefined }));
-                    }
-                  }}
-                  disabled={isPending}
-                  className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-                {errors.adminEmail && (
-                  <p className="mt-1 text-xs text-red-600">{errors.adminEmail}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="admin-password"
-                  className="block text-sm font-medium text-slate-700"
-                >
-                  {t('companies.form.adminPassword')}
-                </label>
-                <input
-                  id="admin-password"
-                  type="password"
-                  value={adminPassword}
-                  onChange={(e) => {
-                    setAdminPassword(e.target.value);
-                    if (errors.adminPassword) {
-                      setErrors((prev) => ({ ...prev, adminPassword: undefined }));
-                    }
-                  }}
-                  disabled={isPending}
-                  className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                />
-                {errors.adminPassword && (
-                  <p className="mt-1 text-xs text-red-600">{errors.adminPassword}</p>
-                )}
-              </div>
-            </div>
-          </div>
+            </legend>
+            <FormField
+              id="admin-full-name"
+              label={t('companies.form.adminFullName')}
+              error={errors.adminFullName}
+              disabled={isPending}
+            >
+              <Input
+                value={adminFullName}
+                onChange={(e) => {
+                  setAdminFullName(e.target.value);
+                  clear('adminFullName');
+                }}
+              />
+            </FormField>
+            <FormField
+              id="admin-email"
+              label={t('companies.form.adminEmail')}
+              error={errors.adminEmail}
+              disabled={isPending}
+            >
+              <Input
+                type="email"
+                autoComplete="off"
+                value={adminEmail}
+                onChange={(e) => {
+                  setAdminEmail(e.target.value);
+                  clear('adminEmail');
+                }}
+              />
+            </FormField>
+            <FormField
+              id="admin-password"
+              label={t('companies.form.adminPassword')}
+              error={errors.adminPassword}
+              disabled={isPending}
+            >
+              <Input
+                type="password"
+                autoComplete="new-password"
+                value={adminPassword}
+                onChange={(e) => {
+                  setAdminPassword(e.target.value);
+                  clear('adminPassword');
+                }}
+              />
+            </FormField>
+          </fieldset>
         )}
       </form>
     </Modal>

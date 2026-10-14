@@ -1,14 +1,21 @@
-import { useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
 import { useCreateManualReadingMutation } from '@/hooks/useTemperature';
+import { errorMessage } from '@/lib/queryClient';
 import type { SensorConfigDto } from '@/types';
+import { Alert, Button, FormField, Input, Modal, Select } from '@/ui';
 
 interface ManualReadingModalProps {
   open: boolean;
   onClose: () => void;
   sensors: SensorConfigDto[];
   defaultSensorId?: string;
+}
+
+interface FieldErrors {
+  sensor?: string;
+  temperature?: string;
+  humidity?: string;
 }
 
 export function ManualReadingModal({
@@ -18,52 +25,44 @@ export function ManualReadingModal({
   defaultSensorId,
 }: ManualReadingModalProps) {
   const { t } = useTranslation();
-  const [sensorConfigId, setSensorConfigId] = useState<string>(
-    defaultSensorId || sensors[0]?.id || '',
-  );
-  const [temperature, setTemperature] = useState<string>('');
-  const [humidity, setHumidity] = useState<string>('');
+  const formId = useId();
+  const mutation = useCreateManualReadingMutation();
+  const activeSensors = sensors.filter((s) => s.isActive);
+  const [sensorConfigId, setSensorConfigId] = useState(defaultSensorId || sensors[0]?.id || '');
+  const [temperature, setTemperature] = useState('');
+  const [humidity, setHumidity] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
 
-  const mutation = useCreateManualReadingMutation();
+  const currentId = sensorConfigId || activeSensors[0]?.id || '';
+  const selectedSensor = sensors.find((s) => s.id === currentId);
 
-  const activeSensors = sensors.filter((s) => s.isActive);
-  const selectedSensor = sensors.find((s) => s.id === (sensorConfigId || sensors[0]?.id));
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-
+    const next: FieldErrors = {};
     const tempNum = parseFloat(temperature);
-    if (isNaN(tempNum) || tempNum < -100 || tempNum > 100) {
-      setError(t('temperature.enterTemp'));
-      return;
-    }
-
+    if (Number.isNaN(tempNum) || tempNum < -100 || tempNum > 100)
+      next.temperature = t('temperature.enterTemp');
     const humNum = humidity.trim() !== '' ? parseFloat(humidity) : undefined;
-    if (humNum !== undefined && (isNaN(humNum) || humNum < 0 || humNum > 100)) {
-      setError(t('temperature.enterHumidity'));
-      return;
+    if (humNum !== undefined && (Number.isNaN(humNum) || humNum < 0 || humNum > 100)) {
+      next.humidity = t('temperature.enterHumidity');
     }
-
-    const targetSensorId = sensorConfigId || activeSensors[0]?.id;
-    if (!targetSensorId) {
-      setError(t('temperature.selectSensor'));
-      return;
-    }
+    if (!currentId) next.sensor = t('temperature.selectSensor');
+    setFieldErrors(next);
+    if (next.temperature || next.humidity || next.sensor) return;
 
     try {
       await mutation.mutateAsync({
-        sensorConfigId: targetSensorId,
+        sensorConfigId: currentId,
         temperature: tempNum,
         humidity: humNum,
       });
       setTemperature('');
       setHumidity('');
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
@@ -73,92 +72,61 @@ export function ManualReadingModal({
       onClose={onClose}
       title={t('temperature.manualReading')}
       footer={
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
+        <>
+          <Button variant="secondary" onClick={onClose}>
             {t('temperature.cancel')}
-          </button>
-          <button
-            type="submit"
-            form="manual-reading-form"
-            disabled={mutation.isPending}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            {mutation.isPending ? t('common.saving') : t('temperature.save')}
-          </button>
-        </div>
+          </Button>
+          <Button type="submit" form={formId} loading={mutation.isPending}>
+            {t('temperature.save')}
+          </Button>
+        </>
       }
     >
-      <form id="manual-reading-form" onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700 border border-rose-200">
-            {error}
-          </div>
-        )}
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            {t('temperature.selectSensor')}
-          </label>
-          <select
-            value={sensorConfigId || activeSensors[0]?.id || ''}
-            onChange={(e) => setSensorConfigId(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            required
-          >
-            {activeSensors.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.locationName} ({s.sensorId})
-              </option>
-            ))}
-          </select>
-        </div>
-
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
+        <FormField label={t('temperature.selectSensor')} required error={fieldErrors.sensor}>
+          <Select
+            options={activeSensors.map((s) => ({
+              value: s.id,
+              label: `${s.locationName} (${s.sensorId})`,
+            }))}
+            value={currentId}
+            onChange={setSensorConfigId}
+          />
+        </FormField>
         {selectedSensor && (
-          <div className="rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+          <div className="rounded-lg border border-line bg-surface-muted px-4 py-3 text-xs text-fg-muted">
             <p>
-              <strong className="mr-1">{t('temperature.tempRange')}:</strong>
-              {selectedSensor.tempMin} &ndash; {selectedSensor.tempMax}
+              <strong className="mr-1 text-fg">{t('temperature.tempRange')}:</strong>
+              {selectedSensor.tempMin} – {selectedSensor.tempMax}
             </p>
             {selectedSensor.humidityMin != null && selectedSensor.humidityMax != null && (
               <p className="mt-1">
-                <strong className="mr-1">{t('temperature.humidityRange')}:</strong>
-                {selectedSensor.humidityMin} &ndash; {selectedSensor.humidityMax}
+                <strong className="mr-1 text-fg">{t('temperature.humidityRange')}:</strong>
+                {selectedSensor.humidityMin} – {selectedSensor.humidityMax}
               </p>
             )}
           </div>
         )}
-
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              {t('temperature.temperature')}
-            </label>
-            <input
+          <FormField label={t('temperature.temperature')} required error={fieldErrors.temperature}>
+            <Input
               type="number"
               step="0.1"
+              inputMode="decimal"
               value={temperature}
               onChange={(e) => setTemperature(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              required
             />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">
-              {t('temperature.humidity')}
-            </label>
-            <input
+          </FormField>
+          <FormField label={t('temperature.humidity')} error={fieldErrors.humidity}>
+            <Input
               type="number"
               step="0.1"
+              inputMode="decimal"
               value={humidity}
               onChange={(e) => setHumidity(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-          </div>
+          </FormField>
         </div>
       </form>
     </Modal>

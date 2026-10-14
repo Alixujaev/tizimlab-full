@@ -106,8 +106,12 @@ describe('Frontend: Harorat monitoringi sahifasi (P8, spec §7, D-52, D-136..D-1
         });
 
         // Ko'rish rollarida kiritish/sozlash tugmalari bo'lmasligi kerak (403 so'rov yuborilmaydi)
-        expect(screen.queryByRole('button', { name: /\+ Qo'lda kiritish/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: /Sensor sozlamalari/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: /\+ Qo'lda kiritish/i }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole('button', { name: /Sensor sozlamalari/i }),
+        ).not.toBeInTheDocument();
       }
     });
 
@@ -121,8 +125,12 @@ describe('Frontend: Harorat monitoringi sahifasi (P8, spec §7, D-52, D-136..D-1
           expect(screen.getAllByText('Steril xona').length).toBeGreaterThan(0);
         });
 
-        expect(screen.getAllByRole('button', { name: /Qo'lda kiritish/i }).length).toBeGreaterThan(0);
-        expect(screen.getAllByRole('button', { name: /Sensor sozlamalari/i }).length).toBeGreaterThan(0);
+        expect(screen.getAllByRole('button', { name: /Qo'lda kiritish/i }).length).toBeGreaterThan(
+          0,
+        );
+        expect(
+          screen.getAllByRole('button', { name: /Sensor sozlamalari/i }).length,
+        ).toBeGreaterThan(0);
       }
     });
   });
@@ -150,7 +158,7 @@ describe('Frontend: Harorat monitoringi sahifasi (P8, spec §7, D-52, D-136..D-1
       });
 
       // Alertlar tabiga o'tish
-      const alertsTab = screen.getByRole('button', { name: /Ogohlantirishlar/i });
+      const alertsTab = screen.getByRole('tab', { name: /Ogohlantirishlar/i });
       await userEvent.click(alertsTab);
 
       await waitFor(() => {

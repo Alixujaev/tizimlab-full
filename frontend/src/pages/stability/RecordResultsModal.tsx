@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@/components/ui/Spinner';
 import { useRecordResultsMutation } from '@/hooks/useStability';
+import { formatDate } from '@/lib/date';
+import { errorMessage } from '@/lib/queryClient';
 import type { StabilityCheckpointDto, StabilityResultStatus } from '@/types';
+import { Alert, Button, DataTable, type DataTableColumn, Input, Modal, Select } from '@/ui';
 
 interface RecordResultsModalProps {
   studyId: string;
@@ -11,50 +13,51 @@ interface RecordResultsModalProps {
   onClose: () => void;
 }
 
-export const RecordResultsModal: React.FC<RecordResultsModalProps> = ({
+interface ResultRow {
+  id: string;
+  parameter: string;
+  initialValue: string | null;
+  currentValue: string;
+  specification: string;
+  resultStatus: StabilityResultStatus;
+}
+
+const STATUSES: StabilityResultStatus[] = ['pass', 'warning', 'fail'];
+
+export function RecordResultsModal({
   studyId,
   checkpoint,
   isOpen,
   onClose,
-}) => {
+}: RecordResultsModalProps) {
   const { t } = useTranslation();
+  const formId = useId();
   const mutation = useRecordResultsMutation(studyId);
-
-  const initialResults = (checkpoint.results ?? []).map((r) => ({
-    id: r.id,
-    parameter: r.parameter,
-    initialValue: r.initialValue,
-    currentValue: r.currentValue ?? '',
-    specification: r.specification ?? '',
-    resultStatus: r.resultStatus ?? ('pass' as StabilityResultStatus),
-  }));
-
-  const [results, setResults] = useState(initialResults);
+  const [results, setResults] = useState<ResultRow[]>(() =>
+    (checkpoint.results ?? []).map((r) => ({
+      id: r.id,
+      parameter: r.parameter,
+      initialValue: r.initialValue,
+      currentValue: r.currentValue ?? '',
+      specification: r.specification ?? '',
+      resultStatus: r.resultStatus ?? 'pass',
+    })),
+  );
   const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null;
-
-  const handleUpdate = (
+  const update = <K extends 'currentValue' | 'specification' | 'resultStatus'>(
     index: number,
-    field: 'currentValue' | 'specification' | 'resultStatus',
-    value: string,
-  ) => {
-    const updated = [...results];
-    updated[index] = { ...updated[index]!, [field]: value };
-    setResults(updated);
-  };
+    field: K,
+    value: ResultRow[K],
+  ) => setResults((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    // Validate that at least one result has current value
-    const hasAny = results.some((r) => r.currentValue.trim() !== '');
-    if (!hasAny) {
+    if (!results.some((r) => r.currentValue.trim() !== '')) {
       setError(t('stability.currentValueRequired', 'Kamida bitta parametr qiymatini kiriting'));
       return;
     }
-
     try {
       await mutation.mutateAsync({
         checkpointId: checkpoint.id,
@@ -71,113 +74,86 @@ export const RecordResultsModal: React.FC<RecordResultsModalProps> = ({
         },
       });
       onClose();
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data
-          ?.error?.message ?? t('common.error', 'Xatolik yuz berdi');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
+  const columns: DataTableColumn<ResultRow>[] = [
+    {
+      key: 'parameter',
+      header: t('stability.parameter'),
+      primary: true,
+      render: (r) => <span className="font-medium">{r.parameter}</span>,
+    },
+    {
+      key: 'initial',
+      header: t('stability.initialValue'),
+      render: (r) => <span className="text-fg-muted">{r.initialValue ?? '—'}</span>,
+    },
+    {
+      key: 'current',
+      header: t('stability.currentValue'),
+      render: (r) => (
+        <Input
+          size="sm"
+          aria-label={`${r.parameter} — ${t('stability.currentValue')}`}
+          value={r.currentValue}
+          onChange={(e) => update(results.indexOf(r), 'currentValue', e.target.value)}
+          placeholder={t('stability.resultPlaceholder')}
+        />
+      ),
+    },
+    {
+      key: 'spec',
+      header: t('stability.specification'),
+      render: (r) => (
+        <Input
+          size="sm"
+          aria-label={`${r.parameter} — ${t('stability.specification')}`}
+          value={r.specification}
+          onChange={(e) => update(results.indexOf(r), 'specification', e.target.value)}
+          placeholder={t('stability.specPlaceholder')}
+        />
+      ),
+    },
+    {
+      key: 'status',
+      header: t('stability.resultStatus'),
+      render: (r) => (
+        <Select
+          size="sm"
+          aria-label={`${r.parameter} — ${t('stability.resultStatus')}`}
+          options={STATUSES.map((s) => ({ value: s, label: t(`stability.${s}`) }))}
+          value={r.resultStatus}
+          onChange={(v) => update(results.indexOf(r), 'resultStatus', v)}
+        />
+      ),
+    },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-      <div className="w-full max-w-3xl rounded-xl bg-white shadow-xl max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">
-              {t('stability.recordResults')} — {checkpoint.intervalTag}
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {t('stability.dueDate')}: {checkpoint.dueDate}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t('common.close', 'Yopish')}
-            className="text-slate-400 hover:text-slate-600 text-lg font-medium"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
-          {error && (
-            <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
-              {error}
-            </div>
-          )}
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm border border-slate-200 rounded-lg">
-              <thead className="bg-slate-50 text-slate-700">
-                <tr>
-                  <th className="px-3 py-2 border-b border-slate-200">{t('stability.parameter')}</th>
-                  <th className="px-3 py-2 border-b border-slate-200">{t('stability.initialValue')}</th>
-                  <th className="px-3 py-2 border-b border-slate-200">{t('stability.currentValue')} *</th>
-                  <th className="px-3 py-2 border-b border-slate-200">{t('stability.specification')}</th>
-                  <th className="px-3 py-2 border-b border-slate-200">{t('stability.resultStatus')}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {results.map((r, idx) => (
-                  <tr key={r.parameter} className="hover:bg-slate-50/50">
-                    <td className="px-3 py-2 font-medium text-slate-900">{r.parameter}</td>
-                    <td className="px-3 py-2 text-slate-500">{r.initialValue ?? '—'}</td>
-                    <td className="px-3 py-2">
-                      <input
-                        type="text"
-                        value={r.currentValue}
-                        onChange={(e) => handleUpdate(idx, 'currentValue', e.target.value)}
-                        placeholder={t('stability.resultPlaceholder')}
-                        className="w-full rounded border border-slate-300 px-2.5 py-1 text-sm focus:border-indigo-500 focus:outline-none"
-                      />
-                    </td>
-                    <td className="px-3 py-2">
-                      <input
-                        type="text"
-                        value={r.specification}
-                        onChange={(e) => handleUpdate(idx, 'specification', e.target.value)}
-                        placeholder={t('stability.specPlaceholder')}
-                        className="w-full rounded border border-slate-300 px-2.5 py-1 text-sm focus:border-indigo-500 focus:outline-none"
-                      />
-                    </td>
-                    <td className="px-3 py-2">
-                      <select
-                        value={r.resultStatus}
-                        onChange={(e) => handleUpdate(idx, 'resultStatus', e.target.value)}
-                        className="rounded border border-slate-300 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none"
-                      >
-                        <option value="pass">{t('stability.pass')}</option>
-                        <option value="warning">{t('stability.warning')}</option>
-                        <option value="fail">{t('stability.fail')}</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              {t('stability.cancel')}
-            </button>
-            <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {mutation.isPending && <Spinner size="sm" />}
-              {t('stability.save')}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      size="xl"
+      title={`${t('stability.recordResults')} — ${checkpoint.intervalTag}`}
+      description={`${t('stability.dueDate')}: ${formatDate(checkpoint.dueDate)}`}
+      footer={
+        <>
+          <Button variant="secondary" onClick={onClose}>
+            {t('stability.cancel')}
+          </Button>
+          <Button type="submit" form={formId} loading={mutation.isPending}>
+            {t('stability.save')}
+          </Button>
+        </>
+      }
+    >
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
+        <DataTable columns={columns} rows={results} rowKey={(r) => r.parameter} />
+      </form>
+    </Modal>
   );
-};
+}

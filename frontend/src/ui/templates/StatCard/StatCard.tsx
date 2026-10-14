@@ -35,21 +35,23 @@ export function StatCard({
   hint,
   className,
 }: StatCardProps) {
+  // Yorliq va qiymat bitta ota-elementda (o'qilishi: "yorliq qiymat"); ikon burchakda bezak sifatida
   const body = (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <span className="text-sm font-medium text-fg-muted">{label}</span>
-        {icon && (
-          <span
-            className={cx(
-              'flex size-9 shrink-0 items-center justify-center rounded-lg',
-              iconTones[tone],
-            )}
-          >
-            <Icon name={icon} size="sm" />
-          </span>
-        )}
-      </div>
+      {icon && (
+        <span
+          aria-hidden="true"
+          className={cx(
+            'absolute right-4 top-4 flex size-9 items-center justify-center rounded-lg',
+            iconTones[tone],
+          )}
+        >
+          <Icon name={icon} size="sm" />
+        </span>
+      )}
+      <span className={cx('block text-sm font-medium text-fg-muted', icon && 'pr-12')}>
+        {label}
+      </span>
       <span
         className={cx(
           'mt-2 block text-3xl font-semibold tabular-nums tracking-tight',
@@ -62,7 +64,7 @@ export function StatCard({
     </>
   );
   const base = cx(
-    'block rounded-xl border bg-surface p-5 shadow-sm',
+    'relative block rounded-xl border bg-surface p-5 shadow-sm',
     highlight ? 'border-warning-line' : 'border-line',
     className,
   );

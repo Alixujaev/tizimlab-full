@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { apiClient } from '@/api/client';
 import i18n, { LANGUAGE_STORAGE_KEY } from '@/i18n';
 import { useAuthStore } from '@/store/authStore';
-import { loginAs, renderAt } from './helpers';
+import { loginAs, renderAt, selectOption } from './helpers';
 
 let api: MockAdapter;
 
@@ -39,7 +39,7 @@ describe('ProfilePage', () => {
     expect(screen.getByText('Super-administrator')).toBeInTheDocument();
   });
 
-  it("ismni yangilash: PATCH /auth/profile yuboriladi va saqlanadi", async () => {
+  it('ismni yangilash: PATCH /auth/profile yuboriladi va saqlanadi', async () => {
     const user = userEvent.setup();
     api.onPatch('/auth/profile').reply(200, {
       data: {
@@ -105,14 +105,14 @@ describe('ProfilePage', () => {
     renderAt('/profile');
 
     const select = screen.getByLabelText('Tizim tili');
-    await user.selectOptions(select, 'ru');
+    await selectOption(user, select, 'ru');
 
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('ru');
     expect(document.documentElement.lang).toBe('ru');
     expect(await screen.findByRole('heading', { name: 'Профиль' })).toBeInTheDocument();
   });
 
-  it("Telegram integratsiyasi bloki profil sahifasida mavjud (P11, R-USER-13, R-USER-14)", () => {
+  it('Telegram integratsiyasi bloki profil sahifasida mavjud (P11, R-USER-13, R-USER-14)', () => {
     renderAt('/profile');
 
     expect(screen.getByRole('heading', { name: /Telegram integratsiyasi/i })).toBeInTheDocument();
@@ -138,14 +138,16 @@ describe('ProfilePage', () => {
 
     renderAt('/profile');
 
-    expect(await screen.findByText("Telegram hisobi ulanmagan")).toBeInTheDocument();
+    expect(await screen.findByText('Telegram hisobi ulanmagan')).toBeInTheDocument();
     const linkBtn = await screen.findByRole('button', { name: 'Telegram ulash' });
     expect(linkBtn).toBeInTheDocument();
 
     await user.click(linkBtn);
 
-    expect(await screen.findByRole('heading', { name: 'Telegram hisobini ulash' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: "Botni ochish" })).toHaveAttribute(
+    expect(
+      await screen.findByRole('heading', { name: 'Telegram hisobini ulash' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Botni ochish' })).toHaveAttribute(
       'href',
       'https://t.me/TizimLab_bot?start=test-link-token-12345',
     );
@@ -167,7 +169,7 @@ describe('ProfilePage', () => {
 
     renderAt('/profile');
 
-    expect(await screen.findByText("Telegram hisobi ulangan")).toBeInTheDocument();
+    expect(await screen.findByText('Telegram hisobi ulangan')).toBeInTheDocument();
     expect(screen.getByText('@aziz_kimyogar')).toBeInTheDocument();
 
     const unlinkBtn = screen.getByRole('button', { name: 'Telegramni uzish' });

@@ -1,73 +1,56 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
   StabilityCheckpointStatus,
   StabilityResultStatus,
   StabilityStudyStatus,
 } from '@/types';
+import { Badge, StatusPill, type Tone } from '@/ui';
 
-export const StudyStatusBadge: React.FC<{ status: StabilityStudyStatus }> = ({ status }) => {
+export function StudyStatusBadge({ status }: { status: StabilityStudyStatus }) {
   const { t } = useTranslation();
-  const isCompleted = status === 'completed';
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-        isCompleted
-          ? 'bg-slate-100 text-slate-800 border border-slate-200'
-          : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-      }`}
-    >
-      {isCompleted ? t('stability.completed') : t('stability.active')}
-    </span>
+  return status === 'completed' ? (
+    <StatusPill tone="neutral">{t('stability.completed')}</StatusPill>
+  ) : (
+    <StatusPill tone="success">{t('stability.active')}</StatusPill>
   );
+}
+
+const CHECKPOINT_TONE: Record<StabilityCheckpointStatus, Tone> = {
+  pending: 'warning',
+  in_progress: 'info',
+  completed: 'success',
+  overdue: 'danger',
 };
 
-export const CheckpointStatusBadge: React.FC<{
+export function CheckpointStatusBadge({
+  status,
+  isDueSoon,
+}: {
   status: StabilityCheckpointStatus;
   isDueSoon?: boolean;
-}> = ({ status, isDueSoon }) => {
+}) {
   const { t } = useTranslation();
-
-  const styles: Record<StabilityCheckpointStatus, string> = {
-    pending: 'bg-amber-100 text-amber-800 border-amber-200',
-    in_progress: 'bg-blue-100 text-blue-800 border-blue-200',
-    completed: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    overdue: 'bg-rose-100 text-rose-800 border-rose-200 font-semibold',
-  };
-
   return (
-    <div className="inline-flex items-center gap-1.5">
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-          styles[status]
-        }`}
-      >
+    <span className="inline-flex items-center gap-1.5">
+      <StatusPill tone={CHECKPOINT_TONE[status]} pulse={status === 'in_progress'}>
         {t(`stability.${status}`)}
-      </span>
+      </StatusPill>
       {isDueSoon && status !== 'completed' && status !== 'overdue' && (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-300 animate-pulse">
+        <Badge tone="warning" size="sm" icon="clock">
           {t('stability.dueSoon')}
-        </span>
+        </Badge>
       )}
-    </div>
-  );
-};
-
-export const ResultStatusBadge: React.FC<{ status: StabilityResultStatus }> = ({ status }) => {
-  const { t } = useTranslation();
-  const styles: Record<StabilityResultStatus, string> = {
-    pass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    warning: 'bg-amber-50 text-amber-700 border-amber-200',
-    fail: 'bg-rose-50 text-rose-700 border-rose-200 font-semibold',
-  };
-
-  return (
-    <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
-        styles[status]
-      }`}
-    >
-      {t(`stability.${status}`)}
     </span>
   );
+}
+
+const RESULT_TONE: Record<StabilityResultStatus, Tone> = {
+  pass: 'success',
+  warning: 'warning',
+  fail: 'danger',
 };
+
+export function ResultStatusBadge({ status }: { status: StabilityResultStatus }) {
+  const { t } = useTranslation();
+  return <Badge tone={RESULT_TONE[status]}>{t(`stability.${status}`)}</Badge>;
+}

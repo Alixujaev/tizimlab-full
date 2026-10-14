@@ -1,19 +1,25 @@
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { fetchPassportDownloadLink } from '@/api/samples';
-import { Spinner } from '@/components/ui/Spinner';
 import { useReviewPassportMutation, useUploadPassportMutation } from '@/hooks/useSamples';
-import { checkFile, FILE_ACCEPT, openDownload } from '@/lib/files';
+import { openDownload } from '@/lib/files';
 import { errorMessage } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/authStore';
 import type { Role, SampleDetailDto } from '@/types';
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  FileDropzone,
+  type FileRejectReason,
+  Icon,
+  notify,
+  StatusPill,
+  type Tone,
+} from '@/ui';
 import { PassportDeleteModal } from './PassportDeleteModal';
 import { PassportRejectModal } from './PassportRejectModal';
-
-interface PassportSectionProps {
-  sample: SampleDetailDto;
-}
 
 type Flow = 'approval' | 'attachment' | 'none';
 
@@ -26,20 +32,25 @@ function flowOf(type: SampleDetailDto['type']): Flow {
 
 const isReviewer = (role?: Role) => role === 'lab_head' || role === 'admin';
 
-const STATUS_STYLES: Record<string, string> = {
-  pending: 'bg-amber-50 text-amber-700 border-amber-200',
-  approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  rejected: 'bg-rose-50 text-rose-700 border-rose-200',
+const STATUS_TONE: Record<string, Tone> = {
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'danger',
 };
 
-export const PassportSection: React.FC<PassportSectionProps> = ({ sample }) => {
+// FileDropzone sabablari → pasport tarjima kalitlari
+const REJECT_KEY: Record<FileRejectReason, string> = {
+  badType: 'unsupported',
+  tooLarge: 'tooLarge',
+  empty: 'empty',
+};
+
+export function PassportSection({ sample }: { sample: SampleDetailDto }) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const uploadMutation = useUploadPassportMutation();
   const reviewMutation = useReviewPassportMutation();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  const [dragOver, setDragOver] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -75,21 +86,14 @@ export const PassportSection: React.FC<PassportSectionProps> = ({ sample }) => {
           ?.reason
       : null;
 
-  const handleFile = async (file: File | undefined) => {
+  const upload = async (file: File | null) => {
     if (!file) return;
-    const problem = checkFile(file);
-    if (problem) {
-      setFileError(t(`samples.passport.fileErrors.${problem}`));
-      return;
-    }
     setFileError(null);
     try {
       await uploadMutation.mutateAsync({ id: sample.id, file });
-      toast.success(t('samples.passport.uploaded'));
+      notify.success(t('samples.passport.uploaded'));
     } catch (err) {
       setFileError(errorMessage(err));
-    } finally {
-      if (inputRef.current) inputRef.current.value = '';
     }
   };
 
@@ -98,7 +102,7 @@ export const PassportSection: React.FC<PassportSectionProps> = ({ sample }) => {
     try {
       openDownload((await fetchPassportDownloadLink(sample.id)).url);
     } catch (err) {
-      toast.error(errorMessage(err));
+      notify.error(errorMessage(err));
     } finally {
       setDownloading(false);
     }
@@ -107,149 +111,116 @@ export const PassportSection: React.FC<PassportSectionProps> = ({ sample }) => {
   const handleApprove = async () => {
     try {
       await reviewMutation.mutateAsync({ id: sample.id, input: { decision: 'approve' } });
-      toast.success(t('samples.passport.approved'));
+      notify.success(t('samples.passport.approved'));
     } catch (err) {
-      toast.error(errorMessage(err));
+      notify.error(errorMessage(err));
     }
   };
 
-  const notice =
-    flow === 'attachment'
-      ? t('samples.passport.attachmentNotice')
-      : t('samples.passport.approvalFlowNotice');
-
   return (
-    <section
-      aria-labelledby="passport-title"
-      className="bg-white rounded-lg border border-slate-200 shadow-sm p-5"
-    >
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h3 id="passport-title" className="text-base font-semibold text-slate-900">
-          {t('samples.passportTitle')}
-        </h3>
-        {status ? (
-          <span
-            data-testid="passport-status"
-            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${STATUS_STYLES[status]}`}
-          >
-            {t(`samples.passportStatus.${status}`)}
+    <Card
+      title={t('samples.passportTitle')}
+      description={
+        flow === 'attachment'
+          ? t('samples.passport.attachmentNotice')
+          : t('samples.passport.approvalFlowNotice')
+      }
+      actions={
+        status ? (
+          <span data-testid="passport-status">
+            <StatusPill tone={STATUS_TONE[status] ?? 'neutral'}>
+              {t(`samples.passportStatus.${status}`)}
+            </StatusPill>
           </span>
         ) : (
-          !hasFile && <span className="text-xs text-slate-400">{t('samples.noPassport')}</span>
-        )}
-      </div>
-
-      <p className="mt-3 text-xs text-slate-600">{notice}</p>
-
-      {hasFile && (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50 rounded border border-slate-200">
-          <span className="text-sm font-medium text-slate-700 break-all">
-            {sample.passportFileName}
-          </span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={downloading}
-              className="px-3 py-1 text-xs font-medium rounded border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-50"
-            >
-              {t('samples.passport.download')}
-            </button>
-            {canDelete && (
-              <button
-                type="button"
-                onClick={() => setDeleteOpen(true)}
-                className="px-3 py-1 text-xs font-medium rounded border border-rose-300 text-rose-700 bg-white hover:bg-rose-50"
+          !hasFile && <Badge>{t('samples.noPassport')}</Badge>
+        )
+      }
+    >
+      <div className="flex flex-col gap-4">
+        {hasFile && (
+          <div className="flex flex-col gap-3 rounded-lg bg-surface-muted px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+            <span className="flex min-w-0 items-center gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-subtle text-primary-subtle-fg">
+                <Icon name="file-text" size="sm" />
+              </span>
+              <span className="break-all text-sm font-medium text-fg">
+                {sample.passportFileName}
+              </span>
+            </span>
+            <span className="flex flex-wrap gap-1.5">
+              <Button
+                variant="secondary"
+                size="sm"
+                leftIcon="download"
+                loading={downloading}
+                onClick={() => void handleDownload()}
               >
-                {t('samples.passport.delete')}
-              </button>
-            )}
+                {t('samples.passport.download')}
+              </Button>
+              {canDelete && (
+                <Button
+                  variant="danger-ghost"
+                  size="sm"
+                  leftIcon="trash"
+                  onClick={() => setDeleteOpen(true)}
+                >
+                  {t('samples.passport.delete')}
+                </Button>
+              )}
+            </span>
           </div>
-        </div>
-      )}
+        )}
 
-      {rejectReason && (
-        <p className="mt-3 text-xs text-rose-700">
-          {t('samples.passport.rejectedReasonLabel')}: {rejectReason}
-        </p>
-      )}
+        {rejectReason && (
+          <Alert tone="danger" title={t('samples.passport.rejectedReasonLabel')}>
+            {rejectReason}
+          </Alert>
+        )}
 
-      {canReview && (
-        <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            onClick={handleApprove}
-            disabled={reviewMutation.isPending}
-            className="px-3 py-1.5 text-sm font-medium rounded bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {t('samples.passport.approve')}
-          </button>
-          <button
-            type="button"
-            onClick={() => setRejectOpen(true)}
-            className="px-3 py-1.5 text-sm font-medium rounded border border-rose-300 text-rose-700 hover:bg-rose-50"
-          >
-            {t('samples.passport.reject')}
-          </button>
-        </div>
-      )}
-      {showOwnNotice && (
-        <p className="mt-3 text-xs text-slate-500">{t('samples.passport.ownPassportNotice')}</p>
-      )}
+        {canReview && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              leftIcon="check"
+              loading={reviewMutation.isPending}
+              onClick={() => void handleApprove()}
+            >
+              {t('samples.passport.approve')}
+            </Button>
+            <Button variant="danger-ghost" onClick={() => setRejectOpen(true)}>
+              {t('samples.passport.reject')}
+            </Button>
+          </div>
+        )}
+        {showOwnNotice && (
+          <p className="text-sm text-fg-muted">{t('samples.passport.ownPassportNotice')}</p>
+        )}
 
-      {canUpload && (
-        <div className="mt-4">
-          {flow === 'approval' && (
-            <p className="mb-2 text-xs text-slate-500">
-              {isReviewer(role)
-                ? t('samples.passport.autoApproveNotice')
-                : t('samples.passport.pendingNotice')}
-            </p>
-          )}
-          <div
-            data-testid="passport-dropzone"
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDragOver(false);
-              void handleFile(e.dataTransfer.files[0]);
-            }}
-            className={`text-center py-6 px-4 border border-dashed rounded-lg ${
-              dragOver ? 'border-blue-400 bg-blue-50' : 'border-slate-300 bg-slate-50'
-            }`}
-          >
-            {uploadMutation.isPending ? (
-              <Spinner />
-            ) : (
-              <p className="text-sm text-slate-600">
-                {t('samples.passport.dropzone')}{' '}
-                <label className="font-medium text-blue-600 underline cursor-pointer">
-                  {t('samples.passport.chooseFile')}
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept={FILE_ACCEPT}
-                    aria-label={t('samples.passport.fileInputLabel')}
-                    className="sr-only"
-                    onChange={(e) => void handleFile(e.target.files?.[0])}
-                  />
-                </label>
+        {canUpload && (
+          <div className="flex flex-col gap-2">
+            {flow === 'approval' && (
+              <p className="text-sm text-fg-muted">
+                {isReviewer(role)
+                  ? t('samples.passport.autoApproveNotice')
+                  : t('samples.passport.pendingNotice')}
               </p>
             )}
-            <p className="mt-1 text-xs text-slate-400">{t('samples.passport.fileHint')}</p>
+            <FileDropzone
+              value={null}
+              onChange={(file) => void upload(file)}
+              loading={uploadMutation.isPending}
+              aria-label={t('samples.passport.fileInputLabel')}
+              error={fileError ?? undefined}
+              onReject={(reason) =>
+                setFileError(t(`samples.passport.fileErrors.${REJECT_KEY[reason]}`))
+              }
+            />
           </div>
-        </div>
-      )}
+        )}
 
-      {fileError && (
-        <p role="alert" className="mt-2 text-xs text-rose-600">
-          {fileError}
-        </p>
-      )}
+        {/* Fayl yo'q holatda yuklash xatosi (masalan, yuklagandan keyin ham) */}
+        {!canUpload && fileError && <Alert tone="danger">{fileError}</Alert>}
+      </div>
 
       <PassportRejectModal
         open={rejectOpen}
@@ -263,6 +234,6 @@ export const PassportSection: React.FC<PassportSectionProps> = ({ sample }) => {
         fileName={sample.passportFileName ?? ''}
         approved={status === 'approved' || sample.status === 'approved'}
       />
-    </section>
+    </Card>
   );
-};
+}

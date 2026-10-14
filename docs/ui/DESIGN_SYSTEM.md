@@ -61,6 +61,7 @@ frontend/src/
 | `IconButton` | Faqat ikonli amal (yopish, tahrirlash) | `icon`, `label` (majburiy), `variant`, `size` |
 | `ButtonLink` | Navigatsiya, ko'rinishi tugma ("Bosh sahifaga", "Ochish") | `to`, `variant`, `size`, `leftIcon` |
 | `Pressable` | Boy mazmunli bosiladigan qator/karta (bildirishnoma, tanlov) | `variant` row/card, `highlighted` |
+| `FileButton` | Darhol yuklanadigan fayl amali ("Yuklash", "Almashtirish") | `onSelect`, `accept`, `loading` |
 | `Input` | Bir qatorli matn/son/email/parol | `size`, `invalid`, `leftIcon`, `rightSlot` |
 | `Textarea` | Ko'p qatorli matn (izoh, sabab) | `rows`, `invalid` |
 | `Select` | Ro'yxatdan bitta qiymat (≤ ~50 variant) | `options`, `value`, `onChange`, `placeholder`, `name` |
@@ -83,6 +84,7 @@ frontend/src/
 | --- | --- |
 | `FormField` | Har bir forma maydoni: label, hint, inline xato; ichidagi elementga id/aria avtomatik |
 | `Alert` | Sahifa/forma ichidagi xabar (server xatosi, ogohlantirish); `danger`/`warning` — `role=alert` |
+| `DescriptionList` | Tafsilot maydonlari (yorliq → qiymat), bo'sh qiymat "—" | `items`, `columns` |
 | `Modal` | Diqqatni to'liq talab qiladigan forma/tafsilot (`size` sm–xl) |
 | `Drawer` | Yon panel: mobil navigatsiya, filtrlar |
 | `ConfirmDialog` | `confirm()` o'rniga — o'chirish, to'xtatish, rad etish (`tone="danger"`) |
@@ -101,10 +103,11 @@ frontend/src/
 | --- | --- |
 | `PageContainer` | Har sahifaning tashqi ramkasi |
 | `PageHeader` | Har sahifaning sarlavhasi (h1, tavsif, amallar, orqaga havola) |
-| `FilterBar` | Ro'yxat ustidagi filtrlar |
+| `FilterBar` | Ro'yxat ustidagi filtrlar; `onSubmit` bilan — ko'p maydonli qidiruv formasi (role=search) |
 | `DetailLayout` | Tafsilot sahifasi (asosiy + yon panel) |
 | `Card` | Mazmun bloki (bo'lim, forma) |
 | `StatCard` | Dashboard ko'rsatkichi |
+| `PageSkeleton` | Sahifa yuklanishi shakli (`list`, `detail`, `cards`) |
 
 ## 4. Sahifa andozasi
 
@@ -147,3 +150,11 @@ Test: `frontend/tests/lint-ui.test.ts`.
   o'zi `PageContainer` qo'ymaydi, faqat `PageHeader` dan boshlaydi. Sahifa almashganda `animate-slide-up`.
 - Sessiya aniqlanguncha `AppSkeleton` (spinner emas). Router `errorElement` — `RouteErrorPage`.
 - Mavzu: `store/themeStore.ts` (D-154), `ThemeToggle`; til: `LanguageSwitcher` (Menu, `menuitemradio`).
+
+## 8. Statik himoya (testlar)
+
+- `frontend/tests/no-adhoc-styles.test.ts` — `src` da Tailwind standart palitrasi, `[#hex]`/`[Npx]` va
+  `src/ui` dan tashqarida native element / `alert|confirm|prompt` **0** ta bo'lishi shart. `@theme` da
+  `--color-*: initial` — standart palitra umuman kompilyatsiya qilinmaydi.
+- `frontend/tests/i18n-keys.test.ts` — koddagi har bir statik `t('...')` kaliti uz/ru/en uchalasida bor.
+- Select bilan testlarda `selectOption(user, combobox, value)` (`tests/helpers.tsx`).

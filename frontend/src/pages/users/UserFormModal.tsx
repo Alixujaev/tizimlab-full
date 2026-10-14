@@ -1,11 +1,10 @@
-import { type FormEvent, useEffect, useMemo, useState } from 'react';
+import { type FormEvent, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toApiError } from '@/api/client';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import { useCreateUserMutation, useUpdateUserMutation } from '@/hooks/useAdminUsers';
 import { EMAIL_REGEX, isPasswordValid } from '@/lib/validation';
 import type { AdminUserDto, CompanyUserRole, Role } from '@/types';
+import { Alert, Button, FormField, Input, Modal, Select, Switch } from '@/ui';
 
 interface UserFormModalProps {
   open: boolean;
@@ -18,7 +17,6 @@ interface UserFormModalProps {
 interface FormErrors {
   email?: string;
   fullName?: string;
-  role?: string;
   password?: string;
   general?: string;
 }
@@ -31,19 +29,20 @@ export function UserFormModal({
   currentUserId,
 }: UserFormModalProps) {
   const { t } = useTranslation();
+  const formId = useId();
   const isEdit = Boolean(user);
   const isSelf = user?.id === currentUserId;
-
   const createMutation = useCreateUserMutation();
   const updateMutation = useUpdateUserMutation();
   const isPending = createMutation.isPending || updateMutation.isPending;
 
-  const allowedRoles: CompanyUserRole[] = useMemo(() => {
-    if (currentUserRole === 'lab_head') {
-      return ['chemist', 'kontrolyor'];
-    }
-    return ['chemist', 'kontrolyor', 'lab_head', 'director', 'admin'];
-  }, [currentUserRole]);
+  const allowedRoles: CompanyUserRole[] = useMemo(
+    () =>
+      currentUserRole === 'lab_head'
+        ? ['chemist', 'kontrolyor']
+        : ['chemist', 'kontrolyor', 'lab_head', 'director', 'admin'],
+    [currentUserRole],
+  );
 
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
@@ -53,49 +52,32 @@ export function UserFormModal({
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    if (open) {
-      if (user) {
-        setEmail(user.email);
-        setFullName(user.fullName);
-        setRole(user.role as CompanyUserRole);
-        setIsActive(user.isActive);
-      } else {
-        setEmail('');
-        setFullName('');
-        setRole(allowedRoles[0] ?? 'chemist');
-        setPassword('');
-        setIsActive(true);
-      }
-      setErrors({});
-    }
+    if (!open) return;
+    setEmail(user?.email ?? '');
+    setFullName(user?.fullName ?? '');
+    setRole((user?.role as CompanyUserRole) ?? allowedRoles[0] ?? 'chemist');
+    setPassword('');
+    setIsActive(user?.isActive ?? true);
+    setErrors({});
   }, [open, user, allowedRoles]);
+
+  const clearError = (key: keyof FormErrors) =>
+    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const newErrors: FormErrors = {};
-
+    const next: FormErrors = {};
     const trimmedFullName = fullName.trim();
-    if (!trimmedFullName) {
-      newErrors.fullName = t('users.errors.fullNameRequired');
-    }
-
+    if (!trimmedFullName) next.fullName = t('users.errors.fullNameRequired');
     if (!isEdit) {
       const trimmedEmail = email.trim().toLowerCase();
-      if (!trimmedEmail) {
-        newErrors.email = t('users.errors.emailRequired');
-      } else if (!EMAIL_REGEX.test(trimmedEmail)) {
-        newErrors.email = t('auth.validation.emailInvalid');
-      }
-
-      if (!password) {
-        newErrors.password = t('users.errors.passwordRequired');
-      } else if (!isPasswordValid(password)) {
-        newErrors.password = t('users.errors.passwordPolicy');
-      }
+      if (!trimmedEmail) next.email = t('users.errors.emailRequired');
+      else if (!EMAIL_REGEX.test(trimmedEmail)) next.email = t('auth.validation.emailInvalid');
+      if (!password) next.password = t('users.errors.passwordRequired');
+      else if (!isPasswordValid(password)) next.password = t('users.errors.passwordPolicy');
     }
-
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
 
     if (isEdit && user) {
       updateMutation.mutate(
@@ -124,12 +106,7 @@ export function UserFormModal({
       );
     } else {
       createMutation.mutate(
-        {
-          email: email.trim().toLowerCase(),
-          fullName: trimmedFullName,
-          role,
-          password,
-        },
+        { email: email.trim().toLowerCase(), fullName: trimmedFullName, role, password },
         {
           onSuccess: () => onClose(),
           onError: (err) => {
@@ -146,145 +123,98 @@ export function UserFormModal({
     }
   };
 
-  const title = isEdit ? t('users.editUser') : t('users.createUser');
-
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={title}
+      title={isEdit ? t('users.editUser') : t('users.createUser')}
       footer={
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isPending}
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
+        <>
+          <Button variant="secondary" onClick={onClose} disabled={isPending}>
             {t('companies.cancel')}
-          </button>
-          <button
-            type="submit"
-            form="user-form"
-            disabled={isPending}
-            className="flex items-center gap-2 rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            {isPending && <Spinner size="sm" />}
+          </Button>
+          <Button type="submit" form={formId} loading={isPending}>
             {isPending ? t('users.form.saving') : t('users.form.save')}
-          </button>
-        </div>
+          </Button>
+        </>
       }
     >
-      <form id="user-form" onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {errors.general && (
-          <div role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-            {errors.general}
-          </div>
-        )}
+      <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+        {errors.general && <Alert tone="danger">{errors.general}</Alert>}
 
-        <div>
-          <label htmlFor="user-full-name" className="block text-sm font-medium text-slate-700">
-            {t('users.form.fullName')}
-          </label>
-          <input
-            id="user-full-name"
-            type="text"
+        <FormField
+          id="user-full-name"
+          label={t('users.form.fullName')}
+          error={errors.fullName}
+          disabled={isPending}
+        >
+          <Input
             value={fullName}
             onChange={(e) => {
               setFullName(e.target.value);
-              if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: undefined }));
+              clearError('fullName');
             }}
-            disabled={isPending}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
-        </div>
+        </FormField>
 
-        <div>
-          <label htmlFor="user-email" className="block text-sm font-medium text-slate-700">
-            {t('users.form.email')}
-          </label>
-          <input
-            id="user-email"
+        <FormField
+          id="user-email"
+          label={t('users.form.email')}
+          error={errors.email}
+          disabled={isPending || isEdit}
+        >
+          <Input
             type="email"
+            autoComplete="off"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              clearError('email');
             }}
-            disabled={isPending || isEdit}
-            className={`mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-              isEdit ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : ''
-            }`}
           />
-          {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
-        </div>
+        </FormField>
 
-        <div>
-          <label htmlFor="user-role" className="block text-sm font-medium text-slate-700">
-            {t('users.form.role')}
-          </label>
-          <select
-            id="user-role"
+        <FormField
+          id="user-role"
+          label={t('users.form.role')}
+          disabled={isPending || isSelf}
+          hint={isSelf ? t('users.errors.cannotDeactivateSelf') : undefined}
+        >
+          <Select
+            options={allowedRoles.map((r) => ({ value: r, label: t(`users.roles.${r}`) }))}
             value={role}
-            onChange={(e) => setRole(e.target.value as CompanyUserRole)}
-            disabled={isPending || isSelf}
-            className={`mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-              isSelf ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : ''
-            }`}
-          >
-            {allowedRoles.map((r) => (
-              <option key={r} value={r}>
-                {t(`users.roles.${r}`)}
-              </option>
-            ))}
-          </select>
-          {isSelf && (
-            <p className="mt-1 text-xs text-slate-500">
-              {t('users.errors.cannotDeactivateSelf')}
-            </p>
-          )}
-        </div>
+            onChange={setRole}
+          />
+        </FormField>
 
         {!isEdit && (
-          <div>
-            <label htmlFor="user-password" className="block text-sm font-medium text-slate-700">
-              {t('users.form.password')}
-            </label>
-            <input
-              id="user-password"
+          <FormField
+            id="user-password"
+            label={t('users.form.password')}
+            error={errors.password}
+            hint={t('users.errors.passwordPolicy')}
+            disabled={isPending}
+          >
+            <Input
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+                clearError('password');
               }}
-              disabled={isPending}
-              className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
-            <p className="mt-1 text-xs text-slate-500">{t('users.errors.passwordPolicy')}</p>
-            {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
-          </div>
+          </FormField>
         )}
 
         {isEdit && (
-          <div>
-            <label htmlFor="user-status" className="block text-sm font-medium text-slate-700">
-              {t('users.form.status')}
-            </label>
-            <select
-              id="user-status"
-              value={isActive ? 'active' : 'inactive'}
-              onChange={(e) => setIsActive(e.target.value === 'active')}
-              disabled={isPending || isSelf}
-              className={`mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${
-                isSelf ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : ''
-              }`}
-            >
-              <option value="active">{t('users.form.active')}</option>
-              <option value="inactive">{t('users.form.inactive')}</option>
-            </select>
-          </div>
+          <Switch
+            label={t('users.form.status')}
+            description={isActive ? t('users.form.active') : t('users.form.inactive')}
+            checked={isActive}
+            disabled={isPending || isSelf}
+            onChange={setIsActive}
+          />
         )}
       </form>
     </Modal>

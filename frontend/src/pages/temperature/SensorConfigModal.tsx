@@ -1,12 +1,23 @@
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
 import {
   useCreateSensorMutation,
   useDeleteSensorMutation,
   useUpdateSensorMutation,
 } from '@/hooks/useTemperature';
+import { errorMessage } from '@/lib/queryClient';
 import type { SensorConfigDto } from '@/types';
+import {
+  Alert,
+  Badge,
+  Button,
+  Checkbox,
+  ConfirmDialog,
+  EmptyState,
+  FormField,
+  Input,
+  Modal,
+} from '@/ui';
 
 interface SensorConfigModalProps {
   open: boolean;
@@ -18,8 +29,8 @@ export function SensorConfigModal({ open, onClose, sensors }: SensorConfigModalP
   const { t } = useTranslation();
   const [editingSensor, setEditingSensor] = useState<SensorConfigDto | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [sensorToDelete, setSensorToDelete] = useState<SensorConfigDto | null>(null);
 
-  // Form holati
   const [sensorId, setSensorId] = useState('');
   const [locationName, setLocationName] = useState('');
   const [tempMin, setTempMin] = useState('');
@@ -34,331 +45,247 @@ export function SensorConfigModal({ open, onClose, sensors }: SensorConfigModalP
   const updateMutation = useUpdateSensorMutation();
   const deleteMutation = useDeleteSensorMutation();
 
-  const handleStartCreate = () => {
-    setEditingSensor(null);
-    setSensorId('');
-    setLocationName('');
-    setTempMin('15');
-    setTempMax('25');
-    setHumidityMin('');
-    setHumidityMax('');
-    setApiKey('');
-    setIsActive(true);
+  const fill = (sensor: SensorConfigDto | null) => {
+    setSensorId(sensor?.sensorId ?? '');
+    setLocationName(sensor?.locationName ?? '');
+    setTempMin(sensor ? String(sensor.tempMin) : '15');
+    setTempMax(sensor ? String(sensor.tempMax) : '25');
+    setHumidityMin(sensor?.humidityMin != null ? String(sensor.humidityMin) : '');
+    setHumidityMax(sensor?.humidityMax != null ? String(sensor.humidityMax) : '');
+    setApiKey(sensor?.apiKey || '');
+    setIsActive(sensor?.isActive ?? true);
     setError(null);
+  };
+
+  const startCreate = () => {
+    setEditingSensor(null);
+    fill(null);
     setIsCreating(true);
   };
 
-  const handleStartEdit = (sensor: SensorConfigDto) => {
+  const startEdit = (sensor: SensorConfigDto) => {
     setEditingSensor(sensor);
-    setSensorId(sensor.sensorId);
-    setLocationName(sensor.locationName);
-    setTempMin(String(sensor.tempMin));
-    setTempMax(String(sensor.tempMax));
-    setHumidityMin(sensor.humidityMin != null ? String(sensor.humidityMin) : '');
-    setHumidityMax(sensor.humidityMax != null ? String(sensor.humidityMax) : '');
-    setApiKey(sensor.apiKey || '');
-    setIsActive(sensor.isActive);
-    setError(null);
+    fill(sensor);
     setIsCreating(false);
   };
 
-  const handleCancelForm = () => {
+  const cancelForm = () => {
     setIsCreating(false);
     setEditingSensor(null);
     setError(null);
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-
     const tMin = parseFloat(tempMin);
     const tMax = parseFloat(tempMax);
-    if (isNaN(tMin) || isNaN(tMax) || tMin >= tMax) {
+    if (Number.isNaN(tMin) || Number.isNaN(tMax) || tMin >= tMax) {
       setError(t('temperature.tempRange'));
       return;
     }
-
     const hMin = humidityMin.trim() !== '' ? parseFloat(humidityMin) : undefined;
     const hMax = humidityMax.trim() !== '' ? parseFloat(humidityMax) : undefined;
     if (hMin !== undefined && hMax !== undefined && hMin >= hMax) {
       setError(t('temperature.humidityRange'));
       return;
     }
-
+    const input = {
+      sensorId: sensorId.trim(),
+      locationName: locationName.trim(),
+      tempMin: tMin,
+      tempMax: tMax,
+      humidityMin: hMin ?? null,
+      humidityMax: hMax ?? null,
+      apiKey: apiKey.trim() || null,
+      isActive,
+    };
     try {
-      if (editingSensor) {
-        await updateMutation.mutateAsync({
-          id: editingSensor.id,
-          input: {
-            sensorId: sensorId.trim(),
-            locationName: locationName.trim(),
-            tempMin: tMin,
-            tempMax: tMax,
-            humidityMin: hMin ?? null,
-            humidityMax: hMax ?? null,
-            apiKey: apiKey.trim() || null,
-            isActive,
-          },
-        });
-      } else {
-        await createMutation.mutateAsync({
-          sensorId: sensorId.trim(),
-          locationName: locationName.trim(),
-          tempMin: tMin,
-          tempMax: tMax,
-          humidityMin: hMin ?? null,
-          humidityMax: hMax ?? null,
-          apiKey: apiKey.trim() || null,
-          isActive,
-        });
-      }
-      handleCancelForm();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error');
-      setError(msg);
+      if (editingSensor) await updateMutation.mutateAsync({ id: editingSensor.id, input });
+      else await createMutation.mutateAsync(input);
+      cancelForm();
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const confirmDelete = async () => {
+    if (!sensorToDelete) return;
     try {
-      await deleteMutation.mutateAsync(id);
-      if (editingSensor?.id === id) handleCancelForm();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error');
-      setError(msg);
+      await deleteMutation.mutateAsync(sensorToDelete.id);
+      if (editingSensor?.id === sensorToDelete.id) cancelForm();
+      setSensorToDelete(null);
+    } catch (err) {
+      setError(errorMessage(err));
+      setSensorToDelete(null);
     }
   };
 
   const isFormOpen = isCreating || editingSensor != null;
+  const saving = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Modal
       open={open}
       onClose={onClose}
+      size="lg"
       title={t('temperature.sensorSettings')}
       footer={
-        <div className="flex justify-between w-full">
-          <div>
-            {!isFormOpen && (
-              <button
-                type="button"
-                onClick={handleStartCreate}
-                className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                {t('temperature.newSensor')}
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-slate-300 px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
+        <>
+          {!isFormOpen && (
+            <Button leftIcon="plus" onClick={startCreate} className="mr-auto">
+              {t('temperature.newSensor')}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={onClose}>
             {t('common.close')}
-          </button>
-        </div>
+          </Button>
+        </>
       }
     >
-      <div className="space-y-4">
-        {isFormOpen ? (
-          <form onSubmit={handleSave} className="space-y-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <h4 className="text-sm font-semibold text-slate-800">
-              {editingSensor
-                ? t('temperature.editSensor')
-                : t('temperature.newSensor')}
-            </h4>
-
-            {error && (
-              <div className="rounded-lg bg-rose-50 p-2.5 text-xs text-rose-700 border border-rose-200">
-                {error}
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.sensorId')}
-                </label>
-                <input
-                  type="text"
-                  value={sensorId}
-                  onChange={(e) => setSensorId(e.target.value)}
-                  required
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.locationName')}
-                </label>
-                <input
-                  type="text"
+      <div className="flex flex-col gap-4">
+        {!isFormOpen && error && <Alert tone="danger">{error}</Alert>}
+        {isFormOpen && (
+          <form
+            onSubmit={handleSave}
+            noValidate
+            className="flex flex-col gap-4 rounded-lg border border-line bg-surface-muted p-4"
+          >
+            <h3 className="text-sm font-semibold text-fg">
+              {editingSensor ? t('temperature.editSensor') : t('temperature.newSensor')}
+            </h3>
+            {error && <Alert tone="danger">{error}</Alert>}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <FormField label={t('temperature.sensorId')} required>
+                <Input size="sm" value={sensorId} onChange={(e) => setSensorId(e.target.value)} />
+              </FormField>
+              <FormField label={t('temperature.locationName')} required>
+                <Input
+                  size="sm"
                   value={locationName}
                   onChange={(e) => setLocationName(e.target.value)}
-                  required
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.tempMin')}
-                </label>
-                <input
+              </FormField>
+              <FormField label={t('temperature.tempMin')} required>
+                <Input
+                  size="sm"
                   type="number"
                   step="0.1"
                   value={tempMin}
                   onChange={(e) => setTempMin(e.target.value)}
-                  required
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.tempMax')}
-                </label>
-                <input
+              </FormField>
+              <FormField label={t('temperature.tempMax')} required>
+                <Input
+                  size="sm"
                   type="number"
                   step="0.1"
                   value={tempMax}
                   onChange={(e) => setTempMax(e.target.value)}
-                  required
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.humidityMin')}
-                </label>
-                <input
+              </FormField>
+              <FormField label={t('temperature.humidityMin')}>
+                <Input
+                  size="sm"
                   type="number"
                   step="0.1"
                   value={humidityMin}
                   onChange={(e) => setHumidityMin(e.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.humidityMax')}
-                </label>
-                <input
+              </FormField>
+              <FormField label={t('temperature.humidityMax')}>
+                <Input
+                  size="sm"
                   type="number"
                   step="0.1"
                   value={humidityMax}
                   onChange={(e) => setHumidityMax(e.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-slate-700">
-                  {t('temperature.apiKey')}
-                </label>
-                <input
-                  type="text"
+              </FormField>
+              <FormField label={t('temperature.apiKey')}>
+                <Input
+                  size="sm"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full rounded-md border border-slate-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                  autoComplete="off"
+                />
+              </FormField>
+              <div className="flex items-end pb-1">
+                <Checkbox
+                  label={t('temperature.isActive')}
+                  checked={isActive}
+                  onChange={(e) => setIsActive(e.target.checked)}
                 />
               </div>
-
-              <div className="flex items-center pt-5">
-                <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  {t('temperature.isActive')}
-                </label>
-              </div>
             </div>
-
-            <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelForm}
-                className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
-              >
+            <div className="flex justify-end gap-2">
+              <Button variant="secondary" size="sm" onClick={cancelForm}>
                 {t('temperature.cancel')}
-              </button>
-              <button
-                type="submit"
-                disabled={createMutation.isPending || updateMutation.isPending}
-                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-              >
+              </Button>
+              <Button type="submit" size="sm" loading={saving}>
                 {t('temperature.save')}
-              </button>
+              </Button>
             </div>
           </form>
-        ) : null}
+        )}
 
-        {/* Sensorlar ro'yxati */}
-        <div className="divide-y divide-slate-100 rounded-lg border border-slate-200 overflow-hidden">
-          {sensors.length === 0 ? (
-            <div className="p-4 text-center text-sm text-slate-500">
-              {t('temperature.noSensors')}
-            </div>
-          ) : (
-            sensors.map((sensor) => (
-              <div
+        {sensors.length === 0 ? (
+          <EmptyState size="sm" icon="thermometer" title={t('temperature.noSensors')} />
+        ) : (
+          <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line">
+            {sensors.map((sensor) => (
+              <li
                 key={sensor.id}
-                className="flex items-center justify-between p-3 hover:bg-slate-50 text-sm"
+                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm"
               >
-                <div>
-                  <div className="flex items-center gap-2 font-medium text-slate-800">
-                    <span>{sensor.locationName}</span>
-                    <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 font-medium text-fg">
+                    {sensor.locationName}
+                    <Badge size="sm" className="font-mono">
                       {sensor.sensorId}
-                    </span>
-                    {!sensor.isActive && (
-                      <span className="rounded bg-slate-200 px-1.5 py-0.5 text-xs text-slate-500">
-                        {t('temperature.inactive')}
+                    </Badge>
+                    {!sensor.isActive && <Badge size="sm">{t('temperature.inactive')}</Badge>}
+                  </div>
+                  <p className="mt-0.5 text-xs text-fg-muted">
+                    {sensor.tempMin} – {sensor.tempMax} {t('temperature.tempUnit')}
+                    {sensor.humidityMin != null && sensor.humidityMax != null && (
+                      <span className="ml-2">
+                        ({sensor.humidityMin} – {sensor.humidityMax} {t('temperature.humidityUnit')}
+                        )
                       </span>
                     )}
-                  </div>
-                  <div className="mt-0.5 text-xs text-slate-500">
-                    <span>{sensor.tempMin} &ndash; {sensor.tempMax} {t('temperature.tempUnit')}</span>
-                    {sensor.humidityMin != null && sensor.humidityMax != null && (
-                      <span className="ml-2">({sensor.humidityMin} &ndash; {sensor.humidityMax} {t('temperature.humidityUnit')})</span>
-                    )}
-                  </div>
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleStartEdit(sensor)}
-                    className="rounded px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50"
-                  >
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => startEdit(sensor)}>
                     {t('temperature.editSensor')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(sensor.id)}
-                    className="rounded px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50"
+                  </Button>
+                  <Button
+                    variant="danger-ghost"
+                    size="sm"
+                    onClick={() => setSensorToDelete(sensor)}
                   >
                     {t('temperature.deleteSensor')}
-                  </button>
+                  </Button>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+
+      <ConfirmDialog
+        open={!!sensorToDelete}
+        title={t('temperature.deleteSensor')}
+        description={
+          sensorToDelete ? `${sensorToDelete.locationName} (${sensorToDelete.sensorId})` : undefined
+        }
+        confirmLabel={t('temperature.deleteSensor')}
+        cancelLabel={t('temperature.cancel')}
+        loading={deleteMutation.isPending}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setSensorToDelete(null)}
+      />
     </Modal>
   );
 }

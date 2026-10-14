@@ -1,102 +1,83 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import type { SampleTrackingDto } from '@/types';
+import { EmptyState, Icon } from '@/ui';
 import { SampleStatusBadge } from './SampleStatusBadge';
-import type { SampleTrackingDto, SampleTrackingEventType } from '@/types';
 
 interface SampleTrackingTimelineProps {
   tracking: SampleTrackingDto[];
 }
 
-export const SampleTrackingTimeline: React.FC<SampleTrackingTimelineProps> = ({ tracking }) => {
+function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
+}
+
+export function SampleTrackingTimeline({ tracking }: SampleTrackingTimelineProps) {
   const { t } = useTranslation();
-
-  const getEventTitle = (eventType: SampleTrackingEventType) => {
-    return t(`samples.events.${eventType}`, eventType);
-  };
-
-  const formatDate = (iso: string) => {
-    try {
-      const d = new Date(iso);
-      return d.toLocaleString();
-    } catch {
-      return iso;
-    }
-  };
 
   if (!tracking || tracking.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-slate-500 bg-slate-50 rounded-lg border border-slate-200">
-        {t('samples.noTrackingEvents', "Hozircha harakatlar tarixi mavjud emas")}
-      </div>
+      <EmptyState
+        size="sm"
+        icon="clock"
+        title={t('samples.noTrackingEvents', 'Hozircha harakatlar tarixi mavjud emas')}
+      />
     );
   }
 
   return (
-    <div className="flow-root">
-      <ul className="-mb-8">
-        {tracking.map((event, eventIdx) => {
-          const isLast = eventIdx === tracking.length - 1;
-          return (
-            <li key={event.id}>
-              <div className="relative pb-8">
-                {!isLast && (
-                  <span
-                    className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200"
-                    aria-hidden="true"
-                  />
-                )}
-                <div className="relative flex space-x-3 items-start">
-                  <div>
-                    <span className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center ring-8 ring-white text-xs font-bold">
-                      {tracking.length - eventIdx}
-                    </span>
-                  </div>
-                  <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-semibold text-slate-900">
-                          {getEventTitle(event.eventType)}
-                        </span>
-                        {event.userFullName && (
-                          <span className="text-xs text-slate-500">
-                            ({event.userFullName})
-                          </span>
-                        )}
-                      </div>
-
-                      {(event.fromStatus || event.toStatus) && (
-                        <div className="mt-1 flex items-center gap-2 text-xs">
-                          {event.fromStatus && (
-                            <SampleStatusBadge status={event.fromStatus} />
-                          )}
-                          {event.fromStatus && event.toStatus && (
-                            <span className="text-slate-400">→</span>
-                          )}
-                          {event.toStatus && (
-                            <SampleStatusBadge status={event.toStatus} />
-                          )}
-                        </div>
-                      )}
-
-                      {event.reason && (
-                        <p className="mt-2 text-xs text-slate-700 bg-amber-50 p-2 rounded border border-amber-200">
-                          <span className="font-medium text-amber-900">
-                            {t('samples.reason', 'Sabab')}:
-                          </span>{' '}
-                          {event.reason}
-                        </p>
-                      )}
-                    </div>
-                    <div className="text-right text-xs whitespace-nowrap text-slate-400">
-                      <time dateTime={event.createdAt}>{formatDate(event.createdAt)}</time>
-                    </div>
-                  </div>
+    <ol className="flex flex-col">
+      {tracking.map((event, idx) => {
+        const isLast = idx === tracking.length - 1;
+        return (
+          <li key={event.id} className="relative flex gap-4 pb-6 last:pb-0">
+            {!isLast && (
+              <span
+                aria-hidden="true"
+                className="absolute left-4 top-9 -ml-px h-full w-0.5 bg-line"
+              />
+            )}
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-semibold tabular-nums text-primary-subtle-fg ring-4 ring-surface">
+              {tracking.length - idx}
+            </span>
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5 pt-1 sm:flex-row sm:justify-between sm:gap-4">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="text-sm font-semibold text-fg">
+                    {t(`samples.events.${event.eventType}`, event.eventType)}
+                  </span>
+                  {event.userFullName && (
+                    <span className="text-xs text-fg-muted">{event.userFullName}</span>
+                  )}
                 </div>
+                {(event.fromStatus || event.toStatus) && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                    {event.fromStatus && <SampleStatusBadge status={event.fromStatus} />}
+                    {event.fromStatus && event.toStatus && (
+                      <Icon name="chevron-right" size="xs" className="text-fg-subtle" />
+                    )}
+                    {event.toStatus && <SampleStatusBadge status={event.toStatus} />}
+                  </div>
+                )}
+                {event.reason && (
+                  <p className="mt-2 rounded-lg border border-warning-line bg-warning-subtle px-3 py-2 text-xs text-fg">
+                    <span className="font-medium text-warning-fg">
+                      {t('samples.reason', 'Sabab')}:
+                    </span>{' '}
+                    {event.reason}
+                  </p>
+                )}
               </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+              <time
+                dateTime={event.createdAt}
+                className="shrink-0 text-xs text-fg-subtle tabular-nums"
+              >
+                {formatDateTime(event.createdAt)}
+              </time>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
-};
+}

@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
 import { useResolveAlertMutation } from '@/hooks/useTemperature';
+import { errorMessage } from '@/lib/queryClient';
 import type { TemperatureAlertDto } from '@/types';
+import { Alert, Button, FormField, Modal, Textarea } from '@/ui';
+import { alertTypeLabel } from './alertType';
 
 interface ResolveAlertModalProps {
   open: boolean;
@@ -12,16 +14,16 @@ interface ResolveAlertModalProps {
 
 export function ResolveAlertModal({ open, onClose, alert }: ResolveAlertModalProps) {
   const { t } = useTranslation();
+  const formId = useId();
   const [resolutionNote, setResolutionNote] = useState('');
   const [error, setError] = useState<string | null>(null);
-
   const mutation = useResolveAlertMutation();
 
-  const handleResolve = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!alert) return;
-    setError(null);
+  if (!alert) return null;
 
+  const handleResolve = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
     try {
       await mutation.mutateAsync({
         id: alert.id,
@@ -29,13 +31,10 @@ export function ResolveAlertModal({ open, onClose, alert }: ResolveAlertModalPro
       });
       setResolutionNote('');
       onClose();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : t('common.error');
-      setError(msg);
+    } catch (err) {
+      setError(errorMessage(err));
     }
   };
-
-  if (!alert) return null;
 
   return (
     <Modal
@@ -43,58 +42,32 @@ export function ResolveAlertModal({ open, onClose, alert }: ResolveAlertModalPro
       onClose={onClose}
       title={t('temperature.resolve')}
       footer={
-        <div className="flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
+        <>
+          <Button variant="secondary" onClick={onClose}>
             {t('temperature.cancel')}
-          </button>
-          <button
-            type="submit"
-            form="resolve-alert-form"
-            disabled={mutation.isPending}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-          >
-            {mutation.isPending ? t('common.saving') : t('temperature.resolve')}
-          </button>
-        </div>
+          </Button>
+          <Button type="submit" form={formId} leftIcon="check" loading={mutation.isPending}>
+            {t('temperature.resolve')}
+          </Button>
+        </>
       }
     >
-      <form id="resolve-alert-form" onSubmit={handleResolve} className="space-y-4">
-        {error && (
-          <div className="rounded-lg bg-rose-50 p-3 text-sm text-rose-700 border border-rose-200">
-            {error}
-          </div>
-        )}
-
-        <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800 border border-amber-200">
-          <p className="font-semibold">
-            <span>{alert.locationName}</span> <span className="ml-1">({alert.sensorId})</span>
+      <form id={formId} onSubmit={handleResolve} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
+        <Alert tone="warning" title={`${alert.locationName} (${alert.sensorId})`}>
+          <p>
+            {t('temperature.temperature')}: {alert.temperature} {t('temperature.tempUnit')} ·{' '}
+            {alertTypeLabel(t, alert.alertType)}
           </p>
-          <p className="mt-1">
-            <span className="mr-1">{t('temperature.temperature')}:</span>
-            <span>{alert.temperature} {t('temperature.tempUnit')}</span>
-            <span className="mx-2">&ndash;</span>
-            <span className="font-medium">{alert.alertType}</span>
-          </p>
-          <p className="mt-1 text-xs text-amber-700">
-            {new Date(alert.createdAt).toLocaleString()}
-          </p>
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
-            {t('temperature.resolutionNote')}
-          </label>
-          <textarea
+          <p className="mt-1 text-xs">{new Date(alert.createdAt).toLocaleString()}</p>
+        </Alert>
+        <FormField label={t('temperature.resolutionNote')}>
+          <Textarea
             rows={3}
             value={resolutionNote}
             onChange={(e) => setResolutionNote(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
-        </div>
+        </FormField>
       </form>
     </Modal>
   );

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { Modal } from '@/components/ui/Modal';
+import { Modal } from '@/ui';
 
 function Harness({ onClose = () => undefined }: { onClose?: () => void }) {
   const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Spinner } from '@/components/ui/Spinner';
 import type { Role, UserStatsDto } from '@/types';
+import { Badge, Card, Skeleton, StatCard } from '@/ui';
 
 interface UserStatsCardsProps {
   stats?: UserStatsDto;
@@ -14,53 +14,42 @@ export function UserStatsCards({ stats, loading }: UserStatsCardsProps) {
 
   if (loading) {
     return (
-      <div className="flex justify-center rounded-lg border border-slate-200 bg-white p-6">
-        <Spinner />
+      <div role="status" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <span className="sr-only">{t('common.loading')}</span>
+        {Array.from({ length: 4 }, (_, i) => (
+          <Skeleton key={i} variant="rect" className="h-28" />
+        ))}
       </div>
     );
   }
-
   if (!stats) return null;
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-          {t('users.stats.total')}
-        </p>
-        <p className="mt-2 text-2xl font-semibold text-slate-900">{stats.total}</p>
-      </div>
-
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wider text-emerald-600">
-          {t('users.stats.active')}
-        </p>
-        <p className="mt-2 text-2xl font-semibold text-emerald-700">{stats.active}</p>
-      </div>
-
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wider text-rose-600">
-          {t('users.stats.inactive')}
-        </p>
-        <p className="mt-2 text-2xl font-semibold text-rose-700">{stats.inactive}</p>
-      </div>
-
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
-          {t('users.stats.rolesBreakdown')}
-        </p>
-        <div className="mt-2 flex flex-wrap gap-1.5 text-xs text-slate-600">
+      <StatCard label={t('users.stats.total')} value={stats.total} icon="users" />
+      <StatCard
+        label={t('users.stats.active')}
+        value={stats.active}
+        icon="check-circle"
+        tone="success"
+      />
+      <StatCard
+        label={t('users.stats.inactive')}
+        value={stats.inactive}
+        icon="x-circle"
+        tone="danger"
+      />
+      <Card>
+        <p className="text-sm font-medium text-fg-muted">{t('users.stats.rolesBreakdown')}</p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {DISPLAY_ROLES.map((role) => (
-            <span
-              key={role}
-              className="inline-flex items-center rounded bg-slate-100 px-2 py-0.5"
-            >
-              <span className="font-medium text-slate-700">{t(`users.roles.${role}`)}:</span>
-              <span className="ml-1 font-semibold text-slate-900">{stats.byRole[role] ?? 0}</span>
-            </span>
+            <Badge key={role}>
+              {t(`users.roles.${role}`)}:{' '}
+              <span className="font-semibold text-fg">{stats.byRole[role] ?? 0}</span>
+            </Badge>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

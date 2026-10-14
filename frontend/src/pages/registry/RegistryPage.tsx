@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { Pagination } from '@/components/ui/Pagination';
-import { Table, type Column } from '@/components/ui/Table';
 import { useRegistryQuery } from '@/hooks/useRegistry';
 import { formatDate, parseDisplayDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
 import type { RegistryItemDto, RegistryListParams, SampleType } from '@/types';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  DataTable,
+  type DataTableColumn,
+  DatePicker,
+  EmptyState,
+  FilterBar,
+  FormField,
+  Input,
+  PageHeader,
+  Pagination,
+  Select,
+} from '@/ui';
 import { SampleTypeBadge } from '../samples/SampleTypeBadge';
 import { RegistryDeleteModal } from './RegistryDeleteModal';
 import { canDeleteFromRegistry, downloadRegistryFile } from './registryActions';
@@ -24,6 +37,7 @@ interface FilterForm {
   substanceName: string;
   serialNumber: string;
   lotNumber: string;
+  /** UI ko'rinishida (DD.MM.YYYY) — qo'llashda tekshiriladi (D-110). */
   approvedFrom: string;
   approvedTo: string;
   unfinalizedOnly: boolean;
@@ -39,22 +53,21 @@ const EMPTY: FilterForm = {
   unfinalizedOnly: false,
 };
 
-const inputCls = 'mt-1 block w-full rounded border border-slate-300 px-3 py-1.5 text-sm';
-
-export const RegistryPage: React.FC = () => {
+export function RegistryPage() {
   const { t } = useTranslation();
   const role = useAuthStore((s) => s.user?.role);
   const [form, setForm] = useState<FilterForm>(EMPTY);
+  // Tozalashda sana maydonlari qayta yaratiladi (yozilgan noto'g'ri matn ham o'chadi)
+  const [resetKey, setResetKey] = useState(0);
   const [params, setParams] = useState<RegistryListParams>({ page: 1 });
   const [dateError, setDateError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<RegistryItemDto | null>(null);
-  const { data, isLoading } = useRegistryQuery(params);
+  const { data, isLoading, isError, refetch } = useRegistryQuery(params);
 
-  const set =
-    (key: keyof FilterForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-      setForm((f) => ({ ...f, [key]: e.target.value }));
+  const setField = <K extends keyof FilterForm>(key: K, value: FilterForm[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
 
-  const apply = (e: React.FormEvent) => {
+  const apply = (e: FormEvent) => {
     e.preventDefault();
     // UI'da DD.MM.YYYY → API'ga ISO (D-110)
     const from = form.approvedFrom.trim() ? parseDisplayDate(form.approvedFrom) : undefined;
@@ -82,16 +95,36 @@ export const RegistryPage: React.FC = () => {
 
   const reset = () => {
     setForm(EMPTY);
+    setResetKey((k) => k + 1);
     setDateError(null);
     setParams({ page: 1 });
   };
 
-  const columns: Column<RegistryItemDto>[] = [
+  const dateField = (key: 'approvedFrom' | 'approvedTo') => (
+    <FormField label={t(`registry.filters.${key}`)}>
+      <DatePicker
+        key={`${key}-${resetKey}`}
+        value={parseDisplayDate(form[key]) ?? ''}
+        placeholder={t('registry.filters.datePlaceholder')}
+        onInputChange={(text) => setField(key, text)}
+        onChange={(iso) => setField(key, iso ? formatDate(iso) : '')}
+      />
+    </FormField>
+  );
+
+  const approvedFromField = dateField('approvedFrom');
+  const approvedToField = dateField('approvedTo');
+
+  const columns: DataTableColumn<RegistryItemDto>[] = [
     {
       key: 'substance',
       header: t('registry.columns.substance'),
+      primary: true,
       render: (row) => (
-        <Link to={`/registry/${row.id}`} className="font-medium text-blue-700 hover:underline">
+        <Link
+          to={`/registry/${row.id}`}
+          className="rounded-sm font-medium text-fg transition-colors motion-fast focus-ring hover:text-primary"
+        >
           {row.substanceName}
         </Link>
       ),
@@ -104,38 +137,40 @@ export const RegistryPage: React.FC = () => {
     {
       key: 'serial',
       header: t('registry.columns.serialNumber'),
-      render: (row) => row.serialNumber ?? '—',
+      render: (row) => <span className="font-mono text-xs">{row.serialNumber ?? '—'}</span>,
     },
-    { key: 'lot', header: t('registry.columns.lotNumber'), render: (row) => row.lotNumber ?? '—' },
+    {
+      key: 'lot',
+      header: t('registry.columns.lotNumber'),
+      render: (row) => <span className="font-mono text-xs">{row.lotNumber ?? '—'}</span>,
+    },
     {
       key: 'approvedAt',
       header: t('registry.columns.approvedAt'),
-      render: (row) => formatDate(row.approvedAt),
+      render: (row) => <span className="tabular-nums">{formatDate(row.approvedAt)}</span>,
     },
     {
       key: 'actions',
       header: t('common.actions'),
+      align: 'right',
       render: (row) => (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-end gap-1">
           {row.downloadKind && (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon="download"
               onClick={() => void downloadRegistryFile(row.id)}
-              className="text-xs font-medium text-blue-700 hover:underline"
             >
               {row.downloadKind === 'passport'
                 ? t('registry.downloadPassport')
                 : t('registry.downloadProtocol')}
-            </button>
+            </Button>
           )}
           {canDeleteFromRegistry(role) && (
-            <button
-              type="button"
-              onClick={() => setToDelete(row)}
-              className="text-xs font-medium text-rose-700 hover:underline"
-            >
+            <Button variant="danger-ghost" size="sm" onClick={() => setToDelete(row)}>
               {t('registry.delete')}
-            </button>
+            </Button>
           )}
         </div>
       ),
@@ -143,105 +178,78 @@ export const RegistryPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-4">
+    <>
+      <PageHeader title={t('pages.registry')} description={t('registry.subtitle')} />
+
+      <FilterBar
+        onSubmit={apply}
+        onReset={reset}
+        submitLabel={t('registry.filters.apply')}
+        resetLabel={t('registry.filters.reset')}
+        extra={
+          <>
+            <Checkbox
+              label={t(
+                'registry.filters.unfinalizedOnly',
+                'Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar',
+              )}
+              checked={form.unfinalizedOnly}
+              onChange={(e) => setField('unfinalizedOnly', e.target.checked)}
+            />
+            {dateError && <Alert tone="danger">{dateError}</Alert>}
+          </>
+        }
+      >
+        <FormField label={t('registry.filters.type')}>
+          <Select
+            options={[
+              { value: '', label: t('common.all') },
+              ...TYPES.map((type) => ({ value: type, label: t(`samples.types.${type}`) })),
+            ]}
+            value={form.type}
+            onChange={(v) => setField('type', v)}
+          />
+        </FormField>
+        <FormField label={t('registry.filters.substanceName')}>
+          <Input
+            value={form.substanceName}
+            onChange={(e) => setField('substanceName', e.target.value)}
+          />
+        </FormField>
+        <FormField label={t('registry.filters.serialNumber')}>
+          <Input
+            value={form.serialNumber}
+            onChange={(e) => setField('serialNumber', e.target.value)}
+          />
+        </FormField>
+        <FormField label={t('registry.filters.lotNumber')}>
+          <Input value={form.lotNumber} onChange={(e) => setField('lotNumber', e.target.value)} />
+        </FormField>
+        {approvedFromField}
+        {approvedToField}
+      </FilterBar>
+
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">{t('pages.registry')}</h1>
-        <p className="text-sm text-slate-500">{t('registry.subtitle')}</p>
+        <DataTable
+          caption={t('pages.registry')}
+          columns={columns}
+          rows={data?.data ?? []}
+          rowKey={(row) => row.id}
+          loading={isLoading}
+          error={isError}
+          onRetry={() => void refetch()}
+          empty={<EmptyState icon="clipboard" title={t('registry.empty')} />}
+        />
+        {data && data.meta.total > data.meta.limit && (
+          <Pagination
+            meta={data.meta}
+            showSummary
+            onPageChange={(page) => setParams((p) => ({ ...p, page }))}
+          />
+        )}
       </div>
 
-      <form
-        onSubmit={apply}
-        noValidate
-        className="grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-white p-4 sm:grid-cols-3"
-      >
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.type')}
-          <select value={form.type} onChange={set('type')} className={inputCls}>
-            <option value="">{t('common.all')}</option>
-            {TYPES.map((type) => (
-              <option key={type} value={type}>
-                {t(`samples.types.${type}`)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.substanceName')}
-          <input value={form.substanceName} onChange={set('substanceName')} className={inputCls} />
-        </label>
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.serialNumber')}
-          <input value={form.serialNumber} onChange={set('serialNumber')} className={inputCls} />
-        </label>
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.lotNumber')}
-          <input value={form.lotNumber} onChange={set('lotNumber')} className={inputCls} />
-        </label>
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.approvedFrom')}
-          <input
-            value={form.approvedFrom}
-            onChange={set('approvedFrom')}
-            placeholder={t('registry.filters.datePlaceholder')}
-            inputMode="numeric"
-            className={inputCls}
-          />
-        </label>
-        <label className="text-xs font-medium text-slate-600">
-          {t('registry.filters.approvedTo')}
-          <input
-            value={form.approvedTo}
-            onChange={set('approvedTo')}
-            placeholder={t('registry.filters.datePlaceholder')}
-            inputMode="numeric"
-            className={inputCls}
-          />
-        </label>
-        <div className="sm:col-span-3 flex items-center pt-1">
-          <label className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.unfinalizedOnly}
-              onChange={(e) => setForm((f) => ({ ...f, unfinalizedOnly: e.target.checked }))}
-              className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
-            />
-            <span>{t('registry.filters.unfinalizedOnly', 'Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar')}</span>
-          </label>
-        </div>
-        {dateError && (
-          <p role="alert" className="text-xs text-rose-600 sm:col-span-3">
-            {dateError}
-          </p>
-        )}
-        <div className="flex gap-2 sm:col-span-3">
-          <button
-            type="submit"
-            className="px-4 py-1.5 text-sm font-medium rounded bg-blue-600 text-white hover:bg-blue-700"
-          >
-            {t('registry.filters.apply')}
-          </button>
-          <button
-            type="button"
-            onClick={reset}
-            className="px-4 py-1.5 text-sm rounded border border-slate-300"
-          >
-            {t('registry.filters.reset')}
-          </button>
-        </div>
-      </form>
-
-      <Table
-        columns={columns}
-        rows={data?.data ?? []}
-        rowKey={(row) => row.id}
-        loading={isLoading}
-        emptyText={t('registry.empty')}
-      />
-      {data && data.meta.total > data.meta.limit && (
-        <Pagination meta={data.meta} onPageChange={(page) => setParams((p) => ({ ...p, page }))} />
-      )}
-
       <RegistryDeleteModal sample={toDelete} onClose={() => setToDelete(null)} />
-    </div>
+    </>
   );
-};
+}

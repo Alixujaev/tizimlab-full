@@ -65,11 +65,7 @@ const mockStats: UserStatsDto = {
 };
 
 const mockCatalog: PermissionsCatalogDto = {
-  catalog: [
-    'samples:create',
-    'samples:view',
-    'protocols:upload',
-  ],
+  catalog: ['samples:create', 'samples:view', 'protocols:upload'],
   roleDefaults: {
     super_admin: [],
     admin: ['samples:view'],
@@ -136,7 +132,7 @@ describe('UsersPage & RBAC UI', () => {
     expect(screen.queryByRole('columnheader', { name: 'Amallar' })).toBeNull();
   });
 
-  it("lab_head: yaratishda faqat chemist/kontrolyor ruxsat etilgan, faqat ularni tahrirlay oladi", async () => {
+  it('lab_head: yaratishda faqat chemist/kontrolyor ruxsat etilgan, faqat ularni tahrirlay oladi', async () => {
     const user = userEvent.setup();
     loginAs('lab_head');
     api.onGet('/admin/users').reply(200, {
@@ -157,11 +153,15 @@ describe('UsersPage & RBAC UI', () => {
     expect(await screen.findByRole('heading', { name: 'Yangi foydalanuvchi' })).toBeInTheDocument();
 
     // Rol tanlash: faqat Kimyogar va Kontrolyor bor, boshqalari yo'q
+    // Rol — Select (combobox): variantlar ochilganda ko'rinadi
     const roleSelect = screen.getByLabelText('Rol');
-    expect(roleSelect).toContainHTML('value="chemist"');
-    expect(roleSelect).toContainHTML('value="kontrolyor"');
-    expect(roleSelect).not.toContainHTML('value="admin"');
-    expect(roleSelect).not.toContainHTML('value="director"');
+    await user.click(roleSelect);
+    const roleValues = screen.getAllByRole('option').map((o) => o.getAttribute('data-value'));
+    expect(roleValues).toContain('chemist');
+    expect(roleValues).toContain('kontrolyor');
+    expect(roleValues).not.toContain('admin');
+    expect(roleValues).not.toContain('director');
+    await user.keyboard('{Escape}');
 
     await user.click(screen.getByRole('button', { name: 'Bekor qilish' }));
 
@@ -204,7 +204,9 @@ describe('UsersPage & RBAC UI', () => {
     const permBtns = await screen.findAllByRole('button', { name: 'Ruxsatlar' });
     await user.click(permBtns[0]!);
 
-    expect(await screen.findByRole('heading', { name: 'Ruxsatlar boshqaruvi' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Ruxsatlar boshqaruvi' }),
+    ).toBeInTheDocument();
     expect((await screen.findAllByText('Rol ruxsati')).length).toBeGreaterThan(0);
 
     await user.click(screen.getByRole('button', { name: 'Ruxsatlarni saqlash' }));
@@ -219,7 +221,9 @@ describe('UsersPage & RBAC UI', () => {
     const resetBtns = screen.getAllByRole('button', { name: 'Parolni tiklash' });
     await user.click(resetBtns[0]!);
 
-    expect(await screen.findByRole('heading', { name: 'Foydalanuvchi parolini tiklash' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Foydalanuvchi parolini tiklash' }),
+    ).toBeInTheDocument();
     await user.type(screen.getByLabelText('Yangi parol'), 'YangiParol123');
     await user.type(screen.getByLabelText('Yangi parolni tasdiqlang'), 'YangiParol123');
 
@@ -235,7 +239,9 @@ describe('UsersPage & RBAC UI', () => {
     const logBtns = screen.getAllByRole('button', { name: 'Audit jurnali' });
     await user.click(logBtns[0]!);
 
-    expect(await screen.findByRole('heading', { name: 'Foydalanuvchi faoliyat jurnali' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: 'Foydalanuvchi faoliyat jurnali' }),
+    ).toBeInTheDocument();
     expect(await screen.findByText('login')).toBeInTheDocument();
   });
 });

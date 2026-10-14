@@ -47,13 +47,15 @@ export function FormField({
   return (
     <div className={cx('flex flex-col gap-1.5', className)}>
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={controlId} className="text-sm font-medium text-fg">
-          {label}
-          {required && (
-            <span aria-hidden="true" className="ml-0.5 text-danger-fg">
-              *
-            </span>
+        {/* Majburiylik belgisi CSS orqali (yorliq matniga qo'shilmaydi); ekran o'quvchiga — aria-required */}
+        <label
+          htmlFor={controlId}
+          className={cx(
+            'text-sm font-medium text-fg',
+            required && "after:ml-0.5 after:text-danger-fg after:content-['*']",
           )}
+        >
+          {label}
         </label>
         {labelAside}
       </div>

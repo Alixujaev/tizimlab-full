@@ -106,3 +106,15 @@ nolga tushishi (D-158; ESLint `LEGACY_UI_FILES` ro'yxati shu fayllar bilan bir x
 2. `ui-2-shell` — layout, navigatsiya, login, xato sahifalari, dark mode.
 3. `ui-3-pages` — barcha sahifalar; ro'yxat bo'shaydi, Tailwind standart palitrasi o'chiriladi.
 4. `ui-4-performance` — code splitting, React Query keshlash, Lighthouse.
+
+## Natija (3-bosqichdan keyin)
+
+| Ko'rsatkich | Oldin | Keyin |
+| --- | ---: | ---: |
+| Native `<button>/<input>/<select>/<textarea>/<table>` (src/ui dan tashqarida) | 315 | 0 |
+| `alert()` / `window.confirm()` | 5 | 0 (notify / ConfirmDialog) |
+| Tailwind palitra klasslari | ~2000 | 0 (faqat tokenlar) |
+| Arbitrary hex/px | 16 | 0 |
+| Maxsus overlay modallar | 3 | 0 (Modal) |
+| `LEGACY_UI_FILES` | 51 | 0 |
+| Tarjimasi yo'q kalitlar (standart matn faqat o'zbekcha) | 52 | 0 |

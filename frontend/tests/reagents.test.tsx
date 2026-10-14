@@ -108,7 +108,7 @@ describe('Reagents Frontend (P7: /reagents, /reagents/:id, /reagents/journal, /e
     renderAt('/reagents');
 
     expect((await screen.findAllByText('Xlorid kislotasi')).length).toBeGreaterThan(0);
-    expect(screen.getByText('+ Yangi reaktiv')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Yangi reaktiv' })).toBeInTheDocument();
   });
 
   it('2. /reagents: chemist roli uchun "+ Yangi reaktiv" ko‘rinmaydi', async () => {
@@ -121,7 +121,7 @@ describe('Reagents Frontend (P7: /reagents, /reagents/:id, /reagents/journal, /e
     renderAt('/reagents');
 
     expect((await screen.findAllByText('Xlorid kislotasi')).length).toBeGreaterThan(0);
-    expect(screen.queryByText('+ Yangi reaktiv')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Yangi reaktiv' })).not.toBeInTheDocument();
   });
 
   it('3. /reagents/:id: reaktiv tafsilotlari, zaxirasi va tranzaksiyalar tarixi ko‘rsatiladi', async () => {
@@ -138,7 +138,7 @@ describe('Reagents Frontend (P7: /reagents, /reagents/:id, /reagents/journal, /e
     expect((await screen.findAllByText('Xlorid kislotasi')).length).toBeGreaterThan(0);
     expect(screen.getAllByText('50').length).toBeGreaterThan(0);
     expect(screen.getByText('Tahlil uchun')).toBeInTheDocument();
-    expect(screen.getByText('+ Tranzaksiya kiritish')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tranzaksiya kiritish' })).toBeInTheDocument();
   });
 
   it('4. /reagents/:id: hujjatlar tabiga o‘tganda hujjatlar ro‘yxati ko‘rsatiladi va yuklab olish mavjud', async () => {
@@ -153,7 +153,7 @@ describe('Reagents Frontend (P7: /reagents, /reagents/:id, /reagents/journal, /e
 
     renderAt('/reagents/reag-1');
 
-    const docsTab = await screen.findByRole('button', { name: /Reaktiv hujjatlari/ });
+    const docsTab = await screen.findByRole('tab', { name: /Reaktiv hujjatlari/ });
     await user.click(docsTab);
 
     expect(await screen.findByText('Sifat pasporti')).toBeInTheDocument();
@@ -167,7 +167,9 @@ describe('Reagents Frontend (P7: /reagents, /reagents/:id, /reagents/journal, /e
 
     renderAt('/reagents/journal');
 
-    expect(await screen.findByRole('heading', { level: 1, name: /Xarajat jurnali/ })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /Xarajat jurnali/ }),
+    ).toBeInTheDocument();
     expect(await screen.findByText('1 ta chiqim')).toBeInTheDocument();
   });
 

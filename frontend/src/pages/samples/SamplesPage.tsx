@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { Spinner } from '@/components/ui/Spinner';
-import { Table, type Column } from '@/components/ui/Table';
 import { useSamplesQuery } from '@/hooks/useSamples';
+import { formatDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
 import type { SampleDto, SampleStatus, SampleType } from '@/types';
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  DataTable,
+  type DataTableColumn,
+  EmptyState,
+  FilterBar,
+  PageHeader,
+  Pagination,
+  SearchInput,
+  Select,
+} from '@/ui';
 import { SampleAssignModal } from './SampleAssignModal';
 import { SampleFormModal } from './SampleFormModal';
 import { SampleResumeModal } from './SampleResumeModal';
@@ -13,26 +25,24 @@ import { SampleStatusBadge } from './SampleStatusBadge';
 import { SampleStopModal } from './SampleStopModal';
 import { SampleTypeBadge } from './SampleTypeBadge';
 
-const STATUS_OPTIONS: Array<{ value: SampleStatus | 'all'; labelKey: string }> = [
-  { value: 'all', labelKey: 'common.all' },
-  { value: 'pending_assignment', labelKey: 'samples.status.pending_assignment' },
-  { value: 'in_progress', labelKey: 'samples.status.in_progress' },
-  { value: 'stopped', labelKey: 'samples.status.stopped' },
-  { value: 'submitted', labelKey: 'samples.status.submitted' },
-  { value: 'approved', labelKey: 'samples.status.approved' },
-  { value: 'rejected', labelKey: 'samples.status.rejected' },
+const STATUSES: SampleStatus[] = [
+  'pending_assignment',
+  'in_progress',
+  'stopped',
+  'submitted',
+  'approved',
+  'rejected',
 ];
-
-const TYPE_OPTIONS: Array<{ value: SampleType | 'all'; labelKey: string }> = [
-  { value: 'all', labelKey: 'common.all' },
-  { value: 'raw_material', labelKey: 'samples.types.raw_material' },
-  { value: 'finished_product', labelKey: 'samples.types.finished_product' },
-  { value: 'reagent', labelKey: 'samples.types.reagent' },
-  { value: 'standard_substance', labelKey: 'samples.types.standard_substance' },
-  { value: 'other', labelKey: 'samples.types.other' },
+const TYPES: SampleType[] = [
+  'raw_material',
+  'finished_product',
+  'reagent',
+  'standard_substance',
+  'other',
 ];
+const ASSIGNABLE: SampleStatus[] = ['pending_assignment', 'in_progress', 'stopped', 'rejected'];
 
-export const SamplesPage: React.FC = () => {
+export function SamplesPage() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
@@ -46,57 +56,45 @@ export const SamplesPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<SampleStatus | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<SampleType | 'all'>('all');
 
-  // Modallar holati
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [assignModalOpen, setAssignModalOpen] = useState(false);
-  const [selectedSampleForAssign, setSelectedSampleForAssign] = useState<SampleDto | null>(null);
+  const [assignSample, setAssignSample] = useState<SampleDto | null>(null);
+  const [stopSample, setStopSample] = useState<SampleDto | null>(null);
+  const [resumeSample, setResumeSample] = useState<SampleDto | null>(null);
 
-  const [stopModalOpen, setStopModalOpen] = useState(false);
-  const [resumeModalOpen, setResumeModalOpen] = useState(false);
-  const [selectedSampleForAction, setSelectedSampleForAction] = useState<SampleDto | null>(null);
-
-  const queryParams = {
+  const { data, isLoading, isError, refetch } = useSamplesQuery({
     page,
     limit: 20,
     search: search.trim() || undefined,
     status: statusFilter !== 'all' ? statusFilter : undefined,
     type: typeFilter !== 'all' ? typeFilter : undefined,
-  };
-
-  const { data, isLoading, isError } = useSamplesQuery(queryParams);
+  });
   const samples = data?.data ?? [];
   const meta = data?.meta;
+  const hasFilters = !!search || statusFilter !== 'all' || typeFilter !== 'all';
 
-  const handleOpenAssign = (sample: SampleDto) => {
-    setSelectedSampleForAssign(sample);
-    setAssignModalOpen(true);
+  const resetFilters = () => {
+    setSearch('');
+    setStatusFilter('all');
+    setTypeFilter('all');
+    setPage(1);
   };
 
-  const handleOpenStop = (sample: SampleDto) => {
-    setSelectedSampleForAction(sample);
-    setStopModalOpen(true);
-  };
-
-  const handleOpenResume = (sample: SampleDto) => {
-    setSelectedSampleForAction(sample);
-    setResumeModalOpen(true);
-  };
-
-  const columns: Column<SampleDto>[] = [
+  const columns: DataTableColumn<SampleDto>[] = [
     {
       key: 'substanceName',
       header: t('samples.substanceName', 'Modda nomi'),
+      primary: true,
       render: (item) => (
-        <div>
+        <div className="min-w-0">
           <Link
             to={`/samples/${item.id}`}
-            className="font-semibold text-blue-600 hover:text-blue-800 hover:underline block"
+            className="block rounded-sm font-medium text-fg transition-colors motion-fast focus-ring hover:text-primary"
           >
             {item.substanceName}
           </Link>
-          <div className="text-xs text-slate-400 mt-0.5">
-            {item.manufacturer || ''}
-          </div>
+          {item.manufacturer && (
+            <div className="mt-0.5 text-xs text-fg-muted">{item.manufacturer}</div>
+          )}
         </div>
       ),
     },
@@ -109,7 +107,7 @@ export const SamplesPage: React.FC = () => {
       key: 'lotNumber',
       header: t('samples.lotOrSerial', 'Lot / Seriya'),
       render: (item) => (
-        <span className="font-mono text-xs text-slate-700">
+        <span className="font-mono text-xs text-fg-muted">
           {item.lotNumber || item.serialNumber || '—'}
         </span>
       ),
@@ -124,85 +122,53 @@ export const SamplesPage: React.FC = () => {
       header: t('samples.assignedTo', 'Biriktirilgan'),
       render: (item) => {
         const name = item.assignedToName || item.assigned_to_name;
-        return name ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-slate-100 text-slate-700 font-medium">
-            {name}
-          </span>
-        ) : (
-          <span className="text-xs text-slate-400">
-            —
-          </span>
-        );
+        return name ? <Badge>{name}</Badge> : <span className="text-fg-subtle">—</span>;
       },
     },
     {
       key: 'createdAt',
       header: t('samples.createdAt', 'Kiritilgan sana'),
+      hideOnMobile: true,
       render: (item) => (
-        <span className="text-xs text-slate-500 whitespace-nowrap">
-          {new Date(item.createdAt).toLocaleDateString()}
+        <span className="whitespace-nowrap text-xs text-fg-muted tabular-nums">
+          {formatDate(item.createdAt)}
         </span>
       ),
     },
     {
       key: 'actions',
       header: t('common.actions', 'Amallar'),
+      align: 'right',
       render: (item) => {
         const canAssign =
           isLabHead &&
           item.type !== 'reagent' &&
           item.type !== 'standard_substance' &&
-          ['pending_assignment', 'in_progress', 'stopped', 'rejected'].includes(item.status);
-
-        const canStop =
-          isChemist &&
-          item.assignedTo === user?.id &&
-          item.status === 'in_progress';
-
-        const canResume =
-          isChemist &&
-          item.assignedTo === user?.id &&
-          item.status === 'stopped';
-
+          ASSIGNABLE.includes(item.status);
+        const isMine = isChemist && item.assignedTo === user?.id;
+        const canStop = isMine && item.status === 'in_progress';
+        const canResume = isMine && item.status === 'stopped';
         return (
-          <div className="flex items-center gap-2">
-            <Link
-              to={`/samples/${item.id}`}
-              className="text-xs text-slate-600 hover:text-slate-900 font-medium"
-            >
+          <div className="flex flex-wrap items-center justify-end gap-1">
+            <ButtonLink to={`/samples/${item.id}`} variant="ghost" size="sm">
               {t('common.view', 'Ko‘rish')}
-            </Link>
-
+            </ButtonLink>
             {canAssign && (
-              <button
-                type="button"
-                onClick={() => handleOpenAssign(item)}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setAssignSample(item)}>
                 {item.assignedTo
                   ? t('samples.reassign', 'Qayta biriktirish')
                   : t('samples.assign', 'Biriktirish')}
-              </button>
+              </Button>
             )}
-
             {canStop && (
-              <button
-                type="button"
-                onClick={() => handleOpenStop(item)}
-                className="text-xs text-rose-600 hover:text-rose-800 font-medium"
-              >
+              <Button variant="danger-ghost" size="sm" onClick={() => setStopSample(item)}>
                 {t('samples.stopAnalysis', 'To‘xtatish')}
-              </button>
+              </Button>
             )}
-
             {canResume && (
-              <button
-                type="button"
-                onClick={() => handleOpenResume(item)}
-                className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setResumeSample(item)}>
                 {t('samples.resumeAnalysis', 'Davom ettirish')}
-              </button>
+              </Button>
             )}
           </div>
         );
@@ -211,190 +177,116 @@ export const SamplesPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Sarlavha va Yangi namuna tugmasi */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            {t('samples.title', 'Namunalar')}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {isKontrolyor
-              ? t('samples.subtitleKontrolyor', 'O‘zingiz kiritgan tahlil namunalari ro‘yxati')
-              : isChemist
+    <>
+      <PageHeader
+        title={t('samples.title', 'Namunalar')}
+        description={
+          isKontrolyor
+            ? t('samples.subtitleKontrolyor', 'O‘zingiz kiritgan tahlil namunalari ro‘yxati')
+            : isChemist
               ? t('samples.subtitleChemist', 'Sizga tahlil o‘tkazish uchun biriktirilgan namunalar')
-              : t('samples.subtitleAdmin', 'Laboratoriya tahlillari va namunalar hayot tsikli nazorati')}
-          </p>
-        </div>
+              : t(
+                  'samples.subtitleAdmin',
+                  'Laboratoriya tahlillari va namunalar hayot tsikli nazorati',
+                )
+        }
+        actions={
+          isKontrolyor && (
+            <Button leftIcon="plus" onClick={() => setCreateModalOpen(true)}>
+              {t('samples.newSample', 'Yangi namuna')}
+            </Button>
+          )
+        }
+      />
 
-        {isKontrolyor && (
-          <button
-            type="button"
-            onClick={() => setCreateModalOpen(true)}
-            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            + {t('samples.newSample', 'Yangi namuna')}
-          </button>
-        )}
-      </div>
-
-      {/* Filtrlar paneli */}
-      <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div>
-          <label htmlFor="search-samples" className="block text-xs font-medium text-slate-600 mb-1">
-            {t('common.search', 'Qidiruv')}
-          </label>
-          <input
-            id="search-samples"
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t('samples.searchPlaceholder', 'Modda, lot yoki seriya raqami...')}
-            className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="filter-sample-status" className="block text-xs font-medium text-slate-600 mb-1">
-            {t('common.status', 'Holati')}
-          </label>
-          <select
-            id="filter-sample-status"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value as SampleStatus | 'all');
-              setPage(1);
-            }}
-            className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {t(opt.labelKey)}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="filter-sample-type" className="block text-xs font-medium text-slate-600 mb-1">
-            {t('samples.type', 'Namuna turi')}
-          </label>
-          <select
-            id="filter-sample-type"
-            value={typeFilter}
-            onChange={(e) => {
-              setTypeFilter(e.target.value as SampleType | 'all');
-              setPage(1);
-            }}
-            className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            {TYPE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {t(opt.labelKey)}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Jadval va ro'yxat */}
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Spinner size="lg" />
-          </div>
-        ) : isError ? (
-          <div className="p-8 text-center text-sm text-red-600">
-            {t('common.loadError', 'Ma’lumotlarni yuklashda xatolik yuz berdi')}
-          </div>
-        ) : samples.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 text-sm">
-            {t('samples.emptyState', 'Namunalar topilmadi')}
-          </div>
-        ) : (
-          <div>
-            <Table
-              rows={samples}
-              columns={columns}
-              rowKey={(item) => item.id}
-            />
-
-            {/* Sahifalash */}
-            {meta && meta.total > 0 && (
-              <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
-                <div>
-                  {t('common.paginationInfo', 'Jami {{total}} tadan {{from}}-{{to}} ko‘rsatilmoqda', {
-                    total: meta.total,
-                    from: (meta.page - 1) * meta.limit + 1,
-                    to: Math.min(meta.page * meta.limit, meta.total),
-                  })}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                    disabled={meta.page <= 1}
-                    className="px-2.5 py-1 rounded border border-slate-300 disabled:opacity-40 hover:bg-slate-50"
-                  >
-                    {t('common.prev', 'Oldingi')}
-                  </button>
-                  <span>
-                    {meta.page} / {Math.max(1, Math.ceil(meta.total / meta.limit))}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={meta.page * meta.limit >= meta.total}
-                    className="px-2.5 py-1 rounded border border-slate-300 disabled:opacity-40 hover:bg-slate-50"
-                  >
-                    {t('common.next', 'Keyingi')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Modallar */}
-      {isKontrolyor && (
-        <SampleFormModal
-          open={createModalOpen}
-          onClose={() => setCreateModalOpen(false)}
+      <FilterBar onReset={resetFilters} canReset={hasFilters}>
+        <SearchInput
+          id="search-samples"
+          value={search}
+          onChange={(v) => {
+            setSearch(v);
+            setPage(1);
+          }}
+          placeholder={t('samples.searchPlaceholder', 'Modda, lot yoki seriya raqami...')}
+          aria-label={t('common.search', 'Qidiruv')}
+          className="sm:w-72"
         />
-      )}
+        <Select
+          id="filter-sample-status"
+          aria-label={t('common.status', 'Holati')}
+          className="sm:w-48"
+          options={[
+            { value: 'all', label: `${t('common.status', 'Holati')}: ${t('common.all')}` },
+            ...STATUSES.map((s) => ({ value: s, label: t(`samples.status.${s}`) })),
+          ]}
+          value={statusFilter}
+          onChange={(v) => {
+            setStatusFilter(v);
+            setPage(1);
+          }}
+        />
+        <Select
+          id="filter-sample-type"
+          aria-label={t('samples.type', 'Namuna turi')}
+          className="sm:w-48"
+          options={[
+            { value: 'all', label: `${t('samples.type', 'Namuna turi')}: ${t('common.all')}` },
+            ...TYPES.map((v) => ({ value: v, label: t(`samples.types.${v}`) })),
+          ]}
+          value={typeFilter}
+          onChange={(v) => {
+            setTypeFilter(v);
+            setPage(1);
+          }}
+        />
+      </FilterBar>
 
+      <div>
+        <DataTable
+          caption={t('samples.title', 'Namunalar')}
+          columns={columns}
+          rows={samples}
+          rowKey={(item) => item.id}
+          loading={isLoading}
+          error={isError}
+          onRetry={() => void refetch()}
+          empty={
+            <EmptyState
+              icon="flask"
+              title={t('samples.emptyState', 'Namunalar topilmadi')}
+              action={
+                hasFilters ? (
+                  <Button variant="secondary" size="sm" onClick={resetFilters}>
+                    {t('ui.resetFilters')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          }
+        />
+        {meta && meta.total > 0 && <Pagination meta={meta} onPageChange={setPage} showSummary />}
+      </div>
+
+      {isKontrolyor && (
+        <SampleFormModal open={createModalOpen} onClose={() => setCreateModalOpen(false)} />
+      )}
       {isLabHead && (
         <SampleAssignModal
-          open={assignModalOpen}
-          onClose={() => {
-            setAssignModalOpen(false);
-            setSelectedSampleForAssign(null);
-          }}
-          sample={selectedSampleForAssign}
+          open={!!assignSample}
+          onClose={() => setAssignSample(null)}
+          sample={assignSample}
         />
       )}
-
       <SampleStopModal
-        open={stopModalOpen}
-        onClose={() => {
-          setStopModalOpen(false);
-          setSelectedSampleForAction(null);
-        }}
-        sample={selectedSampleForAction}
+        open={!!stopSample}
+        onClose={() => setStopSample(null)}
+        sample={stopSample}
       />
-
       <SampleResumeModal
-        open={resumeModalOpen}
-        onClose={() => {
-          setResumeModalOpen(false);
-          setSelectedSampleForAction(null);
-        }}
-        sample={selectedSampleForAction}
+        open={!!resumeSample}
+        onClose={() => setResumeSample(null)}
+        sample={resumeSample}
       />
-    </div>
+    </>
   );
-};
+}

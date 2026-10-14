@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Modal } from '@/components/ui/Modal';
-import { Spinner } from '@/components/ui/Spinner';
 import type { CompanyDto } from '@/types';
+import { ConfirmDialog } from '@/ui';
 
 interface CompanyConfirmModalProps {
   open: boolean;
@@ -12,6 +11,7 @@ interface CompanyConfirmModalProps {
   loading: boolean;
 }
 
+/** Kompaniyani faollashtirish/nofaollashtirish tasdig'i (nofaollashtirish — xavfli amal). */
 export function CompanyConfirmModal({
   open,
   onClose,
@@ -21,52 +21,25 @@ export function CompanyConfirmModal({
   loading,
 }: CompanyConfirmModalProps) {
   const { t } = useTranslation();
-
   if (!company || !action) return null;
-
   const isDeactivate = action === 'deactivate';
-  const title = isDeactivate
-    ? t('companies.confirmDeactivateTitle')
-    : t('companies.confirmActivateTitle');
-  const description = isDeactivate
-    ? t('companies.confirmDeactivateText')
-    : t('companies.confirmActivateText');
-
   return (
-    <Modal
+    <ConfirmDialog
       open={open}
-      onClose={onClose}
-      title={title}
-      footer={
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
-            {t('companies.cancel')}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={loading}
-            className={`flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${
-              isDeactivate
-                ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-                : 'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500'
-            }`}
-          >
-            {loading && <Spinner size="sm" />}
-            {t('companies.confirm')}
-          </button>
-        </div>
+      tone={isDeactivate ? 'danger' : 'primary'}
+      title={
+        isDeactivate ? t('companies.confirmDeactivateTitle') : t('companies.confirmActivateTitle')
       }
+      description={
+        isDeactivate ? t('companies.confirmDeactivateText') : t('companies.confirmActivateText')
+      }
+      confirmLabel={t('companies.confirm')}
+      cancelLabel={t('companies.cancel')}
+      loading={loading}
+      onConfirm={onConfirm}
+      onCancel={onClose}
     >
-      <div className="space-y-3">
-        <p className="text-sm font-medium text-slate-900">{company.name}</p>
-        <p className="text-sm text-slate-600">{description}</p>
-      </div>
-    </Modal>
+      <p className="text-sm font-medium text-fg">{company.name}</p>
+    </ConfirmDialog>
   );
 }

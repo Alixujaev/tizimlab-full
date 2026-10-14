@@ -59,7 +59,21 @@
     "prev": "Previous",
     "next": "Next",
     "loadError": "An error occurred while loading data",
-    "paginationInfo": "Showing {{from}}-{{to}} of {{total}}"
+    "paginationInfo": "Showing {{from}}-{{to}} of {{total}}",
+    "download": "Download",
+    "replace": "Replace",
+    "created": "Created",
+    "none": "None",
+    "reset": "Reset",
+    "system": "System",
+    "details": "Details",
+    "from": "From",
+    "to": "To",
+    "downloadError": "Failed to download the document",
+    "deleteError": "Failed to delete the document",
+    "more": "more",
+    "detail": "Details",
+    "recordedBy": "Recorded by"
   },
   "auth": {
     "email": "Email",
@@ -623,7 +637,12 @@
     "extraFilesTitle": "Additional files (max 10)",
     "uploadExtraFileBtn": "Upload additional file",
     "extraFilesEmpty": "No additional files",
-    "extraFilesMaxNotice": "Maximum 10 files limit reached"
+    "extraFilesMaxNotice": "Maximum 10 files limit reached",
+    "roles": {
+      "standard": "Standard analysis",
+      "final": "Final analysis",
+      "in_process": "In-process analysis"
+    }
   },
   "notifications": {
     "markAllRead": "Mark all as read",
@@ -698,7 +717,42 @@
     "noReagents": "No reagents found",
     "noTransactions": "No transactions recorded",
     "noDocuments": "No documents uploaded",
-    "noExpenses": "No expenses found"
+    "noExpenses": "No expenses found",
+    "outQuantity": "Quantity used",
+    "responsibleStaff": "Responsible staff",
+    "expensesSubtitle": "Consumption (outflow) of all reagents",
+    "notFound": "Reagent not found or failed to load.",
+    "backToList": "Back to reagents",
+    "amount": "Quantity",
+    "balanceBeforeAfter": "Balance (before / after)",
+    "staff": "Staff",
+    "attachedDocs": "Attached documents",
+    "uploadedAtLabel": "Uploaded:",
+    "casPrefix": "CAS:",
+    "stockStatus": "Stock status",
+    "minLabel": "Min:",
+    "shelfLifeAndSupplier": "Shelf life and supply",
+    "deleteDocConfirm": "Are you sure you want to delete this document?",
+    "docTitleRequired": "Document title is required",
+    "fileRequired": "Please choose a file",
+    "nameRequired": "Reagent name is required",
+    "unitRequired": "Unit is required",
+    "journalSubtitle": "Monthly reagent consumption as a calendar",
+    "listView": "List view",
+    "expenseUnit": "outflows",
+    "expensesOnDate": "— consumption on this day",
+    "viewInFullList": "View in full list",
+    "subtitle": "Laboratory reagent stock and consumption",
+    "filterLowStock": "Low stock",
+    "filterExpired": "Expired",
+    "filterHazardous": "Hazardous",
+    "deleteConfirm": "Delete this reagent? (Reagents with transactions cannot be deleted.)",
+    "normal": "Normal",
+    "errors": {
+      "qtyPositive": "Quantity must be greater than 0",
+      "insufficientStock": "Cannot use more than the available stock"
+    },
+    "currentStockLabel": "Current stock:"
   },
   "temperature": {
     "title": "Temperature & Humidity Monitoring",
@@ -759,7 +813,9 @@
     "min": "Min:",
     "max": "Max:",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "allSensors": "All sensors",
+    "alertTypeLabel": "Alert type"
   },
   "stability": {
     "title": "Stability Studies",
@@ -818,7 +874,13 @@
     "resultPlaceholder": "Result...",
     "noParams": "No parameters specified",
     "notRecorded": "Not recorded",
-    "noSerial": "No serial"
+    "noSerial": "No serial",
+    "paramRequired": "At least one parameter is required",
+    "checkpointNameRequired": "Checkpoint name is required",
+    "dueDateRequired": "Date is required",
+    "currentValueRequired": "Enter at least one parameter value",
+    "notFound": "Stability study not found",
+    "backToList": "Back to list"
   },
   "audit": {
     "description": "History of all security and data modifications in the system",
