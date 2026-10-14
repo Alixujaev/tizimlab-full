@@ -12,7 +12,7 @@ export function RegistryDeleteModal({ sample, onClose, onDeleted }: RegistryDele
   const { t } = useTranslation();
   const mutation = useDeleteRegistryItemMutation();
 
-  const confirm = async () => {
+  const handleConfirm = async () => {
     if (!sample) return;
     try {
       await mutation.mutateAsync(sample.id);
@@ -32,7 +32,7 @@ export function RegistryDeleteModal({ sample, onClose, onDeleted }: RegistryDele
       confirmLabel={t('registry.confirmDelete')}
       cancelLabel={t('common.cancel')}
       loading={mutation.isPending}
-      onConfirm={() => void confirm()}
+      onConfirm={() => void handleConfirm()}
       onCancel={onClose}
     />
   );

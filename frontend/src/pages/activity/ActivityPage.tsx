@@ -23,7 +23,7 @@ export function ActivityPage() {
     onDetails: setSelectedLog,
   });
 
-  if (!isAllowed) return <Alert tone="danger">{t('errors.forbidden', 'Kirish taqiqlangan')}</Alert>;
+  if (!isAllowed) return <Alert tone="danger">{t('errors.forbidden.default')}</Alert>;
 
   const logs = Array.isArray(data?.data) ? data.data : [];
   const meta = data?.meta ?? { page: 1, limit: 15, total: 0 };

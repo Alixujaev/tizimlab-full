@@ -3,6 +3,8 @@
 
 /* Tailwind tema → dizayn tokenlari. Klasslar: bg-surface, text-fg-muted, border-line, bg-primary, text-danger-fg ... */
 @theme inline {
+  /* Tailwind standart palitrasi o'chiriladi — faqat token ranglari (D-158) */
+  --color-*: initial;
   --font-sans: var(--tl-font-sans);
   --font-mono: var(--tl-font-mono);
   --spacing: var(--tl-space-unit);

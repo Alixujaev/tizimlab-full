@@ -10,9 +10,7 @@ import tseslint from 'typescript-eslint';
  * D-158: hali @/ui ga ko'chirilmagan fayllar (native element qoidasi vaqtincha o'chiq).
  * Har ko'chirishdan keyin ro'yxat qisqaradi; UI qayta qurish oxirida BO'SH bo'lishi shart.
  */
-const LEGACY_UI_FILES = [
-  'frontend/src/pages/profile/ProfilePage.tsx',
-];
+const LEGACY_UI_FILES = [];
 
 export default tseslint.config(
   { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**'] },

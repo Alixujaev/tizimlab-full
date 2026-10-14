@@ -1,8 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Pagination } from '@/components/ui/Pagination';
-import { Table } from '@/components/ui/Table';
+import { DataTable as Table, Pagination } from '@/ui';
 import i18n from '@/i18n';
 
 beforeEach(async () => {

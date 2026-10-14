@@ -142,7 +142,8 @@ export function UsersPage() {
     return cols;
   }, [t, isDirector, isAdmin, isLabHead]);
 
-  const close = () => setModal(null);
+  // Har modal faqat o'zini yopadi (kechiktirilgan yopilish boshqa ochilgan modalni yopmasin)
+  const closeOf = (kind: ModalKind) => () => setModal((m) => (m === kind ? null : m));
 
   return (
     <>
@@ -225,14 +226,16 @@ export function UsersPage() {
 
       <UserFormModal
         open={modal === 'form'}
-        onClose={close}
+        onClose={closeOf('form')}
         user={selectedUser}
         currentUserRole={currentRole ?? 'admin'}
         currentUserId={currentUser?.id ?? ''}
       />
-      <ResetPasswordModal open={modal === 'reset'} onClose={close} user={selectedUser} />
-      {isAdmin && <PermissionsModal open={modal === 'perms'} onClose={close} user={selectedUser} />}
-      <UserLogsModal open={modal === 'logs'} onClose={close} user={selectedUser} />
+      <ResetPasswordModal open={modal === 'reset'} onClose={closeOf('reset')} user={selectedUser} />
+      {isAdmin && (
+        <PermissionsModal open={modal === 'perms'} onClose={closeOf('perms')} user={selectedUser} />
+      )}
+      <UserLogsModal open={modal === 'logs'} onClose={closeOf('logs')} user={selectedUser} />
     </>
   );
 }

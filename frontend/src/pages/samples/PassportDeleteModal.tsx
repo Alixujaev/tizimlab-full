@@ -21,7 +21,7 @@ export function PassportDeleteModal({
   const { t } = useTranslation();
   const mutation = useDeletePassportMutation();
 
-  const confirm = async () => {
+  const handleConfirm = async () => {
     try {
       await mutation.mutateAsync(sampleId);
       notify.success(t('samples.passport.deleted'));
@@ -39,7 +39,7 @@ export function PassportDeleteModal({
       confirmLabel={t('samples.passport.delete')}
       cancelLabel={t('common.cancel')}
       loading={mutation.isPending}
-      onConfirm={() => void confirm()}
+      onConfirm={() => void handleConfirm()}
       onCancel={onClose}
     >
       {approved && (
