@@ -10,6 +10,8 @@ export interface EmptyStateProps {
   /** Keyingi qadam (masalan, "Namuna qo'shish" tugmasi). */
   action?: ReactNode;
   size?: 'sm' | 'md';
+  /** Sarlavha elementi: sahifa darajasidagi holat (403/404) uchun `h1`. */
+  titleAs?: 'p' | 'h1' | 'h2';
   className?: string;
 }
 
@@ -19,6 +21,7 @@ export function EmptyState({
   icon = 'layers',
   action,
   size = 'md',
+  titleAs: Title = 'p',
   className,
 }: EmptyStateProps) {
   const { t } = useTranslation();
@@ -39,9 +42,14 @@ export function EmptyState({
         <Icon name={icon} size={size === 'md' ? 'lg' : 'md'} />
       </span>
       <div className="flex max-w-sm flex-col gap-1">
-        <p className={cx('font-medium text-fg', size === 'md' ? 'text-base' : 'text-sm')}>
+        <Title
+          className={cx(
+            'font-medium text-fg',
+            Title === 'h1' ? 'text-2xl font-semibold' : size === 'md' ? 'text-base' : 'text-sm',
+          )}
+        >
           {title ?? t('ui.emptyTitle')}
-        </p>
+        </Title>
         {description && <p className="text-sm text-fg-muted">{description}</p>}
       </div>
       {action && <div className="mt-1">{action}</div>}

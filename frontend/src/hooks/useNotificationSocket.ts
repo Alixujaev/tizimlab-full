@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { notify } from '@/ui';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { refreshAccessToken } from '@/api/client';
 import { connectSocket, disconnectSocket, NOTIFICATION_EVENT } from '@/lib/socket';
 import { notificationTitle } from '@/lib/notifications';
@@ -44,7 +44,7 @@ export function useNotificationSocket(): void {
             : old,
       );
       void queryClient.invalidateQueries({ queryKey: dashboardKeys.all });
-      toast(notificationTitle(tRef.current, n), { description: n.message });
+      notify.message(notificationTitle(tRef.current, n), { description: n.message });
     };
 
     // Muddati o'tgan token bilan qayta ulanish rad etilsa — token yangilanib, bir marta qayta uriniladi

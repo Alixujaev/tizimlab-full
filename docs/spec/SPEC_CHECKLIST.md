@@ -660,7 +660,7 @@
 | R-FE-05 | `hooks/useNotificationSocket.ts` — Socket.IO ulanishi va real vaqtli yangilash. | 16-architecture §16 | P6 | [x] |
 | R-FE-06 | `lib/socket.ts` — Socket.IO client ulanish/uzish (logout'da uziladi). | 16-architecture §16 | P6 | [x] |
 | R-FE-07 | `types/index.ts` — TypeScript interfeyslari. | 16-architecture §16 | P1 | [~] |
-| R-FE-08 | UI komponentlari `src/ui` dizayn tizimida (D-153): DataTable, Modal, Spinner, Pagination va boshqalar; NotificationBell — layout. | 16-architecture §16 | P1 | [~] |
+| R-FE-08 | UI komponentlari `src/ui` dizayn tizimida (D-153): DataTable, Modal, Spinner, Pagination va boshqalar; NotificationBell — layout. | 16-architecture §16 | P1 | [x] |
 | R-FE-09 | Layout: `AppLayout`, `Sidebar` (rol bo'yicha; super_admin uchun alohida menyu). | 16-architecture §16 | P1 | [x] |
 | R-FE-10 | Sidebar elementi: Dashboard (Q-64). | 16-architecture §16 | P1 | [x] |
 | R-FE-11 | Sidebar elementi: Namunalar. | 16-architecture §16 | P4 | [x] |
@@ -729,7 +729,7 @@
 - R-ARCH-61 `[~]` — `createApp()` testlangan; graceful shutdown uchun avtomatik test yo'q (qo'lda tekshirildi).
 - R-FE-03, R-FE-04 `[~]` — `client.ts` va `useBootstrapAuth` bor; modul API/hook'lari tegishli fazalarda.
 - R-FE-07 `[~]` — umumiy tiplar (`Role`, `User`, `ApiError`, `Paginated`); modul tiplari keyin.
-- R-FE-08 `[~]` — Table, Modal, Spinner, Pagination tayyor; NotificationBell P6 da ishlaydi (`frontend/tests/notifications.test.tsx`), P1 qatori ID bo'yicha testga bog'lanmagan.
+- R-FE-08 `[x]` — D-153: komponentlar `frontend/src/ui` (har biri o'z testi bilan), NotificationBell `components/layout` (`frontend/tests/notifications.test.tsx`).
 
 ### P2a
 - R-ROLE-04 `[~]` — `requireCompany` (super_admin → 403 `COMPANY_REQUIRED`) testlangan; modul endpointlariga ulanishi har fazada.
@@ -791,15 +791,15 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 56 | 7 | 22 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 36 | 5 | 4 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 37 | 4 | 4 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
-| **Jami** | 602 | 436 | 36 | 130 |
+| **Jami** | 602 | 437 | 35 | 130 |
 
 ### Fazalar bo'yicha
 
 | Faza | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| P1 | 50 | 38 | 12 | 0 |
+| P1 | 50 | 39 | 11 | 0 |
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
@@ -811,4 +811,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P10 | 25 | 7 | 2 | 16 |
 | P11 | 26 | 21 | 0 | 5 |
 | P12 | 28 | 8 | 2 | 18 |
-| **Jami** | 602 | 436 | 36 | 130 |
+| **Jami** | 602 | 437 | 35 | 130 |

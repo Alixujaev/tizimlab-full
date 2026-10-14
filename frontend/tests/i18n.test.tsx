@@ -56,12 +56,15 @@ describe('til almashtirgich', () => {
     renderAt('/samples');
     expect(screen.getByRole('heading', { name: 'Namunalar' })).toBeInTheDocument();
 
-    await userEvent.selectOptions(screen.getByLabelText('Til'), 'ru');
+    // Til almashtirgich — Menu (menuitemradio), native select emas (D-158)
+    await userEvent.click(screen.getByRole('button', { name: 'Til' }));
+    await userEvent.click(screen.getByRole('menuitemradio', { name: 'Русский' }));
     expect(await screen.findByRole('heading', { name: 'Образцы' })).toBeInTheDocument();
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('ru');
     expect(document.documentElement.lang).toBe('ru');
 
-    await userEvent.selectOptions(screen.getByLabelText('Язык'), 'en');
+    await userEvent.click(screen.getByRole('button', { name: 'Язык' }));
+    await userEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
     expect(await screen.findByRole('heading', { name: 'Samples' })).toBeInTheDocument();
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('en');
     expect(document.documentElement.lang).toBe('en');

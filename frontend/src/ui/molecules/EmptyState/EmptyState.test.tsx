@@ -27,4 +27,9 @@ describe('EmptyState', () => {
     expect(screen.getByText("Birinchi namunani qo'shing")).toBeInTheDocument();
     expect(screen.getByRole('button', { name: "Qo'shish" })).toBeInTheDocument();
   });
+
+  it('titleAs=h1 — sahifa sarlavhasi', () => {
+    render(<EmptyState title="Sahifa topilmadi" titleAs="h1" />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Sahifa topilmadi' })).toBeInTheDocument();
+  });
 });

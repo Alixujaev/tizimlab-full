@@ -166,6 +166,14 @@
   }
 }
 
+/* Ro'yxat qatorlari uchun — fokus chizig'i ichkarida (qo'shni qatorlarga chiqmaydi) */
+@utility focus-ring-inset {
+  &:focus-visible {
+    outline: 2px solid var(--tl-focus);
+    outline-offset: -2px;
+  }
+}
+
 /* Token o'lchamlari (layout) */
 @utility w-sidebar {
   width: var(--tl-sidebar-width);
@@ -202,6 +210,9 @@
 }
 @utility max-w-modal-xl {
   max-width: var(--tl-modal-xl);
+}
+@utility max-w-viewport {
+  max-width: calc(100vw - 1rem);
 }
 @utility w-drawer {
   width: min(var(--tl-drawer-width), 100vw);
