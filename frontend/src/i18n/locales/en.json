@@ -59,7 +59,10 @@
     "prev": "Previous",
     "next": "Next",
     "loadError": "An error occurred while loading data",
-    "paginationInfo": "Showing {{from}}-{{to}} of {{total}}"
+    "paginationInfo": "Showing {{from}}-{{to}} of {{total}}",
+    "download": "Download",
+    "replace": "Replace",
+    "created": "Created"
   },
   "auth": {
     "email": "Email",
@@ -623,7 +626,12 @@
     "extraFilesTitle": "Additional files (max 10)",
     "uploadExtraFileBtn": "Upload additional file",
     "extraFilesEmpty": "No additional files",
-    "extraFilesMaxNotice": "Maximum 10 files limit reached"
+    "extraFilesMaxNotice": "Maximum 10 files limit reached",
+    "roles": {
+      "standard": "Standard analysis",
+      "final": "Final analysis",
+      "in_process": "In-process analysis"
+    }
   },
   "notifications": {
     "markAllRead": "Mark all as read",

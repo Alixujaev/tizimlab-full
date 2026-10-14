@@ -11,7 +11,6 @@ import tseslint from 'typescript-eslint';
  * Har ko'chirishdan keyin ro'yxat qisqaradi; UI qayta qurish oxirida BO'SH bo'lishi shart.
  */
 const LEGACY_UI_FILES = [
-  'frontend/src/components/substances/SubstanceSelect.tsx',
   'frontend/src/pages/activity/ActivityPage.tsx',
   'frontend/src/pages/audit/AuditLogPage.tsx',
   'frontend/src/pages/audit/LogDetailsModal.tsx',
@@ -29,17 +28,6 @@ const LEGACY_UI_FILES = [
   'frontend/src/pages/registry/RegistryDeleteModal.tsx',
   'frontend/src/pages/registry/RegistryDetailPage.tsx',
   'frontend/src/pages/registry/RegistryPage.tsx',
-  'frontend/src/pages/samples/PassportDeleteModal.tsx',
-  'frontend/src/pages/samples/PassportRejectModal.tsx',
-  'frontend/src/pages/samples/PassportSection.tsx',
-  'frontend/src/pages/samples/ProtocolRejectModal.tsx',
-  'frontend/src/pages/samples/ProtocolSection.tsx',
-  'frontend/src/pages/samples/SampleAssignModal.tsx',
-  'frontend/src/pages/samples/SampleDetailPage.tsx',
-  'frontend/src/pages/samples/SampleFormModal.tsx',
-  'frontend/src/pages/samples/SampleResumeModal.tsx',
-  'frontend/src/pages/samples/SampleStopModal.tsx',
-  'frontend/src/pages/samples/SamplesPage.tsx',
   'frontend/src/pages/stability/CreateCheckpointModal.tsx',
   'frontend/src/pages/stability/CreateStudyModal.tsx',
   'frontend/src/pages/stability/RecordResultsModal.tsx',

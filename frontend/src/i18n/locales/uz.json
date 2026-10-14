@@ -59,7 +59,10 @@
     "prev": "Oldingi",
     "next": "Keyingi",
     "loadError": "Ma'lumotlarni yuklashda xatolik yuz berdi",
-    "paginationInfo": "Jami {{total}} tadan {{from}}-{{to}} ko'rsatilmoqda"
+    "paginationInfo": "Jami {{total}} tadan {{from}}-{{to}} ko'rsatilmoqda",
+    "download": "Yuklab olish",
+    "replace": "Almashtirish",
+    "created": "Yaratilgan"
   },
   "auth": {
     "email": "Email",
@@ -623,7 +626,12 @@
     "extraFilesTitle": "Qo‘shimcha fayllar (maksimal 10 ta)",
     "uploadExtraFileBtn": "Qo‘shimcha fayl yuklash",
     "extraFilesEmpty": "Qo‘shimcha fayllar mavjud emas",
-    "extraFilesMaxNotice": "Maksimal 10 ta fayl limitiga yetildi"
+    "extraFilesMaxNotice": "Maksimal 10 ta fayl limitiga yetildi",
+    "roles": {
+      "standard": "Standart tahlil",
+      "final": "Yakuniy tahlil",
+      "in_process": "Oraliq tahlil"
+    }
   },
   "notifications": {
     "markAllRead": "Hammasini o'qilgan deb belgilash",

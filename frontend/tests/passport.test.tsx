@@ -231,7 +231,7 @@ describe('PassportSection: yuklash xatolari, o‘chirish, yuklab olish', () => {
     api.onDelete('/samples/s1/passport').reply(200, { data: sample() });
     await open('kontrolyor', sample(withPassport('pending', 'u1')));
     await userEvent.click(within(section()).getByRole('button', { name: P.delete }));
-    const dialog = await screen.findByRole('dialog', { name: P.deleteTitle });
+    const dialog = await screen.findByRole('alertdialog', { name: P.deleteTitle });
     expect(within(dialog).queryByText(P.deleteApprovedWarning)).not.toBeInTheDocument();
     await userEvent.click(within(dialog).getByRole('button', { name: P.delete }));
     await waitFor(() => expect(api.history.delete).toHaveLength(1));
@@ -245,7 +245,7 @@ describe('PassportSection: yuklash xatolari, o‘chirish, yuklab olish', () => {
   it('lab_head tasdiqlangan pasportni o‘chirishda ogohlantirish ko‘radi', async () => {
     await open('lab_head', sample({ ...withPassport('approved', 'u2'), status: 'approved' }));
     await userEvent.click(within(section()).getByRole('button', { name: P.delete }));
-    const dialog = await screen.findByRole('dialog', { name: P.deleteTitle });
+    const dialog = await screen.findByRole('alertdialog', { name: P.deleteTitle });
     expect(within(dialog).getByText(P.deleteApprovedWarning)).toBeInTheDocument();
   });
 

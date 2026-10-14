@@ -261,6 +261,7 @@ export function Select<V extends string = string>({
                   key={`${o.value}-${i}`}
                   id={optionId(i)}
                   role="option"
+                  data-value={o.value}
                   aria-selected={isSelected}
                   aria-disabled={o.disabled || undefined}
                   onMouseDown={(e) => e.preventDefault()}

@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
+import { expect } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { createQueryClient } from '@/lib/queryClient';
 import { routes } from '@/router';
@@ -36,4 +37,21 @@ export function renderAt(path: string) {
     </QueryClientProvider>,
   );
   return { ...utils, router, queryClient };
+}
+
+type UserLike = { click: (el: Element) => Promise<void> };
+
+/** `@/ui` Select (combobox) dan qiymat bo'yicha variant tanlaydi — native `selectOptions` o'rnida. */
+export async function selectOption(user: UserLike, combobox: HTMLElement, value: string) {
+  // Variantlar yuklanguncha (select o'chiq) kutiladi
+  await waitFor(() => expect(combobox).not.toBeDisabled());
+  await user.click(combobox);
+  const option = await waitFor(() => {
+    const el = document.querySelector<HTMLElement>(
+      `[role="option"][data-value="${CSS.escape(value)}"]`,
+    );
+    if (!el) throw new Error(`Select variant topilmadi: ${value}`);
+    return el;
+  });
+  await user.click(option);
 }

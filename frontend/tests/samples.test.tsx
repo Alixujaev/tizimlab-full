@@ -4,7 +4,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { apiClient } from '@/api/client';
 import type { AdminUserDto, SampleDetailDto, SampleDto, SubstanceDto } from '@/types';
-import { loginAs, renderAt, resetAuth } from './helpers';
+import { loginAs, renderAt, resetAuth, selectOption } from './helpers';
 
 let api: MockAdapter;
 
@@ -197,9 +197,7 @@ describe('Samples Module (P4a Frontend)', () => {
       expect(screen.getByText('Paratsetamol')).toBeInTheDocument();
     });
 
-    expect(
-      screen.getByRole('button', { name: /\+ Yangi namuna/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Yangi namuna/i })).toBeInTheDocument();
   });
 
   it('lab_head and chemist do not see "+ Yangi namuna" button', async () => {
@@ -210,9 +208,7 @@ describe('Samples Module (P4a Frontend)', () => {
       expect(screen.getByText('Paratsetamol')).toBeInTheDocument();
     });
 
-    expect(
-      screen.queryByRole('button', { name: /\+ Yangi namuna/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Yangi namuna/i })).not.toBeInTheDocument();
   });
 
   it('lab_head sees "Biriktirish" button on assignable samples but not on reagents', async () => {
@@ -264,14 +260,14 @@ describe('Samples Module (P4a Frontend)', () => {
       expect(screen.getByText('Paratsetamol')).toBeInTheDocument();
     });
 
-    const createBtn = screen.getByRole('button', { name: /\+ Yangi namuna/i });
+    const createBtn = screen.getByRole('button', { name: /Yangi namuna/i });
     await user.click(createBtn);
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
     // Select substance from dropdown
     const selectEl = screen.getByLabelText(/Moddalar bazasidan tanlash/i);
-    await user.selectOptions(selectEl, 'sub-1');
+    await selectOption(user, selectEl, 'sub-1');
 
     // Substance name is auto-filled
     const nameInput = screen.getByLabelText(/^Modda nomi/i);
@@ -315,13 +311,10 @@ describe('Samples Module (P4a Frontend)', () => {
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    // Select chemist
-    await waitFor(() => {
-      expect(screen.getByText(/Aziz Kimyogar/i)).toBeInTheDocument();
-    });
-
-    const chemistSelect = screen.getByLabelText(/Kimyogarni tanlang/i);
-    await user.selectOptions(chemistSelect, 'chem-1');
+    // Select chemist (ro'yxat yuklangach)
+    const chemistSelect = await screen.findByRole('combobox', { name: /Kimyogarni tanlang/i });
+    await selectOption(user, chemistSelect, 'chem-1');
+    expect(chemistSelect).toHaveTextContent(/Aziz Kimyogar/i);
 
     const dialog = screen.getByRole('dialog');
     const submitAssignBtn = within(dialog).getByRole('button', { name: /^Biriktirish$/i });

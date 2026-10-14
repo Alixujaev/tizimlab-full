@@ -4,6 +4,7 @@ export * from './Button';
 export * from './ButtonLink';
 export * from './Checkbox';
 export * from './DatePicker';
+export * from './FileButton';
 export * from './FileDropzone';
 export * from './Icon';
 export * from './IconButton';

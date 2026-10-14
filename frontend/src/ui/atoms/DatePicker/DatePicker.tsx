@@ -119,7 +119,13 @@ export function DatePicker({
         disabled={isDisabled}
         placeholder={placeholder ?? t('ui.date.placeholder')}
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => {
+          const next = e.target.value;
+          setText(next);
+          // To'liq va to'g'ri sana yozilishi bilan qiymat yangilanadi (blur kutilmaydi)
+          const iso = parseTyped(next);
+          if (iso && inRange(iso, min, max) && iso !== value) onChange(iso);
+        }}
         onBlur={commit}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {

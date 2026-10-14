@@ -59,7 +59,10 @@
     "prev": "Назад",
     "next": "Вперед",
     "loadError": "Произошла ошибка при загрузке данных",
-    "paginationInfo": "Показано {{from}}-{{to}} из {{total}}"
+    "paginationInfo": "Показано {{from}}-{{to}} из {{total}}",
+    "download": "Скачать",
+    "replace": "Заменить",
+    "created": "Создан"
   },
   "auth": {
     "email": "Email",
@@ -623,7 +626,12 @@
     "extraFilesTitle": "Дополнительные файлы (максимум 10)",
     "uploadExtraFileBtn": "Загрузить дополнительный файл",
     "extraFilesEmpty": "Дополнительные файлы отсутствуют",
-    "extraFilesMaxNotice": "Достигнут лимит 10 файлов"
+    "extraFilesMaxNotice": "Достигнут лимит 10 файлов",
+    "roles": {
+      "standard": "Стандартный анализ",
+      "final": "Итоговый анализ",
+      "in_process": "Промежуточный анализ"
+    }
   },
   "notifications": {
     "markAllRead": "Отметить все как прочитанные",

@@ -5,6 +5,7 @@ import { cx } from '../../lib/cx';
 import { useFieldProps } from '../../lib/field';
 import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
+import { Spinner } from '../Spinner';
 
 export type FileRejectReason = 'badType' | 'tooLarge' | 'empty';
 
@@ -21,6 +22,9 @@ export interface FileDropzoneProps {
   disabled?: boolean;
   required?: boolean;
   className?: string;
+  /** Yuklash davom etmoqda (fayl darhol yuborilsa) — zona o'chiq, spinner. */
+  loading?: boolean;
+  'aria-label'?: string;
   'aria-describedby'?: string;
 }
 
@@ -44,6 +48,8 @@ export function FileDropzone({
   disabled,
   required,
   className,
+  loading = false,
+  'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
 }: FileDropzoneProps) {
   const { t } = useTranslation();
@@ -52,7 +58,12 @@ export function FileDropzone({
   const errorId = `${autoId}-error`;
   const [dragging, setDragging] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-  const field = useFieldProps({ id, required, disabled, invalid: !!(error || localError) });
+  const field = useFieldProps({
+    id,
+    required,
+    disabled: disabled || loading || undefined,
+    invalid: !!(error || localError),
+  });
   const inputId = field.id ?? `${autoId}-input`;
   const maxMb = Math.round(maxBytes / 1024 / 1024);
   const message = error ?? localError;
@@ -126,7 +137,7 @@ export function FileDropzone({
           )}
         >
           <span className="flex size-10 items-center justify-center rounded-full bg-surface text-fg-muted shadow-sm">
-            <Icon name="upload" size="md" />
+            {loading ? <Spinner inline size="sm" /> : <Icon name="upload" size="md" />}
           </span>
           <span className="text-sm text-fg">
             {t('ui.file.drop')}{' '}
@@ -142,6 +153,8 @@ export function FileDropzone({
             type="file"
             className="sr-only"
             accept={accept.map((e) => `.${e}`).join(',')}
+            aria-label={ariaLabel}
+            aria-busy={loading || undefined}
             disabled={field.disabled}
             required={field.required}
             aria-invalid={field['aria-invalid']}
