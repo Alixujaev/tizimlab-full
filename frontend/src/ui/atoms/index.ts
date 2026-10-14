@@ -18,3 +18,4 @@ export * from './StatusPill';
 export * from './Switch';
 export * from './Textarea';
 export * from './Tooltip';
+export * from './TrendDelta';

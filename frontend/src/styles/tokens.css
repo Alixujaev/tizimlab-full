@@ -182,6 +182,23 @@
   --tl-shadow-md: 0 4px 8px -2px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.06);
   --tl-shadow-lg: 0 12px 24px -6px rgb(15 23 42 / 0.16), 0 4px 8px -4px rgb(15 23 42 / 0.08);
   --tl-shadow-xl: 0 24px 48px -12px rgb(15 23 42 / 0.28);
+
+  /* ── Grafiklar (P13, D-165): kategorial palitra dataviz validatoridan o'tgan (CVD ΔE ≥ 8.4,
+     normal ΔE ≥ 19.3); yorug' rejimda 3 rang 3:1 dan past — har grafikda jadval muqobili bor. ── */
+  --tl-chart-1: #2a78d6;
+  --tl-chart-2: #eb6834;
+  --tl-chart-3: #1baf7a;
+  --tl-chart-4: #eda100;
+  --tl-chart-5: #e87ba4;
+  --tl-chart-6: #6250d6;
+  /* Ketma-ket (bitta rang, och → to'q) — heatmap */
+  --tl-chart-seq-0: var(--tl-neutral-100);
+  --tl-chart-seq-1: var(--tl-blue-200);
+  --tl-chart-seq-2: var(--tl-blue-400);
+  --tl-chart-seq-3: var(--tl-blue-600);
+  --tl-chart-seq-4: var(--tl-blue-800);
+  --tl-chart-grid: var(--tl-neutral-200);
+  --tl-chart-axis: var(--tl-neutral-500);
 }
 
 /* Qorong'i rejim qiymatlari bir joyda: tizim sozlamasi (qo'lda "light" tanlanmagan bo'lsa) va qo'lda "dark" */
@@ -225,6 +242,19 @@
     --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
     --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
     --tl-shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+    --tl-chart-1: #3987e5;
+    --tl-chart-2: #d95926;
+    --tl-chart-3: #199e70;
+    --tl-chart-4: #c98500;
+    --tl-chart-5: #d55181;
+    --tl-chart-6: #9085e9;
+    --tl-chart-seq-0: var(--tl-neutral-800);
+    --tl-chart-seq-1: var(--tl-blue-950);
+    --tl-chart-seq-2: var(--tl-blue-800);
+    --tl-chart-seq-3: var(--tl-blue-500);
+    --tl-chart-seq-4: var(--tl-blue-300);
+    --tl-chart-grid: var(--tl-neutral-800);
+    --tl-chart-axis: var(--tl-neutral-400);
   }
 }
 
@@ -267,4 +297,17 @@
   --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
   --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
   --tl-shadow-xl: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+  --tl-chart-1: #3987e5;
+  --tl-chart-2: #d95926;
+  --tl-chart-3: #199e70;
+  --tl-chart-4: #c98500;
+  --tl-chart-5: #d55181;
+  --tl-chart-6: #9085e9;
+  --tl-chart-seq-0: var(--tl-neutral-800);
+  --tl-chart-seq-1: var(--tl-blue-950);
+  --tl-chart-seq-2: var(--tl-blue-800);
+  --tl-chart-seq-3: var(--tl-blue-500);
+  --tl-chart-seq-4: var(--tl-blue-300);
+  --tl-chart-grid: var(--tl-neutral-800);
+  --tl-chart-axis: var(--tl-neutral-400);
 }
