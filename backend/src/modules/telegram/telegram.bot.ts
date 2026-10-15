@@ -5,6 +5,7 @@ import {
   getUserByChatId,
   linkTelegramAccount,
   setTelegramSender,
+  setTelegramWebAppUrl,
   unlinkByChatId,
 } from './telegram.service.js';
 
@@ -143,15 +144,43 @@ export function createTelegramBot(token: string, webAppUrl?: string): Bot {
     }
   });
 
+  // /app buyrug'i: WebApp ochish (P14, D-166)
+  bot.command('app', async (ctx) => {
+    const lang = getLang(ctx.from?.language_code);
+    const messages = {
+      uz: '📱 <b>TizimLab LIMS WebApp:</b>\nIlovani ochish uchun quyidagi tugmani bosing.',
+      ru: '📱 <b>TizimLab LIMS WebApp:</b>\nНажмите кнопку ниже, чтобы открыть приложение.',
+      en: '📱 <b>TizimLab LIMS WebApp:</b>\nClick the button below to open the application.',
+    };
+    const buttonText = {
+      uz: 'LIMS ni ochish',
+      ru: 'Открыть LIMS',
+      en: 'Open LIMS',
+    };
+
+    if (webAppUrl && webAppUrl.startsWith('https://')) {
+      const keyboard = new InlineKeyboard().webApp(buttonText[lang], webAppUrl);
+      await ctx.reply(messages[lang], { parse_mode: 'HTML', reply_markup: keyboard });
+    } else {
+      await ctx.reply(
+        lang === 'ru'
+          ? '⚠️ WebApp URL hali sozlanmagan.'
+          : lang === 'en'
+            ? '⚠️ WebApp URL is not configured yet.'
+            : "⚠️ WebApp manzili hali sozlanmagan.",
+      );
+    }
+  });
+
   // /help buyrug'i
   bot.command('help', async (ctx) => {
     const lang = getLang(ctx.from?.language_code);
     const messages = {
-      uz: `📋 <b>Buyruqlar ro'yxati:</b>\n\n/start - Botni ishga tushirish\n/status - Akkaunt holatini tekshirish\n/unlink - Akkauntni TizimLab profilidan uzish\n/help - Yordam ma'lumoti`,
-      ru: `📋 <b>Список команд:</b>\n\n/start - Запуск бота\n/status - Проверка статуса аккаунта\n/unlink - Отвязать аккаунт от TizimLab\n/help - Справка`,
-      en: `📋 <b>Commands:</b>\n\n/start - Start bot\n/status - Check account status\n/unlink - Unlink account from TizimLab\n/help - Help information`,
+      uz: `📋 <b>Buyruqlar ro'yxati:</b>\n\n/start - Botni ishga tushirish\n/app - TizimLab LIMS ilovasini ochish\n/status - Akkaunt holatini tekshirish\n/unlink - Akkauntni TizimLab profilidan uzish\n/help - Yordam ma'lumoti`,
+      ru: `📋 <b>Список команд:</b>\n\n/start - Запуск бота\n/app - Открыть приложение TizimLab LIMS\n/status - Проверка статуса аккаунта\n/unlink - Отвязать аккаунт от TizimLab\n/help - Справка`,
+      en: `📋 <b>Commands:</b>\n\n/start - Start bot\n/app - Open TizimLab LIMS app\n/status - Check account status\n/unlink - Unlink account from TizimLab\n/help - Help information`,
     };
-    await ctx.reply(messages[lang], { parse_mode: 'HTML' });
+    await ctx.reply(messages[lang], { parse_mode: 'HTML', reply_markup: undefined });
   });
 
   return bot;
@@ -173,17 +202,39 @@ export function startTelegramBot(env: Env): Bot | null {
     return null;
   }
 
-  const bot = createTelegramBot(env.TELEGRAM_BOT_TOKEN, env.FRONTEND_URL);
+  const webAppUrl =
+    env.TELEGRAM_WEBAPP_URL ||
+    (env.FRONTEND_URL?.startsWith('https://') ? env.FRONTEND_URL : undefined) ||
+    (env.NODE_ENV === 'production' ? 'https://lab.tizimlab.uz' : undefined);
+
+  const bot = createTelegramBot(env.TELEGRAM_BOT_TOKEN, webAppUrl);
   runningBot = bot;
+  setTelegramWebAppUrl(webAppUrl ?? null);
 
   // Xabarnoma yuboruvchini sozlash
   setTelegramSender({
     sendMessage: async (chatId, text, opts) => {
       await bot.api.sendMessage(chatId, text, {
         parse_mode: (opts?.parse_mode as 'HTML') || 'HTML',
+        reply_markup: opts?.reply_markup,
       });
     },
   });
+
+  // Telegram menyu tugmasini sozlash (setChatMenuButton, P14)
+  if (webAppUrl && webAppUrl.startsWith('https://')) {
+    bot.api
+      .setChatMenuButton({
+        menu_button: {
+          type: 'web_app',
+          text: 'TizimLab',
+          web_app: { url: webAppUrl },
+        },
+      })
+      .catch((err) => {
+        logger.warn("setChatMenuButton o'rnatilmadi:", { err });
+      });
+  }
 
   // Production va webhook sozlamasi bo'lsa polling boshlamaymiz
   if (env.NODE_ENV === 'production' && env.TELEGRAM_WEBHOOK_URL) {
@@ -217,5 +268,6 @@ export function stopTelegramBot(): void {
     }
     runningBot = null;
     setTelegramSender(null);
+    setTelegramWebAppUrl(null);
   }
 }

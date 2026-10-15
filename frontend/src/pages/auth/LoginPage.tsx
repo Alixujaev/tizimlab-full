@@ -8,6 +8,7 @@ import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { useLogin } from '@/hooks/useAuth';
 import { useAuthStore } from '@/store/authStore';
+import { isTelegramWebApp } from '@/lib/telegram';
 import { Alert, Button, FormField, IconButton, Input } from '@/ui';
 
 // Server xato kodlari → tarjima kalitlari (qolganlari umumiy xabar)
@@ -36,6 +37,9 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
+  if (isTelegramWebApp() && status !== 'authenticated') {
+    return <Navigate to="/" replace />;
+  }
   if (status === 'unknown') return <AppSkeleton variant="auth" />;
   if (status === 'authenticated') return <Navigate to={redirectTarget(location.state)} replace />;
 

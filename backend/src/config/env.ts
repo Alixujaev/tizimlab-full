@@ -42,6 +42,7 @@ export const envSchema = z
     TELEGRAM_BOT_USERNAME: optionalString,
     TELEGRAM_WEBHOOK_URL: optionalUrl,
     TELEGRAM_WEBHOOK_SECRET: optionalString,
+    TELEGRAM_WEBAPP_URL: optionalUrl,
     // Quyidagilar spec'da yo'q, biz qo'shdik (D-26)
     TEST_DATABASE_URL: z.preprocess(
       (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),

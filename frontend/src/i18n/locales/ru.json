@@ -20,7 +20,11 @@
     "expand": "Развернуть меню",
     "open": "Открыть меню",
     "myResults": "Мои результаты",
-    "team": "Команда"
+    "team": "Команда",
+    "reagents": "Реактивы",
+    "stability": "Стабильность",
+    "profile": "Профиль",
+    "more": "Ещё"
   },
   "pages": {
     "dashboard": "Главная",
@@ -55,6 +59,8 @@
     "remove": "Удалить",
     "cancel": "Отмена",
     "save": "Сохранить",
+    "open": "Открыть",
+    "retry": "Повторить",
     "status": "Статус",
     "active": "Активный",
     "inactive": "Неактивный",
@@ -676,7 +682,36 @@
     "needsAttention": "Требует внимания",
     "pendingAssignment": "Ожидают назначения",
     "awaitingApproval": "Ожидают утверждения (протоколы)",
-    "openProtocols": "Незавершённые протоколы"
+    "openProtocols": "Незавершённые протоколы",
+    "quickProtocolAction": "Загрузка и отправка протокола",
+    "assignedSamplesDesc": "Ввод результатов анализа по образцам в работе",
+    "openSamples": "Образцы",
+    "registerSample": "Ввод нового образца",
+    "registerSampleDesc": "Регистрация нового образца, поступившего в лабораторию",
+    "newSample": "Ввести"
+  },
+  "telegram": {
+    "webapp": {
+      "unlinkedTitle": "Ваш Telegram аккаунт не привязан",
+      "unlinkedInstructions": "Чтобы использовать TizimLab, сначала войдите в свой профиль в браузере и привяжите аккаунт через кнопку «Привязать Telegram».",
+      "openInBrowser": "Открыть в браузере",
+      "expiredTitle": "Срок сессии истек",
+      "expiredInstructions": "Данные авторизации Telegram устарели или уже использованы. Пожалуйста, перезагрузите приложение.",
+      "reload": "Перезагрузить",
+      "networkErrorTitle": "Сетевая ошибка",
+      "networkErrorInstructions": "Не удалось связаться с сервером. Проверьте подключение к интернету и повторите попытку."
+    }
+  },
+  "files": {
+    "uploadTitle": "Загрузка файла",
+    "uploadHint": "PDF, DOC, DOCX, JPEG, PNG (макс. 20МБ)",
+    "camera": "Камера",
+    "chooseFile": "Выбрать файл",
+    "uploadedSuccess": "Файл загружен",
+    "errors": {
+      "sizeTooLarge": "Размер файла не должен превышать 20МБ",
+      "invalidFormat": "Разрешены только форматы PDF, DOC, DOCX, JPEG, PNG"
+    }
   },
   "reagents": {
     "title": "Реактивы",

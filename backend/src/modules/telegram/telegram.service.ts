@@ -536,14 +536,122 @@ export function formatTelegramNotification(dto: NotificationDto, lang: 'uz' | 'r
   return `🔔 <b>${escapeHtml(title)}</b>\n\n${escapeHtml(dto.message)}`;
 }
 
+export type TelegramInlineButton =
+  | { text: string; web_app: { url: string } }
+  | { text: string; url: string };
+
+export interface TelegramSenderOptions {
+  parse_mode?: string;
+  reply_markup?: {
+    inline_keyboard: TelegramInlineButton[][];
+  };
+}
+
 export interface TelegramSender {
-  sendMessage(chatId: number, text: string, options?: { parse_mode?: string }): Promise<unknown>;
+  sendMessage(chatId: number, text: string, options?: TelegramSenderOptions): Promise<unknown>;
 }
 
 let activeSender: TelegramSender | null = null;
+let activeWebAppUrl: string | null = null;
 
 export function setTelegramSender(sender: TelegramSender | null): void {
   activeSender = sender;
+}
+
+export function setTelegramWebAppUrl(url: string | null): void {
+  activeWebAppUrl = url;
+}
+
+export function getTelegramWebAppUrl(): string | null {
+  return activeWebAppUrl;
+}
+
+export const NOTIFICATION_BUTTON_TEXT: Record<'uz' | 'ru' | 'en', string> = {
+  uz: "Ko'rish",
+  ru: 'Открыть',
+  en: 'Open',
+};
+
+/**
+ * Xabarnoma uchun WebApp deep link yaratish (P14, D-166).
+ * Faqat ID uzatiladi, maxfiy ma'lumotlar yo'q. Faqat HTTPS qabul qilinadi.
+ */
+export function getNotificationActionUrl(
+  dto: NotificationDto,
+  baseUrl?: string | null,
+): { path: string; url: string; startapp: string } | null {
+  const base = baseUrl ?? activeWebAppUrl;
+  if (!base || !base.startsWith('https://')) return null;
+  const cleanBase = base.replace(/\/+$/, '');
+
+  let path: string;
+  let startapp: string;
+
+  switch (dto.type) {
+    case 'sample_assigned':
+    case 'sample_rejected':
+      if (dto.referenceId) {
+        path = `/samples/${dto.referenceId}`;
+        startapp = `sample_${dto.referenceId}`;
+      } else {
+        path = '/samples';
+        startapp = 'samples';
+      }
+      break;
+
+    case 'sample_approved':
+    case 'protocol_approved':
+      if (dto.referenceId) {
+        path = `/registry/${dto.referenceId}`;
+        startapp = `registry_${dto.referenceId}`;
+      } else {
+        path = '/registry';
+        startapp = 'registry';
+      }
+      break;
+
+    case 'protocol_submitted':
+    case 'protocol_rejected':
+      if (dto.referenceId) {
+        path = `/samples/${dto.referenceId}`;
+        startapp = `sample_${dto.referenceId}`;
+      } else {
+        path = '/samples';
+        startapp = 'samples';
+      }
+      break;
+
+    case 'temperature_alert':
+      path = '/temperature';
+      startapp = 'temperature';
+      break;
+
+    case 'low_stock':
+      path = '/reagents';
+      startapp = 'reagents';
+      break;
+
+    case 'stability_due_soon':
+    case 'stability_overdue':
+      if (dto.referenceId) {
+        path = `/stability/${dto.referenceId}`;
+        startapp = `stability_${dto.referenceId}`;
+      } else {
+        path = '/stability';
+        startapp = 'stability';
+      }
+      break;
+
+    default:
+      path = '/';
+      startapp = 'home';
+  }
+
+  return {
+    path,
+    url: `${cleanBase}${path}?startapp=${startapp}`,
+    startapp,
+  };
 }
 
 /**
@@ -555,6 +663,7 @@ export async function sendTelegramNotification(
   dto: NotificationDto,
   customSender?: TelegramSender | null,
   companyId?: string | null,
+  webAppUrlOverride?: string | null,
 ): Promise<boolean> {
   const sender = customSender !== undefined ? customSender : activeSender;
   if (!sender) return false;
@@ -579,7 +688,22 @@ export async function sendTelegramNotification(
       : 'uz') as 'uz' | 'ru' | 'en';
 
     const text = formatTelegramNotification(dto, lang);
-    await sender.sendMessage(Number(user.telegram_chat_id), text, { parse_mode: 'HTML' });
+    const action = getNotificationActionUrl(dto, webAppUrlOverride ?? activeWebAppUrl);
+    const options: TelegramSenderOptions = { parse_mode: 'HTML' };
+    if (action) {
+      options.reply_markup = {
+        inline_keyboard: [
+          [
+            {
+              text: NOTIFICATION_BUTTON_TEXT[lang],
+              web_app: { url: action.url },
+            },
+          ],
+        ],
+      };
+    }
+
+    await sender.sendMessage(Number(user.telegram_chat_id), text, options);
     return true;
   } catch (err) {
     logger.error('Telegramga xabarnoma yuborishda xatolik:', { err, userId, notificationId: dto.id });
