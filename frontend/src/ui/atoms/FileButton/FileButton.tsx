@@ -6,8 +6,10 @@ export interface FileButtonProps {
   /** Tanlangan fayl (tanlov oynasi yopilgach). */
   onSelect: (file: File) => void;
   children: ReactNode;
-  /** Ruxsat etilgan kengaytmalar (nuqtasiz). */
+  /** Ruxsat etilgan kengaytmalar yoki MIME turlari. */
   accept?: readonly string[];
+  /** Mobil qurilmalarda kamera / mikrofon / sensor (masalan 'environment'). */
+  capture?: 'user' | 'environment';
   variant?: ButtonVariant;
   size?: ButtonSize;
   leftIcon?: IconName;
@@ -24,6 +26,7 @@ export function FileButton({
   onSelect,
   children,
   accept,
+  capture,
   variant = 'secondary',
   size = 'sm',
   leftIcon = 'upload',
@@ -51,7 +54,8 @@ export function FileButton({
         tabIndex={-1}
         aria-hidden="true"
         className="hidden"
-        accept={accept?.map((e) => `.${e}`).join(',')}
+        capture={capture}
+        accept={accept?.map((e) => (e.startsWith('.') || e.includes('/') ? e : `.${e}`)).join(',')}
         onChange={(e) => {
           const file = e.target.files?.[0];
           e.target.value = '';

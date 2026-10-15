@@ -20,7 +20,11 @@
     "expand": "Menyuni yoyish",
     "open": "Menyuni ochish",
     "myResults": "Mening natijalarim",
-    "team": "Jamoa"
+    "team": "Jamoa",
+    "reagents": "Reaktivlar",
+    "stability": "Stabilizatsiya",
+    "profile": "Profil",
+    "more": "Yana"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -55,6 +59,8 @@
     "remove": "Olib tashlash",
     "cancel": "Bekor qilish",
     "save": "Saqlash",
+    "open": "Ochish",
+    "retry": "Qayta urinish",
     "status": "Holati",
     "active": "Faol",
     "inactive": "Nofaol",
@@ -676,7 +682,36 @@
     "needsAttention": "Diqqat talab qiladi",
     "pendingAssignment": "Biriktirish kutilmoqda",
     "awaitingApproval": "Tasdiqlash kutilmoqda (protokollar)",
-    "openProtocols": "Yakunlanmagan protokollar"
+    "openProtocols": "Yakunlanmagan protokollar",
+    "quickProtocolAction": "Protokol yuklash va yuborish",
+    "assignedSamplesDesc": "Jarayondagi namunalar bo'yicha tahlil natijasini kiritish",
+    "openSamples": "Namunalar",
+    "registerSample": "Yangi namuna kiritish",
+    "registerSampleDesc": "Laboratoriyaga kelib tushgan yangi namunani ro'yxatga olish",
+    "newSample": "Kiritish"
+  },
+  "telegram": {
+    "webapp": {
+      "unlinkedTitle": "Telegram hisobingiz bog'lanmagan",
+      "unlinkedInstructions": "TizimLab dan foydalanish uchun avval brauzerda tizimga kiring, Profil bo'limiga o'ting va 'Telegram ulash' tugmasi orqali hisobingizni bog'lang.",
+      "openInBrowser": "Brauzerda ochish",
+      "expiredTitle": "Sessiya muddati eskirgan",
+      "expiredInstructions": "Telegram avtorizatsiya ma'lumotlari muddati tugagan yoki allaqachon ishlatilgan. Iltimos, ilovani qayta yuklang.",
+      "reload": "Qayta yuklash",
+      "networkErrorTitle": "Tarmoq xatosi",
+      "networkErrorInstructions": "Server bilan aloqa o'rnatib bo'lmadi. Internet aloqasini tekshiring va qayta urinib ko'ring."
+    }
+  },
+  "files": {
+    "uploadTitle": "Fayl yuklash",
+    "uploadHint": "PDF, DOC, DOCX, JPEG, PNG (maksimal 20MB)",
+    "camera": "Kamera",
+    "chooseFile": "Fayl tanlash",
+    "uploadedSuccess": "Fayl yuklangan",
+    "errors": {
+      "sizeTooLarge": "Fayl hajmi 20MB dan oshmasligi kerak",
+      "invalidFormat": "Faqat PDF, DOC, DOCX, JPEG, PNG formatlariga ruxsat berilgan"
+    }
   },
   "reagents": {
     "title": "Reaktivlar",

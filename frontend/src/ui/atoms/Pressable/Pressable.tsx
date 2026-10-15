@@ -6,6 +6,8 @@ const variants = {
   row: 'flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-surface-muted',
   /** Bosiladigan karta. */
   card: 'flex w-full flex-col gap-1 rounded-xl border border-line bg-surface p-4 text-left shadow-sm hover:border-line-strong hover:shadow-md',
+  /** Maxsus moslashtiriladigan sirt. */
+  raw: '',
 } as const;
 
 export interface PressableProps extends Omit<ComponentPropsWithRef<'button'>, 'type'> {

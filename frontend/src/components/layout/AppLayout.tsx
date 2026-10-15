@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation } from 'react-router';
+import { AppSkeleton } from '@/components/layout/AppSkeleton';
 import { ErrorBoundary } from '@/components/routing/ErrorBoundary';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useAuthStore } from '@/store/authStore';
@@ -9,6 +10,14 @@ import { DESKTOP_QUERY, Drawer, PageContainer, useMediaQuery } from '@/ui';
 import { BrandMark } from './BrandMark';
 import { Sidebar, SidebarNav } from './Sidebar';
 import { TopBar } from './TopBar';
+import { isTelegramWebApp } from '@/lib/telegram';
+
+// P14: Telegram mobile shell alohida lazy chunk sifatida yuklanadi (asosiy chunkni shishirmaydi)
+const TelegramMobileShell = lazy(() =>
+  import('@/components/telegram/TelegramMobileShell').then((m) => ({
+    default: m.TelegramMobileShell,
+  })),
+);
 
 /** Himoyalangan sahifalar uchun umumiy karkas (ProtectedRoute ichida ishlatiladi). */
 export function AppLayout() {
@@ -26,6 +35,15 @@ export function AppLayout() {
   }, [location.pathname, setMobileNavOpen]);
 
   if (!user) return null;
+
+  if (isTelegramWebApp()) {
+    return (
+      <Suspense fallback={<AppSkeleton />}>
+        <TelegramMobileShell />
+      </Suspense>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-canvas">
       <a

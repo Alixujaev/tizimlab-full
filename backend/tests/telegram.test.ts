@@ -646,4 +646,147 @@ describeDb('P11 — Telegram integratsiyasi va bot (TEST_DATABASE_URL)', () => {
       expect(mockBot.handleUpdate).toHaveBeenCalledWith({ update_id: 104 });
     });
   });
+
+  describe('7. P14 — WebApp xabarnoma tugmasi va /app buyrug\'i', () => {
+    it('getNotificationActionUrl faqat ID uzatadi, maxfiy ma\'lumotlar yo\'q, HTTPS talab qiladi', async () => {
+      const { getNotificationActionUrl } = await import('../src/modules/telegram/telegram.service.js');
+      
+      // HTTP bo'lsa null qaytishi shart (faqat HTTPS)
+      const httpResult = getNotificationActionUrl(
+        {
+          id: 'n1',
+          type: 'sample_assigned',
+          title: 'Namuna',
+          message: 'Matn',
+          referenceId: 'sample-uuid-123',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        },
+        'http://insecure.test',
+      );
+      expect(httpResult).toBeNull();
+
+      // HTTPS bilan to'g'ri URL va startapp yaratilishi
+      const httpsResult = getNotificationActionUrl(
+        {
+          id: 'n2',
+          type: 'sample_assigned',
+          title: 'Namuna',
+          message: 'Matn',
+          referenceId: 'sample-uuid-123',
+          isRead: false,
+          createdAt: new Date().toISOString(),
+        },
+        'https://lab.tizimlab.uz',
+      );
+      expect(httpsResult).not.toBeNull();
+      expect(httpsResult?.path).toBe('/samples/sample-uuid-123');
+      expect(httpsResult?.startapp).toBe('sample_sample-uuid-123');
+      expect(httpsResult?.url).toBe('https://lab.tizimlab.uz/samples/sample-uuid-123?startapp=sample_sample-uuid-123');
+      // Maxfiy ma'lumotlar yo'qligi
+      expect(httpsResult?.url).not.toMatch(/token|secret|password/i);
+    });
+
+    it('sendTelegramNotification HTTPS WebApp URL bilan reply_markup.inline_keyboard yuboradi', async () => {
+      const { sendTelegramNotification } = await import('../src/modules/telegram/telegram.service.js');
+      const company = await createCompany();
+      const chemist = await createUser({ role: 'chemist', company });
+      const link = await generateLinkToken(chemist.id, company.id);
+      await linkTelegramAccount(link.token, { id: 777111 });
+
+      const mockSender = { sendMessage: vi.fn().mockResolvedValue(true) };
+      const dto = {
+        id: 'notif-p14',
+        type: 'sample_assigned' as const,
+        title: 'Yangi namuna biriktirildi',
+        message: 'Namuna tafsilotlari',
+        referenceId: 'sample-uuid-999',
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      await sendTelegramNotification(
+        chemist.id,
+        dto,
+        mockSender,
+        company.id,
+        'https://lab.tizimlab.uz',
+      );
+
+      expect(mockSender.sendMessage).toHaveBeenCalledWith(
+        777111,
+        expect.stringContaining('Yangi namuna'),
+        expect.objectContaining({
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "Ko'rish",
+                  web_app: {
+                    url: 'https://lab.tizimlab.uz/samples/sample-uuid-999?startapp=sample_sample-uuid-999',
+                  },
+                },
+              ],
+            ],
+          },
+        }),
+      );
+    });
+
+    it('bot /app buyrug\'i WebApp inline tugmasi bilan javob beradi', async () => {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const { createTelegramBot } = await import('../src/modules/telegram/telegram.bot.js');
+      const bot = createTelegramBot(BOT_TOKEN, 'https://lab.tizimlab.uz');
+
+      (bot as any).botInfo = {
+        id: 999999,
+        is_bot: true,
+        first_name: 'TizimLabBot',
+        username: 'TizimLab_bot',
+        can_join_groups: false,
+        can_read_all_group_messages: false,
+        supports_inline_queries: false,
+        can_connect_to_business: false,
+        has_main_web_app: false,
+      };
+
+      const mockSendMessage = vi.fn();
+      bot.api.config.use((prev, method, payload) => {
+        if (method === 'sendMessage') {
+          mockSendMessage((payload as any).chat_id, (payload as any).text, payload);
+          return Promise.resolve({ ok: true, result: { message_id: 123 } as any });
+        }
+        return prev(method, payload);
+      });
+
+      await bot.handleUpdate({
+        update_id: 201,
+        message: {
+          message_id: 1,
+          date: Math.floor(Date.now() / 1000),
+          chat: { id: 123456, type: 'private', first_name: 'Test' },
+          from: { id: 123456, is_bot: false, first_name: 'Test', language_code: 'uz' },
+          text: '/app',
+          entities: [{ type: 'bot_command', offset: 0, length: 4 }],
+        },
+      } as any);
+
+      expect(mockSendMessage).toHaveBeenCalledWith(
+        123456,
+        expect.stringContaining('TizimLab LIMS WebApp'),
+        expect.objectContaining({
+          reply_markup: expect.objectContaining({
+            inline_keyboard: [
+              [
+                expect.objectContaining({
+                  text: 'LIMS ni ochish',
+                  web_app: { url: 'https://lab.tizimlab.uz' },
+                }),
+              ],
+            ],
+          }),
+        }),
+      );
+    });
+  });
 });

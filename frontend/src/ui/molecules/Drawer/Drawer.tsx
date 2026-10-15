@@ -12,12 +12,12 @@ export interface DrawerProps {
   title: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
-  side?: 'left' | 'right';
+  side?: 'left' | 'right' | 'bottom';
   /** Sarlavha faqat ekran o'quvchilar uchun (masalan, mobil navigatsiya). */
   hideTitle?: boolean;
 }
 
-/** Yon panel (mobil navigatsiya, filtrlar, tafsilot): Modal bilan bir xil a11y kafolatlari. */
+/** Yon panel va mobil bottom-sheet (mobil navigatsiya, filtrlar, tafsilot): Modal bilan bir xil a11y kafolatlari. */
 export function Drawer({
   open,
   onClose,
@@ -48,12 +48,20 @@ export function Drawer({
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cx(
-          'absolute inset-y-0 flex w-drawer flex-col bg-surface text-fg shadow-xl outline-none',
-          side === 'right'
-            ? 'right-0 animate-slide-in-right border-l border-line'
-            : 'left-0 animate-slide-in-left border-r border-line',
+          'absolute flex flex-col bg-surface text-fg shadow-xl outline-none',
+          side === 'bottom'
+            ? 'inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t border-line animate-slide-up w-full pb-[env(safe-area-inset-bottom,0px)]'
+            : cx(
+                'inset-y-0 w-drawer',
+                side === 'right'
+                  ? 'right-0 animate-slide-in-right border-l border-line'
+                  : 'left-0 animate-slide-in-left border-r border-line',
+              ),
         )}
       >
+        {side === 'bottom' && (
+          <div aria-hidden="true" className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-line-strong" />
+        )}
         <div
           className={cx(
             'flex items-center justify-between gap-3 border-b border-line px-4 py-3',

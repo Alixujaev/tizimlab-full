@@ -20,7 +20,11 @@
     "expand": "Expand menu",
     "open": "Open menu",
     "myResults": "My results",
-    "team": "Team"
+    "team": "Team",
+    "reagents": "Reagents",
+    "stability": "Stability",
+    "profile": "Profile",
+    "more": "More"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -55,6 +59,8 @@
     "remove": "Remove",
     "cancel": "Cancel",
     "save": "Save",
+    "open": "Open",
+    "retry": "Retry",
     "status": "Status",
     "active": "Active",
     "inactive": "Inactive",
@@ -676,7 +682,36 @@
     "needsAttention": "Needs attention",
     "pendingAssignment": "Awaiting assignment",
     "awaitingApproval": "Awaiting approval (protocols)",
-    "openProtocols": "Unfinalized protocols"
+    "openProtocols": "Unfinalized protocols",
+    "quickProtocolAction": "Upload and submit protocol",
+    "assignedSamplesDesc": "Enter analysis results for samples in progress",
+    "openSamples": "Samples",
+    "registerSample": "Register new sample",
+    "registerSampleDesc": "Register a new sample received in the laboratory",
+    "newSample": "Register"
+  },
+  "telegram": {
+    "webapp": {
+      "unlinkedTitle": "Your Telegram account is not linked",
+      "unlinkedInstructions": "To use TizimLab, first log in to your profile in a web browser and link your account via 'Link Telegram'.",
+      "openInBrowser": "Open in browser",
+      "expiredTitle": "Session expired",
+      "expiredInstructions": "Telegram authorization data has expired or has already been used. Please reload the app.",
+      "reload": "Reload",
+      "networkErrorTitle": "Network error",
+      "networkErrorInstructions": "Could not connect to server. Check your internet connection and try again."
+    }
+  },
+  "files": {
+    "uploadTitle": "File upload",
+    "uploadHint": "PDF, DOC, DOCX, JPEG, PNG (max 20MB)",
+    "camera": "Camera",
+    "chooseFile": "Choose file",
+    "uploadedSuccess": "File uploaded",
+    "errors": {
+      "sizeTooLarge": "File size must not exceed 20MB",
+      "invalidFormat": "Only PDF, DOC, DOCX, JPEG, PNG formats are allowed"
+    }
   },
   "reagents": {
     "title": "Reagents",
