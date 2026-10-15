@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUserStatsQuery, useUsersQuery } from '@/hooks/useAdminUsers';
 import { useAuthStore } from '@/store/authStore';
+import { formatDateTime } from '@/lib/date';
 import type { AdminUserDto, CompanyUserRole } from '@/types';
 import {
   Avatar,
@@ -101,7 +102,7 @@ export function UsersPage() {
         render: (row) => (
           <span className="text-xs tabular-nums text-fg-muted">
             {row.lastLoginAt
-              ? new Date(row.lastLoginAt).toLocaleString()
+              ? formatDateTime(row.lastLoginAt)
               : t('users.neverLoggedIn')}
           </span>
         ),

@@ -1,15 +1,11 @@
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '@/lib/date';
 import type { SampleTrackingDto } from '@/types';
 import { EmptyState, Icon } from '@/ui';
 import { SampleStatusBadge } from './SampleStatusBadge';
 
 interface SampleTrackingTimelineProps {
   tracking: SampleTrackingDto[];
-}
-
-function formatDateTime(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
 }
 
 export function SampleTrackingTimeline({ tracking }: SampleTrackingTimelineProps) {

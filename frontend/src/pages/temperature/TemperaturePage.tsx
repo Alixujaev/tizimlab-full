@@ -7,6 +7,7 @@ import {
   useTemperatureStatusQuery,
 } from '@/hooks/useTemperature';
 import { useAuthStore } from '@/store/authStore';
+import { formatDateTime } from '@/lib/date';
 import type { TemperatureAlertDto, TemperatureReadingDto } from '@/types';
 import {
   Badge,
@@ -86,7 +87,7 @@ export function TemperaturePage() {
       key: 'recordedAt',
       header: t('temperature.recordedAt', 'Vaqti'),
       render: (r) => (
-        <span className="tabular-nums">{new Date(r.recordedAt).toLocaleString()}</span>
+        <span className="tabular-nums">{formatDateTime(r.recordedAt)}</span>
       ),
     },
     {
@@ -151,7 +152,7 @@ export function TemperaturePage() {
     {
       key: 'createdAt',
       header: t('temperature.recordedAt', 'Vaqti'),
-      render: (a) => <span className="tabular-nums">{new Date(a.createdAt).toLocaleString()}</span>,
+      render: (a) => <span className="tabular-nums">{formatDateTime(a.createdAt)}</span>,
     },
     {
       key: 'sensor',

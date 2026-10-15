@@ -15,6 +15,7 @@
     "users": "Пользователи",
     "activity": "Активность",
     "companies": "Компании",
+    "audit": "Аудит",
     "auditLog": "Журнал аудита",
     "collapse": "Свернуть меню",
     "expand": "Развернуть меню",
@@ -24,7 +25,23 @@
     "reagents": "Реактивы",
     "stability": "Стабильность",
     "profile": "Профиль",
-    "more": "Ещё"
+    "more": "Ещё",
+    "dashboardShort": "Главная",
+    "samplesShort": "Образцы",
+    "substancesShort": "Вещества",
+    "registryShort": "Реестр",
+    "temperatureShort": "Температура",
+    "usersShort": "Пользователи",
+    "activityShort": "Активность",
+    "companiesShort": "Компании",
+    "auditShort": "Аудит",
+    "auditLogShort": "Аудит",
+    "myResultsShort": "Результаты",
+    "teamShort": "Команда",
+    "reagentsShort": "Реактивы",
+    "stabilityShort": "Стабильность",
+    "profileShort": "Профиль",
+    "moreShort": "Ещё"
   },
   "pages": {
     "dashboard": "Главная",
@@ -102,7 +119,11 @@
     },
     "welcome": "Войдите в свой аккаунт",
     "showPassword": "Показать пароль",
-    "hidePassword": "Скрыть пароль"
+    "hidePassword": "Скрыть пароль",
+    "logout": "Выход",
+    "logoutDesc": "Завершить текущую сессию и выйти из аккаунта",
+    "logoutConfirmTitle": "Выход из системы",
+    "logoutConfirmDesc": "Вы действительно хотите выйти из системы?"
   },
   "topbar": {
     "language": "Язык",
@@ -699,7 +720,10 @@
       "expiredInstructions": "Данные авторизации Telegram устарели или уже использованы. Пожалуйста, перезагрузите приложение.",
       "reload": "Перезагрузить",
       "networkErrorTitle": "Сетевая ошибка",
-      "networkErrorInstructions": "Не удалось связаться с сервером. Проверьте подключение к интернету и повторите попытку."
+      "networkErrorInstructions": "Не удалось связаться с сервером. Проверьте подключение к интернету и повторите попытку.",
+      "loggedOutTitle": "Вы вышли",
+      "loggedOutInstructions": "Вы успешно вышли из системы. Чтобы войти снова, нажмите кнопку ниже.",
+      "reLogin": "Войти снова"
     }
   },
   "files": {
@@ -940,9 +964,56 @@
     "filters": {
       "searchPlaceholder": "ID, действие, ресурс...",
       "action": "Действие",
+      "actionPlaceholder": "создание, обновление...",
       "resource": "Ресурс",
+      "resourcePlaceholder": "пользователи, образцы...",
       "from": "С",
       "to": "По"
+    },
+    "actions": {
+      "create": "Создание",
+      "update": "Обновление",
+      "delete": "Удаление",
+      "login": "Вход",
+      "login_failed": "Неудачный вход",
+      "login_telegram": "Вход через Telegram",
+      "telegram_link": "Привязка Telegram",
+      "telegram_unlink": "Отвязка Telegram",
+      "logout": "Выход",
+      "session_revoked": "Сессия отозвана",
+      "token_refresh_reuse": "Повторное использование токена",
+      "status_change": "Смена статуса",
+      "assign": "Назначение",
+      "sign": "Подпись",
+      "resolve": "Решение",
+      "complete": "Завершение",
+      "record": "Запись",
+      "revoke": "Отзыв",
+      "disposal": "Утилизация",
+      "alert": "Оповещение",
+      "in": "Приход",
+      "out": "Расход",
+      "adjustment": "Корректировка"
+    },
+    "resources": {
+      "users": "Пользователи",
+      "companies": "Компании",
+      "sessions": "Сессии",
+      "auth": "Аутентификация",
+      "samples": "Образцы",
+      "sample_tracking": "Движение образца",
+      "protocols": "Протоколы",
+      "substances": "Вещества",
+      "reagents": "Реактивы",
+      "reagent_journal": "Журнал реактивов",
+      "temperature": "Температура",
+      "temperature_sensors": "Датчики температуры",
+      "temperature_alerts": "Оповещения температуры",
+      "stability": "Стабильность",
+      "stability_plans": "Планы стабильности",
+      "registry": "Реестр",
+      "files": "Файлы",
+      "audit_log": "Журнал аудита"
     },
     "details": {
       "title": "Детали записи аудита",
@@ -971,7 +1042,9 @@
     "filters": {
       "searchPlaceholder": "ID, действие, ресурс...",
       "action": "Действие",
+      "actionPlaceholder": "создание, обновление...",
       "resource": "Ресурс",
+      "resourcePlaceholder": "пользователи, образцы...",
       "from": "С",
       "to": "По"
     }

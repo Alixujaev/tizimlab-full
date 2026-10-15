@@ -47,8 +47,8 @@ describe('Audit and Activity Logs UI (P10, D-147)', () => {
       renderAt('/logs');
 
       await waitFor(() => {
-        expect(screen.getByText('samples')).toBeInTheDocument();
-        expect(screen.getByText('create')).toBeInTheDocument();
+        expect(screen.getAllByText(/Namunalar|samples/).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getByText('Yaratish')).toBeInTheDocument();
       });
 
       // Tafsilot tugmasi bosilganda modal ochiladi
@@ -89,8 +89,8 @@ describe('Audit and Activity Logs UI (P10, D-147)', () => {
       renderAt('/activity');
 
       await waitFor(() => {
-        expect(screen.getByText('samples')).toBeInTheDocument();
-        expect(screen.getByText('create')).toBeInTheDocument();
+        expect(screen.getAllByText(/Namunalar|samples/).length).toBeGreaterThanOrEqual(1);
+        expect(screen.getByText('Yaratish')).toBeInTheDocument();
       });
     });
 

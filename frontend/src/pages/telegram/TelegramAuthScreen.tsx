@@ -121,6 +121,34 @@ export function TelegramAuthScreen({ state, onRetry }: TelegramAuthScreenProps) 
             </Button>
           </Card>
         )}
+
+        {state === 'logged_out' && (
+          <Card className="w-full text-center p-6 flex flex-col items-center gap-4 border-line shadow-md">
+            <div className="size-12 rounded-full bg-primary-subtle text-primary flex items-center justify-center">
+              <Icon name="log-out" size="lg" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-lg font-semibold text-fg">
+                {t('telegram.webapp.loggedOutTitle', 'Chiqdingiz')}
+              </h1>
+              <p className="text-sm text-fg-muted leading-relaxed">
+                {t(
+                  'telegram.webapp.loggedOutInstructions',
+                  "Siz hisobingizdan muvaffaqiyatli chiqdingiz. Tizimga qayta kirish uchun quyidagi tugmani bosing.",
+                )}
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              onClick={onRetry}
+              leftIcon="log-in"
+            >
+              {t('telegram.webapp.reLogin', 'Qayta kirish')}
+            </Button>
+          </Card>
+        )}
       </div>
     </div>
   );

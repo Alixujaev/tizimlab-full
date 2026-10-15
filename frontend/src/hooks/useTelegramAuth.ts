@@ -18,7 +18,8 @@ export type TelegramAuthState =
   | 'success'
   | 'unlinked'
   | 'expired'
-  | 'network_error';
+  | 'network_error'
+  | 'logged_out';
 
 export interface UseTelegramAuthResult {
   state: TelegramAuthState;
@@ -38,6 +39,10 @@ export function useTelegramAuth(): UseTelegramAuthResult {
 
   const performAuth = useCallback(async () => {
     if (!isTelegramWebApp()) return;
+    if (sessionStorage.getItem('tizimlab.logged_out') === 'true') {
+      setState('logged_out');
+      return;
+    }
     if (authStatus === 'authenticated') {
       setState('success');
       return;
@@ -107,8 +112,17 @@ export function useTelegramAuth(): UseTelegramAuthResult {
     }
   }, [authStatus, navigate]);
 
+  const retry = useCallback(() => {
+    sessionStorage.removeItem('tizimlab.logged_out');
+    void performAuth();
+  }, [performAuth]);
+
   useEffect(() => {
     if (!isTelegramWebApp()) return;
+    if (sessionStorage.getItem('tizimlab.logged_out') === 'true') {
+      setState('logged_out');
+      return;
+    }
     if (state === 'idle') {
       void performAuth();
     }
@@ -117,6 +131,6 @@ export function useTelegramAuth(): UseTelegramAuthResult {
   return {
     state,
     errorMessage,
-    retry: performAuth,
+    retry,
   };
 }

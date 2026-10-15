@@ -41,6 +41,13 @@ i18n.on('languageChanged', (lng) => {
   document.documentElement.lang = lng;
 });
 
+const lookupUz = (path: string): string | undefined => {
+  const val = path.split('.').reduce<unknown>((acc, part) => {
+    return acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[part] : undefined;
+  }, uz);
+  return typeof val === 'string' ? val : undefined;
+};
+
 void i18n.use(initReactI18next).init({
   resources,
   lng: readStoredLanguage(),
@@ -48,6 +55,17 @@ void i18n.use(initReactI18next).init({
   supportedLngs: LANGUAGES,
   interpolation: { escapeValue: false },
   returnNull: false,
+  missingKeyHandler: (_lngs, _ns, key) => {
+    if (import.meta.env.DEV) {
+      console.error(`[i18n] Missing translation key: "${key}"`);
+    }
+  },
+  parseMissingKeyHandler: (key, defaultValue) => {
+    if (defaultValue) return defaultValue;
+    const uzVal = lookupUz(key);
+    if (uzVal) return uzVal;
+    return key.split('.').pop() || key;
+  },
 });
 document.documentElement.lang = i18n.language;
 

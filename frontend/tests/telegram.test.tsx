@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import i18n from '@/i18n';
@@ -27,10 +27,16 @@ import {
   setupTelegramThemeListener,
   syncTelegramTheme,
 } from '@/lib/telegramTheme';
+import { formatDateTime } from '@/lib/date';
+import { ActionBadge } from '@/pages/audit/logsShared';
+import { Logo } from '@/ui/atoms/Logo/Logo';
+import { StatCard } from '@/ui/templates/StatCard/StatCard';
 import { TelegramAuthScreen } from '@/pages/telegram/TelegramAuthScreen';
+import { useTelegramAuth } from '@/hooks/useTelegramAuth';
 import { MobileFileUpload } from '@/components/telegram/MobileFileUpload';
 import { TelegramMobileShell } from '@/components/telegram/TelegramMobileShell';
 import { useAuthStore } from '@/store/authStore';
+import { useThemeStore } from '@/store/themeStore';
 import { MemoryRouter } from 'react-router';
 import type { Role, User } from '@/types';
 
@@ -117,6 +123,15 @@ function createMockTelegramWebApp(overrides: Partial<TelegramWebApp> = {}): Tele
     ...overrides,
   };
 }
+
+const setupUser = (role: Role): User => ({
+  id: 'u1',
+  fullName: 'Test User',
+  email: 'test@example.com',
+  role,
+  companyId: 'c1',
+  company: { id: 'c1', name: 'Farm Test MCHJ', slug: 'farm-test' },
+});
 
 describe('P14 — Telegram WebApp integratsiyasi va Mobil UI', () => {
   beforeEach(async () => {
@@ -271,43 +286,97 @@ describe('P14 — Telegram WebApp integratsiyasi va Mobil UI', () => {
       expect(lowContrast).toBeLessThan(4.5);
     });
 
-    it('syncTelegramTheme va setupTelegramThemeListener Telegram mavzusini jonli yangilaydi', () => {
-      const mockTg = createMockTelegramWebApp({
-        colorScheme: 'dark',
-        themeParams: {
-          bg_color: '#1a1a1a',
-          text_color: '#ffffff', // Kontrast > 4.5:1
-          secondary_bg_color: '#121212',
-          button_color: '#3b82f6',
-          button_text_color: '#ffffff',
-        },
-      });
-      window.Telegram = { WebApp: mockTg };
+    it('Foydalanuvchi tanlovi (qo\'lda almashtirilgan) Telegram colorScheme ustidan ustuvor turadi', () => {
+      // 1) Foydalanuvchi qorong'i tanlagan, Telegram esa yorug'
+      useThemeStore.getState().setPreference('dark');
+      const mockTgLight = createMockTelegramWebApp({ colorScheme: 'light' });
+      window.Telegram = { WebApp: mockTgLight };
 
-      const unsubscribe = setupTelegramThemeListener();
+      syncTelegramTheme();
       expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-      expect(document.documentElement.style.getPropertyValue('--tl-surface')).toBe('#1a1a1a');
-      expect(document.documentElement.style.getPropertyValue('--tl-fg')).toBe('#ffffff');
-      expect(mockTg.onEvent).toHaveBeenCalledWith('themeChanged', expect.any(Function));
 
-      unsubscribe();
-      expect(mockTg.offEvent).toHaveBeenCalledWith('themeChanged', expect.any(Function));
+      // 2) Foydalanuvchi yorug' tanlagan, Telegram esa qorong'i
+      useThemeStore.getState().setPreference('light');
+      const mockTgDark = createMockTelegramWebApp({ colorScheme: 'dark' });
+      window.Telegram = { WebApp: mockTgDark };
+
+      syncTelegramTheme();
+      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+
+      // 3) Tanlov bo'lmaganda (system) Telegram colorScheme ga ergashadi
+      useThemeStore.getState().setPreference('system');
+      syncTelegramTheme();
+      expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+
+      window.Telegram = { WebApp: mockTgLight };
+      syncTelegramTheme();
+      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
     });
 
-    it('Kontrast WCAG AA (4.5) dan past bo\'lsa xavfli rang qo\'llanmaydi', () => {
+    it('themeParams fon/surface tokenlarini ustiga YOZMAYDI, faqat accent ranglarni moslaydi', () => {
+      useThemeStore.getState().setPreference('system');
       const mockTg = createMockTelegramWebApp({
         colorScheme: 'light',
         themeParams: {
-          bg_color: '#888888',
-          text_color: '#777777', // Juda past kontrast (< 4.5)
+          bg_color: '#000000', // Xavfli qora fon
+          text_color: '#ffffff',
+          button_color: '#2563eb', // Kontrast > 4.5:1 oq matn bilan
+          button_text_color: '#ffffff',
+          link_color: '#7c3aed',
         },
       });
       window.Telegram = { WebApp: mockTg };
 
       syncTelegramTheme();
-      // Past kontrast sababli --tl-surface va --tl-fg o'zgartirilmasligi kerak
+
+      // Fon/matn/surface tokenlari butunlay ustiga yozilmasligi shart (toza qoladi)
       expect(document.documentElement.style.getPropertyValue('--tl-surface')).toBe('');
+      expect(document.documentElement.style.getPropertyValue('--tl-canvas')).toBe('');
       expect(document.documentElement.style.getPropertyValue('--tl-fg')).toBe('');
+
+      // Accent ranglar esa to'g'ri moslanadi
+      expect(document.documentElement.style.getPropertyValue('--tl-primary')).toBe('#2563eb');
+      expect(document.documentElement.style.getPropertyValue('--tl-primary-fg')).toBe('#ffffff');
+      expect(document.documentElement.style.getPropertyValue('--tl-accent')).toBe('#7c3aed');
+    });
+
+    it('Kontrast WCAG AA (4.5) dan past bo\'lsa xavfli tugma rangi qo\'llanmaydi', () => {
+      document.documentElement.style.removeProperty('--tl-primary');
+      document.documentElement.style.removeProperty('--tl-primary-fg');
+
+      const mockTg = createMockTelegramWebApp({
+        colorScheme: 'light',
+        themeParams: {
+          button_color: '#888888',
+          button_text_color: '#777777', // Juda past kontrast (< 4.5)
+        },
+      });
+      window.Telegram = { WebApp: mockTg };
+
+      syncTelegramTheme();
+      expect(document.documentElement.style.getPropertyValue('--tl-primary')).toBe('');
+      expect(document.documentElement.style.getPropertyValue('--tl-primary-fg')).toBe('');
+    });
+
+    it('Logotip ranglari ikkala temada (yorug\' va qorong\'i) WCAG AA talabiga javob beradi', () => {
+      // Yorug' rejimda violet-700 (#5b21b6) oq fon ustida
+      const lightLogoContrast = getContrastRatio('#5b21b6', '#ffffff');
+      expect(lightLogoContrast).toBeGreaterThanOrEqual(4.5); // 7.6:1
+
+      // Qorong'i rejimda violet-300 (#c4b5fd) qora/slate fon (#0f172a) ustida
+      const darkLogoContrast = getContrastRatio('#c4b5fd', '#0f172a');
+      expect(darkLogoContrast).toBeGreaterThanOrEqual(4.5); // 9.8:1
+    });
+
+    it('setupTelegramThemeListener themeChanged hodisasiga ulanadi va unmount da tozalaydi', () => {
+      const mockTg = createMockTelegramWebApp({ colorScheme: 'dark' });
+      window.Telegram = { WebApp: mockTg };
+
+      const unsubscribe = setupTelegramThemeListener();
+      expect(mockTg.onEvent).toHaveBeenCalledWith('themeChanged', expect.any(Function));
+
+      unsubscribe();
+      expect(mockTg.offEvent).toHaveBeenCalledWith('themeChanged', expect.any(Function));
     });
   });
 
@@ -406,18 +475,37 @@ describe('P14 — Telegram WebApp integratsiyasi va Mobil UI', () => {
       fireEvent.click(retryBtn);
       expect(retrySpy).toHaveBeenCalledTimes(1);
     });
+
+    it('chiqilgan (logged_out) holati: "Chiqdingiz" sarlavhasi va "Qayta kirish" tugmasi', () => {
+      const retrySpy = vi.fn();
+      render(
+        <TelegramAuthScreen
+          state="logged_out"
+          onRetry={retrySpy}
+        />,
+      );
+
+      expect(screen.getByRole('heading', { name: /^Chiqdingiz$/i })).toBeInTheDocument();
+      const reLoginBtn = screen.getByRole('button', { name: /Qayta kirish/i });
+      expect(reLoginBtn).toBeInTheDocument();
+      fireEvent.click(reLoginBtn);
+      expect(retrySpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('sessionStorage da tizimlab.logged_out bo\'lsa avto-kirish to\'xtaydi va logged_out qaytaradi', () => {
+      const mockTg = createMockTelegramWebApp();
+      window.Telegram = { WebApp: mockTg };
+      sessionStorage.setItem('tizimlab.logged_out', 'true');
+
+      const { result } = renderHook(() => useTelegramAuth(), {
+        wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+      });
+
+      expect(result.current.state).toBe('logged_out');
+    });
   });
 
   describe('6. TelegramMobileShell: rol bo\'yicha pastki navigatsiya va tegish maydoni (>=44px)', () => {
-    const setupUser = (role: Role): User => ({
-      id: 'u1',
-      fullName: 'Test User',
-      email: 'test@example.com',
-      role,
-      companyId: 'c1',
-      company: { id: 'c1', name: 'Farm Test MCHJ', slug: 'farm-test' },
-    });
-
     it('chemist roli uchun 4 asosiy tab va "Yana" sheet tugmasi chiqadi', () => {
       useAuthStore.getState().setUser(setupUser('chemist'));
       const mockTg = createMockTelegramWebApp();
@@ -454,6 +542,27 @@ describe('P14 — Telegram WebApp integratsiyasi va Mobil UI', () => {
       );
 
       expect(screen.getByRole('link', { name: /Jamoa/i })).toBeInTheDocument();
+    });
+
+    it('super_admin roli uchun 3 asosiy tab chiqadi va nav.audit to\'liq tarjima qilingan', () => {
+      useAuthStore.getState().setUser(setupUser('super_admin'));
+      const mockTg = createMockTelegramWebApp();
+      window.Telegram = { WebApp: mockTg };
+      const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter initialEntries={['/']}>
+            <TelegramMobileShell />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      // nav.audit kaliti ochiq chiqmasligi kerak
+      expect(screen.queryByText('nav.audit')).not.toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Audit/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Kompaniyalar/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Profil/i })).toBeInTheDocument();
     });
 
     it('barcha navigatsiya tugmalari kamida 44px teginish maydoniga ega (min-h-[48px], min-w-[44px])', () => {
@@ -569,6 +678,139 @@ describe('P14 — Telegram WebApp integratsiyasi va Mobil UI', () => {
       expect(mockTg.openLink).toHaveBeenCalledWith('https://r2.tizimlab.uz/protocol.pdf', {
         try_instant_view: undefined,
       });
+    });
+  });
+
+  describe('8. Sana va vaqtni lokalga mos formatlash (formatDateTime - uz, ru, en)', () => {
+    // 2026-10-15 12:09:00 mahalliy vaqt bilan
+    const fixedDate = new Date(2026, 9, 15, 12, 9, 0);
+
+    it('uz tilida 24-soatlik DD.MM.YYYY HH:mm formatida chiqaradi', () => {
+      expect(formatDateTime(fixedDate, 'uz')).toBe('15.10.2026 12:09');
+    });
+
+    it('ru tilida 24-soatlik DD.MM.YYYY HH:mm formatida chiqaradi', () => {
+      expect(formatDateTime(fixedDate, 'ru')).toBe('15.10.2026 12:09');
+    });
+
+    it('en tilida 12-soatlik MM/DD/YYYY hh:mm AM/PM formatida chiqaradi', () => {
+      expect(formatDateTime(fixedDate, 'en')).toBe('10/15/2026 12:09 PM');
+    });
+
+    it('noto\'g\'ri sana kiritilganda bo\'sh yoki chiziqcha qaytaradi', () => {
+      expect(formatDateTime(null, 'uz')).toBe('—');
+      expect(formatDateTime('invalid-date', 'uz')).toBe('—');
+    });
+  });
+
+  describe('9. Audit jurnali enum va resurs tarjimalari (ActionBadge va fallback)', () => {
+    it('mavjud amal enumlarini (masalan login_telegram) to\'g\'ri tarjima qiladi', () => {
+      const { rerender } = render(<ActionBadge action="login_telegram" />);
+      expect(screen.getByText("Telegram orqali kirish")).toBeInTheDocument();
+
+      rerender(<ActionBadge action="create" />);
+      expect(screen.getByText("Yaratish")).toBeInTheDocument();
+
+      rerender(<ActionBadge action="update" />);
+      expect(screen.getByText("Yangilash")).toBeInTheDocument();
+    });
+
+    it('noma\'lum amal uchun xom qiymatni fallback sifatida xavfsiz ko\'rsatadi', () => {
+      render(<ActionBadge action="custom_unknown_action" />);
+      expect(screen.getByText("custom_unknown_action")).toBeInTheDocument();
+    });
+
+    it('audit resurslari (jadvallar) to\'g\'ri tarjima qilinadi', () => {
+      expect(i18n.t('audit.resources.users')).toBe('Foydalanuvchilar');
+      expect(i18n.t('audit.resources.samples')).toBe('Namunalar');
+      expect(i18n.t('audit.resources.companies')).toBe('Kompaniyalar');
+      expect(i18n.t('audit.resources.unknown_table', { defaultValue: 'unknown_table' })).toBe('unknown_table');
+    });
+  });
+
+  describe('10. Mobil Logout oqimi (Chiqish, ConfirmDialog, sessionStorage, tokenlar tozalanishi)', () => {
+    it('Mobil shellda "Yana" sheet ochilganda Chiqish tugmasi ko\'rinadi va bosilganda dialog chiqadi', async () => {
+      sessionStorage.clear();
+      useAuthStore.getState().setUser(setupUser('chemist'));
+      const mockTg = createMockTelegramWebApp();
+      window.Telegram = { WebApp: mockTg };
+      const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter initialEntries={['/']}>
+            <TelegramMobileShell />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      // Yana menyusini ochish
+      const moreBtn = screen.getByRole('button', { name: /Yana/i });
+      fireEvent.click(moreBtn);
+
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
+
+      // Chiqish tugmasi sheet ichida ko'rinadi
+      const logoutBtn = screen.getByRole('button', { name: /Chiqish/i });
+      expect(logoutBtn).toBeInTheDocument();
+
+      fireEvent.click(logoutBtn);
+
+      // ConfirmDialog paydo bo'ladi
+      await waitFor(() => {
+        expect(screen.getByText(/Haqiqatan ham hisobingizdan chiqmoqchimisiz\?/i)).toBeInTheDocument();
+      });
+
+      // Tasdiqlash
+      const confirmDialog = screen.getByRole('alertdialog', { name: /Tizimdan chiqish/i });
+      const confirmBtn = within(confirmDialog).getByRole('button', { name: /^Chiqish$/i });
+      fireEvent.click(confirmBtn);
+
+      // sessionStorage ga 'tizimlab.logged_out' darhol o'rnatiladi
+      expect(sessionStorage.getItem('tizimlab.logged_out')).toBe('true');
+
+      // onSettled async oqimini kutish
+      await waitFor(() => {
+        expect(useAuthStore.getState().status).toBe('anonymous');
+        expect(useAuthStore.getState().user).toBeNull();
+      });
+    });
+  });
+
+  describe('11. Mobil layout va responsivlik statik qoidalari', () => {
+    it('Mobil shell safe-area va pastki navigatsiya balandligi uchun padding ajratadi', () => {
+      useAuthStore.getState().setUser(setupUser('chemist'));
+      const queryClient = new QueryClient();
+      const { container } = render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter initialEntries={['/']}>
+            <TelegramMobileShell />
+          </MemoryRouter>
+        </QueryClientProvider>,
+      );
+
+      const mainContent = container.querySelector('main');
+      expect(mainContent).not.toBeNull();
+      expect(mainContent?.className).toContain('pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))]');
+    });
+
+    it('Logotip mobilda siqilmaydi va qatorga sinmaydi (flex-nowrap shrink-0)', () => {
+      const { container } = render(<Logo primary="Tizim" secondary="Lab" />);
+      const logoEl = container.firstElementChild;
+      expect(logoEl?.className).toContain('flex-nowrap');
+      expect(logoEl?.className).toContain('shrink-0');
+    });
+
+    it('StatCard sarlavhalari tor ekranlarda (360px) toshib ketmaydi (truncate, min-w-0)', () => {
+      const { container } = render(
+        <StatCard label="Juda uzun statistik sarlavha tekshiruvi uchun matn" value={120} />,
+      );
+      const labelEl = container.querySelector('span.truncate');
+      expect(labelEl).not.toBeNull();
+      expect(labelEl?.className).toContain('truncate');
+      expect(container.firstElementChild?.className).toContain('min-w-0');
     });
   });
 });

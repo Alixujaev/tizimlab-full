@@ -12,6 +12,8 @@ import {
   type Tone,
 } from '@/ui';
 
+import { formatDateTime } from '@/lib/date';
+
 /** Amal → ohang (audit va faoliyat jurnalida bir xil). */
 export function actionTone(action: string): Tone {
   if (['create', 'login', 'in'].includes(action)) return 'success';
@@ -25,9 +27,10 @@ export function actionTone(action: string): Tone {
 }
 
 export function ActionBadge({ action }: { action: string }) {
+  const { t } = useTranslation();
   return (
     <Badge tone={actionTone(action)} className="font-mono">
-      {action}
+      {t(`audit.actions.${action}`, { defaultValue: action })}
     </Badge>
   );
 }
@@ -109,14 +112,14 @@ export function LogFilterBar({ filters, ns }: { filters: LogFilters; ns: 'audit'
         className="sm:w-40"
         value={values.action}
         onChange={(e) => set.action(e.target.value)}
-        placeholder={t(`${ns}.filters.actionPlaceholder`, 'create, update...')}
+        placeholder={t(`${ns}.filters.actionPlaceholder`, 'yaratish, yangilash...')}
       />
       <Input
         aria-label={t(`${ns}.filters.resource`, 'Resurs')}
         className="sm:w-40"
         value={values.table}
         onChange={(e) => set.table(e.target.value)}
-        placeholder={t(`${ns}.filters.resourcePlaceholder`, 'users, samples...')}
+        placeholder={t(`${ns}.filters.resourcePlaceholder`, 'foydalanuvchilar, namunalar...')}
       />
       <DatePicker
         aria-label={t(`${ns}.filters.from`, 'Dan')}
@@ -157,7 +160,7 @@ export function useLogColumns({
       header: t(`${ns}.table.time`, 'Vaqt'),
       render: (row) => (
         <span className="whitespace-nowrap text-xs tabular-nums text-fg-muted">
-          {new Date(row.createdAt).toLocaleString()}
+          {formatDateTime(row.createdAt)}
         </span>
       ),
     },
@@ -197,7 +200,9 @@ export function useLogColumns({
       key: 'tableName',
       header: t(`${ns}.table.resource`, 'Resurs'),
       render: (row) => (
-        <span className="font-mono text-xs font-medium text-fg">{row.tableName}</span>
+        <span className="font-mono text-xs font-medium text-fg" title={row.tableName}>
+          {t(`audit.resources.${row.tableName}`, { defaultValue: row.tableName })}
+        </span>
       ),
     },
     {

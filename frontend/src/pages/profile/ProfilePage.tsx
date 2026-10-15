@@ -1,6 +1,8 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { toApiError } from '@/api/client';
+import { useLogout } from '@/hooks/useAuth';
 import type { TelegramLinkToken } from '@/api/telegram';
 import { useChangePasswordMutation, useUpdateProfileMutation } from '@/hooks/useProfile';
 import {
@@ -64,6 +66,19 @@ export function ProfilePage() {
   const telegramStatusQuery = useTelegramStatusQuery();
   const createLinkTokenMutation = useCreateTelegramLinkTokenMutation();
   const unlinkTelegramMutation = useUnlinkTelegramMutation();
+  const navigate = useNavigate();
+  const logoutMutation = useLogout();
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
+  const handleLogout = () => {
+    sessionStorage.setItem('tizimlab.logged_out', 'true');
+    logoutMutation.mutate(undefined, {
+      onSettled: () => {
+        setLogoutConfirmOpen(false);
+        void navigate('/', { replace: true });
+      },
+    });
+  };
 
   useEffect(() => {
     if (user?.fullName) setFullName(user.fullName);
@@ -359,6 +374,24 @@ export function ProfilePage() {
               />
             </FormField>
           </Card>
+
+          <Card>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-fg">{t('auth.logout', 'Chiqish')}</h2>
+                <p className="text-sm text-fg-muted">
+                  {t('auth.logoutDesc', 'Joriy sessiyani yakunlash va hisobdan chiqish')}
+                </p>
+              </div>
+              <Button
+                variant="danger"
+                leftIcon="log-out"
+                onClick={() => setLogoutConfirmOpen(true)}
+              >
+                {t('auth.logout', 'Chiqish')}
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
 
@@ -398,6 +431,18 @@ export function ProfilePage() {
         loading={unlinkTelegramMutation.isPending}
         onConfirm={handleUnlink}
         onCancel={() => setUnlinkConfirmOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        title={t('auth.logoutConfirmTitle', 'Tizimdan chiqish')}
+        description={t('auth.logoutConfirmDesc', 'Haqiqatan ham hisobingizdan chiqmoqchimisiz?')}
+        confirmLabel={t('auth.logout', 'Chiqish')}
+        cancelLabel={t('common.cancel', 'Bekor qilish')}
+        tone="danger"
+        loading={logoutMutation.isPending}
+        onConfirm={handleLogout}
+        onCancel={() => setLogoutConfirmOpen(false)}
       />
     </>
   );

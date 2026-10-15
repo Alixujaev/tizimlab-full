@@ -14,10 +14,12 @@ export function TopBar({ user }: { user: User }) {
   const navigate = useNavigate();
   const logoutMutation = useLogout();
   const openMobileNav = useLayoutStore((s) => s.setMobileNavOpen);
-  const onLogout = () =>
+  const onLogout = () => {
+    sessionStorage.setItem('tizimlab.logged_out', 'true');
     logoutMutation.mutate(undefined, {
       onSettled: () => void navigate('/login', { replace: true }),
     });
+  };
   return (
     <header className="sticky top-0 z-sticky flex h-topbar shrink-0 items-center gap-2 border-b border-line bg-surface/90 px-3 backdrop-blur md:px-6">
       <IconButton

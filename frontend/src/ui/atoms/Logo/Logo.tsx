@@ -55,9 +55,9 @@ const sizes = {
 export function Logo({ primary, secondary, size = 'md', className }: LogoProps) {
   const s = sizes[size];
   return (
-    <span className={cx('flex items-center gap-2.5', className)}>
-      <LogoMark className={cx('w-auto', s.mark)} />
-      <span className={cx('flex flex-col tracking-tight', s.word)}>
+    <span className={cx('flex items-center gap-2.5 flex-nowrap shrink-0 select-none', className)}>
+      <LogoMark className={cx('w-auto shrink-0', s.mark)} />
+      <span className={cx('flex flex-col tracking-tight shrink-0', s.word)}>
         <span className="font-bold text-brand-word">{primary}</span>
         <span className="font-light text-brand-word-accent">{secondary}</span>
       </span>

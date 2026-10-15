@@ -124,3 +124,19 @@ Ushbu hujjat P14 (Telegram WebApp mobil foydalanuvchi tajribasi) bo'yicha turli 
   - `.exe`, `.zip` yoki boshqa ruxsatsiz fayl tanlanganda darhol format xatosi chiqadi.
 - [ ] **Yuklangan faylni ochish:**
   - Fayl muvaffaqiyatli yuklangach "Ochish" tugmasi bosilganda Telegram `openLink` orqali brauzerda yoki instant view da ochiladi.
+
+---
+
+## 9. Chiqish (Logout) va Avto-kirishni to'xtatish xavfsizligi
+
+- [ ] **Mobil shelldan chiqish:**
+  - Profil sahifasi pastida va "Yana" (More) sheetida ko'rinadigan "Chiqish" tugmasi mavjud.
+  - Bosilganda `ConfirmDialog` tasdiqlash oynasi ochiladi.
+  - Tasdiqlanganda: sessiya va refresh token bekor qilinadi, xotiradagi tokenlar tozalanadi.
+- [ ] **Telegram ichida avto-kirishni to'xtatish:**
+  - Chiqishdan so'ng darhol qayta avto-kirish AVTOMATIK bo'lmaydi: "Chiqdingiz" ekrani va "Qayta kirish" tugmasi ko'rsatiladi.
+  - Ushbu holat joriy sessiya davomida (`sessionStorage`) saqlanadi.
+  - "Qayta kirish" tugmasi bosilganda avto-kirish qo'lda boshlanadi.
+- [ ] **Telegram yopilib qayta ochilishi:**
+  - Telegram ilovasi yopilib qayta ochilganda yangi WebApp sessiyasi boshlanadi va avto-kirish yana ishlashi normal (xavfsizlik uchun: Telegram HMAC imzosi bilan kirish uning o'z identifikatsiyasi hisoblanadi).
+
