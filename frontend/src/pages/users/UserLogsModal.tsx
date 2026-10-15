@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useUserLogsQuery } from '@/hooks/useAdminUsers';
 import type { AdminUserDto, UserAuditLogDto } from '@/types';
 import { Button, DataTable, type DataTableColumn, Modal, Pagination } from '@/ui';
+import { formatDateTime } from '@/lib/date';
 import { ActionBadge } from '../audit/logsShared';
 
 interface UserLogsModalProps {
@@ -31,14 +32,18 @@ export function UserLogsModal({ open, onClose, user }: UserLogsModalProps) {
       key: 'tableName',
       header: t('users.logsModal.table'),
       primary: true,
-      render: (row) => <span className="font-mono text-xs text-fg">{row.tableName}</span>,
+      render: (row) => (
+        <span className="font-mono text-xs text-fg">
+          {t(`audit.resources.${row.tableName}`, { defaultValue: row.tableName })}
+        </span>
+      ),
     },
     {
       key: 'createdAt',
       header: t('users.logsModal.time'),
       render: (row) => (
         <span className="text-xs tabular-nums text-fg-muted">
-          {new Date(row.createdAt).toLocaleString()}
+          {formatDateTime(row.createdAt)}
         </span>
       ),
     },

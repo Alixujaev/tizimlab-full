@@ -15,6 +15,7 @@
     "users": "Foydalanuvchilar",
     "activity": "Faoliyat",
     "companies": "Kompaniyalar",
+    "audit": "Audit",
     "auditLog": "Audit jurnali",
     "collapse": "Menyuni yig'ish",
     "expand": "Menyuni yoyish",
@@ -24,7 +25,23 @@
     "reagents": "Reaktivlar",
     "stability": "Stabilizatsiya",
     "profile": "Profil",
-    "more": "Yana"
+    "more": "Yana",
+    "dashboardShort": "Asosiy",
+    "samplesShort": "Namunalar",
+    "substancesShort": "Moddalar",
+    "registryShort": "Reyestr",
+    "temperatureShort": "Harorat",
+    "usersShort": "Xodimlar",
+    "activityShort": "Faoliyat",
+    "companiesShort": "Kompaniya",
+    "auditShort": "Audit",
+    "auditLogShort": "Audit",
+    "myResultsShort": "Natijalar",
+    "teamShort": "Jamoa",
+    "reagentsShort": "Reaktivlar",
+    "stabilityShort": "Stabilite",
+    "profileShort": "Profil",
+    "moreShort": "Yana"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -102,7 +119,11 @@
     },
     "welcome": "Hisobingizga kiring",
     "showPassword": "Parolni ko'rsatish",
-    "hidePassword": "Parolni yashirish"
+    "hidePassword": "Parolni yashirish",
+    "logout": "Chiqish",
+    "logoutDesc": "Joriy sessiyani yakunlash va hisobdan chiqish",
+    "logoutConfirmTitle": "Tizimdan chiqish",
+    "logoutConfirmDesc": "Haqiqatan ham hisobingizdan chiqmoqchimisiz?"
   },
   "topbar": {
     "language": "Til",
@@ -699,7 +720,10 @@
       "expiredInstructions": "Telegram avtorizatsiya ma'lumotlari muddati tugagan yoki allaqachon ishlatilgan. Iltimos, ilovani qayta yuklang.",
       "reload": "Qayta yuklash",
       "networkErrorTitle": "Tarmoq xatosi",
-      "networkErrorInstructions": "Server bilan aloqa o'rnatib bo'lmadi. Internet aloqasini tekshiring va qayta urinib ko'ring."
+      "networkErrorInstructions": "Server bilan aloqa o'rnatib bo'lmadi. Internet aloqasini tekshiring va qayta urinib ko'ring.",
+      "loggedOutTitle": "Chiqdingiz",
+      "loggedOutInstructions": "Siz hisobingizdan muvaffaqiyatli chiqdingiz. Tizimga qayta kirish uchun quyidagi tugmani bosing.",
+      "reLogin": "Qayta kirish"
     }
   },
   "files": {
@@ -940,9 +964,56 @@
     "filters": {
       "searchPlaceholder": "ID, amal, resurs...",
       "action": "Amal",
+      "actionPlaceholder": "yaratish, yangilash...",
       "resource": "Resurs",
+      "resourcePlaceholder": "foydalanuvchilar, namunalar...",
       "from": "Dan",
       "to": "Gacha"
+    },
+    "actions": {
+      "create": "Yaratish",
+      "update": "Yangilash",
+      "delete": "O'chirish",
+      "login": "Kirish",
+      "login_failed": "Xato kirish",
+      "login_telegram": "Telegram orqali kirish",
+      "telegram_link": "Telegram hisobini ulash",
+      "telegram_unlink": "Telegram hisobini uzish",
+      "logout": "Chiqish",
+      "session_revoked": "Sessiya bekor qilindi",
+      "token_refresh_reuse": "Token qayta ishlatildi",
+      "status_change": "Holat o'zgardi",
+      "assign": "Biriktirish",
+      "sign": "Imzolash",
+      "resolve": "Hal qilish",
+      "complete": "Yakunlash",
+      "record": "Yozish",
+      "revoke": "Bekor qilish",
+      "disposal": "Chiqarish",
+      "alert": "Ogohlantirish",
+      "in": "Kirim",
+      "out": "Chiqim",
+      "adjustment": "Tuzatish"
+    },
+    "resources": {
+      "users": "Foydalanuvchilar",
+      "companies": "Kompaniyalar",
+      "sessions": "Sessiyalar",
+      "auth": "Autentifikatsiya",
+      "samples": "Namunalar",
+      "sample_tracking": "Namuna harakati",
+      "protocols": "Bayonnomalar",
+      "substances": "Moddalar",
+      "reagents": "Reaktivlar",
+      "reagent_journal": "Reaktiv jurnali",
+      "temperature": "Harorat",
+      "temperature_sensors": "Harorat datchiklari",
+      "temperature_alerts": "Harorat ogohlantirishlari",
+      "stability": "Stabilizatsiya",
+      "stability_plans": "Stabilizatsiya rejalari",
+      "registry": "Reyestr",
+      "files": "Fayllar",
+      "audit_log": "Audit jurnali"
     },
     "details": {
       "title": "Audit yozuvi tafsiloti",
@@ -971,7 +1042,9 @@
     "filters": {
       "searchPlaceholder": "ID, amal, resurs...",
       "action": "Amal",
+      "actionPlaceholder": "yaratish, yangilash...",
       "resource": "Resurs",
+      "resourcePlaceholder": "foydalanuvchilar, namunalar...",
       "from": "Dan",
       "to": "Gacha"
     }

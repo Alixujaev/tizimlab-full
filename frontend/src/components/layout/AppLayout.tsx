@@ -1,12 +1,13 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { AppSkeleton } from '@/components/layout/AppSkeleton';
 import { ErrorBoundary } from '@/components/routing/ErrorBoundary';
 import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { useAuthStore } from '@/store/authStore';
 import { useLayoutStore } from '@/store/layoutStore';
-import { DESKTOP_QUERY, Drawer, PageContainer, useMediaQuery } from '@/ui';
+import { useLogout } from '@/hooks/useAuth';
+import { DESKTOP_QUERY, Drawer, Icon, PageContainer, Pressable, useMediaQuery } from '@/ui';
 import { BrandMark } from './BrandMark';
 import { Sidebar, SidebarNav } from './Sidebar';
 import { TopBar } from './TopBar';
@@ -27,6 +28,8 @@ export function AppLayout() {
   const mobileNavOpen = useLayoutStore((s) => s.mobileNavOpen);
   const setMobileNavOpen = useLayoutStore((s) => s.setMobileNavOpen);
   const desktop = useMediaQuery(DESKTOP_QUERY, true);
+  const navigate = useNavigate();
+  const logoutMutation = useLogout();
   useNotificationSocket();
 
   // Boshqa sahifaga o'tilganda mobil menyu yopiladi
@@ -60,10 +63,30 @@ export function AppLayout() {
         side="left"
         hideTitle
       >
-        <div className="px-5 pb-4">
-          <BrandMark />
+        <div className="flex flex-col h-full justify-between pb-4">
+          <div>
+            <div className="px-5 pb-4">
+              <BrandMark />
+            </div>
+            <SidebarNav role={user.role} onNavigate={() => setMobileNavOpen(false)} />
+          </div>
+          <div className="px-3 pt-3 border-t border-line">
+            <Pressable
+              variant="raw"
+              onClick={() => {
+                setMobileNavOpen(false);
+                sessionStorage.setItem('tizimlab.logged_out', 'true');
+                logoutMutation.mutate(undefined, {
+                  onSettled: () => void navigate('/login', { replace: true }),
+                });
+              }}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium w-full text-danger hover:bg-danger-subtle transition-colors text-left"
+            >
+              <Icon name="log-out" size="md" />
+              <span>{t('auth.logout', 'Chiqish')}</span>
+            </Pressable>
+          </div>
         </div>
-        <SidebarNav role={user.role} onNavigate={() => setMobileNavOpen(false)} />
       </Drawer>
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar user={user} />

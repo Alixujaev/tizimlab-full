@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { useSampleQuery } from '@/hooks/useSamples';
-import { formatDate } from '@/lib/date';
+import { formatDate, formatDateTime } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
 import {
   Alert,
@@ -27,7 +27,7 @@ import { SampleTypeBadge } from './SampleTypeBadge';
 
 const ASSIGNABLE = ['pending_assignment', 'in_progress', 'stopped', 'rejected'];
 
-const dateTime = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleString() : null);
+const dateTime = (iso: string | null | undefined) => (iso ? formatDateTime(iso) : null);
 
 export function SampleDetailPage() {
   const { t } = useTranslation();

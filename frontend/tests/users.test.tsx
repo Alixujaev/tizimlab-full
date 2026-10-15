@@ -238,10 +238,9 @@ describe('UsersPage & RBAC UI', () => {
     // Audit log modali
     const logBtns = screen.getAllByRole('button', { name: 'Audit jurnali' });
     await user.click(logBtns[0]!);
-
     expect(
       await screen.findByRole('heading', { name: 'Foydalanuvchi faoliyat jurnali' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText('login')).toBeInTheDocument();
+    expect(await screen.findByText(/^Kirish$/)).toBeInTheDocument();
   });
 });

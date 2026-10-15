@@ -23,6 +23,7 @@ import {
   useUploadProtocolPassportMutation,
 } from '@/hooks/useProtocols';
 import { ALLOWED_EXTENSIONS } from '@/lib/files';
+import { formatDateTime } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
 import type { ProtocolFileDto, ProtocolStatus, SampleDetailDto } from '@/types';
 import {
@@ -582,7 +583,7 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                         <FileRow
                           key={f.id}
                           name={f.fileName}
-                          meta={`${formatBytes(f.fileSize)} · ${f.uploadedByName ?? f.uploadedBy} · ${new Date(f.createdAt).toLocaleString()}`}
+                          meta={`${formatBytes(f.fileSize)} · ${f.uploadedByName ?? f.uploadedBy} · ${formatDateTime(f.createdAt)}`}
                           actions={
                             <>
                               <Button
@@ -692,7 +693,7 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                         </Badge>
                       </span>
                       <span className="flex items-center gap-3 font-mono text-fg-muted">
-                        <span>{new Date(sig.signedAt).toLocaleString()}</span>
+                        <span>{formatDateTime(sig.signedAt)}</span>
                         <span
                           className="max-w-28 truncate text-fg-subtle"
                           title={`SHA-256: ${sig.signatureHash}`}

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import type { AuditLogDto } from '@/types';
 import { Button, DescriptionList, Modal } from '@/ui';
+import { formatDateTime } from '@/lib/date';
 import { ActionBadge } from './logsShared';
 
 interface LogDetailsModalProps {
@@ -51,11 +52,15 @@ export function LogDetailsModal({ open, onClose, log }: LogDetailsModalProps) {
           className="rounded-lg border border-line bg-surface-muted p-4"
           items={[
             { label: t('audit.details.action'), value: <ActionBadge action={log.action} /> },
-            { label: t('audit.details.table'), value: log.tableName, mono: true },
+            {
+              label: t('audit.details.table'),
+              value: t(`audit.resources.${log.tableName}`, { defaultValue: log.tableName }),
+              mono: true,
+            },
             { label: t('audit.details.recordId'), value: log.recordId, mono: true },
             {
               label: t('audit.details.createdAt'),
-              value: new Date(log.createdAt).toLocaleString(),
+              value: formatDateTime(log.createdAt),
             },
             {
               label: t('audit.details.user'),

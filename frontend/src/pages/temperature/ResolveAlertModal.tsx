@@ -1,6 +1,7 @@
 import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useResolveAlertMutation } from '@/hooks/useTemperature';
+import { formatDateTime } from '@/lib/date';
 import { errorMessage } from '@/lib/queryClient';
 import type { TemperatureAlertDto } from '@/types';
 import { Alert, Button, FormField, Modal, Textarea } from '@/ui';
@@ -59,7 +60,7 @@ export function ResolveAlertModal({ open, onClose, alert }: ResolveAlertModalPro
             {t('temperature.temperature')}: {alert.temperature} {t('temperature.tempUnit')} ·{' '}
             {alertTypeLabel(t, alert.alertType)}
           </p>
-          <p className="mt-1 text-xs">{new Date(alert.createdAt).toLocaleString()}</p>
+          <p className="mt-1 text-xs">{formatDateTime(alert.createdAt)}</p>
         </Alert>
         <FormField label={t('temperature.resolutionNote')}>
           <Textarea

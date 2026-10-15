@@ -189,7 +189,7 @@
   --tl-brand: var(--tl-brand-violet);
   --tl-brand-tint: var(--tl-brand-violet-soft);
   --tl-brand-word: var(--tl-brand-violet-deep);
-  --tl-brand-word-accent: var(--tl-brand-violet-soft);
+  --tl-brand-word-accent: var(--tl-violet-700);
 
   --tl-shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.06);
   --tl-shadow-md: 0 4px 8px -2px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.06);
@@ -254,7 +254,7 @@
     --tl-brand: var(--tl-brand-violet-bright);
     --tl-brand-tint: var(--tl-brand-violet-bright);
     --tl-brand-word: var(--tl-neutral-0);
-    --tl-brand-word-accent: var(--tl-brand-violet-muted);
+    --tl-brand-word-accent: var(--tl-violet-300);
     --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
     --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
     --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
@@ -313,7 +313,7 @@
   --tl-brand: var(--tl-brand-violet-bright);
   --tl-brand-tint: var(--tl-brand-violet-bright);
   --tl-brand-word: var(--tl-neutral-0);
-  --tl-brand-word-accent: var(--tl-brand-violet-muted);
+  --tl-brand-word-accent: var(--tl-violet-300);
   --tl-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
   --tl-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
   --tl-shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);

@@ -142,7 +142,7 @@ export function CompaniesPage() {
   ];
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <PageHeader
         title={t('companies.title')}
         description={t('companies.subtitle')}
@@ -237,6 +237,6 @@ export function CompaniesPage() {
         onConfirm={handleConfirmAction}
         loading={activateMutation.isPending || deactivateMutation.isPending}
       />
-    </>
+    </div>
   );
 }

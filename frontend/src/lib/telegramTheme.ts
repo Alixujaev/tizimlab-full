@@ -3,7 +3,7 @@
  * Kontrast WCAG AA (>= 4.5:1) saqlanadi, qorong'i/yorug' rejim avtomatik boshqariladi.
  */
 
-import { applyTheme } from '@/store/themeStore';
+import { applyTheme, useThemeStore } from '@/store/themeStore';
 import { getTelegramWebApp, isTelegramWebApp } from './telegram';
 
 /** Hex rangdan nisbiy yorqinlik (relative luminance) hisoblash (WCAG 2.1) */
@@ -38,47 +38,44 @@ export function getContrastRatio(hex1: string, hex2: string): number {
 
 /**
  * Telegram themeParams ni tekshirib, CSS tokenlariga qo'llash.
- * Kontrast yetarli bo'lmasa (WCAG AA < 4.5), dizayn tizimining standart tokenlari saqlanadi.
+ * Qoida: foydalanuvchi tanlovi (qo'lda tema almashtirgich, saqlangan) ustuvor;
+ * tanlov yo'q bo'lsa Telegram colorScheme'ga ergash.
+ * themeParams faqat tanlangan tema ichida accent (button, link) ranglarini moslasin,
+ * fon/matn/surface tokenlarini butunlay ustiga yozmasin.
  */
 export function syncTelegramTheme(): void {
   if (!isTelegramWebApp()) return;
   const tg = getTelegramWebApp();
   if (!tg) return;
 
-  // 1) Qorong'i / yorug' rejimni sinxronlashtirish
-  const scheme = tg.colorScheme || 'light';
-  applyTheme(scheme);
+  // 1) Foydalanuvchi tanlovi ustuvor; tanlov yo'q ('system') bo'lsa Telegram colorScheme
+  const userPref = useThemeStore.getState().preference;
+  if (userPref === 'system') {
+    applyTheme(tg.colorScheme || 'light');
+  } else {
+    applyTheme(userPref);
+  }
 
-  // 2) Telegram themeParams ni o'qish
-  const params = tg.themeParams || {};
+  // 2) Fon/matn/surface tokenlarini butunlay ustiga yozmaslik (tozalash)
   const root = document.documentElement;
+  root.style.removeProperty('--tl-surface');
+  root.style.removeProperty('--tl-canvas');
+  root.style.removeProperty('--tl-fg');
+  root.style.removeProperty('--tl-surface-muted');
 
-  // Agar Telegram ranglari berilgan bo'lsa va kontrast yetarli bo'lsa:
-  if (params.bg_color && params.text_color) {
-    const textContrast = getContrastRatio(params.text_color, params.bg_color);
-    if (textContrast >= 4.5) {
-      root.style.setProperty('--tl-surface', params.bg_color);
-      root.style.setProperty('--tl-fg', params.text_color);
-      if (params.secondary_bg_color) {
-        root.style.setProperty('--tl-canvas', params.secondary_bg_color);
-        root.style.setProperty('--tl-surface-muted', params.secondary_bg_color);
-      }
-    }
-  }
+  const params = tg.themeParams || {};
 
-  if (params.hint_color && params.bg_color) {
-    const hintContrast = getContrastRatio(params.hint_color, params.bg_color);
-    if (hintContrast >= 3.0) {
-      root.style.setProperty('--tl-fg-muted', params.hint_color);
-    }
-  }
-
+  // 3) Faqat accent (button, link) ranglarini moslash (WCAG AA >= 4.5)
   if (params.button_color && params.button_text_color) {
     const btnContrast = getContrastRatio(params.button_text_color, params.button_color);
     if (btnContrast >= 4.5) {
       root.style.setProperty('--tl-primary', params.button_color);
       root.style.setProperty('--tl-primary-fg', params.button_text_color);
     }
+  }
+
+  if (params.link_color) {
+    root.style.setProperty('--tl-accent', params.link_color);
   }
 }
 

@@ -49,22 +49,22 @@ export function StatCard({
           <Icon name={icon} size="sm" />
         </span>
       )}
-      <span className={cx('block text-sm font-medium text-fg-muted', icon && 'pr-12')}>
+      <span className={cx('block text-sm font-medium text-fg-muted truncate', icon && 'pr-12')}>
         {label}
       </span>
       <span
         className={cx(
-          'mt-2 block text-3xl font-semibold tabular-nums tracking-tight',
+          'mt-2 block text-3xl font-semibold tabular-nums tracking-tight truncate',
           highlight ? 'text-warning-fg' : 'text-fg',
         )}
       >
         {value}
       </span>
-      {hint && <span className="mt-1 block text-xs text-fg-muted">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs text-fg-muted truncate">{hint}</span>}
     </>
   );
   const base = cx(
-    'relative block rounded-xl border bg-surface p-5 shadow-sm',
+    'relative block rounded-xl border bg-surface p-5 shadow-sm min-w-0 overflow-hidden',
     highlight ? 'border-warning-line' : 'border-line',
     className,
   );

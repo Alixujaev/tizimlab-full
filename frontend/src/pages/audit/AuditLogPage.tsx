@@ -28,7 +28,7 @@ export function AuditLogPage() {
   const meta = data?.meta ?? { page: 1, limit: 15, total: 0 };
 
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <PageHeader
         title={t('pages.auditLog', 'Audit jurnali')}
         description={t(
@@ -59,6 +59,6 @@ export function AuditLogPage() {
         onClose={() => setSelectedLog(null)}
         log={selectedLog}
       />
-    </>
+    </div>
   );
 }

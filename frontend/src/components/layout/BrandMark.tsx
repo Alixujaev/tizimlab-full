@@ -12,14 +12,19 @@ export function BrandMark({ compact = false, large = false }: BrandMarkProps) {
   const { t } = useTranslation();
   if (compact) {
     return (
-      <span className="flex items-center">
-        <LogoIcon className="size-9" />
+      <span className="flex items-center flex-nowrap shrink-0">
+        <LogoIcon className="size-8 shrink-0" />
         <span className="sr-only">{t('app.name')}</span>
       </span>
     );
   }
   return (
-    <span className={cx('flex items-center', large && 'flex-col gap-3')}>
+    <span
+      className={cx(
+        'flex items-center flex-nowrap shrink-0',
+        large && 'flex-col gap-3',
+      )}
+    >
       <Logo
         primary={t('app.namePrimary')}
         secondary={t('app.nameSecondary')}
