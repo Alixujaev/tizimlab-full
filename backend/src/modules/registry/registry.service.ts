@@ -40,8 +40,9 @@ type RegistryRow = SampleRow & { approved_at: string };
  * Voqea bo'lmasa (masalan ETL'dan kelgan) — `updated_at`.
  */
 const REGISTRY_BASE = `
-  SELECT s.*, COALESCE(a.approved_at, s.updated_at) AS approved_at
+  SELECT s.*, COALESCE(a.approved_at, s.updated_at) AS approved_at, u.full_name AS assigned_to_name
   FROM samples s
+  LEFT JOIN users u ON u.id = s.assigned_to AND u.company_id = s.company_id
   LEFT JOIN LATERAL (
     SELECT t.created_at AS approved_at FROM sample_tracking t
     WHERE t.sample_id = s.id AND t.event_type = 'approved'
@@ -82,6 +83,7 @@ export async function listRegistry(
   // Ikki tomoni inklyuziv: [from 00:00, to+1 00:00)
   if (params.approvedFrom) add((i) => `r.approved_at >= $${i}::date`, params.approvedFrom);
   if (params.approvedTo) add((i) => `r.approved_at < ($${i}::date + 1)`, params.approvedTo);
+  if (params.chemistId) add((i) => `r.assigned_to = $${i}`, params.chemistId);
   if (params.unfinalizedOnly) {
     where.push(`EXISTS (SELECT 1 FROM protocols p WHERE p.sample_id = r.id AND p.status = 'approved')`);
   }
@@ -99,6 +101,19 @@ export async function listRegistry(
     data: dataRes.rows.map(toItem),
     meta: { page: params.page, limit: params.limit, total: Number(countRes.rows[0]?.count ?? 0) },
   };
+}
+
+/** D-172: reyestr filtri uchun kompaniya kimyogarlari (nofaollari ham — tarixiy tahlillar uchun). */
+export async function listRegistryChemists(
+  companyId: string,
+): Promise<{ id: string; fullName: string; isActive: boolean }[]> {
+  const { rows } = await query<{ id: string; full_name: string; is_active: boolean }>(
+    `SELECT id, full_name, is_active FROM users
+     WHERE company_id = $1 AND role = 'chemist'
+     ORDER BY is_active DESC, full_name, id`,
+    [companyId],
+  );
+  return rows.map((r) => ({ id: r.id, fullName: r.full_name, isActive: r.is_active }));
 }
 
 async function getRegistryRow(companyId: string, sampleId: string): Promise<RegistryRow> {

@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { useRegistryQuery } from '@/hooks/useRegistry';
+import { useRegistryChemistsQuery, useRegistryQuery } from '@/hooks/useRegistry';
 import { formatDate, parseDisplayDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
 import type { RegistryItemDto, RegistryListParams, SampleType } from '@/types';
@@ -41,6 +41,7 @@ interface FilterForm {
   approvedFrom: string;
   approvedTo: string;
   unfinalizedOnly: boolean;
+  chemistId: string;
 }
 
 const EMPTY: FilterForm = {
@@ -51,6 +52,7 @@ const EMPTY: FilterForm = {
   approvedFrom: '',
   approvedTo: '',
   unfinalizedOnly: false,
+  chemistId: '',
 };
 
 export function RegistryPage() {
@@ -63,6 +65,7 @@ export function RegistryPage() {
   const [dateError, setDateError] = useState<string | null>(null);
   const [toDelete, setToDelete] = useState<RegistryItemDto | null>(null);
   const { data, isLoading, isError, refetch } = useRegistryQuery(params);
+  const { data: chemists = [] } = useRegistryChemistsQuery();
 
   const setField = <K extends keyof FilterForm>(key: K, value: FilterForm[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -90,6 +93,7 @@ export function RegistryPage() {
       approvedFrom: from,
       approvedTo: to,
       unfinalizedOnly: form.unfinalizedOnly || undefined,
+      chemistId: form.chemistId || undefined,
     });
   };
 
@@ -143,6 +147,14 @@ export function RegistryPage() {
       key: 'lot',
       header: t('registry.columns.lotNumber'),
       render: (row) => <span className="font-mono text-xs">{row.lotNumber ?? '—'}</span>,
+    },
+    {
+      key: 'chemist',
+      header: t('registry.columns.chemist', 'Kimyogar'),
+      hideOnMobile: true,
+      render: (row) => (
+        <span className="text-fg-muted">{row.assignedToName || row.assigned_to_name || '—'}</span>
+      ),
     },
     {
       key: 'approvedAt',
@@ -224,6 +236,21 @@ export function RegistryPage() {
         </FormField>
         <FormField label={t('registry.filters.lotNumber')}>
           <Input value={form.lotNumber} onChange={(e) => setField('lotNumber', e.target.value)} />
+        </FormField>
+        <FormField label={t('registry.filters.chemist', 'Kimyogar')}>
+          <Select
+            options={[
+              { value: '', label: t('common.all') },
+              ...chemists.map((c) => ({
+                value: c.id,
+                label: c.isActive
+                  ? c.fullName
+                  : `${c.fullName} (${t('registry.filters.inactive', 'nofaol')})`,
+              })),
+            ]}
+            value={form.chemistId}
+            onChange={(v) => setField('chemistId', v)}
+          />
         </FormField>
         {approvedFromField}
         {approvedToField}

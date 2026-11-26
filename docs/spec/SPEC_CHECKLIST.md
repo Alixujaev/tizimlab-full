@@ -758,6 +758,9 @@
 | R-P16-16 | Idempotentlik: yakuniy amal tokeni atomik `used_at`; takror/parallel bosish — "allaqachon bajarilgan"; servis xatosida token bo'shatiladi va tushunarli matn qaytadi. | TZ §4, DECISIONS.md D-171 | P16 | [x] |
 | R-P16-17 | Har bosishda tekshiruv: chat = token egasining `telegram_chat_id`, foydalanuvchi va kompaniya faol, token kompaniyasi = foydalanuvchi kompaniyasi, rol ruxsati (`permissions.ts`), token muddati (72 soat); boshqa chat/kompaniya/rol — rad, holat o'zgarmaydi. | TZ §4, DECISIONS.md D-171 | P16 | [x] |
 | R-P16-18 | Kontrolyor kiritgan biriktiriladigan namuna (reagent/standard_substance dan tashqari) uchun `sample_created` xabarnomasi kompaniyaning `lab_head`'lariga (ekran, Socket.IO, Telegram). | TZ §3.1, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-19 | Reyestr (audit qidiruvi) `chemistId` filtri (tahlilni bajargan kimyogar) mavjud nom, seriya, lot, sana oralig'i va tur filtrlari bilan AND, sahifalash; javobda kimyogar ismi; boshqa kompaniya kimyogari — bo'sh natija. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
+| R-P16-20 | `GET /registry/chemists` — kompaniya kimyogarlari (nofaollari belgisi bilan) barcha kompaniya rollariga; super_admin — 403. UI: reyestr filtrida "Kimyogar" tanlovi va ustun. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
+| R-P16-21 | `019_registry_search_indexes.sql`: tasdiqlangan namunalar bo'yicha qisman indekslar (kimyogar, seriya, lot, nom) va `users(company_id, role)`. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
 
 ## Holat izohlari
 
@@ -848,8 +851,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 18 | 18 | 0 | 0 |
-| **Jami** | 636 | 576 | 42 | 18 |
+| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 21 | 21 | 0 | 0 |
+| **Jami** | 639 | 579 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -870,5 +873,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P13 | 16 | 16 | 0 | 0 |
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
-| P16 | 18 | 18 | 0 | 0 |
-| **Jami** | 636 | 576 | 42 | 18 |
+| P16 | 21 | 21 | 0 | 0 |
+| **Jami** | 639 | 579 | 42 | 18 |

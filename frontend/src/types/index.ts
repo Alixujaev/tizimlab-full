@@ -397,6 +397,15 @@ export interface RegistryListParams {
   approvedFrom?: string;
   approvedTo?: string;
   unfinalizedOnly?: boolean;
+  /** D-172: tahlilni bajargan kimyogar */
+  chemistId?: string;
+}
+
+/** D-172: reyestr filtri uchun kimyogar (barcha kompaniya rollariga ochiq). */
+export interface RegistryChemistDto {
+  id: string;
+  fullName: string;
+  isActive: boolean;
 }
 
 // ---------------------------------------------------- Protocols

@@ -613,14 +613,17 @@
       "reset": "Reset",
       "invalidDate": "The date must be in DD.MM.YYYY format",
       "invalidRange": "The «from» date cannot be after the «to» date",
-      "unfinalizedOnly": "Unfinalized only (awaiting director finalization)"
+      "unfinalizedOnly": "Unfinalized only (awaiting director finalization)",
+      "chemist": "Chemist",
+      "inactive": "inactive"
     },
     "columns": {
       "substance": "Substance",
       "type": "Type",
       "serialNumber": "Serial",
       "lotNumber": "Lot",
-      "approvedAt": "Approval date"
+      "approvedAt": "Approval date",
+      "chemist": "Chemist"
     },
     "downloadPassport": "Download passport",
     "downloadProtocol": "Download protocol",

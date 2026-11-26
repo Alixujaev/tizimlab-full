@@ -88,6 +88,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 16, name: 'reagent_approval', state: 'applied' }),
       expect.objectContaining({ version: 17, name: 'reagent_expiry_notices', state: 'applied' }),
       expect.objectContaining({ version: 18, name: 'telegram_callbacks', state: 'applied' }),
+      expect.objectContaining({ version: 19, name: 'registry_search_indexes', state: 'applied' }),
     ]);
   });
 
