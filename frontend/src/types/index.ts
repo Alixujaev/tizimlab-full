@@ -471,6 +471,7 @@ export interface RejectProtocolInput {
 
 /** Ilova yaratadigan 10 tur; legacy (`general` va h.k.) faqat ko'chirilgan yozuvlarda. */
 export type NotificationType =
+  | 'sample_created'
   | 'sample_assigned'
   | 'sample_approved'
   | 'sample_rejected'
@@ -488,7 +489,7 @@ export type NotificationType =
 
 export interface NotificationDto {
   id: string;
-  type: NotificationType | 'sample_created' | 'sample_overdue' | 'general';
+  type: NotificationType | 'sample_overdue' | 'general';
   title: string;
   message: string;
   referenceId: string | null;

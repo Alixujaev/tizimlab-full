@@ -401,7 +401,7 @@
 | R-NOTIF-08 | Xabarnoma turi `low_stock` — reaktiv zaxirasi kam qolganda. | 09-notifications §9 | P7 | [x] |
 | R-NOTIF-09 | Xabarnoma turi `stability_due_soon` — checkpoint muddati yaqinlashganda. | 09-notifications §9 | P9 | [x] |
 | R-NOTIF-10 | Xabarnoma turi `stability_overdue` — checkpoint muddati o'tganda. | 09-notifications §9 | P9 | [x] |
-| R-NOTIF-11 | Ilova faqat §9 dagi xabarnoma turlarini yaratadi; `notification_type` enum'idagi legacy `sample_created`, `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70 | P6 | [x] |
+| R-NOTIF-11 | Ilova faqat §9 dagi va P16 qarorlaridagi xabarnoma turlarini yaratadi (`sample_created` — D-171, `reagent_*` — D-169/D-170); legacy `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70, DECISIONS.md D-171 | P6 | [x] |
 | R-NOTIF-12 | Kanal 1: xabarnoma `notifications` jadvaliga yoziladi. | 09-notifications §9 | P6 | [x] |
 | R-NOTIF-13 | Bazadagi xabarnomalar yuqori o'ng burchakdagi bell ikonasi (`NotificationBell`) orqali ko'rinadi. | 09-notifications §9, 16 §16 | P6 | [x] |
 | R-NOTIF-14 | Kanal 2: Socket.IO real vaqtli push. | 09-notifications §9 | P6 | [x] |
@@ -752,6 +752,12 @@
 | R-P16-10 | `reagent_expiring` xabarnomasi kompaniyaning `lab_head` va `admin` rollariga yagona `createNotification` orqali (ekran, Socket.IO, Telegram); boshqa kompaniyaga ketmaydi. | TZ §3.2, §4, DECISIONS.md D-170 | P16 | [x] |
 | R-P16-11 | Dublikat yo'q: `reagent_expiry_notices` UNIQUE(reagent, threshold, expires_at) + `ON CONFLICT DO NOTHING`; `pg_try_advisory_xact_lock` — ko'p instansiyada bir marta; muddat o'zgarsa yangi sana uchun qayta ogohlantirish. | TZ §3.2, DECISIONS.md D-170 | P16 | [x] |
 | R-P16-12 | `GET /reagents?expiringWithinDays=N` (1..365) va DTO `isExpiringSoon` (≤30 kun); UI "Muddati yaqin" tab va belgi. | TZ §3.2, DECISIONS.md D-170 | P16 | [x] |
+| R-P16-13 | Telegram xabarnomasida rolga qarab tezkor tugmalar: `sample_created` → lab_head "Kimyogar biriktirish"; `protocol_submitted` → "Tasdiqlash"/"Rad etish"; reaktiv xabarlarida "Ko'rish" (WebApp `/reagents/:id`). `callback_data` = `cb:<16 belgi>` (≤64 bayt, ID/rol yo'q). | TZ §4, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-14 | Biriktirish: tugma kompaniyaning faol kimyogarlari ro'yxatini chiqaradi, tanlov `assignSample` servisi orqali (holat mashinasi, audit `telegram-bot`). | TZ §3.1, §4, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-15 | Protokolni tasdiqlash `approveProtocol` orqali; rad etish — sabab keyingi matnli xabardan (≥5 belgi, 10 daqiqa), `rejectProtocol` orqali; `/cancel` bekor qiladi. | TZ §3.1, §4, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-16 | Idempotentlik: yakuniy amal tokeni atomik `used_at`; takror/parallel bosish — "allaqachon bajarilgan"; servis xatosida token bo'shatiladi va tushunarli matn qaytadi. | TZ §4, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-17 | Har bosishda tekshiruv: chat = token egasining `telegram_chat_id`, foydalanuvchi va kompaniya faol, token kompaniyasi = foydalanuvchi kompaniyasi, rol ruxsati (`permissions.ts`), token muddati (72 soat); boshqa chat/kompaniya/rol — rad, holat o'zgarmaydi. | TZ §4, DECISIONS.md D-171 | P16 | [x] |
+| R-P16-18 | Kontrolyor kiritgan biriktiriladigan namuna (reagent/standard_substance dan tashqari) uchun `sample_created` xabarnomasi kompaniyaning `lab_head`'lariga (ekran, Socket.IO, Telegram). | TZ §3.1, DECISIONS.md D-171 | P16 | [x] |
 
 ## Holat izohlari
 
@@ -842,8 +848,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 12 | 12 | 0 | 0 |
-| **Jami** | 630 | 570 | 42 | 18 |
+| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 18 | 18 | 0 | 0 |
+| **Jami** | 636 | 576 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -864,5 +870,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P13 | 16 | 16 | 0 | 0 |
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
-| P16 | 12 | 12 | 0 | 0 |
-| **Jami** | 630 | 570 | 42 | 18 |
+| P16 | 18 | 18 | 0 | 0 |
+| **Jami** | 636 | 576 | 42 | 18 |

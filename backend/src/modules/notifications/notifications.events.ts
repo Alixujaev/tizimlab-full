@@ -20,6 +20,7 @@ export const NOTIFICATION_TITLES: Record<NotificationType, string> = {
   low_stock: 'Reaktiv zaxirasi kam qoldi',
   stability_due_soon: 'Stabilizatsiya muddati yaqinlashmoqda',
   stability_overdue: 'Stabilizatsiya muddati o‘tdi',
+  sample_created: 'Yangi namuna biriktirishni kutmoqda',
   reagent_pending_approval: 'Yangi reaktiv tasdiqlashni kutmoqda',
   reagent_approved: 'Reaktiv tasdiqlandi',
   reagent_rejected: 'Reaktiv rad etildi',
@@ -33,6 +34,27 @@ type SampleRef = Pick<
 
 function sampleMessage(sample: Pick<SampleRow, 'substance_name'>, reason?: string | null): string {
   return reason ? `${sample.substance_name} — ${reason}` : sample.substance_name;
+}
+
+/**
+ * D-171 (TZ §3.1.4): kimyogarga biriktiriladigan yangi namuna — kompaniyaning lab_head'lariga.
+ * reagent/standard_substance pasport orqali tasdiqlanadi (D-39) — ular uchun xabar yo'q.
+ */
+export async function notifySampleCreated(
+  tx: pg.PoolClient,
+  sample: Pick<SampleRow, 'id' | 'company_id' | 'substance_name' | 'type' | 'lot_number' | 'serial_number'>,
+  actorId: string,
+): Promise<void> {
+  if (sample.type === 'reagent' || sample.type === 'standard_substance') return;
+  const ref = sample.lot_number || sample.serial_number;
+  await createNotification(tx, {
+    companyId: sample.company_id,
+    actorId,
+    type: 'sample_created',
+    title: NOTIFICATION_TITLES.sample_created,
+    message: ref ? `${sample.substance_name} (${ref})` : sample.substance_name,
+    referenceId: sample.id,
+  });
 }
 
 export async function notifySampleAssigned(

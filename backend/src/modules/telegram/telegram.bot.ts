@@ -1,6 +1,7 @@
 import { Bot, InlineKeyboard } from 'grammy';
 import type { Env } from '../../config/env.js';
 import { logger } from '../../utils/logger.js';
+import { cancelPendingInput, handleCallback, handleTextInput } from './telegram.callbacks.js';
 import {
   getUserByChatId,
   linkTelegramAccount,
@@ -176,11 +177,37 @@ export function createTelegramBot(token: string, webAppUrl?: string): Bot {
   bot.command('help', async (ctx) => {
     const lang = getLang(ctx.from?.language_code);
     const messages = {
-      uz: `📋 <b>Buyruqlar ro'yxati:</b>\n\n/start - Botni ishga tushirish\n/app - TizimLab LIMS ilovasini ochish\n/status - Akkaunt holatini tekshirish\n/unlink - Akkauntni TizimLab profilidan uzish\n/help - Yordam ma'lumoti`,
-      ru: `📋 <b>Список команд:</b>\n\n/start - Запуск бота\n/app - Открыть приложение TizimLab LIMS\n/status - Проверка статуса аккаунта\n/unlink - Отвязать аккаунт от TizimLab\n/help - Справка`,
-      en: `📋 <b>Commands:</b>\n\n/start - Start bot\n/app - Open TizimLab LIMS app\n/status - Check account status\n/unlink - Unlink account from TizimLab\n/help - Help information`,
+      uz: `📋 <b>Buyruqlar ro'yxati:</b>\n\n/start - Botni ishga tushirish\n/app - TizimLab LIMS ilovasini ochish\n/status - Akkaunt holatini tekshirish\n/unlink - Akkauntni TizimLab profilidan uzish\n/cancel - Kutilayotgan amalni bekor qilish\n/help - Yordam ma'lumoti`,
+      ru: `📋 <b>Список команд:</b>\n\n/start - Запуск бота\n/app - Открыть приложение TizimLab LIMS\n/status - Проверка статуса аккаунта\n/unlink - Отвязать аккаунт от TizimLab\n/cancel - Отменить ожидающее действие\n/help - Справка`,
+      en: `📋 <b>Commands:</b>\n\n/start - Start bot\n/app - Open TizimLab LIMS app\n/status - Check account status\n/unlink - Unlink account from TizimLab\n/cancel - Cancel pending action\n/help - Help information`,
     };
     await ctx.reply(messages[lang], { parse_mode: 'HTML', reply_markup: undefined });
+  });
+
+  // /cancel — kutilayotgan kiritishni (rad etish sababi) bekor qilish (D-171)
+  bot.command('cancel', async (ctx) => {
+    if (!ctx.from) return;
+    await ctx.reply(await cancelPendingInput(ctx.from.id));
+  });
+
+  // Inline tezkor tugmalar (D-171): biriktirish, protokolni tasdiqlash/rad etish
+  bot.on('callback_query:data', async (ctx) => {
+    const res = await handleCallback(ctx.from.id, ctx.callbackQuery.data, {
+      languageCode: ctx.from.language_code,
+    });
+    await ctx.answerCallbackQuery({ text: res.answer.slice(0, 200), show_alert: res.alert ?? false });
+    if (res.message) {
+      await ctx.reply(res.message.text, {
+        reply_markup: res.message.keyboard ? { inline_keyboard: res.message.keyboard } : undefined,
+      });
+    }
+  });
+
+  // Oddiy matn: faqat kutilayotgan kiritish bo'lsa (rad etish sababi); buyruqlar bu yerga kelmaydi
+  bot.on('message:text', async (ctx) => {
+    if (!ctx.from || ctx.message.text.startsWith('/')) return;
+    const reply = await handleTextInput(ctx.from.id, ctx.message.text);
+    if (reply) await ctx.reply(reply);
   });
 
   return bot;

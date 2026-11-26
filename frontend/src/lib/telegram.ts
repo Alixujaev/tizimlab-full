@@ -437,6 +437,12 @@ export function parseStartParam(rawParam?: string): { path: string; id?: string 
     return { path: `/registry/${id}`, id };
   }
 
+  // reagent_ID — reaktiv xabarnomalari (D-170, D-171)
+  if (param.startsWith('reagent_')) {
+    const id = param.replace('reagent_', '');
+    return { path: `/reagents/${id}`, id };
+  }
+
   // st_ID yoki stability_ID
   if (param.startsWith('stability_')) {
     const id = param.replace('stability_', '');

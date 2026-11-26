@@ -701,7 +701,8 @@
       "reagent_pending_approval": "Новый реактив ожидает подтверждения",
       "reagent_approved": "Реактив подтверждён",
       "reagent_rejected": "Реактив отклонён",
-      "reagent_expiring": "Срок годности реактива подходит к концу"
+      "reagent_expiring": "Срок годности реактива подходит к концу",
+      "sample_created": "Новый образец ожидает назначения"
     }
   },
   "dashboard": {

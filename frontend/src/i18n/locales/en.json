@@ -701,7 +701,8 @@
       "reagent_pending_approval": "New reagent awaiting approval",
       "reagent_approved": "Reagent approved",
       "reagent_rejected": "Reagent rejected",
-      "reagent_expiring": "Reagent expiry date is approaching"
+      "reagent_expiring": "Reagent expiry date is approaching",
+      "sample_created": "New sample awaiting assignment"
     }
   },
   "dashboard": {

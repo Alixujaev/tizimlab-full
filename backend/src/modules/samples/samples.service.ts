@@ -2,6 +2,7 @@ import { query, withTransaction } from '../../config/database.js';
 import { ForbiddenError, NotFoundError, ValidationError } from '../../utils/errors.js';
 import { writeAudit } from '../audit/audit.service.js';
 import type { Role } from '../auth/auth.types.js';
+import { notifySampleCreated } from '../notifications/notifications.events.js';
 import { sampleHooks } from './samples.hooks.js';
 import {
   assertCanAssign,
@@ -241,6 +242,9 @@ export async function createSample(
         JSON.stringify({ type: input.type, substance_name: input.substanceName }),
       ],
     );
+
+    // D-171: lab_head'larga "biriktirishni kutmoqda" (ekran + real vaqt + Telegram tugmasi)
+    await notifySampleCreated(client, createdSample, userId);
 
     // Audit yozuvi
     await writeAudit(client, {

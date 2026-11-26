@@ -6,6 +6,8 @@ import { writeAudit } from '../audit/audit.service.js';
 import { loginViaTelegram } from '../auth/auth.service.js';
 import type { AuthConfig, RequestMeta } from '../auth/auth.types.js';
 import type { NotificationDto } from '../notifications/notifications.types.js';
+import type { Role } from '../auth/auth.types.js';
+import { buildCallbackRows } from './telegram.callbacks.js';
 import type {
   LinkTokenDto,
   TelegramStatusDto,
@@ -475,6 +477,24 @@ export async function authenticateWebApp(
 // ------------------ Telegram xabarnoma yuborish (R-TG-13, R-NOTIF-20, R-NOTIF-21) ------------------
 
 const NOTIFICATION_TITLES: Record<string, Record<'uz' | 'ru' | 'en', string>> = {
+  // P16 (D-169..D-171)
+  sample_created: {
+    uz: 'Yangi namuna biriktirishni kutmoqda',
+    ru: 'Новый образец ожидает назначения',
+    en: 'New sample awaiting assignment',
+  },
+  reagent_pending_approval: {
+    uz: 'Yangi reaktiv tasdiqlashni kutmoqda',
+    ru: 'Новый реактив ожидает подтверждения',
+    en: 'New reagent awaiting approval',
+  },
+  reagent_approved: { uz: 'Reaktiv tasdiqlandi', ru: 'Реактив подтверждён', en: 'Reagent approved' },
+  reagent_rejected: { uz: 'Reaktiv rad etildi', ru: 'Реактив отклонён', en: 'Reagent rejected' },
+  reagent_expiring: {
+    uz: 'Reaktiv yaroqlilik muddati yaqinlashmoqda',
+    ru: 'Срок годности реактива подходит к концу',
+    en: 'Reagent expiry date is approaching',
+  },
   sample_assigned: {
     uz: 'Yangi namuna biriktirildi',
     ru: 'Назначен новый образец',
@@ -538,7 +558,8 @@ export function formatTelegramNotification(dto: NotificationDto, lang: 'uz' | 'r
 
 export type TelegramInlineButton =
   | { text: string; web_app: { url: string } }
-  | { text: string; url: string };
+  | { text: string; url: string }
+  | { text: string; callback_data: string };
 
 export interface TelegramSenderOptions {
   parse_mode?: string;
@@ -588,6 +609,7 @@ export function getNotificationActionUrl(
   let startapp: string;
 
   switch (dto.type) {
+    case 'sample_created':
     case 'sample_assigned':
     case 'sample_rejected':
       if (dto.referenceId) {
@@ -626,9 +648,19 @@ export function getNotificationActionUrl(
       startapp = 'temperature';
       break;
 
+    // D-170/D-171: reaktiv xabarnomalari reaktiv sahifasiga ("Ko'rish")
     case 'low_stock':
-      path = '/reagents';
-      startapp = 'reagents';
+    case 'reagent_pending_approval':
+    case 'reagent_approved':
+    case 'reagent_rejected':
+    case 'reagent_expiring':
+      if (dto.referenceId) {
+        path = `/reagents/${dto.referenceId}`;
+        startapp = `reagent_${dto.referenceId}`;
+      } else {
+        path = '/reagents';
+        startapp = 'reagents';
+      }
       break;
 
     case 'stability_due_soon':
@@ -672,8 +704,10 @@ export async function sendTelegramNotification(
     const { rows } = await query<{
       telegram_chat_id: string | null;
       telegram_language: string | null;
+      role: Role;
+      company_id: string | null;
     }>(
-      `SELECT telegram_chat_id, telegram_language
+      `SELECT telegram_chat_id, telegram_language, role, company_id
        FROM users
        WHERE id = $1 AND telegram_chat_id IS NOT NULL AND is_active = true
          AND ($2::uuid IS NULL OR company_id = $2)`,
@@ -690,18 +724,22 @@ export async function sendTelegramNotification(
     const text = formatTelegramNotification(dto, lang);
     const action = getNotificationActionUrl(dto, webAppUrlOverride ?? activeWebAppUrl);
     const options: TelegramSenderOptions = { parse_mode: 'HTML' };
+    const keyboard: TelegramInlineButton[][] = [];
     if (action) {
-      options.reply_markup = {
-        inline_keyboard: [
-          [
-            {
-              text: NOTIFICATION_BUTTON_TEXT[lang],
-              web_app: { url: action.url },
-            },
-          ],
-        ],
-      };
+      keyboard.push([{ text: NOTIFICATION_BUTTON_TEXT[lang], web_app: { url: action.url } }]);
     }
+    // D-171: tezkor amal tugmalari (rolga qarab; har bosishda qayta tekshiriladi)
+    if (user.company_id) {
+      keyboard.push(
+        ...(await buildCallbackRows(dto, {
+          id: userId,
+          role: user.role,
+          companyId: user.company_id,
+          lang,
+        })),
+      );
+    }
+    if (keyboard.length > 0) options.reply_markup = { inline_keyboard: keyboard };
 
     await sender.sendMessage(Number(user.telegram_chat_id), text, options);
     return true;

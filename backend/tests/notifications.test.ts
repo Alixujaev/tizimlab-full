@@ -112,6 +112,10 @@ describeDb('notifications: qabul qiluvchilar, tenant izolyatsiyasi, API (P6, D-1
   describe('1. Turlar va qabul qiluvchilar (D-13)', () => {
     it('sample_assigned — faqat biriktirilgan kimyogarga; biriktirgan lab_head ga emas (R-NOTIF-01, R-SAMPLE-17)', async () => {
       const sampleId = await createSample();
+      // D-171: yaratilganda lab_head'larga sample_created (biriktirish navbati)
+      expect(await inbox()).toEqual({ sample_created: ['labHead', 'labHead2'] });
+      await query('DELETE FROM notifications');
+      pushed = [];
       await assign(sampleId);
       expect(await inbox()).toEqual({ sample_assigned: ['chemist1'] });
       const [p] = pushed;

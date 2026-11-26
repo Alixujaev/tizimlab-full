@@ -60,6 +60,9 @@ export function recipientRule(
     case 'stability_due_soon':
     case 'stability_overdue':
       return { users: [ctx.assignedTo], roles: ['lab_head'] };
+    // D-171: biriktirishni kutayotgan yangi namuna — lab_head'larga (Telegram'da "Biriktirish" tugmasi)
+    case 'sample_created':
+      return { users: [], roles: ['lab_head'] };
     // D-169: tasdiqlash huquqi bor rollar (harakat egasi chiqariladi); qaror — reaktivni kiritganga.
     case 'reagent_pending_approval':
       return { users: [], roles: ['chemist', 'lab_head'] };
