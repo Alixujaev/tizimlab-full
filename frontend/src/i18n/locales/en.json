@@ -360,7 +360,8 @@
       "activity:view": "View activity log",
       "analytics:view": "View own results",
       "analytics:team": "View team results",
-      "analytics:company": "View company analytics"
+      "analytics:company": "View company analytics",
+      "reagents:approve": "Approve or reject reagents"
     }
   },
   "profile": {
@@ -696,7 +697,11 @@
       "temperature_alert": "Temperature out of range",
       "low_stock": "Reagent stock is low",
       "stability_due_soon": "Stability checkpoint is due soon",
-      "stability_overdue": "Stability checkpoint is overdue"
+      "stability_overdue": "Stability checkpoint is overdue",
+      "reagent_pending_approval": "New reagent awaiting approval",
+      "reagent_approved": "Reagent approved",
+      "reagent_rejected": "Reagent rejected",
+      "reagent_expiring": "Reagent expiry date is approaching"
     }
   },
   "dashboard": {
@@ -822,7 +827,23 @@
       "qtyPositive": "Quantity must be greater than 0",
       "insufficientStock": "Cannot use more than the available stock"
     },
-    "currentStockLabel": "Current stock:"
+    "currentStockLabel": "Current stock:",
+    "filterPendingApproval": "Awaiting approval",
+    "approval": {
+      "pending": "Awaiting approval",
+      "rejected": "Rejected",
+      "rejectedTitle": "Reagent rejected",
+      "pendingTitle": "Reagent is awaiting approval",
+      "pendingHint": "Consumption cannot be recorded until a chemist or lab head approves the reagent.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectTitle": "Reject reagent",
+      "reason": "Rejection reason",
+      "reasonMin": "The reason must be at least 5 characters long",
+      "approvedToast": "Reagent approved",
+      "rejectedToast": "Reagent rejected",
+      "outBlocked": "The reagent is not approved yet — consumption cannot be recorded. Choose receipt, adjustment or disposal."
+    }
   },
   "temperature": {
     "title": "Temperature & Humidity Monitoring",

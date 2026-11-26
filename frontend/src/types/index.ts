@@ -480,7 +480,11 @@ export type NotificationType =
   | 'temperature_alert'
   | 'low_stock'
   | 'stability_due_soon'
-  | 'stability_overdue';
+  | 'stability_overdue'
+  | 'reagent_pending_approval'
+  | 'reagent_approved'
+  | 'reagent_rejected'
+  | 'reagent_expiring';
 
 export interface NotificationDto {
   id: string;
@@ -534,9 +538,17 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
+  approvalStatus: ReagentApprovalStatus;
+  createdBy: string | null;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  rejectionReason: string | null;
   createdAt: string;
   updatedAt: string;
 }
+
+export type ReagentApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface CreateReagentInput {
   name: string;
@@ -568,6 +580,7 @@ export interface ListReagentsQuery {
   isLowStock?: boolean;
   isExpired?: boolean;
   isHazardous?: boolean;
+  approvalStatus?: ReagentApprovalStatus;
 }
 
 export interface ReagentTransactionDto {

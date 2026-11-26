@@ -60,6 +60,15 @@ export function recipientRule(
     case 'stability_due_soon':
     case 'stability_overdue':
       return { users: [ctx.assignedTo], roles: ['lab_head'] };
+    // D-169: tasdiqlash huquqi bor rollar (harakat egasi chiqariladi); qaror — reaktivni kiritganga.
+    case 'reagent_pending_approval':
+      return { users: [], roles: ['chemist', 'lab_head'] };
+    case 'reagent_approved':
+    case 'reagent_rejected':
+      return { users: [ctx.createdBy], roles: [] };
+    // D-170: muddat ogohlantirishi — zaxira uchun mas'ullar (low_stock bilan bir xil).
+    case 'reagent_expiring':
+      return { users: [], roles: ['lab_head', 'admin'] };
   }
 }
 

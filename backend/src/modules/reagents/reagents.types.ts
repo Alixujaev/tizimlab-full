@@ -1,6 +1,7 @@
 import { toIsoDay } from '../../utils/dates.js';
 export type ReagentTransactionType = 'in' | 'out' | 'adjustment' | 'disposal';
 export type ReagentDocType = 'passport' | 'analysis';
+export type ReagentApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface ReagentRow {
   id: string;
@@ -14,6 +15,11 @@ export interface ReagentRow {
   supplier: string | null;
   storage_conditions: string | null;
   is_hazardous: boolean;
+  approval_status: ReagentApprovalStatus;
+  created_by: string | null;
+  approved_by: string | null;
+  approved_at: string | Date | null;
+  rejection_reason: string | null;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -32,6 +38,12 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
+  approvalStatus: ReagentApprovalStatus;
+  createdBy: string | null;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  rejectionReason: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -121,6 +133,11 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
     isHazardous: row.is_hazardous,
     isLowStock: qty < threshold,
     isExpired,
+    approvalStatus: row.approval_status,
+    createdBy: row.created_by ?? null,
+    approvedBy: row.approved_by ?? null,
+    approvedAt: row.approved_at ? new Date(row.approved_at).toISOString() : null,
+    rejectionReason: row.rejection_reason ?? null,
     createdAt: new Date(row.created_at).toISOString(),
     updatedAt: new Date(row.updated_at).toISOString(),
   };

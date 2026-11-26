@@ -23,7 +23,7 @@ import {
 import { ReagentFormModal } from './ReagentFormModal';
 import { ReagentStatusBadges } from './ReagentStatusBadges';
 
-type QuickFilter = 'all' | 'lowStock' | 'expired' | 'hazardous';
+type QuickFilter = 'all' | 'pendingApproval' | 'lowStock' | 'expired' | 'hazardous';
 
 export function ReagentsPage() {
   const { t } = useTranslation();
@@ -47,6 +47,7 @@ export function ReagentsPage() {
     isLowStock: filterType === 'lowStock' ? true : undefined,
     isExpired: filterType === 'expired' ? true : undefined,
     isHazardous: filterType === 'hazardous' ? true : undefined,
+    approvalStatus: filterType === 'pendingApproval' ? 'pending' : undefined,
   });
   const reagents = data?.data ?? [];
   const meta = data?.meta;
@@ -218,6 +219,10 @@ export function ReagentsPage() {
           }}
           items={[
             { id: 'all', label: t('reagents.all', 'Barchasi') },
+            {
+              id: 'pendingApproval',
+              label: t('reagents.filterPendingApproval', 'Tasdiq kutayotganlar'),
+            },
             { id: 'lowStock', label: t('reagents.filterLowStock', 'Kam qolganlar') },
             { id: 'expired', label: t('reagents.filterExpired', "Muddati o'tganlar") },
             { id: 'hazardous', label: t('reagents.filterHazardous', 'Xavflilar') },

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
-import { requireCompany, requirePermission } from '../../middleware/authenticate.js';
+import { requireCompany, requirePermission, requireRole } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
 import type { FileStorage } from '../files/files.storage.js';
 import { uploadSingle } from '../files/files.upload.js';
@@ -13,6 +13,7 @@ import {
   listExpensesQuerySchema,
   listReagentsQuerySchema,
   listTransactionsQuerySchema,
+  reviewReagentSchema,
   updateReagentSchema,
 } from './reagents.schemas.js';
 import { REAGENT_DOC_MAX_BYTES } from './reagents.service.js';
@@ -82,6 +83,55 @@ export function createReagentsRouter(deps: ReagentsRouterDeps): Router {
     requirePermission('reagents', 'write'),
     validate({ params: idParamSchema }),
     controller.delete,
+  );
+
+  /**
+   * @openapi
+   * /reagents/{id}/approve:
+   *   post:
+   *     tags: [Reagents]
+   *     summary: Reaktivni tasdiqlash (faqat chemist yoki lab_head; o'zi kiritganini emas) — D-169
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200: { description: Tasdiqlandi }
+   *       403: { description: Rol yoki o'zi kiritgan reaktiv }
+   *       409: { description: Qaror allaqachon qabul qilingan }
+   * /reagents/{id}/reject:
+   *   post:
+   *     tags: [Reagents]
+   *     summary: Reaktivni rad etish, sabab ≥5 belgi (faqat chemist yoki lab_head) — D-169
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required: [reason]
+   *             properties:
+   *               reason: { type: string, minLength: 5 }
+   *     responses:
+   *       200: { description: Rad etildi }
+   */
+  // "Faqat chemist yoki lab_head" (D-169): individual grant bilan ham boshqa rol tasdiqlay olmaydi.
+  router.post(
+    '/:id/approve',
+    ...companyAuth,
+    requireRole('chemist', 'lab_head'),
+    requirePermission('reagents', 'approve'),
+    validate({ params: idParamSchema }),
+    controller.approve,
+  );
+
+  router.post(
+    '/:id/reject',
+    ...companyAuth,
+    requireRole('chemist', 'lab_head'),
+    requirePermission('reagents', 'approve'),
+    validate({ params: idParamSchema, body: reviewReagentSchema }),
+    controller.reject,
   );
 
   // Tranzaksiyalar

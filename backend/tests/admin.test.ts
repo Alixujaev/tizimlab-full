@@ -332,12 +332,14 @@ describeDb('admin: users, roles, permissions and audit logs', () => {
   });
 
   describe('Ruxsatlar boshqaruvi (catalog & grants - D-32)', () => {
-    it('GET /api/v1/admin/permissions/catalog — 24 ta ruxsat (+ analytics:* D-159) va roleDefaults qaytaradi', async () => {
+    it('GET /api/v1/admin/permissions/catalog — 25 ta ruxsat (+ analytics:* D-159, reagents:approve D-169) va roleDefaults qaytaradi', async () => {
       const res = await request(app)
         .get('/api/v1/admin/permissions/catalog')
         .set('Authorization', `Bearer ${tokenAdminA}`);
       expect(res.status).toBe(200);
-      expect(res.body.data.catalog).toHaveLength(24);
+      expect(res.body.data.catalog).toHaveLength(25);
+      expect(res.body.data.roleDefaults.chemist).toContain('reagents:approve');
+      expect(res.body.data.roleDefaults.admin).not.toContain('reagents:approve');
       expect(res.body.data.roleDefaults).toBeDefined();
       expect(res.body.data.roleDefaults.lab_head).toContain('protocols:approve');
       expect(res.body.data.roleDefaults.chemist).not.toContain('protocols:approve');

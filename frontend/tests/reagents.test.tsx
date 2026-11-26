@@ -31,6 +31,11 @@ const mockReagent: ReagentDto = {
   isHazardous: true,
   isLowStock: false,
   isExpired: false,
+  approvalStatus: 'approved',
+  createdBy: 'u1',
+  approvedBy: 'u2',
+  approvedAt: '2026-03-01T01:00:00.000Z',
+  rejectionReason: null,
   createdAt: '2026-03-01T00:00:00.000Z',
   updatedAt: '2026-03-01T00:00:00.000Z',
 };

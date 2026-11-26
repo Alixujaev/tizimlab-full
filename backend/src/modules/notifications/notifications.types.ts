@@ -12,6 +12,11 @@ export const NOTIFICATION_TYPES = [
   'low_stock',
   'stability_due_soon',
   'stability_overdue',
+  // P16 (D-169, D-170)
+  'reagent_pending_approval',
+  'reagent_approved',
+  'reagent_rejected',
+  'reagent_expiring',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];

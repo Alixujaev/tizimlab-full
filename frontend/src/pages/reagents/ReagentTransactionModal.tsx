@@ -28,8 +28,12 @@ export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
   const [qtyError, setQtyError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // D-169: tasdiqlanmagan reaktivdan sarf yo'q (backend ham 409 qaytaradi).
+  const outBlocked = type === 'out' && (reagent.approvalStatus ?? 'approved') !== 'approved';
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (outBlocked) return;
     const qty = Number(quantity);
     if (!qty || qty <= 0) {
       setQtyError(t('reagents.errors.qtyPositive', "Miqdor 0 dan katta bo'lishi shart"));
@@ -75,7 +79,12 @@ export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
           <Button variant="secondary" onClick={onClose} disabled={createMutation.isPending}>
             {t('common.cancel', 'Bekor qilish')}
           </Button>
-          <Button type="submit" form={formId} loading={createMutation.isPending}>
+          <Button
+            type="submit"
+            form={formId}
+            loading={createMutation.isPending}
+            disabled={outBlocked}
+          >
             {t('common.save', 'Saqlash')}
           </Button>
         </>
@@ -83,6 +92,14 @@ export function ReagentTransactionModal({ open, onClose, reagent }: Props) {
     >
       <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         {error && <Alert tone="danger">{error}</Alert>}
+        {outBlocked && (
+          <Alert tone="warning">
+            {t(
+              'reagents.approval.outBlocked',
+              'Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi. Kirim, tuzatish yoki utilizatsiyani tanlang.',
+            )}
+          </Alert>
+        )}
 
         <div className="flex items-center justify-between gap-3 rounded-lg border border-line bg-surface-muted px-4 py-3 text-sm">
           <span className="font-medium text-fg">{reagent.name}</span>

@@ -14,6 +14,7 @@ export const PERMISSION_CATALOG = [
   'substances:delete',
   'reagents:view',
   'reagents:write',
+  'reagents:approve',
   'temperature:view',
   'temperature:write',
   'stability:view',
@@ -50,6 +51,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'registry:view',
     'substances:view',
     'reagents:view',
+    'reagents:approve',
     'temperature:view',
     'stability:view',
     'stability:record',
@@ -65,6 +67,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'substances:write',
     'reagents:view',
     'reagents:write',
+    'reagents:approve',
     'temperature:view',
     'temperature:write',
     'stability:view',
@@ -112,3 +115,8 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'activity:view',
   ],
 };
+
+/** Rol katalogida ruxsat bormi (individual grant'larsiz) — Telegram callback'lari kabi HTTP bo'lmagan oqimlar uchun. */
+export function roleHasPermission(role: Role, key: PermissionKey): boolean {
+  return (ROLE_PERMISSIONS[role] as readonly string[] | undefined)?.includes(key) ?? false;
+}

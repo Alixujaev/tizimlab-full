@@ -20,6 +20,10 @@ export const NOTIFICATION_TITLES: Record<NotificationType, string> = {
   low_stock: 'Reaktiv zaxirasi kam qoldi',
   stability_due_soon: 'Stabilizatsiya muddati yaqinlashmoqda',
   stability_overdue: 'Stabilizatsiya muddati o‘tdi',
+  reagent_pending_approval: 'Yangi reaktiv tasdiqlashni kutmoqda',
+  reagent_approved: 'Reaktiv tasdiqlandi',
+  reagent_rejected: 'Reaktiv rad etildi',
+  reagent_expiring: 'Reaktiv yaroqlilik muddati yaqinlashmoqda',
 };
 
 type SampleRef = Pick<

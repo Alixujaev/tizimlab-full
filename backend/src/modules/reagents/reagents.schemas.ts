@@ -50,6 +50,8 @@ export const listReagentsQuerySchema = paginationQuerySchema.extend({
     .enum(['true', 'false'])
     .transform((v) => v === 'true')
     .optional(),
+  /** D-169 */
+  approvalStatus: z.enum(['pending', 'approved', 'rejected']).optional(),
 });
 
 export const listTransactionsQuerySchema = paginationQuerySchema.extend({
@@ -86,3 +88,10 @@ export type ListReagentsQuery = z.infer<typeof listReagentsQuerySchema>;
 export type ListTransactionsQuery = z.infer<typeof listTransactionsQuerySchema>;
 export type ListExpensesQuery = z.infer<typeof listExpensesQuerySchema>;
 export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;
+
+/** D-169: rad etishda sabab majburiy (≥5 belgi), tasdiqlashda e'tiborsiz. */
+export const reviewReagentSchema = z.object({
+  reason: z.string().trim().min(5, 'Rad etish sababi kamida 5 ta belgidan iborat bo‘lishi shart').max(1000),
+});
+
+export type ReviewReagentInput = { reason?: string | null };

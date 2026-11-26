@@ -360,7 +360,8 @@
       "activity:view": "Faoliyat jurnalini ko'rish",
       "analytics:view": "O'z natijalarini ko'rish",
       "analytics:team": "Jamoa natijalarini ko'rish",
-      "analytics:company": "Kompaniya analitikasini ko'rish"
+      "analytics:company": "Kompaniya analitikasini ko'rish",
+      "reagents:approve": "Reaktivni tasdiqlash yoki rad etish"
     }
   },
   "profile": {
@@ -696,7 +697,11 @@
       "temperature_alert": "Harorat chegaradan chiqdi",
       "low_stock": "Reaktiv zaxirasi kam qoldi",
       "stability_due_soon": "Stabilizatsiya muddati yaqinlashmoqda",
-      "stability_overdue": "Stabilizatsiya muddati o'tdi"
+      "stability_overdue": "Stabilizatsiya muddati o'tdi",
+      "reagent_pending_approval": "Yangi reaktiv tasdiqlashni kutmoqda",
+      "reagent_approved": "Reaktiv tasdiqlandi",
+      "reagent_rejected": "Reaktiv rad etildi",
+      "reagent_expiring": "Reaktiv yaroqlilik muddati yaqinlashmoqda"
     }
   },
   "dashboard": {
@@ -822,7 +827,23 @@
       "qtyPositive": "Miqdor 0 dan katta bo'lishi shart",
       "insufficientStock": "Mavjud zaxiradan ko'p chiqim qilib bo'lmaydi"
     },
-    "currentStockLabel": "Joriy zaxira:"
+    "currentStockLabel": "Joriy zaxira:",
+    "filterPendingApproval": "Tasdiq kutayotganlar",
+    "approval": {
+      "pending": "Tasdiq kutilmoqda",
+      "rejected": "Rad etilgan",
+      "rejectedTitle": "Reaktiv rad etilgan",
+      "pendingTitle": "Reaktiv tasdiqlashni kutmoqda",
+      "pendingHint": "Kimyogar yoki laboratoriya mudiri tasdiqlamaguncha reaktivdan sarf qayd etilmaydi.",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "rejectTitle": "Reaktivni rad etish",
+      "reason": "Rad etish sababi",
+      "reasonMin": "Rad etish sababi kamida 5 ta belgidan iborat bo‘lishi shart",
+      "approvedToast": "Reaktiv tasdiqlandi",
+      "rejectedToast": "Reaktiv rad etildi",
+      "outBlocked": "Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi. Kirim, tuzatish yoki utilizatsiyani tanlang."
+    }
   },
   "temperature": {
     "title": "Harorat va namlik monitoringi",
