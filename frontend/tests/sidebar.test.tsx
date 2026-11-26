@@ -27,6 +27,9 @@ const BASE = [
   ['Moddalar', '/substances'],
   ['Reyestr', '/registry'],
   ['Harorat', '/temperature'],
+  // P17 (D-175, D-176): barcha kompaniya rollariga
+  ['Apparatlar', '/equipment'],
+  ['Normativ hujjatlar', '/nd'],
 ];
 const MANAGER = [...BASE, ['Foydalanuvchilar', '/users'], ['Faoliyat', '/activity']];
 // P13 (D-165): "Mening natijalarim" — analitika rollari, "Jamoa" — lab_head/director; admin'da yo'q

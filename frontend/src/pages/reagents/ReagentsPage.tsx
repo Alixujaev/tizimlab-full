@@ -38,6 +38,8 @@ export function ReagentsPage() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const canWrite = user?.role === 'admin' || user?.role === 'lab_head';
+  // D-178: kontrolyor ham yangi reaktiv kiritadi (tahrirlash/o'chirish — faqat canWrite)
+  const canCreate = canWrite || user?.role === 'kontrolyor';
   const canDelete = user?.role === 'admin';
 
   const [page, setPage] = useState(1);
@@ -194,7 +196,7 @@ export function ReagentsPage() {
             <ButtonLink to="/expenses" leftIcon="file-text">
               {t('reagents.expenses')}
             </ButtonLink>
-            {canWrite && (
+            {canCreate && (
               <Button
                 leftIcon="plus"
                 onClick={() => {

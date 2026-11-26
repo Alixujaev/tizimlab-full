@@ -1,4 +1,6 @@
+import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
+import { normalizeUnit } from '../../utils/units.js';
 import { AppError, ConflictError, NotFoundError } from '../../utils/errors.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
 import { writeAudit } from '../audit/audit.service.js';
@@ -20,6 +22,7 @@ import type {
   CreateReagentInput,
   CreateTransactionInput,
   ListExpensesQuery,
+  ListReagentItemsQuery,
   ListReagentsQuery,
   ListTransactionsQuery,
   ReviewReagentInput,
@@ -46,11 +49,12 @@ export async function createReagent(
   meta?: { ip?: string; userAgent?: string },
 ): Promise<ReagentDto> {
   return await withTransaction(async (tx) => {
+    const itemId = await resolveReagentItem(tx, companyId, input);
     const { rows } = await tx.query<ReagentRow>(
       `INSERT INTO reagents (
          company_id, name, cas_number, unit, quantity, low_stock_threshold,
-         expires_at, supplier, storage_conditions, is_hazardous, created_by, approval_status
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')
+         expires_at, supplier, storage_conditions, is_hazardous, created_by, approval_status, reagent_item_id
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending', $12)
        RETURNING *`,
       [
         companyId,
@@ -64,6 +68,7 @@ export async function createReagent(
         input.storageConditions ?? null,
         input.isHazardous ?? false,
         userId,
+        itemId,
       ],
     );
     const row = rows[0]!;
@@ -107,6 +112,92 @@ export async function createReagent(
 
     return toReagentDto(row);
   });
+}
+
+export interface ReagentItemDto {
+  id: string;
+  name: string;
+  casNumber: string | null;
+  unitFamily: string;
+  /** Tasdiqlangan, muddati o'tmagan, qoldig'i bor lotlar soni */
+  usableLots: number;
+}
+
+/**
+ * D-174: lot uchun katalog elementi. Berilgan `reagentItemId` — shu kompaniyaniki bo'lishi shart;
+ * aks holda nom kaliti bo'yicha topiladi yoki yaratiladi. Birlik oilasi element oilasiga mos bo'lishi shart
+ * (masalan "Sulfat kislota" ml da yuritilsa, kg li lot qo'shib bo'lmaydi) — FEFO konvertatsiyasi uchun.
+ */
+async function resolveReagentItem(
+  tx: pg.PoolClient,
+  companyId: string,
+  input: CreateReagentInput,
+): Promise<string> {
+  const family = normalizeUnit(input.unit)?.family ?? 'other:';
+  type ItemRow = { id: string; unit_family: string; name: string };
+  const found = input.reagentItemId
+    ? await tx.query<ItemRow>(
+        `SELECT id, unit_family, name FROM reagent_items WHERE id = $1 AND company_id = $2`,
+        [input.reagentItemId, companyId],
+      )
+    : await tx.query<ItemRow>(
+        `SELECT id, unit_family, name FROM reagent_items WHERE company_id = $1 AND name_key = reagent_name_key($2)`,
+        [companyId, input.name],
+      );
+  const item = found.rows[0];
+  if (input.reagentItemId && !item) throw new NotFoundError('Reaktiv katalog elementi topilmadi');
+  if (item) {
+    if (item.unit_family !== family) {
+      throw new AppError(
+        422,
+        'UNIT_MISMATCH',
+        `"${item.name}" boshqa o‘lchov turida yuritiladi — "${input.unit}" birligi mos emas`,
+        { itemUnitFamily: item.unit_family, unitFamily: family },
+      );
+    }
+    return item.id;
+  }
+  const created = await tx.query<{ id: string }>(
+    `INSERT INTO reagent_items (company_id, name, name_key, cas_number, unit_family)
+     VALUES ($1, reagent_display_name($2), reagent_name_key($2), $3, $4)
+     ON CONFLICT (company_id, name_key) DO UPDATE SET updated_at = now()
+     RETURNING id`,
+    [companyId, input.name, input.casNumber ?? null, family],
+  );
+  return created.rows[0]!.id;
+}
+
+export async function listReagentItems(
+  companyId: string,
+  q: ListReagentItemsQuery,
+): Promise<ReagentItemDto[]> {
+  const { rows } = await query<{
+    id: string;
+    name: string;
+    cas_number: string | null;
+    unit_family: string;
+    usable_lots: string;
+  }>(
+    `SELECT i.id, i.name, i.cas_number, i.unit_family,
+            count(r.id) FILTER (
+              WHERE r.approval_status = 'approved' AND r.quantity > 0
+                AND (r.expires_at IS NULL OR r.expires_at >= (now() AT TIME ZONE 'Asia/Tashkent')::date)
+            ) AS usable_lots
+     FROM reagent_items i
+     LEFT JOIN reagents r ON r.reagent_item_id = i.id
+     WHERE i.company_id = $1 AND ($2::text IS NULL OR i.name ILIKE $2 OR i.cas_number ILIKE $2)
+     GROUP BY i.id
+     ORDER BY i.name_key
+     LIMIT $3`,
+    [companyId, q.search ? `%${q.search}%` : null, q.limit],
+  );
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    casNumber: r.cas_number,
+    unitFamily: r.unit_family,
+    usableLots: Number(r.usable_lots),
+  }));
 }
 
 export async function updateReagent(

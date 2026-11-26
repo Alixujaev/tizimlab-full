@@ -39,5 +39,8 @@ export const submitProtocolSchema = z
       }, 'Sana mavjud emas')
       .nullable()
       .optional(),
+    /** D-177: tahlil bajarilgan ND (tasdiqlangan) va tahlillar soni — avto-sarf uchun */
+    ndId: z.string().uuid('ND ID si to‘g‘ri UUID bo‘lishi kerak').nullable().optional(),
+    nAnalyses: z.coerce.number().int().min(1).max(100).optional(),
   })
   .default({});

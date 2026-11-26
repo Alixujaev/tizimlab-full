@@ -47,6 +47,15 @@ export const NAV_ITEMS: readonly NavItem[] = [
     icon: 'thermometer',
     roles: COMPANY_ROLES,
   },
+  // P17 (D-175, D-176)
+  {
+    key: 'equipment',
+    path: '/equipment',
+    labelKey: 'nav.equipment',
+    icon: 'monitor',
+    roles: COMPANY_ROLES,
+  },
+  { key: 'nd', path: '/nd', labelKey: 'nav.nd', icon: 'file-text', roles: COMPANY_ROLES },
   {
     key: 'myResults',
     path: '/me',

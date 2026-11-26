@@ -72,6 +72,10 @@ export function recipientRule(
     // D-170: muddat ogohlantirishi — zaxira uchun mas'ullar (low_stock bilan bir xil).
     case 'reagent_expiring':
       return { users: [], roles: ['lab_head', 'admin'] };
+    // P17: kalibrlash muddati (D-175) va ND sarfida yetishmovchilik (D-177) — lab_head
+    case 'equipment_calibration_due':
+    case 'reagent_shortfall':
+      return { users: [], roles: ['lab_head'] };
   }
 }
 

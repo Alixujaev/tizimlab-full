@@ -14,6 +14,8 @@ export const createReagentSchema = z.object({
   supplier: z.string().trim().max(255).nullable().optional(),
   storageConditions: z.string().trim().max(255).nullable().optional(),
   isHazardous: z.boolean().default(false),
+  /** D-174: katalog elementi (berilmasa nom bo'yicha topiladi yoki yaratiladi) */
+  reagentItemId: z.string().uuid().nullable().optional(),
 });
 
 export const updateReagentSchema = z.object({
@@ -97,3 +99,10 @@ export const reviewReagentSchema = z.object({
 });
 
 export type ReviewReagentInput = { reason?: string | null };
+
+/** D-174: reaktiv katalogi qidiruvi (ND talablari formasi uchun) */
+export const listReagentItemsQuerySchema = z.object({
+  search: z.string().trim().max(200).optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+});
+export type ListReagentItemsQuery = z.infer<typeof listReagentItemsQuerySchema>;

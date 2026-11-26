@@ -16,6 +16,7 @@ export interface ReagentRow {
   storage_conditions: string | null;
   is_hazardous: boolean;
   approval_status: ReagentApprovalStatus;
+  reagent_item_id: string;
   created_by: string | null;
   approved_by: string | null;
   approved_at: string | Date | null;
@@ -42,6 +43,8 @@ export interface ReagentDto {
   isExpiringSoon: boolean;
   /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
   approvalStatus: ReagentApprovalStatus;
+  /** D-174: katalog elementi (bu reaktiv — uning loti) */
+  reagentItemId: string;
   createdBy: string | null;
   approvedBy: string | null;
   approvedAt: string | null;
@@ -147,6 +150,7 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
     isExpired,
     isExpiringSoon: isExpiringSoon(row.expires_at, isExpired),
     approvalStatus: row.approval_status,
+    reagentItemId: row.reagent_item_id,
     createdBy: row.created_by ?? null,
     approvedBy: row.approved_by ?? null,
     approvedAt: row.approved_at ? new Date(row.approved_at).toISOString() : null,

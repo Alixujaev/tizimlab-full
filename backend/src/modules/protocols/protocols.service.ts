@@ -3,6 +3,7 @@ import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AppError, NotFoundError } from '../../utils/errors.js';
 import { captureTemperatureSnapshot, resolveAnalysisDate } from './protocols.temperature.js';
+import { applyNdConsumption } from '../consumptions/consumptions.service.js';
 import { generateProtocolDocx, type ExportLang, type ProtocolSampleExtra } from '../../utils/docxExport.js';
 import { writeAudit } from '../audit/audit.service.js';
 import { type FileStorage, requireStorage, SIGNED_URL_TTL_SECONDS } from '../files/files.storage.js';
@@ -74,6 +75,8 @@ export function toProtocolDto(
     finalizedAt: row.finalized_at?.toISOString() ?? null,
     rejectedAt: row.rejected_at?.toISOString() ?? null,
     sensorConfigId: row.sensor_config_id ?? null,
+    ndId: row.nd_id ?? null,
+    nAnalyses: row.n_analyses ?? 1,
     temperatureSnapshot: row.temperature_snapshot ?? null,
     temperatureWarning: row.temperature_warning ?? null,
     createdAt: row.created_at.toISOString(),
@@ -568,6 +571,37 @@ export async function getMainFileDownloadUrl(
   };
 }
 
+/**
+ * D-177: yuborishdagi ND — so'rovdagi `ndId` yoki avval bog'langan ND. Faqat shu kompaniyaning tasdiqlangan ND si
+ * (422 `ND_NOT_APPROVED`). Sarf boshlangan protokolda ND ni almashtirib bo'lmaydi (409 `ND_LOCKED`) —
+ * miqdorlar sarf yozuvlarini tuzatish orqali o'zgartiriladi.
+ */
+async function resolveSubmitNd(
+  client: pg.PoolClient,
+  companyId: string,
+  protocol: ProtocolRow,
+  input: SubmitProtocolInput,
+): Promise<{ id: string; code: string; nAnalyses: number } | null> {
+  const ndId = input.ndId ?? protocol.nd_id ?? null;
+  if (!ndId) return null;
+  const { rows } = await client.query<{ id: string; code: string; status: string }>(
+    `SELECT id, code, status::text FROM normative_documents WHERE id = $1 AND company_id = $2`,
+    [ndId, companyId],
+  );
+  const nd = rows[0];
+  if (!nd) throw new NotFoundError('Normativ hujjat (ND) topilmadi');
+  if (nd.status !== 'approved') {
+    throw new AppError(422, 'ND_NOT_APPROVED', 'Faqat tasdiqlangan ND bo‘yicha tahlil yuborish mumkin');
+  }
+  if (protocol.nd_id && protocol.nd_id !== ndId) {
+    const used = await client.query(`SELECT 1 FROM reagent_consumptions WHERE protocol_id = $1 LIMIT 1`, [protocol.id]);
+    if (used.rows.length) {
+      throw new AppError(409, 'ND_LOCKED', 'Bu tahlil bo‘yicha sarf allaqachon yozilgan — ND ni almashtirib bo‘lmaydi');
+    }
+  }
+  return { id: nd.id, code: nd.code, nAnalyses: input.nAnalyses ?? protocol.n_analyses ?? 1 };
+}
+
 export async function submitProtocol(
   companyId: string,
   user: UserContext,
@@ -576,6 +610,11 @@ export async function submitProtocol(
   input: SubmitProtocolInput = {},
 ): Promise<ProtocolDto> {
   return withTransaction(async (client) => {
+    // D-177: parallel yuborishlar ketma-ket bajariladi (ikkinchisi holat tekshiruvida to'xtaydi)
+    await client.query(`SELECT 1 FROM protocols WHERE id = $1 AND company_id = $2 FOR UPDATE`, [
+      protocolId,
+      companyId,
+    ]);
     const { protocol, sample } = await getProtocolAndSample(companyId, protocolId, client);
 
     const isAssigned = sample.assigned_to === user.id;
@@ -611,7 +650,27 @@ export async function submitProtocol(
         temp.warning,
       ],
     );
-    const updatedProtocol = updateRes.rows[0]!;
+    let updatedProtocol = updateRes.rows[0]!;
+
+    // D-177: ND bo'yicha avto-sarf (idempotent; yetishmovchilik yuborishni bloklamaydi)
+    const nd = await resolveSubmitNd(client, companyId, protocol, input);
+    if (nd) {
+      const upd = await client.query<ProtocolRow>(
+        `UPDATE protocols SET nd_id = $3, n_analyses = $4 WHERE id = $1 AND company_id = $2 RETURNING *`,
+        [protocolId, companyId, nd.id, nd.nAnalyses],
+      );
+      updatedProtocol = upd.rows[0]!;
+      await applyNdConsumption(client, {
+        companyId,
+        userId: user.id,
+        protocolId,
+        sampleId: sample.id,
+        substanceName: sample.substance_name,
+        ndId: nd.id,
+        ndCode: nd.code,
+        nAnalyses: nd.nAnalyses,
+      });
+    }
 
     // Imzo yozuvi (action: 'submitted')
     await recordSignature(client, {

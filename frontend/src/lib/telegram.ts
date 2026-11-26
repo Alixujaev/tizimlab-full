@@ -443,6 +443,12 @@ export function parseStartParam(rawParam?: string): { path: string; id?: string 
     return { path: `/reagents/${id}`, id };
   }
 
+  // equipment_ID — kalibrlash xabarnomasi (D-175)
+  if (param.startsWith('equipment_')) {
+    const id = param.replace('equipment_', '');
+    return { path: `/equipment/${id}`, id };
+  }
+
   // st_ID yoki stability_ID
   if (param.startsWith('stability_')) {
     const id = param.replace('stability_', '');
@@ -505,6 +511,8 @@ export function canRoleAccessPath(role: string | undefined, path: string): boole
     path.startsWith('/registry') ||
     path.startsWith('/substances') ||
     path.startsWith('/reagents') ||
+    path.startsWith('/equipment') ||
+    path.startsWith('/nd') ||
     path.startsWith('/expenses') ||
     path.startsWith('/temperature') ||
     path.startsWith('/stability')

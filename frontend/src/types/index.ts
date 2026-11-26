@@ -449,6 +449,9 @@ export interface ProtocolDto {
   passportUploadedAt?: string | null;
   /** D-173: yuborishda olingan xona harorati snapshot'i */
   sensorConfigId?: string | null;
+  /** D-177 */
+  ndId?: string | null;
+  nAnalyses?: number;
   temperatureSnapshot?: ProtocolTemperatureSnapshot | null;
   temperatureWarning?: 'no_room' | 'no_reading' | null;
   createdAt: string;
@@ -472,6 +475,9 @@ export interface ProtocolTemperatureSnapshot {
 export interface SubmitProtocolInput {
   sensorConfigId?: string | null;
   analysisDate?: string | null;
+  /** D-177: tasdiqlangan ND va tahlillar soni — avto-sarf */
+  ndId?: string | null;
+  nAnalyses?: number;
 }
 
 export interface ProtocolFileDto {
@@ -517,7 +523,10 @@ export type NotificationType =
   | 'reagent_pending_approval'
   | 'reagent_approved'
   | 'reagent_rejected'
-  | 'reagent_expiring';
+  | 'reagent_expiring'
+  // P17 (D-175, D-177)
+  | 'equipment_calibration_due'
+  | 'reagent_shortfall';
 
 export interface NotificationDto {
   id: string;
@@ -575,6 +584,8 @@ export interface ReagentDto {
   isExpiringSoon?: boolean;
   /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
   approvalStatus: ReagentApprovalStatus;
+  /** D-174: katalog elementi */
+  reagentItemId?: string;
   createdBy: string | null;
   approvedBy: string | null;
   approvedAt: string | null;
@@ -948,3 +959,4 @@ export interface ListAuditLogsQuery {
 }
 
 export * from './analytics';
+export * from './p17';

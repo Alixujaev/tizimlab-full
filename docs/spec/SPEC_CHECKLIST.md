@@ -59,7 +59,7 @@
 | R-ROLE-45 | Moddalar: `lab_head` — ko'rish + yaratish + tahrirlash; o'chirish — TAQIQ. | 01-roles §1, 05 §5, DECISIONS.md D-30 | P3 | [x] |
 | R-ROLE-46 | Moddalar: `director` — faqat ko'rish (yaratish/tahrirlash TAQIQ). | 01-roles §1 | P3 | [x] |
 | R-ROLE-47 | Moddalar: `admin` — to'liq. | 01-roles §1 | P3 | [x] |
-| R-ROLE-48 | Reaktivlar: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
+| R-ROLE-48 | Reaktivlar: `kontrolyor` — ko'rish va yangi reaktiv kiritish (`reagents:create`); tahrirlash/sarf/tasdiqlash — TAQIQ. | 01-roles §1, DECISIONS.md D-178 | P7 | [x] |
 | R-ROLE-49 | Reaktivlar: `chemist` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
 | R-ROLE-50 | Reaktivlar: `lab_head` — to'liq. | 01-roles §1 | P7 | [x] |
 | R-ROLE-51 | Reaktivlar: `director` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
@@ -766,6 +766,22 @@
 | R-P16-24 | Yozuv topilmasa `no_reading`, xona tanlanmasa `no_room` ogohlantirishi saqlanadi va UI'da aniq ko'rsatiladi (yuborish bloklanmaydi); boshqa kompaniya sensori — 404, protokol holati o'zgarmaydi. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
 | R-P16-25 | UI: biriktirilgan kimyogar yuborishda faol xonani tanlaydi; protokol kartasida harorat yoki ogohlantirish; `.docx` eksportda "Xona harorati" qatori. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
 
+## P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz)
+
+| ID | Talab | Manba | Faza | Holat |
+|---|---|---|---|---|
+| R-P17-01 | Reaktiv katalogi `reagent_items`: lot (`reagents`) kompaniya ichida normallashtirilgan nom bo'yicha elementga bog'lanadi (trigger ETL uchun ham); birlik oilasi mos kelmasa 422; `GET /reagents/items`. | TZ §3.2, DECISIONS.md D-174 | P17 | [x] |
+| R-P17-02 | Birliklar: ml/l/mkl, g/kg/mg, dona konvertatsiyasi; TS va SQL ro'yxatlari paritetda. | DECISIONS.md D-174 | P17 | [x] |
+| R-P17-03 | Apparatlar CRUD (nom, kategoriya, model, seriya, joylashuv, holat, kalibrlash muddati), audit, tenant izolyatsiyasi; yozish — lab_head/admin, o'qish — barcha kompaniya rollari. | TZ §3.3, DECISIONS.md D-175 | P17 | [x] |
+| R-P17-04 | Kalibrlash muddati ogohlantirishi 30/7/0: advisory lock, dublikatsiz, `out_of_service` chiqarilgan, lab_head ga (Telegram ham). | TZ §3.3, DECISIONS.md D-175 | P17 | [x] |
+| R-P17-05 | ND (kod, nom, versiya, holat, fayl R2) va talablar (apparat kategoriyasi / reaktiv + bir tahlil uchun miqdor va birlik); draft → approved → revise; approved da tahrirlash — 409. | TZ §3.2, §3.3, DECISIONS.md D-176 | P17 | [x] |
+| R-P17-06 | Moslik `GET/POST /nd/:id/feasibility`: `canRun` va aniq sabablar (apparat yo'q / xizmatda / kalibrlash o'tgan; reaktiv yo'q / yetishmaydi (miqdor bilan) / barcha lotlar muddati o'tgan); faqat tasdiqlangan lotlar. | TZ §3.3, DECISIONS.md D-176 | P17 | [x] |
+| R-P17-07 | Protokol yuborilganda ND normasi × tahlillar soni bo'yicha FEFO avto-sarf, birlik konvertatsiyasi; bir tahlil uchun bir marta (parallel va qayta yuborishda ham); manfiy qoldiq yo'q. | TZ §3.2, DECISIONS.md D-177 | P17 | [x] |
+| R-P17-08 | Yetishmovchilik: mavjudi ayiriladi, `shortfall` saqlanadi, lab_head ga xabar (Telegram ham), yuborish bloklanmaydi. | TZ §3.2, §4, DECISIONS.md D-177 | P17 | [x] |
+| R-P17-09 | Sarfni tasdiqlash (auto → confirmed) va tuzatish (sabab ≥5, farq omborga qaytadi yoki qo'shimcha ayiriladi, audit) — biriktirilgan kimyogar yoki lab_head. | TZ §3.2, DECISIONS.md D-177 | P17 | [x] |
+| R-P17-10 | Kontrolyor reaktiv yaratadi (`reagents:create`); tasdiqlash chemist/lab_head da, o'zinikini emas. | TZ §2, §3.2, DECISIONS.md D-178 | P17 | [x] |
+| R-P17-11 | UI: `/equipment` (ro'yxat, filtrlar, forma; `/equipment/:id`), `/nd` va `/nd/:id` (talablar draft da, holat, fayl, moslik paneli "bajarish mumkin/emas" + sabablar), protokolda ND va tahlillar soni, sarf paneli (tasdiqlash/tuzatish); sidebar va Telegram "Yana" menyusi, `equipment_<id>` deep link; uz/ru/en. | TZ §3.2, §3.3, §4, DECISIONS.md D-175..D-177 | P17 | [x] |
+
 ## Holat izohlari
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
@@ -856,7 +872,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
 | P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
-| **Jami** | 643 | 583 | 42 | 18 |
+| P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 11 | 11 | 0 | 0 |
+| **Jami** | 654 | 594 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -878,4 +895,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
 | P16 | 25 | 25 | 0 | 0 |
-| **Jami** | 643 | 583 | 42 | 18 |
+| P17 | 11 | 11 | 0 | 0 |
+| **Jami** | 654 | 594 | 42 | 18 |

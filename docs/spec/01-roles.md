@@ -25,7 +25,10 @@ Tizimda 6 ta rol mavjud:
 | Protokol yakunlash | — | — | — | ✅ | — |
 | Reyestrni ko'rish | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Moddalar | Ko'rish | Ko'rish | Ko'rish + tahrirlash | Ko'rish | ✅ To'liq |
-| Reaktivlar | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
+| Reaktivlar | Ko'rish + kiritish (D-178) | Ko'rish + tasdiqlash (D-169) | ✅ To'liq | Ko'rish | ✅ To'liq |
+| Apparatlar (D-175) | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
+| Normativ hujjatlar va moslik (D-176) | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
+| ND sarfini tasdiqlash/tuzatish (D-177) | — | ✅ (biriktirilgan) | ✅ | — | — |
 | Harorat | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
 | Stabilizatsiya boshlash | — | — | ✅ | ✅ | ✅ |
 | Stabilizatsiya natija kiritish | — | ✅ (biriktirilgan) | ✅ | ✅ | ✅ |

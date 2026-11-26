@@ -16,6 +16,8 @@ export function notificationTitle(
 export function notificationLink(n: Pick<NotificationDto, 'type' | 'referenceId'>): string | null {
   if (!n.referenceId) return null;
   if (/^(sample|protocol)_/.test(n.type)) return `/samples/${n.referenceId}`;
+  if (n.type === 'reagent_shortfall') return `/samples/${n.referenceId}`;
   if (/^reagent_/.test(n.type) || n.type === 'low_stock') return `/reagents/${n.referenceId}`;
+  if (n.type === 'equipment_calibration_due') return `/equipment/${n.referenceId}`;
   return null;
 }
