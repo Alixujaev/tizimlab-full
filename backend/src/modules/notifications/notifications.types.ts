@@ -12,13 +12,18 @@ export const NOTIFICATION_TYPES = [
   'low_stock',
   'stability_due_soon',
   'stability_overdue',
+  // P16 (D-169, D-170, D-171)
+  'sample_created',
+  'reagent_pending_approval',
+  'reagent_approved',
+  'reagent_rejected',
+  'reagent_expiring',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
 /** Bazadagi qiymat legacy tur ham bo'lishi mumkin (ETL qatorlari). */
-export type StoredNotificationType =
-  NotificationType | 'sample_created' | 'sample_overdue' | 'general';
+export type StoredNotificationType = NotificationType | 'sample_overdue' | 'general';
 
 export interface NotificationRow {
   id: string;

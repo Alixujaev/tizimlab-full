@@ -146,8 +146,8 @@ describeDb('Socket.IO: JWT handshake, user:<id> xonalari, real vaqtli push (P6, 
       });
       expect(c2.received).toEqual([]);
       expect(cb.received).toEqual([]);
-      // Harakat egasi (lab_head) ham olmaydi
-      expect(lh.received).toEqual([]);
+      // Harakat egasi (lab_head) sample_assigned olmaydi; unga faqat yaratilishdagi sample_created (D-171)
+      expect(lh.received.map((n) => (n as { type: string }).type)).toEqual(['sample_created']);
     });
 
     it('socket company:<companyId> va user:<userId> xonalariga a‘zo bo‘ladi, boshqa kompaniya xonasiga a‘zo bo‘lmaydi', async () => {

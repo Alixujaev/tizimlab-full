@@ -23,7 +23,16 @@ import {
 import { ReagentFormModal } from './ReagentFormModal';
 import { ReagentStatusBadges } from './ReagentStatusBadges';
 
-type QuickFilter = 'all' | 'lowStock' | 'expired' | 'hazardous';
+type QuickFilter =
+  | 'all'
+  | 'pendingApproval'
+  | 'expiringSoon'
+  | 'lowStock'
+  | 'expired'
+  | 'hazardous';
+
+/** D-170: "muddati yaqin" — job'ning eng uzun chegarasi bilan bir xil (30 kun). */
+const EXPIRING_SOON_DAYS = 30;
 
 export function ReagentsPage() {
   const { t } = useTranslation();
@@ -47,6 +56,8 @@ export function ReagentsPage() {
     isLowStock: filterType === 'lowStock' ? true : undefined,
     isExpired: filterType === 'expired' ? true : undefined,
     isHazardous: filterType === 'hazardous' ? true : undefined,
+    approvalStatus: filterType === 'pendingApproval' ? 'pending' : undefined,
+    expiringWithinDays: filterType === 'expiringSoon' ? EXPIRING_SOON_DAYS : undefined,
   });
   const reagents = data?.data ?? [];
   const meta = data?.meta;
@@ -218,6 +229,11 @@ export function ReagentsPage() {
           }}
           items={[
             { id: 'all', label: t('reagents.all', 'Barchasi') },
+            {
+              id: 'pendingApproval',
+              label: t('reagents.filterPendingApproval', 'Tasdiq kutayotganlar'),
+            },
+            { id: 'expiringSoon', label: t('reagents.filterExpiringSoon', 'Muddati yaqin') },
             { id: 'lowStock', label: t('reagents.filterLowStock', 'Kam qolganlar') },
             { id: 'expired', label: t('reagents.filterExpired', "Muddati o'tganlar") },
             { id: 'hazardous', label: t('reagents.filterHazardous', 'Xavflilar') },

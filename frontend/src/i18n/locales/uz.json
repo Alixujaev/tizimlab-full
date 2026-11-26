@@ -360,7 +360,8 @@
       "activity:view": "Faoliyat jurnalini ko'rish",
       "analytics:view": "O'z natijalarini ko'rish",
       "analytics:team": "Jamoa natijalarini ko'rish",
-      "analytics:company": "Kompaniya analitikasini ko'rish"
+      "analytics:company": "Kompaniya analitikasini ko'rish",
+      "reagents:approve": "Reaktivni tasdiqlash yoki rad etish"
     }
   },
   "profile": {
@@ -558,7 +559,8 @@
       "substanceRequired": "Modda nomi kiritilishi shart",
       "dateFormat": "Sana formati: YYYY-MM-DD",
       "chemistRequired": "Kimyogarni tanlash shart",
-      "stopReasonMinLength": "To'xtatish sababi kamida 5 ta belgidan iborat bo'lishi shart"
+      "stopReasonMinLength": "To'xtatish sababi kamida 5 ta belgidan iborat bo'lishi shart",
+      "expiryBeforeManufacture": "Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas"
     },
     "passport": {
       "approvalFlowNotice": "Reaktiv va standart namunalar uchun pasport — tasdiqlashning yagona yo'li: kimyogar va protokol talab qilinmaydi.",
@@ -593,7 +595,9 @@
         "tooLarge": "Fayl hajmi 20 MB dan oshmasligi kerak",
         "unsupported": "Faqat PDF, DOC, DOCX, JPEG yoki PNG fayl yuklash mumkin"
       }
-    }
+    },
+    "arrivalDate": "Kelgan sana",
+    "expiryDate": "Yaroqlilik muddati"
   },
   "registry": {
     "subtitle": "Tasdiqlangan namunalar arxivi",
@@ -609,14 +613,17 @@
       "reset": "Tozalash",
       "invalidDate": "Sana KK.OO.YYYY formatida bo'lishi kerak",
       "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo'lmasligi kerak",
-      "unfinalizedOnly": "Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar"
+      "unfinalizedOnly": "Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar",
+      "chemist": "Kimyogar",
+      "inactive": "nofaol"
     },
     "columns": {
       "substance": "Modda",
       "type": "Turi",
       "serialNumber": "Seriya",
       "lotNumber": "Lot",
-      "approvedAt": "Tasdiqlangan sana"
+      "approvedAt": "Tasdiqlangan sana",
+      "chemist": "Kimyogar"
     },
     "downloadPassport": "Pasportni yuklab olish",
     "downloadProtocol": "Protokolni yuklab olish",
@@ -677,6 +684,18 @@
       "standard": "Standart tahlil",
       "final": "Yakuniy tahlil",
       "in_process": "Oraliq tahlil"
+    },
+    "temperature": {
+      "title": "Xona harorati (tahlil vaqtida)",
+      "outOfRange": "Bu o‘qish xona chegarasidan tashqarida bo‘lgan.",
+      "warning": {
+        "no_room": "Xona tanlanmagan — harorat protokolga bog‘lanmadi.",
+        "no_reading": "Tanlangan xona uchun tahlil sanasida (±24 soat) harorat yozuvi topilmadi."
+      },
+      "room": "Tahlil o‘tkazilgan xona",
+      "roomHint": "Tahlil sanasiga eng yaqin harorat yozuvi protokolga bog‘lanadi",
+      "noRoom": "Tanlanmagan",
+      "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
     }
   },
   "notifications": {
@@ -693,7 +712,12 @@
       "temperature_alert": "Harorat chegaradan chiqdi",
       "low_stock": "Reaktiv zaxirasi kam qoldi",
       "stability_due_soon": "Stabilizatsiya muddati yaqinlashmoqda",
-      "stability_overdue": "Stabilizatsiya muddati o'tdi"
+      "stability_overdue": "Stabilizatsiya muddati o'tdi",
+      "reagent_pending_approval": "Yangi reaktiv tasdiqlashni kutmoqda",
+      "reagent_approved": "Reaktiv tasdiqlandi",
+      "reagent_rejected": "Reaktiv rad etildi",
+      "reagent_expiring": "Reaktiv yaroqlilik muddati yaqinlashmoqda",
+      "sample_created": "Yangi namuna biriktirishni kutmoqda"
     }
   },
   "dashboard": {
@@ -819,7 +843,25 @@
       "qtyPositive": "Miqdor 0 dan katta bo'lishi shart",
       "insufficientStock": "Mavjud zaxiradan ko'p chiqim qilib bo'lmaydi"
     },
-    "currentStockLabel": "Joriy zaxira:"
+    "currentStockLabel": "Joriy zaxira:",
+    "filterPendingApproval": "Tasdiq kutayotganlar",
+    "approval": {
+      "pending": "Tasdiq kutilmoqda",
+      "rejected": "Rad etilgan",
+      "rejectedTitle": "Reaktiv rad etilgan",
+      "pendingTitle": "Reaktiv tasdiqlashni kutmoqda",
+      "pendingHint": "Kimyogar yoki laboratoriya mudiri tasdiqlamaguncha reaktivdan sarf qayd etilmaydi.",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "rejectTitle": "Reaktivni rad etish",
+      "reason": "Rad etish sababi",
+      "reasonMin": "Rad etish sababi kamida 5 ta belgidan iborat bo‘lishi shart",
+      "approvedToast": "Reaktiv tasdiqlandi",
+      "rejectedToast": "Reaktiv rad etildi",
+      "outBlocked": "Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi. Kirim, tuzatish yoki utilizatsiyani tanlang."
+    },
+    "filterExpiringSoon": "Muddati yaqin",
+    "expiringSoon": "Muddati yaqin"
   },
   "temperature": {
     "title": "Harorat va namlik monitoringi",

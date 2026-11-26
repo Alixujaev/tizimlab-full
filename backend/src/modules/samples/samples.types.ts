@@ -1,3 +1,4 @@
+import { toIsoDay } from '../../utils/dates.js';
 export type SampleType =
   'raw_material' | 'finished_product' | 'reagent' | 'standard_substance' | 'other';
 
@@ -32,6 +33,8 @@ export interface SampleRow {
   manufactured_at: string | null;
   analysis_start: string | null;
   analysis_end: string | null;
+  arrival_date: string | null;
+  expiry_date: string | null;
   notes: string | null;
   created_by: string;
   assigned_to: string | null;
@@ -77,6 +80,8 @@ export interface SampleDto {
   manufacturedAt: string | null;
   analysisStart: string | null;
   analysisEnd: string | null;
+  arrivalDate: string | null;
+  expiryDate: string | null;
   notes: string | null;
   createdBy: string;
   assignedTo: string | null;
@@ -124,9 +129,11 @@ export function toSampleDto(row: SampleRow): SampleDto {
     lotNumber: row.lot_number,
     quantity: row.quantity,
     manufacturer: row.manufacturer,
-    manufacturedAt: row.manufactured_at ? String(row.manufactured_at).slice(0, 10) : null,
-    analysisStart: row.analysis_start ? String(row.analysis_start).slice(0, 10) : null,
-    analysisEnd: row.analysis_end ? String(row.analysis_end).slice(0, 10) : null,
+    manufacturedAt: toIsoDay(row.manufactured_at),
+    analysisStart: toIsoDay(row.analysis_start),
+    analysisEnd: toIsoDay(row.analysis_end),
+    arrivalDate: toIsoDay(row.arrival_date),
+    expiryDate: toIsoDay(row.expiry_date),
     notes: row.notes,
     createdBy: row.created_by,
     assignedTo: row.assigned_to,

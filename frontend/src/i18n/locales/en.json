@@ -360,7 +360,8 @@
       "activity:view": "View activity log",
       "analytics:view": "View own results",
       "analytics:team": "View team results",
-      "analytics:company": "View company analytics"
+      "analytics:company": "View company analytics",
+      "reagents:approve": "Approve or reject reagents"
     }
   },
   "profile": {
@@ -558,7 +559,8 @@
       "substanceRequired": "Substance name is required",
       "dateFormat": "Date format: YYYY-MM-DD",
       "chemistRequired": "Selecting a chemist is required",
-      "stopReasonMinLength": "Suspension reason must contain at least 5 characters"
+      "stopReasonMinLength": "Suspension reason must contain at least 5 characters",
+      "expiryBeforeManufacture": "Expiry date cannot be earlier than the manufacturing date"
     },
     "passport": {
       "approvalFlowNotice": "For reagents and standard substances the passport is the only approval path: no chemist or protocol is needed.",
@@ -593,7 +595,9 @@
         "tooLarge": "The file must not exceed 20 MB",
         "unsupported": "Only PDF, DOC, DOCX, JPEG or PNG files can be uploaded"
       }
-    }
+    },
+    "arrivalDate": "Arrival date",
+    "expiryDate": "Expiry date"
   },
   "registry": {
     "subtitle": "Archive of approved samples",
@@ -609,14 +613,17 @@
       "reset": "Reset",
       "invalidDate": "The date must be in DD.MM.YYYY format",
       "invalidRange": "The «from» date cannot be after the «to» date",
-      "unfinalizedOnly": "Unfinalized only (awaiting director finalization)"
+      "unfinalizedOnly": "Unfinalized only (awaiting director finalization)",
+      "chemist": "Chemist",
+      "inactive": "inactive"
     },
     "columns": {
       "substance": "Substance",
       "type": "Type",
       "serialNumber": "Serial",
       "lotNumber": "Lot",
-      "approvedAt": "Approval date"
+      "approvedAt": "Approval date",
+      "chemist": "Chemist"
     },
     "downloadPassport": "Download passport",
     "downloadProtocol": "Download protocol",
@@ -677,6 +684,18 @@
       "standard": "Standard analysis",
       "final": "Final analysis",
       "in_process": "In-process analysis"
+    },
+    "temperature": {
+      "title": "Room temperature (at analysis time)",
+      "outOfRange": "This reading was outside the room limits.",
+      "warning": {
+        "no_room": "No room selected — temperature is not linked to the protocol.",
+        "no_reading": "No temperature record found for the selected room on the analysis date (±24 h)."
+      },
+      "room": "Room where the analysis was performed",
+      "roomHint": "The temperature record closest to the analysis date will be linked",
+      "noRoom": "Not selected",
+      "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
     }
   },
   "notifications": {
@@ -693,7 +712,12 @@
       "temperature_alert": "Temperature out of range",
       "low_stock": "Reagent stock is low",
       "stability_due_soon": "Stability checkpoint is due soon",
-      "stability_overdue": "Stability checkpoint is overdue"
+      "stability_overdue": "Stability checkpoint is overdue",
+      "reagent_pending_approval": "New reagent awaiting approval",
+      "reagent_approved": "Reagent approved",
+      "reagent_rejected": "Reagent rejected",
+      "reagent_expiring": "Reagent expiry date is approaching",
+      "sample_created": "New sample awaiting assignment"
     }
   },
   "dashboard": {
@@ -819,7 +843,25 @@
       "qtyPositive": "Quantity must be greater than 0",
       "insufficientStock": "Cannot use more than the available stock"
     },
-    "currentStockLabel": "Current stock:"
+    "currentStockLabel": "Current stock:",
+    "filterPendingApproval": "Awaiting approval",
+    "approval": {
+      "pending": "Awaiting approval",
+      "rejected": "Rejected",
+      "rejectedTitle": "Reagent rejected",
+      "pendingTitle": "Reagent is awaiting approval",
+      "pendingHint": "Consumption cannot be recorded until a chemist or lab head approves the reagent.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "rejectTitle": "Reject reagent",
+      "reason": "Rejection reason",
+      "reasonMin": "The reason must be at least 5 characters long",
+      "approvedToast": "Reagent approved",
+      "rejectedToast": "Reagent rejected",
+      "outBlocked": "The reagent is not approved yet — consumption cannot be recorded. Choose receipt, adjustment or disposal."
+    },
+    "filterExpiringSoon": "Expiring soon",
+    "expiringSoon": "Expiring soon"
   },
   "temperature": {
     "title": "Temperature & Humidity Monitoring",

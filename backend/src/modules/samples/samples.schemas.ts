@@ -17,7 +17,17 @@ export const sampleStatusEnum = z.enum([
   'rejected',
 ]);
 
-export const createSampleSchema = z.object({
+/** ISO sana (YYYY-MM-DD) va kalendarda mavjudligi (masalan 2026-02-30 rad etiladi). */
+const isoDay = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana formati: YYYY-MM-DD')
+  .refine((v) => {
+    const d = new Date(`${v}T00:00:00Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+  }, 'Sana mavjud emas');
+
+export const createSampleSchema = z
+  .object({
   type: sampleTypeEnum,
   substanceId: z.string().uuid().optional().nullable(),
   substanceName: z
@@ -44,8 +54,20 @@ export const createSampleSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana formati: YYYY-MM-DD')
     .optional()
     .nullable(),
+  /** TZ §3.1: kelgan sana va yaroqlilik muddati (D-168). */
+  arrivalDate: isoDay.optional().nullable(),
+  expiryDate: isoDay.optional().nullable(),
   notes: z.string().trim().max(2000).optional().nullable(),
-});
+  })
+  .superRefine((v, ctx) => {
+    if (v.expiryDate && v.manufacturedAt && v.expiryDate < v.manufacturedAt) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['expiryDate'],
+        message: 'Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas',
+      });
+    }
+  });
 
 export const listSamplesQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

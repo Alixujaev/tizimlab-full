@@ -59,6 +59,12 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
 
   const auth = (who: string) => ({ Authorization: `Bearer ${tokens[who]}` });
 
+  /** D-169: sarf (`out`) faqat tasdiqlangan reaktivdan — kimyogar (kirituvchi emas) tasdiqlaydi. */
+  async function approve(id: string): Promise<void> {
+    const res = await request(app).post(`/api/v1/reagents/${id}/approve`).set(auth('chemist'));
+    expect(res.status).toBe(200);
+  }
+
   describe('1. CRUD va ruxsat matritsasi (R-ROLE-48..52, R-REAG-20..22, D-51)', () => {
     it('admin va lab_head reaktiv yarata oladi, tahrirlay oladi; boshqa rollar taqiqlanadi (403)', async () => {
       // 1. lab_head yaratadi
@@ -172,6 +178,7 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         .set(auth('labHead'))
         .send({ name: 'Metanol', unit: 'l', quantity: 20 });
       const id = r.body.data.id as string;
+      await approve(id);
 
       // 25 chiqim qilishga urinish
       const outRes = await request(app)
@@ -200,6 +207,7 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         .set(auth('labHead'))
         .send({ name: 'Toluol', unit: 'l', quantity: 10 });
       const id = r.body.data.id as string;
+      await approve(id);
 
       // 2 ta bir vaqtda 6 dan chiqim (jami 12 kerak, lekin zaxira 10 — faqat bittasiga yetadi)
       const results = await Promise.all([
@@ -227,6 +235,7 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         .set(auth('labHead'))
         .send({ name: 'Natriy gidroksid', unit: 'kg', quantity: 10 });
       const id = r.body.data.id as string;
+      await approve(id);
 
       // Kirim +5
       await request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('labHead')).send({ type: 'in', quantity: 5 });
@@ -253,6 +262,7 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         .set(auth('labHead'))
         .send({ name: 'Yod eritmasi', unit: 'ml', quantity: 50, lowStockThreshold: 20 });
       const id = r.body.data.id as string;
+      await approve(id);
 
       // 1. Chiqim 10 -> qoldiq 40 >= 20 (xabar yo'q)
       await request(app).post(`/api/v1/reagents/${id}/transactions`).set(auth('admin')).send({ type: 'out', quantity: 10 });
@@ -362,6 +372,7 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         .set(auth('labHead'))
         .send({ name: 'Spirt 70%', unit: 'l', quantity: 100 });
       const id = r.body.data.id as string;
+      await approve(id);
 
       // Chiqim qilish
       await request(app)

@@ -47,11 +47,25 @@ export function createRegistryRouter(deps: RegistryRouterDeps): Router {
    *       - { in: query, name: lotNumber, schema: { type: string } }
    *       - { in: query, name: approvedFrom, schema: { type: string, format: date } }
    *       - { in: query, name: approvedTo, schema: { type: string, format: date } }
+   *       - { in: query, name: chemistId, schema: { type: string, format: uuid }, description: "Tahlilni bajargan kimyogar (D-172)" }
    *     responses:
    *       200:
    *         description: Reyestr ro'yxati
    */
   router.get('/', ...companyAuth, validate({ query: registryListQuerySchema }), controller.list);
+
+  /**
+   * @openapi
+   * /registry/chemists:
+   *   get:
+   *     tags: [Registry]
+   *     summary: Reyestr filtri uchun kompaniya kimyogarlari (barcha kompaniya rollari) — D-172
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200: { description: "[{ id, fullName, isActive }]" }
+   */
+  router.get('/chemists', ...companyAuth, controller.chemists);
 
   /**
    * @openapi

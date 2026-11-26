@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteRegistryItem, fetchRegistry, fetchRegistryItem } from '@/api/registry';
+import {
+  deleteRegistryItem,
+  fetchRegistry,
+  fetchRegistryChemists,
+  fetchRegistryItem,
+} from '@/api/registry';
 import { samplesKeys } from '@/hooks/useSamples';
 import type { RegistryListParams } from '@/types';
 
@@ -7,7 +12,17 @@ export const registryKeys = {
   all: ['registry'] as const,
   list: (params?: RegistryListParams) => [...registryKeys.all, 'list', params] as const,
   detail: (id: string) => [...registryKeys.all, 'detail', id] as const,
+  chemists: () => [...registryKeys.all, 'chemists'] as const,
 };
+
+/** D-172: reyestr filtri uchun kimyogarlar (kam o'zgaradi — 5 daqiqa kesh). */
+export function useRegistryChemistsQuery() {
+  return useQuery({
+    queryKey: registryKeys.chemists(),
+    queryFn: fetchRegistryChemists,
+    staleTime: 5 * 60_000,
+  });
+}
 
 export function useRegistryQuery(params?: RegistryListParams) {
   return useQuery({ queryKey: registryKeys.list(params), queryFn: () => fetchRegistry(params) });

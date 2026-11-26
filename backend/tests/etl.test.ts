@@ -258,6 +258,7 @@ describeDb('P12a: ETL Legacy Migration (Database Integration & Transactions)', (
       // Reaktivlar va tranzaksiyalar (P7, 008_reagents):
       const { rows: reagents } = await db.pool.query('SELECT * FROM reagents');
       expect(reagents).toHaveLength(1);
+      expect(reagents[0].approval_status).toBe('approved'); // D-169: legacy reaktiv sarfga tayyor
       const { rows: rTransactions } = await db.pool.query('SELECT * FROM reagent_transactions');
       expect(rTransactions).toHaveLength(1);
       expect(rTransactions[0].reagent_id).toBe(reagents[0].id);

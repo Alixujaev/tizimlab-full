@@ -45,6 +45,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'protocols',
       'reagent_documents',
       'reagent_expense_log',
+      'reagent_expiry_notices',
       'reagent_transactions',
       'reagents',
       'sample_tracking',
@@ -57,7 +58,9 @@ describeDb('001_core baseline migratsiyasi', () => {
       'stability_studies',
       'substance_parameters',
       'substances',
+      'telegram_callback_tokens',
       'telegram_link_tokens',
+      'telegram_pending_inputs',
       'temperature_alerts',
       'temperature_readings',
       'used_init_data',
@@ -81,10 +84,16 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 12, name: 'telegram', state: 'applied' }),
       expect.objectContaining({ version: 13, name: 'telegram_hardening', state: 'applied' }),
       expect.objectContaining({ version: 14, name: 'analytics', state: 'applied' }),
+      expect.objectContaining({ version: 15, name: 'sample_dates', state: 'applied' }),
+      expect.objectContaining({ version: 16, name: 'reagent_approval', state: 'applied' }),
+      expect.objectContaining({ version: 17, name: 'reagent_expiry_notices', state: 'applied' }),
+      expect.objectContaining({ version: 18, name: 'telegram_callbacks', state: 'applied' }),
+      expect.objectContaining({ version: 19, name: 'registry_search_indexes', state: 'applied' }),
+      expect.objectContaining({ version: 20, name: 'protocol_temperature', state: 'applied' }),
     ]);
   });
 
-  it("notification_type: §9 dagi 10 tur + legacy 3 tur; notifications.type da DEFAULT yo'q (R-ARCH-43, R-ARCH-80, R-NOTIF-11)", async () => {
+  it("notification_type: §9 dagi 10 tur + legacy 3 tur + P16 4 tur (D-169, D-170); notifications.type da DEFAULT yo'q (R-ARCH-43, R-ARCH-80, R-NOTIF-11)", async () => {
     const { rows } = await query<{ v: string }>(
       `SELECT unnest(enum_range(NULL::notification_type))::text AS v`,
       [],
@@ -96,6 +105,10 @@ describeDb('001_core baseline migratsiyasi', () => {
         'protocol_approved',
         'protocol_rejected',
         'protocol_submitted',
+        'reagent_approved',
+        'reagent_expiring',
+        'reagent_pending_approval',
+        'reagent_rejected',
         'sample_approved',
         'sample_assigned',
         'sample_created',

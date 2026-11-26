@@ -32,6 +32,7 @@ import {
   Tabs,
   type Tone,
 } from '@/ui';
+import { ReagentApprovalPanel } from './ReagentApprovalPanel';
 import { ReagentDocumentModal } from './ReagentDocumentModal';
 import { ReagentFormModal } from './ReagentFormModal';
 import { ReagentStatusBadges } from './ReagentStatusBadges';
@@ -261,6 +262,8 @@ export function ReagentDetailPage() {
           )
         }
       />
+
+      <ReagentApprovalPanel reagent={reagent} />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card>

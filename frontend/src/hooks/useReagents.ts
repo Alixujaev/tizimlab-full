@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  approveReagent,
+  rejectReagent,
   createReagent,
   createTransaction,
   deleteReagent,
@@ -69,6 +71,19 @@ export function useUpdateReagentMutation() {
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: reagentsKeys.all });
       void queryClient.invalidateQueries({ queryKey: reagentsKeys.detail(variables.id) });
+    },
+  });
+}
+
+/** D-169: tasdiqlash yoki rad etish — ro'yxat va tafsilot keshini yangilaydi. */
+export function useReviewReagentMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (v: { id: string; decision: 'approve' } | { id: string; decision: 'reject'; reason: string }) =>
+      v.decision === 'approve' ? approveReagent(v.id) : rejectReagent(v.id, v.reason),
+    onSuccess: (_data, v) => {
+      void queryClient.invalidateQueries({ queryKey: reagentsKeys.all });
+      void queryClient.invalidateQueries({ queryKey: reagentsKeys.detail(v.id) });
     },
   });
 }

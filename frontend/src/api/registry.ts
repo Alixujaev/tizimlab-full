@@ -5,8 +5,14 @@ import type {
   Paginated,
   RegistryDetailDto,
   RegistryItemDto,
+  RegistryChemistDto,
   RegistryListParams,
 } from '@/types';
+
+export async function fetchRegistryChemists(): Promise<RegistryChemistDto[]> {
+  const { data } = await apiClient.get<ApiResponse<RegistryChemistDto[]>>('/registry/chemists');
+  return data.data;
+}
 
 export async function fetchRegistry(
   params?: RegistryListParams,

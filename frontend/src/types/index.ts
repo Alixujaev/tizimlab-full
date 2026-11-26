@@ -287,6 +287,8 @@ export interface SampleDto {
   manufacturedAt: string | null;
   analysisStart: string | null;
   analysisEnd: string | null;
+  arrivalDate?: string | null;
+  expiryDate?: string | null;
   notes: string | null;
   createdBy: string;
   assignedTo: string | null;
@@ -333,6 +335,8 @@ export interface CreateSampleInput {
   manufacturedAt?: string | null;
   analysisStart?: string | null;
   analysisEnd?: string | null;
+  arrivalDate?: string | null;
+  expiryDate?: string | null;
   notes?: string | null;
 }
 
@@ -393,6 +397,15 @@ export interface RegistryListParams {
   approvedFrom?: string;
   approvedTo?: string;
   unfinalizedOnly?: boolean;
+  /** D-172: tahlilni bajargan kimyogar */
+  chemistId?: string;
+}
+
+/** D-172: reyestr filtri uchun kimyogar (barcha kompaniya rollariga ochiq). */
+export interface RegistryChemistDto {
+  id: string;
+  fullName: string;
+  isActive: boolean;
 }
 
 // ---------------------------------------------------- Protocols
@@ -434,8 +447,31 @@ export interface ProtocolDto {
   passportFileMime?: string | null;
   passportUploadedBy?: string | null;
   passportUploadedAt?: string | null;
+  /** D-173: yuborishda olingan xona harorati snapshot'i */
+  sensorConfigId?: string | null;
+  temperatureSnapshot?: ProtocolTemperatureSnapshot | null;
+  temperatureWarning?: 'no_room' | 'no_reading' | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProtocolTemperatureSnapshot {
+  readingId: string;
+  sensorConfigId: string;
+  sensorId: string;
+  locationName: string;
+  temperature: number;
+  humidity: number | null;
+  recordedAt: string;
+  isManual: boolean;
+  alertTriggered: boolean;
+  analysisDate: string;
+  capturedAt: string;
+}
+
+export interface SubmitProtocolInput {
+  sensorConfigId?: string | null;
+  analysisDate?: string | null;
 }
 
 export interface ProtocolFileDto {
@@ -467,6 +503,7 @@ export interface RejectProtocolInput {
 
 /** Ilova yaratadigan 10 tur; legacy (`general` va h.k.) faqat ko'chirilgan yozuvlarda. */
 export type NotificationType =
+  | 'sample_created'
   | 'sample_assigned'
   | 'sample_approved'
   | 'sample_rejected'
@@ -476,11 +513,15 @@ export type NotificationType =
   | 'temperature_alert'
   | 'low_stock'
   | 'stability_due_soon'
-  | 'stability_overdue';
+  | 'stability_overdue'
+  | 'reagent_pending_approval'
+  | 'reagent_approved'
+  | 'reagent_rejected'
+  | 'reagent_expiring';
 
 export interface NotificationDto {
   id: string;
-  type: NotificationType | 'sample_created' | 'sample_overdue' | 'general';
+  type: NotificationType | 'sample_overdue' | 'general';
   title: string;
   message: string;
   referenceId: string | null;
@@ -530,9 +571,19 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-170: muddati 30 kun ichida tugaydi (hali o'tmagan). */
+  isExpiringSoon?: boolean;
+  /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
+  approvalStatus: ReagentApprovalStatus;
+  createdBy: string | null;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  rejectionReason: string | null;
   createdAt: string;
   updatedAt: string;
 }
+
+export type ReagentApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface CreateReagentInput {
   name: string;
@@ -564,6 +615,9 @@ export interface ListReagentsQuery {
   isLowStock?: boolean;
   isExpired?: boolean;
   isHazardous?: boolean;
+  approvalStatus?: ReagentApprovalStatus;
+  /** D-170 */
+  expiringWithinDays?: number;
 }
 
 export interface ReagentTransactionDto {

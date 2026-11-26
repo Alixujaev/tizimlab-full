@@ -2,7 +2,8 @@ import crypto from 'node:crypto';
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AppError, NotFoundError } from '../../utils/errors.js';
-import { generateProtocolDocx, type ExportLang } from '../../utils/docxExport.js';
+import { captureTemperatureSnapshot, resolveAnalysisDate } from './protocols.temperature.js';
+import { generateProtocolDocx, type ExportLang, type ProtocolSampleExtra } from '../../utils/docxExport.js';
 import { writeAudit } from '../audit/audit.service.js';
 import { type FileStorage, requireStorage, SIGNED_URL_TTL_SECONDS } from '../files/files.storage.js';
 import {
@@ -40,6 +41,7 @@ import type {
   ProtocolSignatureRow,
   RejectProtocolInput,
   RequestMeta,
+  SubmitProtocolInput,
   UserContext,
 } from './protocols.types.js';
 
@@ -71,6 +73,9 @@ export function toProtocolDto(
     approvedAt: row.approved_at?.toISOString() ?? null,
     finalizedAt: row.finalized_at?.toISOString() ?? null,
     rejectedAt: row.rejected_at?.toISOString() ?? null,
+    sensorConfigId: row.sensor_config_id ?? null,
+    temperatureSnapshot: row.temperature_snapshot ?? null,
+    temperatureWarning: row.temperature_warning ?? null,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };
@@ -568,6 +573,7 @@ export async function submitProtocol(
   user: UserContext,
   protocolId: string,
   meta: RequestMeta,
+  input: SubmitProtocolInput = {},
 ): Promise<ProtocolDto> {
   return withTransaction(async (client) => {
     const { protocol, sample } = await getProtocolAndSample(companyId, protocolId, client);
@@ -583,12 +589,27 @@ export async function submitProtocol(
 
     const previousStatus = protocol.status;
 
+    // D-173: xona harorati snapshot'i — har (qayta) yuborishda yangilanadi, tasdiq/yakunlashda o'zgarmaydi
+    const analysisDate = await resolveAnalysisDate(client, sample.id, input.analysisDate);
+    const temp = await captureTemperatureSnapshot(client, {
+      companyId,
+      sensorConfigId: input.sensorConfigId,
+      analysisDate,
+    });
+
     const updateRes = await client.query<ProtocolRow>(
       `UPDATE protocols
-       SET status = 'submitted', submitted_at = now(), rejection_reason = NULL
+       SET status = 'submitted', submitted_at = now(), rejection_reason = NULL,
+           sensor_config_id = $3, temperature_snapshot = $4::jsonb, temperature_warning = $5
        WHERE id = $1 AND company_id = $2
        RETURNING *`,
-      [protocolId, companyId],
+      [
+        protocolId,
+        companyId,
+        temp.sensorConfigId,
+        temp.snapshot ? JSON.stringify(temp.snapshot) : null,
+        temp.warning,
+      ],
     );
     const updatedProtocol = updateRes.rows[0]!;
 
@@ -1482,14 +1503,33 @@ export async function exportProtocolDocx(
     serial_number: string | null;
     quantity: string | null;
     manufacturer: string | null;
+    manufactured_at: string | null;
+    expiry_date: string | null;
+    arrival_date: string | null;
+    analysis_end: string | null;
   }>(
-    `SELECT lot_number, serial_number, quantity, manufacturer
+    `SELECT lot_number, serial_number, quantity, manufacturer,
+            manufactured_at::text AS manufactured_at, expiry_date::text AS expiry_date,
+            arrival_date::text AS arrival_date, analysis_end::text AS analysis_end
      FROM samples
      WHERE id = $1 AND company_id = $2`,
     [sample.id, companyId],
   );
 
-  const sampleExtra = sampleRes.rows[0] ?? {};
+  // snake_case qator → eksportning camelCase kirishi (avval to'g'ridan-to'g'ri berilib, lot/seriya '—' chiqardi).
+  const row = sampleRes.rows[0];
+  const sampleExtra: ProtocolSampleExtra = row
+    ? {
+        lotNumber: row.lot_number,
+        serialNumber: row.serial_number,
+        quantity: row.quantity,
+        manufacturer: row.manufacturer,
+        manufacturedAt: row.manufactured_at,
+        expiryDate: row.expiry_date,
+        arrivalDate: row.arrival_date,
+        analysisEnd: row.analysis_end,
+      }
+    : {};
 
   const buffer = await generateProtocolDocx(detail, sampleExtra, lang as ExportLang);
   const filename = `protocol-${protocol.id}.docx`;

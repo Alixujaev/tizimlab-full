@@ -14,6 +14,7 @@ import {
 } from '../files/files.service.js';
 import { type FileStorage } from '../files/files.storage.js';
 import { assertAllowedFile, type IncomingFile } from '../files/files.validation.js';
+import { NOTIFICATION_TITLES } from '../notifications/notifications.events.js';
 import { createNotification } from '../notifications/notifications.service.js';
 import type {
   CreateReagentInput,
@@ -21,6 +22,7 @@ import type {
   ListExpensesQuery,
   ListReagentsQuery,
   ListTransactionsQuery,
+  ReviewReagentInput,
   UpdateReagentInput,
 } from './reagents.schemas.js';
 import {
@@ -47,8 +49,8 @@ export async function createReagent(
     const { rows } = await tx.query<ReagentRow>(
       `INSERT INTO reagents (
          company_id, name, cas_number, unit, quantity, low_stock_threshold,
-         expires_at, supplier, storage_conditions, is_hazardous
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         expires_at, supplier, storage_conditions, is_hazardous, created_by, approval_status
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')
        RETURNING *`,
       [
         companyId,
@@ -61,6 +63,7 @@ export async function createReagent(
         input.supplier ?? null,
         input.storageConditions ?? null,
         input.isHazardous ?? false,
+        userId,
       ],
     );
     const row = rows[0]!;
@@ -86,9 +89,20 @@ export async function createReagent(
         cas_number: row.cas_number,
         unit: row.unit,
         quantity: Number(row.quantity),
+        approval_status: row.approval_status,
       },
       ip: meta?.ip,
       userAgent: meta?.userAgent,
+    });
+
+    // D-169: tasdiqlash huquqi bor rollarga (kiritgan o'zi chiqariladi).
+    await createNotification(tx, {
+      companyId,
+      actorId: userId,
+      type: 'reagent_pending_approval',
+      title: NOTIFICATION_TITLES.reagent_pending_approval,
+      message: `${row.name} (${Number(row.quantity)} ${row.unit})`,
+      referenceId: row.id,
     });
 
     return toReagentDto(row);
@@ -222,6 +236,17 @@ export async function listReagents(
     params.push(q.isHazardous);
     conditions.push(`is_hazardous = $${params.length}`);
   }
+  if (q.expiringWithinDays !== undefined) {
+    params.push(q.expiringWithinDays);
+    // Laboratoriya kuni (D-161/D-170) bo'yicha: bugun ≤ muddat ≤ bugun + N
+    conditions.push(
+      `expires_at IS NOT NULL AND expires_at >= (now() AT TIME ZONE 'Asia/Tashkent')::date AND expires_at <= (now() AT TIME ZONE 'Asia/Tashkent')::date + $${params.length}::int`,
+    );
+  }
+  if (q.approvalStatus) {
+    params.push(q.approvalStatus);
+    conditions.push(`approval_status = $${params.length}::reagent_approval_status`);
+  }
 
   const where = conditions.join(' AND ');
   const [list, count] = await Promise.all([
@@ -254,6 +279,16 @@ export async function createTransaction(
     );
     if (!rRows[0]) throw new NotFoundError('Reaktiv topilmadi');
     const reagent = rRows[0];
+
+    // D-169: tasdiqlanmagan (pending/rejected) reaktiv sarfga ishlatilmaydi; kirim, tuzatish va utilizatsiya mumkin.
+    if (input.type === 'out' && reagent.approval_status !== 'approved') {
+      throw new AppError(
+        409,
+        'REAGENT_NOT_APPROVED',
+        'Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi',
+        { approvalStatus: reagent.approval_status },
+      );
+    }
 
     const qtyBefore = Number(reagent.quantity);
     let qtyAfter: number;
@@ -595,4 +630,73 @@ export async function deleteReagentDocument(
   });
 
   await deleteObjectSafely(storage, doc.file_path);
+}
+
+/**
+ * D-169: reaktivni tasdiqlash yoki rad etish (faqat `chemist`/`lab_head`, marshrutda majburlanadi).
+ * - Faqat `pending` holatdan; takroriy qaror — 409 `REAGENT_ALREADY_REVIEWED`.
+ * - O'zi kiritgan reaktivni o'zi tasdiqlay olmaydi (to'rt ko'z) — 403 `SELF_REVIEW_FORBIDDEN`.
+ * - Qator `FOR UPDATE` bilan qulflanadi — parallel ikki qarordan faqat bittasi o'tadi.
+ */
+export async function reviewReagent(
+  companyId: string,
+  userId: string,
+  reagentId: string,
+  decision: 'approve' | 'reject',
+  input: ReviewReagentInput,
+  meta?: { ip?: string; userAgent?: string },
+): Promise<ReagentDto> {
+  return await withTransaction(async (tx) => {
+    const { rows } = await tx.query<ReagentRow>(
+      `SELECT * FROM reagents WHERE id = $1 AND company_id = $2 FOR UPDATE`,
+      [reagentId, companyId],
+    );
+    const reagent = rows[0];
+    if (!reagent) throw new NotFoundError('Reaktiv topilmadi');
+    if (reagent.approval_status !== 'pending') {
+      throw new AppError(409, 'REAGENT_ALREADY_REVIEWED', 'Reaktiv bo‘yicha qaror allaqachon qabul qilingan', {
+        approvalStatus: reagent.approval_status,
+      });
+    }
+    if (reagent.created_by && reagent.created_by === userId) {
+      throw new AppError(403, 'SELF_REVIEW_FORBIDDEN', 'O‘zingiz kiritgan reaktivni o‘zingiz tasdiqlay olmaysiz');
+    }
+
+    const status = decision === 'approve' ? 'approved' : 'rejected';
+    const reason = decision === 'reject' ? (input.reason ?? null) : null;
+    const { rows: updated } = await tx.query<ReagentRow>(
+      `UPDATE reagents
+         SET approval_status = $1::reagent_approval_status, approved_by = $2, approved_at = now(),
+             rejection_reason = $3, updated_at = now()
+       WHERE id = $4 AND company_id = $5
+       RETURNING *`,
+      [status, userId, reason, reagentId, companyId],
+    );
+    const row = updated[0]!;
+
+    await writeAudit(tx, {
+      userId,
+      companyId,
+      action: 'status_change',
+      tableName: 'reagents',
+      recordId: row.id,
+      oldValues: { approval_status: reagent.approval_status },
+      newValues: { approval_status: status, rejection_reason: reason },
+      ip: meta?.ip,
+      userAgent: meta?.userAgent,
+    });
+
+    const type = status === 'approved' ? 'reagent_approved' : 'reagent_rejected';
+    await createNotification(tx, {
+      companyId,
+      actorId: userId,
+      type,
+      title: NOTIFICATION_TITLES[type],
+      message: reason ? `${row.name} — ${reason}` : row.name,
+      referenceId: row.id,
+      context: { createdBy: row.created_by },
+    });
+
+    return toReagentDto(row);
+  });
 }

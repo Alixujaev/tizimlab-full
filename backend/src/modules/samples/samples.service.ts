@@ -2,6 +2,7 @@ import { query, withTransaction } from '../../config/database.js';
 import { ForbiddenError, NotFoundError, ValidationError } from '../../utils/errors.js';
 import { writeAudit } from '../audit/audit.service.js';
 import type { Role } from '../auth/auth.types.js';
+import { notifySampleCreated } from '../notifications/notifications.events.js';
 import { sampleHooks } from './samples.hooks.js';
 import {
   assertCanAssign,
@@ -197,8 +198,10 @@ export async function createSample(
         analysis_start,
         analysis_end,
         notes,
-        created_by
-      ) VALUES ($1, $2, 'pending_assignment', $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        created_by,
+        arrival_date,
+        expiry_date
+      ) VALUES ($1, $2, 'pending_assignment', $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *`,
       [
         companyId,
@@ -214,6 +217,8 @@ export async function createSample(
         input.analysisEnd ?? null,
         input.notes ?? null,
         userId,
+        input.arrivalDate ?? null,
+        input.expiryDate ?? null,
       ],
     );
     const createdSample = insertSampleRes.rows[0]!;
@@ -237,6 +242,9 @@ export async function createSample(
         JSON.stringify({ type: input.type, substance_name: input.substanceName }),
       ],
     );
+
+    // D-171: lab_head'larga "biriktirishni kutmoqda" (ekran + real vaqt + Telegram tugmasi)
+    await notifySampleCreated(client, createdSample, userId);
 
     // Audit yozuvi
     await writeAudit(client, {

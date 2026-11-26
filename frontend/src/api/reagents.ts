@@ -39,6 +39,8 @@ export async function fetchReagents(
   if (params?.isLowStock !== undefined) query.isLowStock = params.isLowStock;
   if (params?.isExpired !== undefined) query.isExpired = params.isExpired;
   if (params?.isHazardous !== undefined) query.isHazardous = params.isHazardous;
+  if (params?.approvalStatus) query.approvalStatus = params.approvalStatus;
+  if (params?.expiringWithinDays) query.expiringWithinDays = params.expiringWithinDays;
 
   const { data } = await apiClient.get<Paginated<ReagentDto>>('/reagents', { params: query });
   return data;
@@ -59,6 +61,19 @@ export async function updateReagent(
   input: UpdateReagentInput,
 ): Promise<ReagentDto> {
   const { data } = await apiClient.put<ApiResponse<ReagentDto>>(`/reagents/${id}`, input);
+  return data.data;
+}
+
+/** D-169: faqat chemist/lab_head (o'zi kiritmagan). */
+export async function approveReagent(id: string): Promise<ReagentDto> {
+  const { data } = await apiClient.post<ApiResponse<ReagentDto>>(`/reagents/${id}/approve`);
+  return data.data;
+}
+
+export async function rejectReagent(id: string, reason: string): Promise<ReagentDto> {
+  const { data } = await apiClient.post<ApiResponse<ReagentDto>>(`/reagents/${id}/reject`, {
+    reason,
+  });
   return data.data;
 }
 

@@ -399,8 +399,9 @@ export async function runETL(
     // 12. Reagents
     for (const r of mapped.reagents) {
       const sql = `
-        INSERT INTO reagents (id, company_id, name, cas_number, unit, quantity, low_stock_threshold, expires_at, supplier, storage_conditions, is_hazardous, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        -- Legacy reaktivlar ishlatilib kelingan — tasdiqlangan deb ko'chiriladi (D-169)
+        INSERT INTO reagents (id, company_id, name, cas_number, unit, quantity, low_stock_threshold, expires_at, supplier, storage_conditions, is_hazardous, created_at, updated_at, approval_status, approved_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'approved', $12)
         ${conflictClause(
           'reagents',
           'ON CONFLICT (id) DO UPDATE SET quantity = EXCLUDED.quantity, updated_at = EXCLUDED.updated_at',

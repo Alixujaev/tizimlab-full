@@ -18,6 +18,10 @@ export function createRegistryController(storage: FileStorage | null) {
       sendPaginated(res, result.data, result.meta);
     },
 
+    async chemists(req: Request, res: Response): Promise<void> {
+      sendOk(res, await registryService.listRegistryChemists(companyOf(req)));
+    },
+
     async getById(req: Request, res: Response): Promise<void> {
       sendOk(res, await registryService.getRegistryItem(companyOf(req), req.params.id as string));
     },

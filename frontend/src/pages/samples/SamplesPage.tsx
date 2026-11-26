@@ -126,6 +126,16 @@ export function SamplesPage() {
       },
     },
     {
+      key: 'expiryDate',
+      header: t('samples.expiryDate', 'Yaroqlilik muddati'),
+      hideOnMobile: true,
+      render: (item) => (
+        <span className="whitespace-nowrap text-xs text-fg-muted tabular-nums">
+          {item.expiryDate ? formatDate(item.expiryDate) : '—'}
+        </span>
+      ),
+    },
+    {
       key: 'createdAt',
       header: t('samples.createdAt', 'Kiritilgan sana'),
       hideOnMobile: true,

@@ -5,14 +5,29 @@ import { StatusPill } from '@/ui';
 /** Reaktiv holati belgilari (ro'yxat va tafsilotda bir xil). */
 export function ReagentStatusBadges({ reagent }: { reagent: ReagentDto }) {
   const { t } = useTranslation();
-  const ok = !reagent.isLowStock && !reagent.isExpired && !reagent.isHazardous;
+  const approval = reagent.approvalStatus ?? 'approved';
+  const ok =
+    approval === 'approved' &&
+    !reagent.isLowStock &&
+    !reagent.isExpired &&
+    !reagent.isExpiringSoon &&
+    !reagent.isHazardous;
   return (
     <div className="flex flex-wrap gap-1">
+      {approval === 'pending' && (
+        <StatusPill tone="warning">{t('reagents.approval.pending', 'Tasdiq kutilmoqda')}</StatusPill>
+      )}
+      {approval === 'rejected' && (
+        <StatusPill tone="danger">{t('reagents.approval.rejected', 'Rad etilgan')}</StatusPill>
+      )}
       {reagent.isLowStock && (
         <StatusPill tone="warning">{t('reagents.lowStock', 'Kam qoldi')}</StatusPill>
       )}
       {reagent.isExpired && (
         <StatusPill tone="danger">{t('reagents.expired', "Muddati o'tgan")}</StatusPill>
+      )}
+      {reagent.isExpiringSoon && (
+        <StatusPill tone="warning">{t('reagents.expiringSoon', 'Muddati yaqin')}</StatusPill>
       )}
       {reagent.isHazardous && (
         <StatusPill tone="accent">{t('reagents.hazardous', 'Xavfli')}</StatusPill>

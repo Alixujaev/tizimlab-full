@@ -8,6 +8,7 @@ import type {
   ListExpensesQuery,
   ListReagentsQuery,
   ListTransactionsQuery,
+  ReviewReagentInput,
   UpdateReagentInput,
 } from './reagents.schemas.js';
 import * as reagentsService from './reagents.service.js';
@@ -91,6 +92,33 @@ export function createReagentsController(storage: FileStorage | null) {
         getMeta(req),
       );
       sendCreated(res, tx);
+    },
+
+    async approve(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      const reagent = await reagentsService.reviewReagent(
+        actor.companyId,
+        actor.userId,
+        req.params.id as string,
+        'approve',
+        {},
+        getMeta(req),
+      );
+      sendOk(res, reagent);
+    },
+
+    async reject(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      const body = req.validated.body as ReviewReagentInput;
+      const reagent = await reagentsService.reviewReagent(
+        actor.companyId,
+        actor.userId,
+        req.params.id as string,
+        'reject',
+        body,
+        getMeta(req),
+      );
+      sendOk(res, reagent);
     },
 
     async listTransactions(req: Request, res: Response): Promise<void> {

@@ -22,6 +22,8 @@ export const registryListQuerySchema = paginationQuerySchema
     approvedFrom: isoDate.optional(),
     approvedTo: isoDate.optional(),
     unfinalizedOnly: z.coerce.boolean().optional(),
+    /** D-172 (TZ §3.5): tahlilni bajargan kimyogar (`samples.assigned_to`). */
+    chemistId: z.string().uuid('Kimyogar ID si to‘g‘ri UUID bo‘lishi kerak').optional(),
   })
   .refine((q) => !q.approvedFrom || !q.approvedTo || q.approvedFrom <= q.approvedTo, {
     path: ['approvedTo'],

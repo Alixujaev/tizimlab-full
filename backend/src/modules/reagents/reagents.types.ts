@@ -1,5 +1,7 @@
+import { toIsoDay } from '../../utils/dates.js';
 export type ReagentTransactionType = 'in' | 'out' | 'adjustment' | 'disposal';
 export type ReagentDocType = 'passport' | 'analysis';
+export type ReagentApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface ReagentRow {
   id: string;
@@ -13,6 +15,11 @@ export interface ReagentRow {
   supplier: string | null;
   storage_conditions: string | null;
   is_hazardous: boolean;
+  approval_status: ReagentApprovalStatus;
+  created_by: string | null;
+  approved_by: string | null;
+  approved_at: string | Date | null;
+  rejection_reason: string | null;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -31,6 +38,14 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-170: muddati 30 kun ichida tugaydi (hali o'tmagan). */
+  isExpiringSoon: boolean;
+  /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
+  approvalStatus: ReagentApprovalStatus;
+  createdBy: string | null;
+  approvedBy: string | null;
+  approvedAt: string | null;
+  rejectionReason: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -101,15 +116,21 @@ export interface ReagentDocumentDto {
   uploadedAt: string;
 }
 
+export const EXPIRING_SOON_DAYS = 30;
+
+function isExpiringSoon(expiresAt: string | Date | null, isExpired: boolean): boolean {
+  if (!expiresAt || isExpired) return false;
+  const limit = new Date();
+  limit.setHours(0, 0, 0, 0);
+  limit.setDate(limit.getDate() + EXPIRING_SOON_DAYS);
+  return new Date(expiresAt) <= limit;
+}
+
 export function toReagentDto(row: ReagentRow): ReagentDto {
   const qty = Number(row.quantity);
   const threshold = Number(row.low_stock_threshold);
   const isExpired = row.expires_at ? new Date(row.expires_at) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
-  const expiresAt = row.expires_at
-    ? row.expires_at instanceof Date
-      ? row.expires_at.toISOString().slice(0, 10)
-      : String(row.expires_at).slice(0, 10)
-    : null;
+  const expiresAt = toIsoDay(row.expires_at);
   return {
     id: row.id,
     companyId: row.company_id,
@@ -124,6 +145,12 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
     isHazardous: row.is_hazardous,
     isLowStock: qty < threshold,
     isExpired,
+    isExpiringSoon: isExpiringSoon(row.expires_at, isExpired),
+    approvalStatus: row.approval_status,
+    createdBy: row.created_by ?? null,
+    approvedBy: row.approved_by ?? null,
+    approvedAt: row.approved_at ? new Date(row.approved_at).toISOString() : null,
+    rejectionReason: row.rejection_reason ?? null,
     createdAt: new Date(row.created_at).toISOString(),
     updatedAt: new Date(row.updated_at).toISOString(),
   };
@@ -145,11 +172,7 @@ export function toReagentTransactionDto(row: ReagentTransactionRow): ReagentTran
     note: row.note,
     protocolId: row.protocol_id,
     analysisPurpose: row.analysis_purpose,
-    recordedDate: row.recorded_date
-      ? (row.recorded_date instanceof Date
-          ? row.recorded_date.toISOString().slice(0, 10)
-          : String(row.recorded_date).slice(0, 10))
-      : new Date().toISOString().slice(0, 10),
+    recordedDate: toIsoDay(row.recorded_date) ?? (toIsoDay(new Date()) as string),
     createdAt: new Date(row.created_at).toISOString(),
   };
 }

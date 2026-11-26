@@ -25,3 +25,19 @@ export const exportProtocolQuerySchema = z.object({
     message: 'Til faqat uz, ru yoki en bo‘lishi mumkin',
   }).default('uz'),
 });
+
+/** D-173: yuborishda xona (sensor) va ixtiyoriy tahlil sanasi — harorat snapshot'i uchun. */
+export const submitProtocolSchema = z
+  .object({
+    sensorConfigId: z.string().uuid('Xona (sensor) ID si to‘g‘ri UUID bo‘lishi kerak').nullable().optional(),
+    analysisDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana formati: YYYY-MM-DD')
+      .refine((v) => {
+        const d = new Date(`${v}T00:00:00Z`);
+        return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+      }, 'Sana mavjud emas')
+      .nullable()
+      .optional(),
+  })
+  .default({});
