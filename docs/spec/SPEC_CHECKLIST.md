@@ -18,7 +18,7 @@
 | R-ROLE-04 | `super_admin` oddiy ish oqimlarida (namuna, protokol va h.k.) qatnashmaydi — kompaniya ichidagi modul endpointlari unga yopiq. | 01-roles §1 | P2 | [x] |
 | R-ROLE-05 | `super_admin` interfeysi butunlay boshqacha: faqat **Kompaniyalar** va **Audit jurnali** sahifalarini ko'radi (`SuperAdminDashboard`). | 01-roles §1 | P2 | [x] |
 | R-ROLE-06 | `super_admin` kompaniyalarni yaratadi/faollashtiradi. | 01-roles §1 | P2 | [x] |
-| R-ROLE-07 | `super_admin` barcha kompaniyalar bo'yicha audit jurnalini ko'radi. | 01-roles §1 | P10 | [ ] |
+| R-ROLE-07 | `super_admin` barcha kompaniyalar bo'yicha audit jurnalini ko'radi. | 01-roles §1 | P10 | [x] |
 | R-ROLE-08 | Namuna yaratish: `kontrolyor` — RUXSAT. | 01-roles §1 | P4 | [x] |
 | R-ROLE-09 | Namuna yaratish: `chemist` — TAQIQ. | 01-roles §1 | P4 | [x] |
 | R-ROLE-10 | Namuna yaratish: `lab_head` — TAQIQ. | 01-roles §1 | P4 | [x] |
@@ -64,31 +64,31 @@
 | R-ROLE-50 | Reaktivlar: `lab_head` — to'liq. | 01-roles §1 | P7 | [x] |
 | R-ROLE-51 | Reaktivlar: `director` — faqat ko'rish. | 01-roles §1 | P7 | [x] |
 | R-ROLE-52 | Reaktivlar: `admin` — to'liq. | 01-roles §1 | P7 | [x] |
-| R-ROLE-53 | Harorat: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P8 | [ ] |
-| R-ROLE-54 | Harorat: `chemist` — faqat ko'rish. | 01-roles §1 | P8 | [ ] |
-| R-ROLE-55 | Harorat: `lab_head` — to'liq. | 01-roles §1 | P8 | [ ] |
-| R-ROLE-56 | Harorat: `director` — faqat ko'rish. | 01-roles §1 | P8 | [ ] |
-| R-ROLE-57 | Harorat: `admin` — to'liq. | 01-roles §1 | P8 | [ ] |
-| R-ROLE-58 | Stabilizatsiya boshlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-59 | Stabilizatsiya boshlash: `chemist` — TAQIQ. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-60 | Stabilizatsiya boshlash: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-61 | Stabilizatsiya boshlash: `director` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-62 | Stabilizatsiya boshlash: `admin` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-63 | Stabilizatsiya natija kiritish: `kontrolyor` — TAQIQ. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-64 | Stabilizatsiya natija kiritish: `chemist` — faqat checkpointga biriktirilgan (`assigned_to`) bo'lsa RUXSAT. | 01-roles §1, DECISIONS.md D-53 | P9 | [ ] |
-| R-ROLE-65 | Stabilizatsiya natija kiritish: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-66 | Stabilizatsiya natija kiritish: `director` — RUXSAT. | 01-roles §1 | P9 | [ ] |
-| R-ROLE-67 | Stabilizatsiya natija kiritish: `admin` — RUXSAT. | 01-roles §1 | P9 | [ ] |
+| R-ROLE-53 | Harorat: `kontrolyor` — faqat ko'rish. | 01-roles §1 | P8 | [x] |
+| R-ROLE-54 | Harorat: `chemist` — faqat ko'rish. | 01-roles §1 | P8 | [x] |
+| R-ROLE-55 | Harorat: `lab_head` — to'liq. | 01-roles §1 | P8 | [x] |
+| R-ROLE-56 | Harorat: `director` — faqat ko'rish. | 01-roles §1 | P8 | [x] |
+| R-ROLE-57 | Harorat: `admin` — to'liq. | 01-roles §1 | P8 | [x] |
+| R-ROLE-58 | Stabilizatsiya boshlash: `kontrolyor` — TAQIQ. | 01-roles §1 | P9 | [x] |
+| R-ROLE-59 | Stabilizatsiya boshlash: `chemist` — TAQIQ. | 01-roles §1 | P9 | [x] |
+| R-ROLE-60 | Stabilizatsiya boshlash: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [x] |
+| R-ROLE-61 | Stabilizatsiya boshlash: `director` — RUXSAT. | 01-roles §1 | P9 | [x] |
+| R-ROLE-62 | Stabilizatsiya boshlash: `admin` — RUXSAT. | 01-roles §1 | P9 | [x] |
+| R-ROLE-63 | Stabilizatsiya natija kiritish: `kontrolyor` — TAQIQ. | 01-roles §1 | P9 | [x] |
+| R-ROLE-64 | Stabilizatsiya natija kiritish: `chemist` — faqat checkpointga biriktirilgan (`assigned_to`) bo'lsa RUXSAT. | 01-roles §1, DECISIONS.md D-53 | P9 | [x] |
+| R-ROLE-65 | Stabilizatsiya natija kiritish: `lab_head` — RUXSAT. | 01-roles §1 | P9 | [x] |
+| R-ROLE-66 | Stabilizatsiya natija kiritish: `director` — RUXSAT. | 01-roles §1 | P9 | [x] |
+| R-ROLE-67 | Stabilizatsiya natija kiritish: `admin` — RUXSAT. | 01-roles §1 | P9 | [x] |
 | R-ROLE-68 | Foydalanuvchilar boshqaruvi: `kontrolyor` — TAQIQ. | 01-roles §1 | P2 | [x] |
 | R-ROLE-69 | Foydalanuvchilar boshqaruvi: `chemist` — TAQIQ. | 01-roles §1 | P2 | [x] |
 | R-ROLE-70 | Foydalanuvchilar boshqaruvi: `lab_head` — RUXSAT, faqat `kontrolyor`/`chemist` rollaridagi foydalanuvchilar uchun. | 01-roles §1, DECISIONS.md D-16 | P2 | [x] |
 | R-ROLE-71 | Foydalanuvchilar boshqaruvi: `director` — faqat ko'rish (yaratish/tahrirlash/parol tiklash TAQIQ). | 01-roles §1 | P2 | [x] |
 | R-ROLE-72 | Foydalanuvchilar boshqaruvi: `admin` — to'liq. | 01-roles §1 | P2 | [x] |
-| R-ROLE-73 | Faoliyat jurnali: `kontrolyor` — TAQIQ. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-74 | Faoliyat jurnali: `chemist` — TAQIQ. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-75 | Faoliyat jurnali: `lab_head` — RUXSAT. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-76 | Faoliyat jurnali: `director` — RUXSAT. | 01-roles §1 | P10 | [ ] |
-| R-ROLE-77 | Faoliyat jurnali: `admin` — RUXSAT. | 01-roles §1 | P10 | [ ] |
+| R-ROLE-73 | Faoliyat jurnali: `kontrolyor` — TAQIQ. | 01-roles §1 | P10 | [x] |
+| R-ROLE-74 | Faoliyat jurnali: `chemist` — TAQIQ. | 01-roles §1 | P10 | [x] |
+| R-ROLE-75 | Faoliyat jurnali: `lab_head` — RUXSAT. | 01-roles §1 | P10 | [x] |
+| R-ROLE-76 | Faoliyat jurnali: `director` — RUXSAT. | 01-roles §1 | P10 | [x] |
+| R-ROLE-77 | Faoliyat jurnali: `admin` — RUXSAT. | 01-roles §1 | P10 | [x] |
 | R-ROLE-78 | Rol ruxsatlaridan tashqari `user_permissions` orqali individual ruxsat berish mumkin, `requirePermission(resource, action)` bilan tekshiriladi. | 01-roles §1 | P2 | [x] |
 | R-ROLE-79 | Matritsadagi har bir TAQIQ backend'da (403) majburlanadi — faqat UI'da yashirish yetarli emas. | 01-roles §1, 16 §16 | P12 | [ ] |
 
@@ -207,7 +207,7 @@
 | R-REG-12 | `/protocols/:id` yo'li avtomatik `/registry` ga yo'naltiriladi. | 03-samples §3 | P4 | [x] |
 | R-REG-13 | Alohida "Protokollar ro'yxati" sahifasi yo'q. | 03-samples §3, 18 §18 | P4 | [x] |
 | R-REG-14 | Direktor finalizatsiyasi namunani reyestrdan chiqarmaydi va namuna statusini o'zgartirmaydi. | DECISIONS.md D-07 | P5 | [x] |
-| R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [~] |
+| R-REG-15 | Faol stabilizatsiyasi bor namunani reyestrdan o'chirish rad etiladi. | DECISIONS.md D-43 | P9 | [x] |
 | R-REG-16 | `/registry` da "yakunlanmagan" (`approved`, `finalized` emas) filtri. | DECISIONS.md D-50 | P5 | [x] |
 | R-REG-17 | `/registry/:id` da direktor uchun protokolni "Yakunlash" tugmasi; alohida sahifa yo'q. | DECISIONS.md D-50 | P5 | [x] |
 
@@ -326,66 +326,66 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-TEMP-01 | Har bir sensor uchun min/max chegara `sensor_configs` da saqlanadi. | 07-temperature §7 | P8 | [ ] |
-| R-TEMP-02 | Harorat ko'rsatkichi `temperature_readings` ga yoziladi. | 07-temperature §7, 16 §16 | P8 | [ ] |
-| R-TEMP-03 | Namlik ko'rsatkichi ham yoziladi. | 07-temperature §7 | P8 | [ ] |
-| R-TEMP-04 | Qo'lda kiritilgan o'qish `is_manual = true` bilan belgilanadi. | 07-temperature §7, DECISIONS.md D-03 | P8 | [ ] |
-| R-TEMP-05 | Chegaradan chiqqan o'qishda `temperature_alerts` yozuvi yaratiladi. | 07-temperature §7 | P8 | [ ] |
-| R-TEMP-06 | Chegara ichidagi o'qishda alert yaratilmaydi. | 07-temperature §7 | P8 | [ ] |
-| R-TEMP-07 | Dashboardda "Harorat alertlari" ko'rsatiladi. | 07-temperature §7 | P8 | [ ] |
-| R-TEMP-08 | Chegaradan chiqqanda `temperature_alert` xabarnomasi yaratiladi. | 09-notifications §9 | P8 | [ ] |
-| R-TEMP-09 | `temperature_alert` kompaniyaning barcha `lab_head` va `admin` foydalanuvchilariga yuboriladi. | DECISIONS.md D-04 | P8 | [ ] |
-| R-TEMP-10 | Sensor avtomatik ingest endpointi / API key bu versiyada YO'Q. | DECISIONS.md D-03 | P8 | [ ] |
-| R-TEMP-11 | Schema keyinchalik sensor ingest qo'shishga tayyor (o'qishda manba/`is_manual` farqlanadi). | DECISIONS.md D-03 | P8 | [ ] |
-| R-TEMP-12 | Harorat sahifasi (`temperature/`) asosiy Sidebar'da bor. | 16-architecture §16 | P8 | [ ] |
-| R-TEMP-13 | Sensor maydonlari: `sensor_id` (identifikator), `location_name` (joyi, xona). | DECISIONS.md D-83 | P8 | [ ] |
-| R-TEMP-14 | Harorat o'qishini faqat `lab_head`/`admin` kiritadi; "Ko'rish" rollari — 403. | DECISIONS.md D-52 | P8 | [ ] |
-| R-TEMP-15 | Namlik uchun ixtiyoriy alohida min/max chegara. | DECISIONS.md D-52 | P8 | [ ] |
-| R-TEMP-16 | Chegaradan chiqqan har o'qish uchun alert yaratiladi; alertni yopish/"ko'rildi" belgisi yo'q. | DECISIONS.md D-52 | P8 | [ ] |
-| R-TEMP-17 | `sensor_id` kompaniya ichida unikal (`UNIQUE(company_id, sensor_id)`): ikki kompaniya bir xil `sensor_id` ishlata oladi, bitta kompaniyada takror rad etiladi. | DECISIONS.md D-78 | P8 | [ ] |
-| R-TEMP-18 | `temperature_readings` va `temperature_alerts` sensorga `sensor_config_id` (uuid FK) orqali bog'lanadi. | DECISIONS.md D-78 | P8 | [ ] |
+| R-TEMP-01 | Har bir sensor uchun min/max chegara `sensor_configs` da saqlanadi. | 07-temperature §7 | P8 | [x] |
+| R-TEMP-02 | Harorat ko'rsatkichi `temperature_readings` ga yoziladi. | 07-temperature §7, 16 §16 | P8 | [x] |
+| R-TEMP-03 | Namlik ko'rsatkichi ham yoziladi. | 07-temperature §7 | P8 | [x] |
+| R-TEMP-04 | Qo'lda kiritilgan o'qish `is_manual = true` bilan belgilanadi. | 07-temperature §7, DECISIONS.md D-03 | P8 | [x] |
+| R-TEMP-05 | Chegaradan chiqqan o'qishda `temperature_alerts` yozuvi yaratiladi. | 07-temperature §7 | P8 | [x] |
+| R-TEMP-06 | Chegara ichidagi o'qishda alert yaratilmaydi. | 07-temperature §7 | P8 | [x] |
+| R-TEMP-07 | Dashboardda "Harorat alertlari" ko'rsatiladi. | 07-temperature §7 | P8 | [~] |
+| R-TEMP-08 | Chegaradan chiqqanda `temperature_alert` xabarnomasi yaratiladi. | 09-notifications §9 | P8 | [x] |
+| R-TEMP-09 | `temperature_alert` kompaniyaning barcha `lab_head` va `admin` foydalanuvchilariga yuboriladi. | DECISIONS.md D-04 | P8 | [x] |
+| R-TEMP-10 | Sensor avtomatik ingest endpointi (`X-Sensor-Key`, sha256 xeshlangan kalit, rate-limit) mavjud (D-03 o'rniga D-167). | DECISIONS.md D-167, D-141 | P8 | [x] |
+| R-TEMP-11 | Schema keyinchalik sensor ingest qo'shishga tayyor (o'qishda manba/`is_manual` farqlanadi). | DECISIONS.md D-03 | P8 | [x] |
+| R-TEMP-12 | Harorat sahifasi (`temperature/`) asosiy Sidebar'da bor. | 16-architecture §16 | P8 | [x] |
+| R-TEMP-13 | Sensor maydonlari: `sensor_id` (identifikator), `location_name` (joyi, xona). | DECISIONS.md D-83 | P8 | [x] |
+| R-TEMP-14 | Harorat o'qishini faqat `lab_head`/`admin` kiritadi; "Ko'rish" rollari — 403. | DECISIONS.md D-52 | P8 | [x] |
+| R-TEMP-15 | Namlik uchun ixtiyoriy alohida min/max chegara. | DECISIONS.md D-52 | P8 | [x] |
+| R-TEMP-16 | Chegaradan chiqqan o'qish uchun alert yaratiladi (15 daqiqalik cooldown, D-138); `lab_head`/`admin` alertni yopadi (D-139). | DECISIONS.md D-52, D-138, D-139 | P8 | [x] |
+| R-TEMP-17 | `sensor_id` kompaniya ichida unikal (`UNIQUE(company_id, sensor_id)`): ikki kompaniya bir xil `sensor_id` ishlata oladi, bitta kompaniyada takror rad etiladi. | DECISIONS.md D-78 | P8 | [x] |
+| R-TEMP-18 | `temperature_readings` va `temperature_alerts` sensorga `sensor_config_id` (uuid FK) orqali bog'lanadi. | DECISIONS.md D-78 | P8 | [x] |
 
 ## STAB — Stabilizatsiya
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-STAB-01 | Stabilizatsiya faqat `status = approved` namunalar uchun boshlanadi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-02 | `approved` bo'lmagan namunada boshlash rad etiladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-03 | Namuna turi cheklanmagan — barcha turlar uchun ruxsat. | 08-stability §8, 18 §18 | P9 | [ ] |
-| R-STAB-04 | Yangi study `active` holatida yaratiladi (`stability_studies`). | 08-stability §8 | P9 | [ ] |
-| R-STAB-05 | Checkpointlar qo'lda, ixtiyoriy nom (masalan T9, T18, T24) va sana bilan kiritiladi (`stability_checkpoints`). | 08-stability §8 | P9 | [ ] |
-| R-STAB-06 | Checkpointlar qattiq T3/T6/T12 bilan cheklanmagan. | 08-stability §8 | P9 | [ ] |
-| R-STAB-07 | Bir study ichida bir xil nomli ikkita checkpoint bo'lishi mumkin emas (DB unique + validatsiya). | 08-stability §8 | P9 | [ ] |
-| R-STAB-08 | Turli study'larda bir xil checkpoint nomi ruxsat etiladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-09 | Checkpointlarni `lab_head`, `director`, `admin` qo'shadi/o'zgartiradi/o'chiradi. | 08-stability §8, DECISIONS.md D-54 | P9 | [ ] |
-| R-STAB-10 | Checkpoint statusi `pending` mavjud; yangi checkpoint `pending` da yaratiladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-11 | Checkpoint statusi `in_progress` mavjud. | 08-stability §8 | P9 | [ ] |
-| R-STAB-12 | Checkpoint statusi `overdue` mavjud. | 08-stability §8 | P9 | [ ] |
-| R-STAB-13 | Checkpoint statusi `completed` mavjud. | 08-stability §8 | P9 | [ ] |
-| R-STAB-14 | O'tish `pending → in_progress`: birinchi natija kiritilganda avtomatik. | 08-stability §8, DECISIONS.md D-55 | P9 | [ ] |
-| R-STAB-15 | O'tish `→ overdue`: faqat fon jarayoni muddat o'tganda belgilaydi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-16 | O'tish `→ completed` (`overdue` checkpoint ham yakunlanishi mumkin). | 08-stability §8 | P9 | [ ] |
-| R-STAB-17 | `completed` checkpoint `overdue` deb belgilanmaydi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-18 | Har checkpoint uchun bir nechta natija (`stability_results`): `parameter`, `initial_value` (T0), `current_value`, `specification`, `result_status`. | 08-stability §8 | P9 | [ ] |
-| R-STAB-19 | `result_status` faqat `pass`/`warning`/`fail`, foydalanuvchi qo'lda tanlaydi. | 08-stability §8, DECISIONS.md D-57 | P9 | [ ] |
-| R-STAB-20 | 5 ta standart parametr oldindan to'ldiriladi: Tavsif, Assay, Namlik miqdori, Qo'shimcha aralashmalar, Eruvchanlik. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
-| R-STAB-21 | Qo'shimcha parametr qo'shish mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
-| R-STAB-22 | Parametrni (standartlarini ham) olib tashlash mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [ ] |
-| R-STAB-23 | Fon jarayoni `stabilityAlertJob` har 6 soatda ishga tushadi. | 08-stability §8, 16 §16 | P9 | [ ] |
-| R-STAB-24 | Fon jarayoni muddati o'tgan checkpointlarni `overdue` belgilaydi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-25 | `overdue` belgilanganda `stability_overdue` xabarnomasi yuboriladi (qabul qiluvchilar — D-13; takrorlanish — Q-46). | 08-stability §8, 09 §9, DECISIONS.md D-13 | P9 | [ ] |
-| R-STAB-26 | 14 kun ichida muddati yetadigan checkpointlar uchun `stability_due_soon` xabarnomasi yuboriladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-27 | 14 kundan uzoq muddatli checkpoint uchun `stability_due_soon` yuborilmaydi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-28 | `stability_due_soon` bitta checkpoint uchun 24 soatda ko'pi bilan bir marta yuboriladi. | 08-stability §8 | P9 | [ ] |
-| R-STAB-29 | Stabilizatsiya sahifalari asosiy Sidebar'da yo'q — namuna sahifasi va ichki havolalar orqali ochiladi. | 16-architecture §16 | P9 | [ ] |
-| R-STAB-30 | Checkpointga ixtiyoriy biriktirilgan kimyogar (`assigned_to`); study'da alohida mas'ul maydoni yo'q. | DECISIONS.md D-53 | P9 | [ ] |
-| R-STAB-31 | Natijasi bor checkpointni o'chirib bo'lmaydi. | DECISIONS.md D-54 | P9 | [ ] |
-| R-STAB-32 | Checkpoint `completed` — barcha parametrlar to'ldirilgach "Yakunlash" tugmasi bilan; to'ldirilmagan bo'lsa rad etiladi. | DECISIONS.md D-55 | P9 | [ ] |
-| R-STAB-33 | `pending` checkpoint ham muddat o'tganda `overdue` bo'ladi. | DECISIONS.md D-55 | P9 | [ ] |
-| R-STAB-34 | Study statuslari `active` / `completed`; barcha checkpointlar `completed` bo'lganda study avtomatik `completed`; bekor qilish yo'q. | DECISIONS.md D-56, DECISIONS.md D-81 | P9 | [ ] |
-| R-STAB-35 | `initial_value` (T0) study yaratishda parametr bo'yicha qo'lda kiritiladi va checkpointlarga ko'chadi. | DECISIONS.md D-57 | P9 | [ ] |
-| R-STAB-36 | Bitta namunada bir vaqtda ko'pi bilan bitta `active` study; ikkinchisi rad etiladi. | DECISIONS.md D-58 | P9 | [ ] |
-| R-STAB-37 | Study yaratilganda har checkpoint uchun parametr qatorlari (`stability_results`) oldindan yaratiladi: `initial_value` = T0, `current_value` NULL. | DECISIONS.md D-77 | P9 | [ ] |
+| R-STAB-01 | Stabilizatsiya faqat `status = approved` namunalar uchun boshlanadi. | 08-stability §8 | P9 | [x] |
+| R-STAB-02 | `approved` bo'lmagan namunada boshlash rad etiladi. | 08-stability §8 | P9 | [x] |
+| R-STAB-03 | Namuna turi cheklanmagan — barcha turlar uchun ruxsat. | 08-stability §8, 18 §18 | P9 | [x] |
+| R-STAB-04 | Yangi study `active` holatida yaratiladi (`stability_studies`). | 08-stability §8 | P9 | [x] |
+| R-STAB-05 | Checkpointlar qo'lda, ixtiyoriy nom (masalan T9, T18, T24) va sana bilan kiritiladi (`stability_checkpoints`). | 08-stability §8 | P9 | [x] |
+| R-STAB-06 | Checkpointlar qattiq T3/T6/T12 bilan cheklanmagan. | 08-stability §8 | P9 | [x] |
+| R-STAB-07 | Bir study ichida bir xil nomli ikkita checkpoint bo'lishi mumkin emas (DB unique + validatsiya). | 08-stability §8 | P9 | [x] |
+| R-STAB-08 | Turli study'larda bir xil checkpoint nomi ruxsat etiladi. | 08-stability §8 | P9 | [~] |
+| R-STAB-09 | Checkpointlarni `lab_head`, `director`, `admin` qo'shadi/o'zgartiradi/o'chiradi. | 08-stability §8, DECISIONS.md D-54 | P9 | [x] |
+| R-STAB-10 | Checkpoint statusi `pending` mavjud; yangi checkpoint `pending` da yaratiladi. | 08-stability §8 | P9 | [x] |
+| R-STAB-11 | Checkpoint statusi `in_progress` mavjud. | 08-stability §8 | P9 | [x] |
+| R-STAB-12 | Checkpoint statusi `overdue` mavjud. | 08-stability §8 | P9 | [x] |
+| R-STAB-13 | Checkpoint statusi `completed` mavjud. | 08-stability §8 | P9 | [x] |
+| R-STAB-14 | O'tish `pending → in_progress`: birinchi natija kiritilganda avtomatik. | 08-stability §8, DECISIONS.md D-55 | P9 | [x] |
+| R-STAB-15 | O'tish `→ overdue`: faqat fon jarayoni muddat o'tganda belgilaydi. | 08-stability §8 | P9 | [x] |
+| R-STAB-16 | O'tish `→ completed` (`overdue` checkpoint ham yakunlanishi mumkin). | 08-stability §8 | P9 | [~] |
+| R-STAB-17 | `completed` checkpoint `overdue` deb belgilanmaydi. | 08-stability §8 | P9 | [x] |
+| R-STAB-18 | Har checkpoint uchun bir nechta natija (`stability_results`): `parameter`, `initial_value` (T0), `current_value`, `specification`, `result_status`. | 08-stability §8 | P9 | [x] |
+| R-STAB-19 | `result_status` faqat `pass`/`warning`/`fail`, foydalanuvchi qo'lda tanlaydi. | 08-stability §8, DECISIONS.md D-57 | P9 | [x] |
+| R-STAB-20 | 5 ta standart parametr oldindan to'ldiriladi: Tavsif, Assay, Namlik miqdori, Qo'shimcha aralashmalar, Eruvchanlik. | 08-stability §8, DECISIONS.md D-05 | P9 | [x] |
+| R-STAB-21 | Qo'shimcha parametr qo'shish mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [~] |
+| R-STAB-22 | Parametrni (standartlarini ham) olib tashlash mumkin. | 08-stability §8, DECISIONS.md D-05 | P9 | [~] |
+| R-STAB-23 | Fon jarayoni `stabilityAlertJob` har 6 soatda ishga tushadi. | 08-stability §8, 16 §16 | P9 | [x] |
+| R-STAB-24 | Fon jarayoni muddati o'tgan checkpointlarni `overdue` belgilaydi. | 08-stability §8 | P9 | [x] |
+| R-STAB-25 | `overdue` belgilanganda `stability_overdue` xabarnomasi yuboriladi (qabul qiluvchilar — D-13; takrorlanish — Q-46). | 08-stability §8, 09 §9, DECISIONS.md D-13 | P9 | [x] |
+| R-STAB-26 | 14 kun ichida muddati yetadigan checkpointlar uchun `stability_due_soon` xabarnomasi yuboriladi. | 08-stability §8 | P9 | [x] |
+| R-STAB-27 | 14 kundan uzoq muddatli checkpoint uchun `stability_due_soon` yuborilmaydi. | 08-stability §8 | P9 | [x] |
+| R-STAB-28 | `stability_due_soon` bitta checkpoint uchun 24 soatda ko'pi bilan bir marta yuboriladi. | 08-stability §8 | P9 | [x] |
+| R-STAB-29 | Stabilizatsiya sahifalari asosiy Sidebar'da yo'q — namuna sahifasi va ichki havolalar orqali ochiladi. | 16-architecture §16 | P9 | [x] |
+| R-STAB-30 | Checkpointga ixtiyoriy biriktirilgan kimyogar (`assigned_to`); study'da alohida mas'ul maydoni yo'q. | DECISIONS.md D-53 | P9 | [x] |
+| R-STAB-31 | Natijasi bor checkpointni o'chirib bo'lmaydi. | DECISIONS.md D-54 | P9 | [x] |
+| R-STAB-32 | Checkpoint `completed` — barcha parametrlar to'ldirilgach "Yakunlash" tugmasi bilan; to'ldirilmagan bo'lsa rad etiladi. | DECISIONS.md D-55 | P9 | [x] |
+| R-STAB-33 | `pending` checkpoint ham muddat o'tganda `overdue` bo'ladi. | DECISIONS.md D-55 | P9 | [x] |
+| R-STAB-34 | Study statuslari `active` / `completed`; barcha checkpointlar `completed` bo'lganda study avtomatik `completed`; bekor qilish yo'q. | DECISIONS.md D-56, DECISIONS.md D-81 | P9 | [x] |
+| R-STAB-35 | `initial_value` (T0) study yaratishda parametr bo'yicha qo'lda kiritiladi va checkpointlarga ko'chadi. | DECISIONS.md D-57 | P9 | [~] |
+| R-STAB-36 | Bitta namunada bir vaqtda ko'pi bilan bitta `active` study; ikkinchisi rad etiladi. | DECISIONS.md D-58 | P9 | [x] |
+| R-STAB-37 | Study yaratilganda har checkpoint uchun parametr qatorlari (`stability_results`) oldindan yaratiladi: `initial_value` = T0, `current_value` NULL. | DECISIONS.md D-77 | P9 | [~] |
 
 ## NOTIF — Xabarnomalar
 
@@ -397,10 +397,10 @@
 | R-NOTIF-04 | Xabarnoma turi `protocol_submitted` — kimyogar protokolni yuborganda; kompaniyaning barcha `lab_head`'lariga. | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
 | R-NOTIF-05 | Xabarnoma turi `protocol_approved` — protokol tasdiqlanganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
 | R-NOTIF-06 | Xabarnoma turi `protocol_rejected` — protokol rad etilganda; namunaga biriktirilgan kimyogarga (`sample.assigned_to`). | 09-notifications §9, DECISIONS.md D-13 | P6 | [x] |
-| R-NOTIF-07 | Xabarnoma turi `temperature_alert` — harorat chegaradan chiqqanda. | 09-notifications §9 | P8 | [ ] |
-| R-NOTIF-08 | Xabarnoma turi `low_stock` — reaktiv zaxirasi kam qolganda. | 09-notifications §9 | P7 | [ ] |
-| R-NOTIF-09 | Xabarnoma turi `stability_due_soon` — checkpoint muddati yaqinlashganda. | 09-notifications §9 | P9 | [ ] |
-| R-NOTIF-10 | Xabarnoma turi `stability_overdue` — checkpoint muddati o'tganda. | 09-notifications §9 | P9 | [ ] |
+| R-NOTIF-07 | Xabarnoma turi `temperature_alert` — harorat chegaradan chiqqanda. | 09-notifications §9 | P8 | [x] |
+| R-NOTIF-08 | Xabarnoma turi `low_stock` — reaktiv zaxirasi kam qolganda. | 09-notifications §9 | P7 | [x] |
+| R-NOTIF-09 | Xabarnoma turi `stability_due_soon` — checkpoint muddati yaqinlashganda. | 09-notifications §9 | P9 | [x] |
+| R-NOTIF-10 | Xabarnoma turi `stability_overdue` — checkpoint muddati o'tganda. | 09-notifications §9 | P9 | [x] |
 | R-NOTIF-11 | Ilova faqat §9 dagi xabarnoma turlarini yaratadi; `notification_type` enum'idagi legacy `sample_created`, `sample_overdue`, `general` faqat ko'chirilgan yozuvlar uchun. | 09-notifications §9, DECISIONS.md D-13, DECISIONS.md D-70 | P6 | [x] |
 | R-NOTIF-12 | Kanal 1: xabarnoma `notifications` jadvaliga yoziladi. | 09-notifications §9 | P6 | [x] |
 | R-NOTIF-13 | Bazadagi xabarnomalar yuqori o'ng burchakdagi bell ikonasi (`NotificationBell`) orqali ko'rinadi. | 09-notifications §9, 16 §16 | P6 | [x] |
@@ -447,16 +447,16 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-AUDIT-01 | Audit jurnali sahifasi `/logs` — faqat `super_admin`. | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-02 | Audit jurnali butun platforma, barcha kompaniyalar bo'yicha tizim hodisalarini ko'rsatadi. | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-03 | Faoliyat jurnali sahifasi `/activity` — `lab_head`, `director`, `admin`. | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-04 | Faoliyat jurnali faqat o'z kompaniyasi ichidagi foydalanuvchi harakatlarini ko'rsatadi. | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-05 | `super_admin` `/activity` ga, kompaniya rollari `/logs` ga kira olmaydi. | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-06 | Ikkala jurnal backend'da bitta `audit` modulida: `audit.router.ts` (global), `activity.router.ts` (kompaniya bo'yicha). | 11-audit §11 | P10 | [ ] |
-| R-AUDIT-07 | Audit yozuvlari bitta `audit_log` jadvalida: login/logout/muvaffaqiyatsiz login, CRUD, status o'tishlari, fayl yuklash/o'chirish, ruxsat o'zgarishlari. | 16-architecture §16, DECISIONS.md D-60 | P10 | [~] |
-| R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [ ] |
-| R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [~] |
-| R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [ ] |
+| R-AUDIT-01 | Audit jurnali sahifasi `/logs` — faqat `super_admin`. | 11-audit §11 | P10 | [x] |
+| R-AUDIT-02 | Audit jurnali butun platforma, barcha kompaniyalar bo'yicha tizim hodisalarini ko'rsatadi. | 11-audit §11 | P10 | [x] |
+| R-AUDIT-03 | Faoliyat jurnali sahifasi `/activity` — `lab_head`, `director`, `admin`. | 11-audit §11 | P10 | [x] |
+| R-AUDIT-04 | Faoliyat jurnali faqat o'z kompaniyasi ichidagi foydalanuvchi harakatlarini ko'rsatadi. | 11-audit §11 | P10 | [x] |
+| R-AUDIT-05 | `super_admin` `/activity` ga, kompaniya rollari `/logs` ga kira olmaydi. | 11-audit §11 | P10 | [x] |
+| R-AUDIT-06 | Ikkala jurnal backend'da bitta `audit` modulida: `audit.router.ts` (global), `activity.router.ts` (kompaniya bo'yicha). | 11-audit §11 | P10 | [x] |
+| R-AUDIT-07 | Audit yozuvlari bitta `audit_log` jadvalida: login/logout/muvaffaqiyatsiz login, CRUD, status o'tishlari, fayl yuklash/o'chirish, ruxsat o'zgarishlari. | 16-architecture §16, DECISIONS.md D-60 | P10 | [x] |
+| R-AUDIT-08 | Har bir namuna va protokol uchun aniq tarix — kim, qachon, nima qildi. | 00-overview §0 | P10 | [~] |
+| R-AUDIT-09 | Audit va faoliyat jurnallari bitta `audit_log` jadvalidan (faoliyat — kompaniya bo'yicha filtrlangan). | DECISIONS.md D-60 | P10 | [x] |
+| R-AUDIT-10 | Jurnal filtrlari: sana, foydalanuvchi, harakat; eksport yo'q; yozuvlar muddatsiz saqlanadi. | DECISIONS.md D-60 | P10 | [~] |
 | R-AUDIT-11 | Audit yozuvida sezgir ustunlar (`password_hash`, token/token hash'lari) saqlanmaydi — yozishdan oldin olib tashlanadi. | DECISIONS.md D-62, D-64 | P10 | [x] |
 | R-AUDIT-12 | Audit yozuvi ilova (servis) qatlamida yoziladi; audit uchun DB trigger yo'q. | DECISIONS.md D-64 | P10 | [x] |
 | R-AUDIT-13 | Audit yozuvi o'zgartirish bilan bitta tranzaksiyada yoziladi — o'zgarish rollback bo'lsa audit yozuvi ham qolmaydi. | DECISIONS.md D-64 | P10 | [x] |
@@ -579,7 +579,7 @@
 | R-ARCH-14 | Har modul naqshi: `*.router.ts` (Router + Swagger annotatsiya), `*.controller.ts`, `*.service.ts` (SQL + logika + domen xato klassi), `*.schemas.ts` (Zod). | 16-architecture §16 | P1 | [~] |
 | R-ARCH-15 | Backend modullari: auth, admin, companies, substances, protocols, samples, reagents, temperature, stability, notifications, dashboard, files, audit, telegram. | 16-architecture §16 | P1 | [~] |
 | R-ARCH-16 | `realtime/socket.ts` — Socket.IO server bir xil HTTP server ustida, JWT handshake, `user:<id>` xonalar. | 16-architecture §16 | P6 | [x] |
-| R-ARCH-17 | `jobs/stabilityAlertJob.ts` — 6 soatlik fon jarayoni. | 16-architecture §16 | P9 | [ ] |
+| R-ARCH-17 | `jobs/stabilityAlertJob.ts` — 6 soatlik fon jarayoni. | 16-architecture §16 | P9 | [~] |
 | R-ARCH-18 | `utils/logger.ts` — Winston logger. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-19 | Migratsiyalar `db/migrations/` da raqamlangan SQL fayllar, `npm run migrate` bilan qo'llaniladi. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-20 | Qo'llangan migratsiyalar `schema_migrations` jadvalida kuzatiladi; qayta qo'llanmaydi. | 16-architecture §16 | P1 | [x] |
@@ -588,34 +588,34 @@
 | R-ARCH-23 | Jadval `users` (`company_id`, Telegram bog'lanish maydonlari bilan). | 16-architecture §16 | P2 | [x] |
 | R-ARCH-24 | Jadval `sessions` (refresh token hash). | 16-architecture §16 | P2 | [x] |
 | R-ARCH-25 | Jadval `user_permissions`. | 16-architecture §16 | P2 | [x] |
-| R-ARCH-26 | Jadval `telegram_link_tokens`. | 16-architecture §16 | P11 | [ ] |
+| R-ARCH-26 | Jadval `telegram_link_tokens`. | 16-architecture §16 | P11 | [x] |
 | R-ARCH-27 | Jadval `substances`. | 16-architecture §16 | P3 | [x] |
 | R-ARCH-28 | Jadval `substance_parameters`. | 16-architecture §16 | P3 | [x] |
 | R-ARCH-29 | Jadval `protocols`. | 16-architecture §16 | P5 | [x] |
 | R-ARCH-30 | Jadval `protocol_signatures`. | 16-architecture §16 | P5 | [x] |
-| R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [ ] |
+| R-ARCH-31 | Jadval `protocol_files`. | 04-protocols §4 | P5 | [x] |
 | R-ARCH-32 | Jadval `samples`. | 16-architecture §16 | P4 | [x] |
 | R-ARCH-33 | Jadval `sample_tracking`. | 16-architecture §16 | P4 | [x] |
 | R-ARCH-34 | Jadval `reagents`. | 16-architecture §16 | P7 | [x] |
 | R-ARCH-35 | Jadval `reagent_transactions`. | 16-architecture §16 | P7 | [x] |
 | R-ARCH-36 | Jadval `reagent_documents`. | 16-architecture §16 | P7 | [x] |
-| R-ARCH-37 | Jadval `sensor_configs`. | 16-architecture §16 | P8 | [ ] |
-| R-ARCH-38 | Jadval `temperature_readings`. | 16-architecture §16 | P8 | [ ] |
-| R-ARCH-39 | Jadval `temperature_alerts`. | 16-architecture §16 | P8 | [ ] |
-| R-ARCH-40 | Jadval `stability_studies`. | 16-architecture §16 | P9 | [ ] |
-| R-ARCH-41 | Jadval `stability_checkpoints`. | 16-architecture §16 | P9 | [ ] |
-| R-ARCH-42 | Jadval `stability_results`. | 16-architecture §16 | P9 | [ ] |
+| R-ARCH-37 | Jadval `sensor_configs`. | 16-architecture §16 | P8 | [x] |
+| R-ARCH-38 | Jadval `temperature_readings`. | 16-architecture §16 | P8 | [x] |
+| R-ARCH-39 | Jadval `temperature_alerts`. | 16-architecture §16 | P8 | [x] |
+| R-ARCH-40 | Jadval `stability_studies`. | 16-architecture §16 | P9 | [x] |
+| R-ARCH-41 | Jadval `stability_checkpoints`. | 16-architecture §16 | P9 | [x] |
+| R-ARCH-42 | Jadval `stability_results`. | 16-architecture §16 | P9 | [x] |
 | R-ARCH-43 | Jadval `notifications`. | 16-architecture §16 | P6 | [x] |
-| R-ARCH-44 | Jadval `files`. | 16-architecture §16 | P5 | [ ] |
+| R-ARCH-44 | Jadval `files`. | 16-architecture §16 | P5 | [x] |
 | R-ARCH-45 | Jadval `audit_log`. | 16-architecture §16 | P10 | [x] |
 | R-ARCH-46 | Jadval `schema_migrations`. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-47 | Env `DATABASE_URL` — cloud (Neon/Railway/Supabase) yoki lokal PostgreSQL. | 16-architecture §16 | P1 | [x] |
 | R-ARCH-48 | Env `SESSION_IDLE_TIMEOUT_MINUTES` (standart 30). | 15-auth §15 | P2 | [x] |
-| R-ARCH-49 | Env `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT`. | 12-files §12, DECISIONS.md D-18, D-25 | P5 | [ ] |
-| R-ARCH-50 | Env `TELEGRAM_BOT_TOKEN`. | 13-telegram §13 | P11 | [ ] |
-| R-ARCH-51 | Env `TELEGRAM_BOT_USERNAME`. | 13-telegram §13 | P11 | [ ] |
-| R-ARCH-52 | Env `TELEGRAM_WEBHOOK_URL` (production). | 13-telegram §13 | P11 | [ ] |
-| R-ARCH-53 | Env `TELEGRAM_WEBHOOK_SECRET` (production). | 13-telegram §13 | P11 | [ ] |
+| R-ARCH-49 | Env `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_ENDPOINT`. | 12-files §12, DECISIONS.md D-18, D-25 | P5 | [x] |
+| R-ARCH-50 | Env `TELEGRAM_BOT_TOKEN`. | 13-telegram §13 | P11 | [x] |
+| R-ARCH-51 | Env `TELEGRAM_BOT_USERNAME`. | 13-telegram §13 | P11 | [x] |
+| R-ARCH-52 | Env `TELEGRAM_WEBHOOK_URL` (production). | 13-telegram §13 | P11 | [x] |
+| R-ARCH-53 | Env `TELEGRAM_WEBHOOK_SECRET` (production). | 13-telegram §13 | P11 | [x] |
 | R-ARCH-54 | Env `NODE_ENV` (development/production — Swagger, rate-limit, Telegram rejimi unga bog'liq). | 15 §15, 16 §16 | P1 | [x] |
 | R-ARCH-55 | Env `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`. | 15-auth §15, DECISIONS.md D-18, D-25 | P2 | [x] |
 | R-ARCH-56 | Hosting-agnostik: hammasi `.env` orqali, `npm run build` + `npm start`; Docker yo'q. | DECISIONS.md D-11 | P12 | [ ] |
@@ -635,15 +635,15 @@
 | R-ARCH-70 | ETL har ko'chirilgan namuna va protokol uchun bitta "legacy'dan ko'chirildi" tracking voqeasini yozadi: joriy status, asl `created_at`/`updated_at`. | DECISIONS.md D-63 | P12 | [x] |
 | R-ARCH-71 | `user_permissions` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-72 | `substance_parameters` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P3 | [x] |
-| R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-73 | `protocol_signatures` va `protocol_files` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P5 | [x] |
 | R-ARCH-74 | `reagent_transactions` va `reagent_documents` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P7 | [x] |
-| R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [ ] |
-| R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [ ] |
+| R-ARCH-75 | `temperature_readings` va `temperature_alerts` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P8 | [x] |
+| R-ARCH-76 | `stability_checkpoints` va `stability_results` da `company_id` (NOT NULL, tenant filtri). | DECISIONS.md D-12, DECISIONS.md D-70 | P9 | [x] |
 | R-ARCH-77 | `users` CHECK: `role = 'super_admin'` ⇔ `company_id IS NULL` (DB darajasida rad etiladi). | DECISIONS.md D-70 | P2 | [x] |
 | R-ARCH-78 | `protocol_signatures` da `action` ustuni bor va `UNIQUE(protocol_id, role)` yo'q — qayta yuborishda kimyogarning ikkinchi imzosi saqlanadi. | DECISIONS.md D-46, DECISIONS.md D-70 | P5 | [x] |
-| R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [ ] |
+| R-ARCH-79 | `protocols.passport_uploaded_by` — protokol pasportini yuklagan foydalanuvchi saqlanadi. | DECISIONS.md D-47, DECISIONS.md D-70 | P5 | [x] |
 | R-ARCH-80 | `notification_type` enum'ida §9 dagi 10 tur (shu jumladan `temperature_alert`, `low_stock`) bor; `notifications.type` da DEFAULT yo'q. | DECISIONS.md D-70 | P6 | [x] |
-| R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [ ] |
+| R-ARCH-81 | `stability_studies`: status CHECK faqat `active`, `completed`; unikallik faqat `status = 'active'` qatorlar bo'yicha (bitta namunada bir nechta yakunlangan study mumkin). | DECISIONS.md D-58, DECISIONS.md D-70, DECISIONS.md D-81 | P9 | [x] |
 | R-ARCH-82 | ETL boshida xavfsizlik tekshiruvi: `sample_documents`, `protocol_values`, namunasiz protokollar, `finished_product` bo'lmagan protokollardagi `protocol_files`, `cancelled` study, `in_process` namuna soni 0 bo'lmasa ETL to'xtaydi va xabar beradi. | DECISIONS.md D-82 | P12 | [x] |
 | R-ARCH-83 | ETL `samples.expires_at`/`deadline` qiymatini shu namunaning "legacy'dan ko'chirildi" tracking voqeasi izohiga yozadi. | DECISIONS.md D-71 | P12 | [x] |
 | R-ARCH-84 | ETL `users.password_hash` eski xeshlarini ko'chirmaydi, foydalanuvchilarga vaqtinchalik parol/sozlash tokeni beradi. | DECISIONS.md D-82, DECISIONS.md D-151 | P12 | [x] |
@@ -684,11 +684,11 @@
 | R-FE-29 | Sahifa: reaktivlar. | 16-architecture §16 | P7 | [x] |
 | R-FE-30 | Sahifa: `/reagents/journal`. | 06-reagents §6 | P7 | [x] |
 | R-FE-31 | Sahifa: `/expenses`. | 06-reagents §6 | P7 | [x] |
-| R-FE-32 | Sahifa: harorat. | 16-architecture §16 | P8 | [ ] |
-| R-FE-33 | Sahifa: stabilizatsiya. | 16-architecture §16 | P9 | [ ] |
+| R-FE-32 | Sahifa: harorat. | 16-architecture §16 | P8 | [x] |
+| R-FE-33 | Sahifa: stabilizatsiya. | 16-architecture §16 | P9 | [x] |
 | R-FE-34 | Sahifa: `/companies` (faqat super_admin). | 02 §2, 16 §16 | P2 | [x] |
-| R-FE-35 | Sahifa: `/logs` (faqat super_admin). | 11 §11, 16 §16 | P10 | [ ] |
-| R-FE-36 | Sahifa: `/activity` (lab_head/director/admin). | 11 §11, 16 §16 | P10 | [ ] |
+| R-FE-35 | Sahifa: `/logs` (faqat super_admin). | 11 §11, 16 §16 | P10 | [x] |
+| R-FE-36 | Sahifa: `/activity` (lab_head/director/admin). | 11 §11, 16 §16 | P10 | [x] |
 | R-FE-37 | Sahifa: `/users`. | 10 §10, 16 §16 | P2 | [x] |
 | R-FE-38 | Sahifa: `/profile` (parol o'zgartirish, Telegram ulash/uzish). | 10 §10 | P2 | [x] |
 | R-FE-39 | Ruxsatsiz rol himoyalangan yo'lga to'g'ridan-to'g'ri kirsa sahifa ochilmaydi. | 01 §1, 16 §16 | P2 | [x] |
@@ -785,6 +785,16 @@
 - R-REG-15 `[~]` — `registryHooks.assertNoActiveStability` o'chirishda chaqiriladi va xato bersa o'chirish bekor (testlangan); stability_studies jadvali P9 da, hozir tekshiruv bo'sh.
 - R-FILE-01 `[~]` — pasport R2 da (adapter, `files` jadvali); protokol (P5) va reaktiv (P7) hujjatlari o'z fazalarida. Testlar xotiradagi adapter bilan, haqiqiy R2 — qo'lda tekshiruv.
 
+### P8–P10 (P16 da kod va testlar bo'yicha qayta tekshirildi)
+- R-TEMP-*, R-ROLE-53..57: `backend/tests/temperature.test.ts` (RBAC, validatsiya, alert, xabarnoma, ingest, tenant), `frontend/tests/temperature.test.tsx`.
+- R-TEMP-07 `[~]` — dashboard harorat alertlari kartasi uchun alohida test yo'q.
+- R-TEMP-10, R-TEMP-16 — matni D-167 / D-139 bo'yicha yangilandi (ID saqlandi).
+- R-STAB-*, R-ROLE-58..67, R-REG-15: `backend/tests/stability.test.ts`, `frontend/tests/stability.test.tsx`, `frontend/tests/sidebar.test.tsx`.
+- R-STAB-08/16/21/22/35/37 `[~]` — kod bor (`stability.service.ts`), alohida test yo'q.
+- R-ARCH-17 `[~]` — job `modules/stability/stability.job.ts` da (`jobs/` papkasi emas), testlangan.
+- R-AUDIT-*, R-ROLE-07, R-ROLE-73..77: `backend/tests/audit.test.ts`, `frontend/tests/audit.test.tsx`.
+- R-AUDIT-08 `[~]` — namuna `sample_tracking` va protokol imzolari bor; "to'liq tarix" UI testi yo'q. R-AUDIT-10 `[~]` — action/table/search filtrlari testlangan, sana filtri testi yo'q.
+
 ## Statistika
 
 _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
@@ -793,29 +803,29 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 
 | Bo'lim | Jami | [x] | [~] | [ ] |
 |---|---|---|---|---|
-| ROLE — Rollar va ruxsat matritsasi | 79 | 57 | 0 | 22 |
+| ROLE — Rollar va ruxsat matritsasi | 79 | 78 | 0 | 1 |
 | TENANT — Ko'p-kompaniyalilik | 16 | 13 | 1 | 2 |
 | SAMPLE — Namunalar | 41 | 40 | 1 | 0 |
 | PASS — Namuna pasporti | 25 | 23 | 2 | 0 |
-| REG — Reyestr | 17 | 16 | 1 | 0 |
+| REG — Reyestr | 17 | 17 | 0 | 0 |
 | PROTO — Protokollar | 62 | 48 | 14 | 0 |
 | SUBST — Moddalar | 11 | 11 | 0 | 0 |
 | REAG — Reaktivlar va Xarajat jurnali | 23 | 23 | 0 | 0 |
-| TEMP — Harorat monitoringi | 18 | 0 | 0 | 18 |
-| STAB — Stabilizatsiya | 37 | 0 | 0 | 37 |
-| NOTIF — Xabarnomalar | 28 | 24 | 0 | 4 |
+| TEMP — Harorat monitoringi | 18 | 17 | 1 | 0 |
+| STAB — Stabilizatsiya | 37 | 31 | 6 | 0 |
+| NOTIF — Xabarnomalar | 28 | 28 | 0 | 0 |
 | USER — Foydalanuvchilar, Admin panel, Ruxsatlar | 18 | 18 | 0 | 0 |
-| AUDIT — Audit va Faoliyat jurnali | 15 | 5 | 2 | 8 |
+| AUDIT — Audit va Faoliyat jurnali | 15 | 13 | 2 | 0 |
 | FILE — Fayllarni saqlash | 11 | 10 | 1 | 0 |
 | TG — Telegram | 18 | 18 | 0 | 0 |
 | I18N — Ko'p tillilik | 9 | 8 | 1 | 0 |
 | AUTH — Autentifikatsiya va xavfsizlik | 26 | 26 | 0 | 0 |
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
-| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 56 | 7 | 22 |
-| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 37 | 4 | 4 |
+| ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 75 | 8 | 2 |
+| FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| **Jami** | 618 | 453 | 35 | 130 |
+| **Jami** | 618 | 558 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -825,13 +835,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P2 | 87 | 87 | 0 | 0 |
 | P3 | 20 | 20 | 0 | 0 |
 | P4 | 71 | 71 | 0 | 0 |
-| P5 | 131 | 109 | 17 | 5 |
+| P5 | 131 | 114 | 17 | 0 |
 | P6 | 40 | 38 | 2 | 0 |
-| P7 | 36 | 35 | 0 | 1 |
-| P8 | 30 | 1 | 0 | 29 |
-| P9 | 58 | 1 | 1 | 56 |
-| P10 | 25 | 7 | 2 | 16 |
-| P11 | 26 | 21 | 0 | 5 |
+| P7 | 36 | 36 | 0 | 0 |
+| P8 | 30 | 29 | 1 | 0 |
+| P9 | 58 | 51 | 7 | 0 |
+| P10 | 25 | 23 | 2 | 0 |
+| P11 | 26 | 26 | 0 | 0 |
 | P12 | 28 | 8 | 2 | 18 |
 | P13 | 16 | 16 | 0 | 0 |
-| **Jami** | 618 | 453 | 35 | 130 |
+| **Jami** | 618 | 558 | 42 | 18 |
