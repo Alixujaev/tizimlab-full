@@ -108,8 +108,8 @@ describeDb('P7: Reaktivlar, tranzaksiyalar, xarajatlar va hujjatlar (spec §6, D
         expect(res.status).toBe(403);
       }
 
-      // 4. chemist, kontrolyor, director yaratishga urinsa 403
-      for (const role of ['chemist', 'kontrolyor', 'director']) {
+      // 4. chemist, director yaratishga urinsa 403 (D-178: kontrolyor yarata oladi — p17 testlarida)
+      for (const role of ['chemist', 'director']) {
         const res = await request(app)
           .post('/api/v1/reagents')
           .set(auth(role))

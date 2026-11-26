@@ -6,6 +6,10 @@ import { storageFromEnv } from './modules/files/files.storage.js';
 import { closeSocketServer, createSocketServer } from './realtime/socket.js';
 import { startStabilityScheduler, stopStabilityScheduler } from './modules/stability/stability.job.js';
 import {
+  startCalibrationScheduler,
+  stopCalibrationScheduler,
+} from './modules/equipment/equipment.job.js';
+import {
   startReagentExpiryScheduler,
   stopReagentExpiryScheduler,
 } from './modules/reagents/reagents.job.js';
@@ -29,6 +33,7 @@ const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
   startStabilityScheduler();
   startReagentExpiryScheduler();
+  startCalibrationScheduler();
   startTelegramBot(env);
   setNotificationChannel('telegram', (userId, dto, companyId) => {
     void sendTelegramNotification(userId, dto, undefined, companyId);
@@ -52,6 +57,7 @@ async function shutdown(signal: string): Promise<void> {
   timer.unref();
   stopStabilityScheduler();
   stopReagentExpiryScheduler();
+  stopCalibrationScheduler();
   stopTelegramBot();
   setNotificationChannel('telegram', null);
   void closeSocketServer(io);

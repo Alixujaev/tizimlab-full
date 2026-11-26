@@ -11,6 +11,7 @@ import {
   docIdParamSchema,
   idParamSchema,
   listExpensesQuerySchema,
+  listReagentItemsQuerySchema,
   listReagentsQuerySchema,
   listTransactionsQuerySchema,
   reviewReagentSchema,
@@ -53,6 +54,15 @@ export function createReagentsRouter(deps: ReagentsRouterDeps): Router {
     controller.list,
   );
 
+  // D-174: reaktiv katalogi (ND talablari uchun) — '/:id' dan oldin
+  router.get(
+    '/items',
+    ...companyAuth,
+    requirePermission('reagents', 'view'),
+    validate({ query: listReagentItemsQuerySchema }),
+    controller.listItems,
+  );
+
   router.get(
     '/:id',
     ...companyAuth,
@@ -61,10 +71,11 @@ export function createReagentsRouter(deps: ReagentsRouterDeps): Router {
     controller.getById,
   );
 
+  // D-178: yaratish — kontrolyor ham (TZ §3.2); tahrirlash/o'chirish/tranzaksiya — reagents:write
   router.post(
     '/',
     ...companyAuth,
-    requirePermission('reagents', 'write'),
+    requirePermission('reagents', 'create'),
     validate({ body: createReagentSchema }),
     controller.create,
   );

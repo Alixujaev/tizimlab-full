@@ -38,14 +38,21 @@ describeDb('001_core baseline migratsiyasi', () => {
       'analytics_signatures',
       'audit_log',
       'companies',
+      'equipment',
+      'equipment_calibration_notices',
       'files',
+      'nd_requirements',
+      'normative_documents',
       'notifications',
       'protocol_files',
       'protocol_signatures',
       'protocols',
+      'reagent_consumption_lots',
+      'reagent_consumptions',
       'reagent_documents',
       'reagent_expense_log',
       'reagent_expiry_notices',
+      'reagent_items',
       'reagent_transactions',
       'reagents',
       'sample_tracking',
@@ -90,10 +97,14 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 18, name: 'telegram_callbacks', state: 'applied' }),
       expect.objectContaining({ version: 19, name: 'registry_search_indexes', state: 'applied' }),
       expect.objectContaining({ version: 20, name: 'protocol_temperature', state: 'applied' }),
+      expect.objectContaining({ version: 21, name: 'reagent_catalog', state: 'applied' }),
+      expect.objectContaining({ version: 22, name: 'equipment', state: 'applied' }),
+      expect.objectContaining({ version: 23, name: 'normative_documents', state: 'applied' }),
+      expect.objectContaining({ version: 24, name: 'reagent_consumptions', state: 'applied' }),
     ]);
   });
 
-  it("notification_type: §9 dagi 10 tur + legacy 3 tur + P16 4 tur (D-169, D-170); notifications.type da DEFAULT yo'q (R-ARCH-43, R-ARCH-80, R-NOTIF-11)", async () => {
+  it("notification_type: §9 dagi 10 tur + legacy 3 tur + P16 4 tur (D-169, D-170) + P17 2 tur (D-175, D-177); notifications.type da DEFAULT yo'q (R-ARCH-43, R-ARCH-80, R-NOTIF-11)", async () => {
     const { rows } = await query<{ v: string }>(
       `SELECT unnest(enum_range(NULL::notification_type))::text AS v`,
       [],
@@ -105,6 +116,8 @@ describeDb('001_core baseline migratsiyasi', () => {
         'protocol_approved',
         'protocol_rejected',
         'protocol_submitted',
+        'equipment_calibration_due',
+        'reagent_shortfall',
         'reagent_approved',
         'reagent_expiring',
         'reagent_pending_approval',
@@ -241,7 +254,13 @@ describeDb('001_core baseline migratsiyasi', () => {
     );
     expect(triggers.rows.map((r) => r.tgname)).toEqual([
       'trg_companies_updated_at',
+      'trg_equipment_updated_at',
+      'trg_nd_requirements_updated_at',
+      'trg_nd_updated_at',
       'trg_protocols_updated_at',
+      'trg_reagent_consumptions_updated_at',
+      // D-174: lotni katalog elementiga bog'lash (audit emas)
+      'trg_reagents_assign_item',
       'trg_samples_updated_at',
       'trg_sensor_configs_updated_at',
       'trg_stability_checkpoints_updated_at',

@@ -6,6 +6,7 @@ import type {
   CreateReagentInput,
   CreateTransactionInput,
   ListExpensesQuery,
+  ListReagentItemsQuery,
   ListReagentsQuery,
   ListTransactionsQuery,
   ReviewReagentInput,
@@ -43,6 +44,14 @@ export function createReagentsController(storage: FileStorage | null) {
       const q = req.validated.query as ListReagentsQuery;
       const result = await reagentsService.listReagents(actor.companyId, q);
       sendPaginated(res, result.items, result.meta);
+    },
+
+    async listItems(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      sendOk(
+        res,
+        await reagentsService.listReagentItems(actor.companyId, req.validated.query as ListReagentItemsQuery),
+      );
     },
 
     async getById(req: Request, res: Response): Promise<void> {

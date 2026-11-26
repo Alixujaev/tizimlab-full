@@ -18,6 +18,9 @@ export const NOTIFICATION_TYPES = [
   'reagent_approved',
   'reagent_rejected',
   'reagent_expiring',
+  // P17 (D-175, D-177)
+  'equipment_calibration_due',
+  'reagent_shortfall',
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];

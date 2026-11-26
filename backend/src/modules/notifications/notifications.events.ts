@@ -25,6 +25,8 @@ export const NOTIFICATION_TITLES: Record<NotificationType, string> = {
   reagent_approved: 'Reaktiv tasdiqlandi',
   reagent_rejected: 'Reaktiv rad etildi',
   reagent_expiring: 'Reaktiv yaroqlilik muddati yaqinlashmoqda',
+  equipment_calibration_due: 'Apparat kalibrlash muddati yaqinlashmoqda',
+  reagent_shortfall: 'ND bo‘yicha reaktiv sarfi uchun zaxira yetmadi',
 };
 
 type SampleRef = Pick<

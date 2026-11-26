@@ -29,6 +29,8 @@ export interface ProtocolRow {
   passport_uploaded_at: Date | null;
   /** D-173: xona (sensor) va harorat snapshot'i */
   sensor_config_id?: string | null;
+  nd_id?: string | null;
+  n_analyses?: number;
   temperature_snapshot?: TemperatureSnapshot | null;
   temperature_warning?: TemperatureWarning | null;
   created_at: Date;
@@ -109,6 +111,9 @@ export interface ProtocolDto {
   rejectedAt: string | null;
   /** D-173: yuborishda olingan xona harorati (jurnal o'zgarsa ham o'zgarmaydi). */
   sensorConfigId: string | null;
+  /** D-177: tahlil bog'langan ND va tahlillar soni */
+  ndId: string | null;
+  nAnalyses: number;
   temperatureSnapshot: TemperatureSnapshot | null;
   temperatureWarning: TemperatureWarning | null;
   createdAt: string;
@@ -127,6 +132,9 @@ export interface ProtocolDetailDto extends ProtocolDto {
 export interface SubmitProtocolInput {
   sensorConfigId?: string | null;
   analysisDate?: string | null;
+  /** D-177 */
+  ndId?: string | null;
+  nAnalyses?: number;
 }
 
 export interface RejectProtocolInput {

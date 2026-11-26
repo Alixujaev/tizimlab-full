@@ -489,6 +489,16 @@ const NOTIFICATION_TITLES: Record<string, Record<'uz' | 'ru' | 'en', string>> = 
     en: 'New reagent awaiting approval',
   },
   reagent_approved: { uz: 'Reaktiv tasdiqlandi', ru: 'Реактив подтверждён', en: 'Reagent approved' },
+  equipment_calibration_due: {
+    uz: 'Apparat kalibrlash muddati yaqinlashmoqda',
+    ru: 'Приближается срок калибровки прибора',
+    en: 'Equipment calibration is due soon',
+  },
+  reagent_shortfall: {
+    uz: 'ND bo‘yicha reaktiv sarfi uchun zaxira yetmadi',
+    ru: 'Недостаточно реактива для расхода по НД',
+    en: 'Insufficient reagent stock for ND consumption',
+  },
   reagent_rejected: { uz: 'Reaktiv rad etildi', ru: 'Реактив отклонён', en: 'Reagent rejected' },
   reagent_expiring: {
     uz: 'Reaktiv yaroqlilik muddati yaqinlashmoqda',
@@ -634,12 +644,23 @@ export function getNotificationActionUrl(
 
     case 'protocol_submitted':
     case 'protocol_rejected':
+    case 'reagent_shortfall':
       if (dto.referenceId) {
         path = `/samples/${dto.referenceId}`;
         startapp = `sample_${dto.referenceId}`;
       } else {
         path = '/samples';
         startapp = 'samples';
+      }
+      break;
+
+    case 'equipment_calibration_due':
+      if (dto.referenceId) {
+        path = `/equipment/${dto.referenceId}`;
+        startapp = `equipment_${dto.referenceId}`;
+      } else {
+        path = '/equipment';
+        startapp = 'equipment';
       }
       break;
 

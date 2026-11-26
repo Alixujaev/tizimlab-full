@@ -34,6 +34,9 @@ import {
 } from './modules/temperature/ingestLimiter.js';
 import { createTemperatureRouter } from './modules/temperature/temperature.router.js';
 import { createStabilityRouter } from './modules/stability/stability.router.js';
+import { createEquipmentRouter } from './modules/equipment/equipment.router.js';
+import { createNdRouter } from './modules/nd/nd.router.js';
+import { createConsumptionsRouter } from './modules/consumptions/consumptions.router.js';
 import { createAuditRouter } from './modules/audit/audit.router.js';
 import { createActivityRouter } from './modules/audit/activity.router.js';
 import { createTelegramRouter } from './modules/telegram/telegram.router.js';
@@ -163,6 +166,10 @@ export function createApp({
     createTemperatureRouter({ auth, ingestLimiter: createIngestLimiter(ingestLimit) }),
   );
   api.use('/stability', createStabilityRouter({ auth }));
+  // P17 (D-175..D-177)
+  api.use('/equipment', createEquipmentRouter({ auth }));
+  api.use('/nd', createNdRouter({ auth, storage }));
+  api.use('/consumptions', createConsumptionsRouter({ auth }));
   api.use('/audit', createAuditRouter({ auth }));
   api.use('/activity', createActivityRouter({ auth }));
   api.use(
