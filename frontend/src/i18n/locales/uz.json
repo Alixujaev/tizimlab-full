@@ -41,7 +41,9 @@
     "reagentsShort": "Reaktivlar",
     "stabilityShort": "Stabilite",
     "profileShort": "Profil",
-    "moreShort": "Yana"
+    "moreShort": "Yana",
+    "equipment": "Apparatlar",
+    "nd": "Normativ hujjatlar"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -361,7 +363,12 @@
       "analytics:view": "O'z natijalarini ko'rish",
       "analytics:team": "Jamoa natijalarini ko'rish",
       "analytics:company": "Kompaniya analitikasini ko'rish",
-      "reagents:approve": "Reaktivni tasdiqlash yoki rad etish"
+      "reagents:approve": "Reaktivni tasdiqlash yoki rad etish",
+      "reagents:create": "Yangi reaktiv kiritish",
+      "equipment:view": "Apparatlarni ko‘rish",
+      "equipment:write": "Apparatlarni boshqarish",
+      "nd:view": "Normativ hujjatlarni ko‘rish",
+      "nd:write": "Normativ hujjatlarni boshqarish"
     }
   },
   "profile": {
@@ -696,6 +703,33 @@
       "roomHint": "Tahlil sanasiga eng yaqin harorat yozuvi protokolga bog‘lanadi",
       "noRoom": "Tanlanmagan",
       "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
+    },
+    "nd": {
+      "label": "Normativ hujjat (ND)",
+      "hint": "Tanlansa reaktiv sarfi ND normasi bo‘yicha avtomatik ayiriladi",
+      "none": "Tanlanmagan",
+      "analyses": "Tahlillar soni"
+    },
+    "consumption": {
+      "title": "ND bo‘yicha reaktiv sarfi",
+      "reagent": "Reaktiv (lotlar)",
+      "consumed": "Sarf",
+      "qtyLine": "{{consumed}} / {{required}} {{unit}}",
+      "shortfall": "Yetmadi: {{qty}} {{unit}}",
+      "shortfallNotice": "Ombordagi zaxira yetmadi — laboratoriya mudiriga xabar yuborildi.",
+      "status": {
+        "auto": "Avtomatik",
+        "confirmed": "Tasdiqlangan",
+        "corrected": "Tuzatilgan"
+      },
+      "confirm": "Tasdiqlash",
+      "correct": "Tuzatish",
+      "correctTitle": "Sarfni tuzatish: {{name}}",
+      "newQty": "Haqiqiy sarf ({{unit}})",
+      "newQtyHint": "Hozir ayirilgan: {{qty}} {{unit}}. Farq omborga qaytariladi yoki qo‘shimcha ayiriladi.",
+      "reason": "Tuzatish sababi",
+      "reasonMin": "Sabab kamida 5 ta belgidan iborat bo‘lishi shart",
+      "qtyInvalid": "Miqdor 0 yoki undan katta son bo‘lishi shart"
     }
   },
   "notifications": {
@@ -717,7 +751,9 @@
       "reagent_approved": "Reaktiv tasdiqlandi",
       "reagent_rejected": "Reaktiv rad etildi",
       "reagent_expiring": "Reaktiv yaroqlilik muddati yaqinlashmoqda",
-      "sample_created": "Yangi namuna biriktirishni kutmoqda"
+      "sample_created": "Yangi namuna biriktirishni kutmoqda",
+      "equipment_calibration_due": "Apparat kalibrlash muddati yaqinlashmoqda",
+      "reagent_shortfall": "ND bo‘yicha reaktiv sarfi uchun zaxira yetmadi"
     }
   },
   "dashboard": {
@@ -1411,6 +1447,101 @@
         "label": "Kechikayotgan namunalar",
         "formula": "Joriy holat: rejadagi tahlil tugash sanasi o'tgan ochiq namunalar."
       }
+    }
+  },
+  "equipment": {
+    "title": "Apparatlar",
+    "subtitle": "Laboratoriya asbob-uskunalari, holati va kalibrlash muddatlari",
+    "create": "Apparat qo‘shish",
+    "edit": "Apparatni tahrirlash",
+    "delete": "Apparatni o‘chirish",
+    "deleteConfirm": "Haqiqatan ham bu apparatni o‘chirmoqchimisiz?",
+    "name": "Nomi",
+    "category": "Kategoriya (turi)",
+    "categoryHint": "ND talablari shu kategoriya bo‘yicha solishtiriladi (masalan: Mufel pech, HPLC)",
+    "model": "Model",
+    "serialNumber": "Seriya raqami",
+    "location": "Joylashuvi",
+    "statusLabel": "Holati",
+    "status": {
+      "active": "Ishlamoqda",
+      "maintenance": "Texnik xizmatda",
+      "out_of_service": "Ishlamaydi"
+    },
+    "calibrationDue": "Kalibrlash muddati",
+    "calibrationExpired": "Kalibrlash o‘tgan",
+    "calibrationSoon": "Kalibrlash yaqin",
+    "notes": "Izoh",
+    "filterCalibration": "Kalibrlash 30 kun ichida",
+    "empty": "Apparatlar kiritilmagan",
+    "errors": {
+      "required": "Nomi va kategoriyasi kiritilishi shart"
+    }
+  },
+  "nd": {
+    "title": "Normativ hujjatlar (ND)",
+    "subtitle": "Tahlil metodikalari: kerakli apparatlar va reaktiv sarf normalari",
+    "create": "ND qo‘shish",
+    "code": "Kodi",
+    "name": "Nomi",
+    "version": "Versiyasi",
+    "requirementCount": "Talablar",
+    "empty": "Normativ hujjatlar kiritilmagan",
+    "status": {
+      "draft": "Qoralama",
+      "approved": "Tasdiqlangan",
+      "archived": "Arxivda"
+    },
+    "errors": {
+      "required": "Kod va nom kiritilishi shart",
+      "categoryRequired": "Apparat kategoriyasini kiriting",
+      "reagentRequired": "Reaktivni tanlang",
+      "qtyPositive": "Miqdor 0 dan katta bo‘lishi shart",
+      "unitRequired": "Birlikni kiriting"
+    },
+    "addRequirement": "Talab qo‘shish",
+    "editRequirement": "Talabni tahrirlash",
+    "requirementKind": "Turi",
+    "kind": {
+      "reagent": "Reaktiv",
+      "equipment": "Apparat"
+    },
+    "methodName": "Metodika / tahlil",
+    "methodHint": "Masalan: Sulfated ash",
+    "reagent": "Reaktiv",
+    "chooseReagent": "Reaktivni tanlang",
+    "quantityPerAnalysis": "Bir tahlil uchun miqdor",
+    "unit": "Birlik",
+    "unitHint": "ml, l, g, kg, mg, dona",
+    "requirement": "Talab",
+    "reagentLine": "{{name}} — {{qty}} {{unit}} / tahlil",
+    "requirements": "Talablar",
+    "noRequirements": "Talablar kiritilmagan",
+    "approve": "Tasdiqlash",
+    "revise": "Qayta ko‘rib chiqish",
+    "archive": "Arxivlash",
+    "draftNotice": "Qoralama: talablarni tahrirlash mumkin. Avto-sarf va tahlilga bog‘lash faqat tasdiqlangan ND bilan ishlaydi.",
+    "file": "ND fayli",
+    "noFile": "Fayl yuklanmagan",
+    "uploadFile": "Fayl yuklash (PDF/rasm)",
+    "notFound": "ND topilmadi yoki yuklashda xatolik",
+    "backToList": "ND ro‘yxatiga qaytish",
+    "feasibility": {
+      "title": "Bajarish mumkinligi",
+      "analyses": "Tahlillar soni",
+      "canRun": "Tahlilni bajarish mumkin",
+      "cannotRun": "Tahlilni bajarish mumkin emas",
+      "draftNote": "ND hali tasdiqlanmagan — natija dastlabki.",
+      "reagentLine": "kerak {{required}} {{unit}}, mavjud {{available}} {{unit}}"
+    },
+    "reasons": {
+      "no_requirements": "ND uchun talablar kiritilmagan",
+      "equipment_missing": "\"{{category}}\" turidagi apparat laboratoriyada yo‘q",
+      "equipment_unavailable": "\"{{equipment}}\" ({{category}}): {{status}}",
+      "equipment_calibration_expired": "\"{{equipment}}\" ({{category}}) kalibrlash muddati o‘tgan: {{calibrationDue}}",
+      "reagent_missing": "\"{{reagent}}\" reaktivi omborda yo‘q",
+      "reagent_insufficient": "\"{{reagent}}\" yetarli emas: kerak {{required}} {{unit}}, mavjud {{available}} {{unit}}, yetishmaydi {{missing}} {{unit}}",
+      "reagent_all_expired": "\"{{reagent}}\" reaktivining barcha lotlari muddati o‘tgan"
     }
   }
 }

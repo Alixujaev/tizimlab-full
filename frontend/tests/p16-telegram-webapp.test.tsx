@@ -1,89 +1,15 @@
 import { screen, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { apiClient } from '@/api/client';
-import type { TelegramWebApp } from '@/lib/telegram';
 import type { ReagentDto } from '@/types';
 import { loginAs, renderAt, resetAuth } from './helpers';
+import { telegramStub } from './telegramStub';
 
 /**
  * P16 — yangi UI Telegram WebApp mobil shell'i ichida (D-166): reaktiv tasdiqlash paneli,
  * "Muddati yaqin" filtri va protokol xonasi tanlovi mobil ko'rinishda ishlaydi.
  */
-
-function telegramStub(): TelegramWebApp {
-  const chain = () => vi.fn().mockReturnThis();
-  return {
-    initData: 'query_id=1&user=%7B%22id%22%3A100%7D&auth_date=1600000000&hash=h',
-    initDataUnsafe: { user: { id: 100, first_name: 'T' } },
-    version: '7.7',
-    platform: 'android',
-    colorScheme: 'light',
-    themeParams: {
-      bg_color: '#ffffff',
-      text_color: '#000000',
-      button_color: '#2481cc',
-      button_text_color: '#ffffff',
-    },
-    isExpanded: true,
-    viewportHeight: 640,
-    viewportStableHeight: 640,
-    headerColor: '#ffffff',
-    backgroundColor: '#ffffff',
-    isClosingConfirmationEnabled: false,
-    BackButton: {
-      isVisible: false,
-      show: vi.fn(),
-      hide: vi.fn(),
-      onClick: vi.fn(),
-      offClick: vi.fn(),
-    },
-    MainButton: {
-      text: '',
-      color: '',
-      textColor: '',
-      isVisible: false,
-      isActive: true,
-      isProgressVisible: false,
-      setText: chain(),
-      onClick: chain(),
-      offClick: chain(),
-      show: chain(),
-      hide: chain(),
-      enable: chain(),
-      disable: chain(),
-      showProgress: chain(),
-      hideProgress: chain(),
-      setParams: chain(),
-    },
-    HapticFeedback: {
-      impactOccurred: chain(),
-      notificationOccurred: chain(),
-      selectionChanged: chain(),
-    },
-    safeAreaInset: { top: 24, bottom: 16, left: 0, right: 0 },
-    contentSafeAreaInset: { top: 0, bottom: 0, left: 0, right: 0 },
-    isVersionAtLeast: vi.fn(() => true),
-    setHeaderColor: vi.fn(),
-    setBackgroundColor: vi.fn(),
-    enableClosingConfirmation: vi.fn(),
-    disableClosingConfirmation: vi.fn(),
-    onEvent: vi.fn(),
-    offEvent: vi.fn(),
-    sendData: vi.fn(),
-    openLink: vi.fn(),
-    openTelegramLink: vi.fn(),
-    openInvoice: vi.fn(),
-    showPopup: vi.fn(),
-    showAlert: vi.fn(),
-    showConfirm: vi.fn(),
-    ready: vi.fn(),
-    expand: vi.fn(),
-    close: vi.fn(),
-    disableVerticalSwipes: vi.fn(),
-    enableVerticalSwipes: vi.fn(),
-  } as unknown as TelegramWebApp;
-}
 
 let api: MockAdapter;
 

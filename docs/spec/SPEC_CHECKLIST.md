@@ -780,6 +780,7 @@
 | R-P17-08 | Yetishmovchilik: mavjudi ayiriladi, `shortfall` saqlanadi, lab_head ga xabar (Telegram ham), yuborish bloklanmaydi. | TZ §3.2, §4, DECISIONS.md D-177 | P17 | [x] |
 | R-P17-09 | Sarfni tasdiqlash (auto → confirmed) va tuzatish (sabab ≥5, farq omborga qaytadi yoki qo'shimcha ayiriladi, audit) — biriktirilgan kimyogar yoki lab_head. | TZ §3.2, DECISIONS.md D-177 | P17 | [x] |
 | R-P17-10 | Kontrolyor reaktiv yaratadi (`reagents:create`); tasdiqlash chemist/lab_head da, o'zinikini emas. | TZ §2, §3.2, DECISIONS.md D-178 | P17 | [x] |
+| R-P17-11 | UI: `/equipment` (ro'yxat, filtrlar, forma; `/equipment/:id`), `/nd` va `/nd/:id` (talablar draft da, holat, fayl, moslik paneli "bajarish mumkin/emas" + sabablar), protokolda ND va tahlillar soni, sarf paneli (tasdiqlash/tuzatish); sidebar va Telegram "Yana" menyusi, `equipment_<id>` deep link; uz/ru/en. | TZ §3.2, §3.3, §4, DECISIONS.md D-175..D-177 | P17 | [x] |
 
 ## Holat izohlari
 
@@ -871,8 +872,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
 | P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
-| P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 10 | 10 | 0 | 0 |
-| **Jami** | 653 | 593 | 42 | 18 |
+| P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 11 | 11 | 0 | 0 |
+| **Jami** | 654 | 594 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -894,5 +895,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
 | P16 | 25 | 25 | 0 | 0 |
-| P17 | 10 | 10 | 0 | 0 |
-| **Jami** | 653 | 593 | 42 | 18 |
+| P17 | 11 | 11 | 0 | 0 |
+| **Jami** | 654 | 594 | 42 | 18 |

@@ -26,6 +26,9 @@ import { StabilityDetailPage } from '@/pages/stability/StabilityDetailPage';
 import { AuditLogPage } from '@/pages/audit/AuditLogPage';
 import { ActivityPage } from '@/pages/activity/ActivityPage';
 import { COMPANY_ROLES } from '@/types';
+import { EquipmentPage } from '@/pages/equipment/EquipmentPage';
+import { NdDetailPage } from '@/pages/nd/NdDetailPage';
+import { NdListPage } from '@/pages/nd/NdListPage';
 
 /**
  * Barcha yo'llar (spec §3, §6, §10, §11, §16; D-29). Sahifalar hozircha stub —
@@ -63,6 +66,11 @@ export const routes: RouteObject[] = [
               { path: '/temperature', element: <TemperaturePage /> },
               { path: '/stability', element: <StabilityPage /> },
               { path: '/stability/:id', element: <StabilityDetailPage /> },
+              // P17 (D-175, D-176)
+              { path: '/equipment', element: <EquipmentPage /> },
+              { path: '/equipment/:id', element: <EquipmentPage /> },
+              { path: '/nd', element: <NdListPage /> },
+              { path: '/nd/:id', element: <NdDetailPage /> },
             ],
           },
           {

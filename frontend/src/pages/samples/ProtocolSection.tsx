@@ -25,6 +25,7 @@ import {
 import { ALLOWED_EXTENSIONS } from '@/lib/files';
 import { formatDateTime } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
+import { ProtocolConsumptions, ProtocolNdSelect } from './ProtocolNd';
 import { ProtocolRoomSelect, ProtocolTemperatureInfo } from './ProtocolTemperature';
 import type { ProtocolFileDto, ProtocolStatus, SampleDetailDto } from '@/types';
 import {
@@ -138,6 +139,8 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
   const submitMutation = useSubmitProtocolMutation(sample.id);
   // D-173: yuborishda tanlanadigan xona (harorat snapshot'i)
   const [roomId, setRoomId] = useState('');
+  // D-177: tahlil bajarilgan ND va tahlillar soni (avto-sarf)
+  const [ndChoice, setNdChoice] = useState({ ndId: '', nAnalyses: '1' });
   const approveMutation = useApproveProtocolMutation(sample.id);
   const rejectMutation = useRejectProtocolMutation(sample.id);
   const finalizeMutation = useFinalizeProtocolMutation(sample.id);
@@ -465,6 +468,13 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
 
             <ProtocolTemperatureInfo protocol={activeProto} />
 
+            {activeProto.status !== 'draft' && (
+              <ProtocolConsumptions
+                protocolId={activeProto.id}
+                canReview={isAssignedChemist || isLabHead}
+              />
+            )}
+
             {/* 1. Asosiy fayl */}
             <FileBlock
               title={t('protocols.mainFile', 'Asosiy tahlil hisoboti (majburiy)')}
@@ -630,6 +640,13 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
               <div className="flex flex-wrap items-end justify-end gap-2 border-t border-line pt-4">
                 {canSubmit && <ProtocolRoomSelect value={roomId} onChange={setRoomId} />}
                 {canSubmit && (
+                  <ProtocolNdSelect
+                    ndId={ndChoice.ndId || activeProto.ndId || ''}
+                    nAnalyses={ndChoice.nAnalyses}
+                    onChange={setNdChoice}
+                  />
+                )}
+                {canSubmit && (
                   <Button
                     leftIcon="send"
                     loading={submitMutation.isPending}
@@ -642,7 +659,15 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                     onClick={() =>
                       submitMutation.mutate({
                         id: activeProto.id,
-                        input: { sensorConfigId: roomId || null },
+                        input: {
+                          sensorConfigId: roomId || null,
+                          ...((ndChoice.ndId || activeProto.ndId)
+                            ? {
+                                ndId: ndChoice.ndId || activeProto.ndId,
+                                nAnalyses: Math.min(100, Math.max(1, Number(ndChoice.nAnalyses) || 1)),
+                              }
+                            : {}),
+                        },
                       })
                     }
                   >

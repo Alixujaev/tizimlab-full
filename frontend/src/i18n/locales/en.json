@@ -41,7 +41,9 @@
     "reagentsShort": "Reagents",
     "stabilityShort": "Stability",
     "profileShort": "Profile",
-    "moreShort": "More"
+    "moreShort": "More",
+    "equipment": "Equipment",
+    "nd": "Normative documents"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -361,7 +363,12 @@
       "analytics:view": "View own results",
       "analytics:team": "View team results",
       "analytics:company": "View company analytics",
-      "reagents:approve": "Approve or reject reagents"
+      "reagents:approve": "Approve or reject reagents",
+      "reagents:create": "Add new reagents",
+      "equipment:view": "View equipment",
+      "equipment:write": "Manage equipment",
+      "nd:view": "View normative documents",
+      "nd:write": "Manage normative documents"
     }
   },
   "profile": {
@@ -696,6 +703,33 @@
       "roomHint": "The temperature record closest to the analysis date will be linked",
       "noRoom": "Not selected",
       "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
+    },
+    "nd": {
+      "label": "Normative document (ND)",
+      "hint": "If selected, reagent consumption is deducted automatically per the ND norm",
+      "none": "Not selected",
+      "analyses": "Number of analyses"
+    },
+    "consumption": {
+      "title": "Reagent consumption per ND",
+      "reagent": "Reagent (lots)",
+      "consumed": "Consumption",
+      "qtyLine": "{{consumed}} / {{required}} {{unit}}",
+      "shortfall": "Short by: {{qty}} {{unit}}",
+      "shortfallNotice": "Stock was insufficient — the lab head has been notified.",
+      "status": {
+        "auto": "Automatic",
+        "confirmed": "Confirmed",
+        "corrected": "Corrected"
+      },
+      "confirm": "Confirm",
+      "correct": "Correct",
+      "correctTitle": "Correct consumption: {{name}}",
+      "newQty": "Actual consumption ({{unit}})",
+      "newQtyHint": "Currently deducted: {{qty}} {{unit}}. The difference is returned to stock or deducted additionally.",
+      "reason": "Correction reason",
+      "reasonMin": "The reason must be at least 5 characters long",
+      "qtyInvalid": "Quantity must be a number of 0 or more"
     }
   },
   "notifications": {
@@ -717,7 +751,9 @@
       "reagent_approved": "Reagent approved",
       "reagent_rejected": "Reagent rejected",
       "reagent_expiring": "Reagent expiry date is approaching",
-      "sample_created": "New sample awaiting assignment"
+      "sample_created": "New sample awaiting assignment",
+      "equipment_calibration_due": "Equipment calibration is due soon",
+      "reagent_shortfall": "Insufficient reagent stock for ND consumption"
     }
   },
   "dashboard": {
@@ -1411,6 +1447,101 @@
         "label": "Overdue samples",
         "formula": "Current state: open samples whose planned analysis end date has passed."
       }
+    }
+  },
+  "equipment": {
+    "title": "Equipment",
+    "subtitle": "Laboratory instruments, status and calibration dates",
+    "create": "Add equipment",
+    "edit": "Edit equipment",
+    "delete": "Delete equipment",
+    "deleteConfirm": "Are you sure you want to delete this equipment?",
+    "name": "Name",
+    "category": "Category (type)",
+    "categoryHint": "ND requirements are matched by this category (e.g. Muffle furnace, HPLC)",
+    "model": "Model",
+    "serialNumber": "Serial number",
+    "location": "Location",
+    "statusLabel": "Status",
+    "status": {
+      "active": "In service",
+      "maintenance": "Under maintenance",
+      "out_of_service": "Out of service"
+    },
+    "calibrationDue": "Calibration due",
+    "calibrationExpired": "Calibration overdue",
+    "calibrationSoon": "Calibration soon",
+    "notes": "Notes",
+    "filterCalibration": "Calibration within 30 days",
+    "empty": "No equipment added",
+    "errors": {
+      "required": "Name and category are required"
+    }
+  },
+  "nd": {
+    "title": "Normative documents (ND)",
+    "subtitle": "Analysis methods: required equipment and reagent consumption norms",
+    "create": "Add ND",
+    "code": "Code",
+    "name": "Name",
+    "version": "Version",
+    "requirementCount": "Requirements",
+    "empty": "No normative documents added",
+    "status": {
+      "draft": "Draft",
+      "approved": "Approved",
+      "archived": "Archived"
+    },
+    "errors": {
+      "required": "Code and name are required",
+      "categoryRequired": "Enter the equipment category",
+      "reagentRequired": "Select a reagent",
+      "qtyPositive": "Quantity must be greater than 0",
+      "unitRequired": "Enter the unit"
+    },
+    "addRequirement": "Add requirement",
+    "editRequirement": "Edit requirement",
+    "requirementKind": "Type",
+    "kind": {
+      "reagent": "Reagent",
+      "equipment": "Equipment"
+    },
+    "methodName": "Method / analysis",
+    "methodHint": "e.g. Sulfated ash",
+    "reagent": "Reagent",
+    "chooseReagent": "Select a reagent",
+    "quantityPerAnalysis": "Quantity per analysis",
+    "unit": "Unit",
+    "unitHint": "ml, l, g, kg, mg, pcs",
+    "requirement": "Requirement",
+    "reagentLine": "{{name}} — {{qty}} {{unit}} / analysis",
+    "requirements": "Requirements",
+    "noRequirements": "No requirements added",
+    "approve": "Approve",
+    "revise": "Revise",
+    "archive": "Archive",
+    "draftNotice": "Draft: requirements can be edited. Auto-consumption and linking to analyses work only with an approved ND.",
+    "file": "ND file",
+    "noFile": "No file uploaded",
+    "uploadFile": "Upload file (PDF/image)",
+    "notFound": "ND not found or failed to load",
+    "backToList": "Back to ND list",
+    "feasibility": {
+      "title": "Feasibility",
+      "analyses": "Number of analyses",
+      "canRun": "The analysis can be performed",
+      "cannotRun": "The analysis cannot be performed",
+      "draftNote": "The ND is not approved yet — the result is preliminary.",
+      "reagentLine": "needed {{required}} {{unit}}, available {{available}} {{unit}}"
+    },
+    "reasons": {
+      "no_requirements": "No requirements defined for the ND",
+      "equipment_missing": "No \"{{category}}\" equipment in the laboratory",
+      "equipment_unavailable": "\"{{equipment}}\" ({{category}}): {{status}}",
+      "equipment_calibration_expired": "\"{{equipment}}\" ({{category}}): calibration expired on {{calibrationDue}}",
+      "reagent_missing": "\"{{reagent}}\" is not in stock",
+      "reagent_insufficient": "Not enough \"{{reagent}}\": needed {{required}} {{unit}}, available {{available}} {{unit}}, missing {{missing}} {{unit}}",
+      "reagent_all_expired": "All lots of \"{{reagent}}\" have expired"
     }
   }
 }
