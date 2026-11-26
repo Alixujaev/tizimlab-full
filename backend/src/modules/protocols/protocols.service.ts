@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { AppError, NotFoundError } from '../../utils/errors.js';
-import { generateProtocolDocx, type ExportLang } from '../../utils/docxExport.js';
+import { generateProtocolDocx, type ExportLang, type ProtocolSampleExtra } from '../../utils/docxExport.js';
 import { writeAudit } from '../audit/audit.service.js';
 import { type FileStorage, requireStorage, SIGNED_URL_TTL_SECONDS } from '../files/files.storage.js';
 import {
@@ -1482,14 +1482,33 @@ export async function exportProtocolDocx(
     serial_number: string | null;
     quantity: string | null;
     manufacturer: string | null;
+    manufactured_at: string | null;
+    expiry_date: string | null;
+    arrival_date: string | null;
+    analysis_end: string | null;
   }>(
-    `SELECT lot_number, serial_number, quantity, manufacturer
+    `SELECT lot_number, serial_number, quantity, manufacturer,
+            manufactured_at::text AS manufactured_at, expiry_date::text AS expiry_date,
+            arrival_date::text AS arrival_date, analysis_end::text AS analysis_end
      FROM samples
      WHERE id = $1 AND company_id = $2`,
     [sample.id, companyId],
   );
 
-  const sampleExtra = sampleRes.rows[0] ?? {};
+  // snake_case qator → eksportning camelCase kirishi (avval to'g'ridan-to'g'ri berilib, lot/seriya '—' chiqardi).
+  const row = sampleRes.rows[0];
+  const sampleExtra: ProtocolSampleExtra = row
+    ? {
+        lotNumber: row.lot_number,
+        serialNumber: row.serial_number,
+        quantity: row.quantity,
+        manufacturer: row.manufacturer,
+        manufacturedAt: row.manufactured_at,
+        expiryDate: row.expiry_date,
+        arrivalDate: row.arrival_date,
+        analysisEnd: row.analysis_end,
+      }
+    : {};
 
   const buffer = await generateProtocolDocx(detail, sampleExtra, lang as ExportLang);
   const filename = `protocol-${protocol.id}.docx`;

@@ -197,8 +197,10 @@ export async function createSample(
         analysis_start,
         analysis_end,
         notes,
-        created_by
-      ) VALUES ($1, $2, 'pending_assignment', $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        created_by,
+        arrival_date,
+        expiry_date
+      ) VALUES ($1, $2, 'pending_assignment', $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
       RETURNING *`,
       [
         companyId,
@@ -214,6 +216,8 @@ export async function createSample(
         input.analysisEnd ?? null,
         input.notes ?? null,
         userId,
+        input.arrivalDate ?? null,
+        input.expiryDate ?? null,
       ],
     );
     const createdSample = insertSampleRes.rows[0]!;

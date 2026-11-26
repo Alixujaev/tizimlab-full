@@ -31,6 +31,10 @@ interface TranslationMap {
   serialNumber: string;
   quantity: string;
   manufacturer: string;
+  manufacturedAt: string;
+  expiryDate: string;
+  arrivalDate: string;
+  analysisEnd: string;
   colAction: string;
   colUser: string;
   colRole: string;
@@ -62,6 +66,10 @@ const I18N: Record<ExportLang, TranslationMap> = {
     serialNumber: 'Seriya raqami',
     quantity: 'Miqdori',
     manufacturer: 'Ishlab chiqaruvchi',
+    manufacturedAt: 'Ishlab chiqarilgan sana',
+    expiryDate: 'Yaroqlilik muddati',
+    arrivalDate: 'Kelgan sana',
+    analysisEnd: 'Analiz tugash sanasi',
     colAction: 'Harakat / Bosqich',
     colUser: 'F.I.SH.',
     colRole: 'Rol',
@@ -119,6 +127,10 @@ const I18N: Record<ExportLang, TranslationMap> = {
     serialNumber: 'Серийный номер',
     quantity: 'Количество',
     manufacturer: 'Производитель',
+    manufacturedAt: 'Дата производства',
+    expiryDate: 'Срок годности',
+    arrivalDate: 'Дата поступления',
+    analysisEnd: 'Дата окончания анализа',
     colAction: 'Действие / Этап',
     colUser: 'Ф.И.О.',
     colRole: 'Роль',
@@ -176,6 +188,10 @@ const I18N: Record<ExportLang, TranslationMap> = {
     serialNumber: 'Serial Number',
     quantity: 'Quantity',
     manufacturer: 'Manufacturer',
+    manufacturedAt: 'Manufacturing Date',
+    expiryDate: 'Expiry Date',
+    arrivalDate: 'Arrival Date',
+    analysisEnd: 'Analysis Due Date',
     colAction: 'Action / Stage',
     colUser: 'Full Name',
     colRole: 'Role',
@@ -232,6 +248,48 @@ function formatDate(iso: string): string {
   }
 }
 
+/** ISO kun (YYYY-MM-DD) → DD.MM.YYYY; bo'sh bo'lsa '—'. Vaqt zonasi siljishisiz (satr bo'yicha). */
+export function formatIsoDay(value: string | null | undefined): string {
+  if (!value) return '—';
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  return m ? `${m[3]}.${m[2]}.${m[1]}` : value;
+}
+
+export interface ProtocolSampleExtra {
+  lotNumber?: string | null;
+  serialNumber?: string | null;
+  quantity?: string | null;
+  manufacturer?: string | null;
+  manufacturedAt?: string | null;
+  expiryDate?: string | null;
+  arrivalDate?: string | null;
+  analysisEnd?: string | null;
+}
+
+/**
+ * Eksportdagi "Namuna ma'lumotlari" jadvali qatorlari (kalit, qiymat).
+ * D-84: namuna kodi chiqmaydi. Alohida funksiya — DOCX ochmasdan testlash uchun.
+ */
+export function buildSampleInfoRows(
+  protocol: Pick<ProtocolDetailDto, 'sampleType' | 'sampleSubstanceName'>,
+  extra: ProtocolSampleExtra,
+  lang: ExportLang = 'uz',
+): Array<[string, string]> {
+  const dict = I18N[lang] ?? I18N.uz;
+  return [
+    [dict.sampleType, dict.sampleTypes[protocol.sampleType] ?? protocol.sampleType],
+    [dict.substanceName, protocol.sampleSubstanceName || '—'],
+    [dict.lotNumber, extra.lotNumber || '—'],
+    [dict.serialNumber, extra.serialNumber || '—'],
+    [dict.quantity, extra.quantity || '—'],
+    [dict.manufacturer, extra.manufacturer || '—'],
+    [dict.manufacturedAt, formatIsoDay(extra.manufacturedAt)],
+    [dict.expiryDate, formatIsoDay(extra.expiryDate)],
+    [dict.arrivalDate, formatIsoDay(extra.arrivalDate)],
+    [dict.analysisEnd, formatIsoDay(extra.analysisEnd)],
+  ];
+}
+
 function createKeyValueRow(key: string, value: string): TableRow {
   return new TableRow({
     children: [
@@ -257,12 +315,7 @@ function createKeyValueRow(key: string, value: string): TableRow {
 
 export async function generateProtocolDocx(
   protocol: ProtocolDetailDto,
-  sampleExtra: {
-    lotNumber?: string | null;
-    serialNumber?: string | null;
-    quantity?: string | null;
-    manufacturer?: string | null;
-  },
+  sampleExtra: ProtocolSampleExtra,
   lang: ExportLang = 'uz',
 ): Promise<Buffer> {
   const dict = I18N[lang] ?? I18N.uz;
@@ -334,17 +387,9 @@ export async function generateProtocolDocx(
           }),
           new Table({
             width: { size: 9000, type: WidthType.DXA },
-            rows: [
-              createKeyValueRow(
-                dict.sampleType,
-                dict.sampleTypes[protocol.sampleType] ?? protocol.sampleType,
-              ),
-              createKeyValueRow(dict.substanceName, protocol.sampleSubstanceName || '—'),
-              createKeyValueRow(dict.lotNumber, sampleExtra.lotNumber || '—'),
-              createKeyValueRow(dict.serialNumber, sampleExtra.serialNumber || '—'),
-              createKeyValueRow(dict.quantity, sampleExtra.quantity || '—'),
-              createKeyValueRow(dict.manufacturer, sampleExtra.manufacturer || '—'),
-            ],
+            rows: buildSampleInfoRows(protocol, sampleExtra, lang).map(([k, v]) =>
+              createKeyValueRow(k, v),
+            ),
           }),
 
           // 3. Imzolar tarixi

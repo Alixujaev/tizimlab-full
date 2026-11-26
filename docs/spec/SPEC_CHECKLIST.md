@@ -736,6 +736,14 @@
 | R-ANALYTICS-15 | SVG grafiklar (Line, Bar, Donut, StackedBar, Heatmap, Sparkline): aria, klaviatura, jadval muqobili, bo'sh/yuklanish/xato holatlari, token ranglari. | DECISIONS.md D-165 | P13 | [x] |
 | R-ANALYTICS-16 | Davr tanlagich (URL'da) va almashtirishda yangi so'rov; oldingi davrga nisbatan ▲▼ foiz; (i) formula izohi; CSV eksport; uz/ru/en. | DECISIONS.md D-165 | P13 | [x] |
 
+## P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot)
+
+| ID | Talab | Manba | Faza | Holat |
+|---|---|---|---|---|
+| R-P16-01 | Namunada ixtiyoriy `arrival_date` (kelgan sana) va `expiry_date` (yaroqlilik muddati); muddat ishlab chiqarilgan sanadan oldin emas (Zod + DB CHECK). | TZ §3.1, DECISIONS.md D-168 | P16 | [x] |
+| R-P16-02 | Yangi sanalar API (yaratish, detail, ro'yxat, reyestr) va UI (forma, ro'yxat ustuni, detail) da; `date` qiymatlari zona siljishisiz `YYYY-MM-DD`. | TZ §3.1, DECISIONS.md D-168 | P16 | [x] |
+| R-P16-03 | Protokol `.docx` eksportida lot, seriya, ishlab chiqarilgan sana, yaroqlilik muddati, kelgan sana, analiz tugash sanasi chiqadi; namuna kodi yo'q (D-84). | TZ §3.1, DECISIONS.md D-84, D-168 | P16 | [x] |
+
 ## Holat izohlari
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
@@ -825,7 +833,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| **Jami** | 618 | 558 | 42 | 18 |
+| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 3 | 3 | 0 | 0 |
+| **Jami** | 621 | 561 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -844,4 +853,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P11 | 26 | 26 | 0 | 0 |
 | P12 | 28 | 8 | 2 | 18 |
 | P13 | 16 | 16 | 0 | 0 |
-| **Jami** | 618 | 558 | 42 | 18 |
+| P14 | 0 | 0 | 0 | 0 |
+| P15 | 0 | 0 | 0 | 0 |
+| P16 | 3 | 3 | 0 | 0 |
+| **Jami** | 621 | 561 | 42 | 18 |

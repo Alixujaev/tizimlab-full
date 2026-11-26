@@ -558,7 +558,8 @@
       "substanceRequired": "Substance name is required",
       "dateFormat": "Date format: YYYY-MM-DD",
       "chemistRequired": "Selecting a chemist is required",
-      "stopReasonMinLength": "Suspension reason must contain at least 5 characters"
+      "stopReasonMinLength": "Suspension reason must contain at least 5 characters",
+      "expiryBeforeManufacture": "Expiry date cannot be earlier than the manufacturing date"
     },
     "passport": {
       "approvalFlowNotice": "For reagents and standard substances the passport is the only approval path: no chemist or protocol is needed.",
@@ -593,7 +594,9 @@
         "tooLarge": "The file must not exceed 20 MB",
         "unsupported": "Only PDF, DOC, DOCX, JPEG or PNG files can be uploaded"
       }
-    }
+    },
+    "arrivalDate": "Arrival date",
+    "expiryDate": "Expiry date"
   },
   "registry": {
     "subtitle": "Archive of approved samples",

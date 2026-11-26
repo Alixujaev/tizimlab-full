@@ -287,6 +287,8 @@ export interface SampleDto {
   manufacturedAt: string | null;
   analysisStart: string | null;
   analysisEnd: string | null;
+  arrivalDate?: string | null;
+  expiryDate?: string | null;
   notes: string | null;
   createdBy: string;
   assignedTo: string | null;
@@ -333,6 +335,8 @@ export interface CreateSampleInput {
   manufacturedAt?: string | null;
   analysisStart?: string | null;
   analysisEnd?: string | null;
+  arrivalDate?: string | null;
+  expiryDate?: string | null;
   notes?: string | null;
 }
 

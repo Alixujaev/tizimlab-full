@@ -41,6 +41,8 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
   const [manufacturedAt, setManufacturedAt] = useState('');
   const [analysisStart, setAnalysisStart] = useState('');
   const [analysisEnd, setAnalysisEnd] = useState('');
+  const [arrivalDate, setArrivalDate] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -55,6 +57,8 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
     setManufacturedAt('');
     setAnalysisStart('');
     setAnalysisEnd('');
+    setArrivalDate('');
+    setExpiryDate('');
     setNotes('');
     setErrors({});
   };
@@ -78,8 +82,14 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
       );
     }
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if ([manufacturedAt, analysisStart, analysisEnd].some((d) => d && !dateRegex.test(d))) {
+    if ([manufacturedAt, analysisStart, analysisEnd, arrivalDate, expiryDate].some((d) => d && !dateRegex.test(d))) {
       next.dates = t('samples.validation.dateFormat', 'Sana formati: YYYY-MM-DD');
+    } else if (expiryDate && manufacturedAt && expiryDate < manufacturedAt) {
+      // Backend (D-168) bilan bir xil qoida: muddat ishlab chiqarilgan sanadan oldin emas.
+      next.dates = t(
+        'samples.validation.expiryBeforeManufacture',
+        'Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas',
+      );
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -100,6 +110,8 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
       manufacturedAt: manufacturedAt || null,
       analysisStart: analysisStart || null,
       analysisEnd: analysisEnd || null,
+      arrivalDate: arrivalDate || null,
+      expiryDate: expiryDate || null,
       notes: notes.trim() || null,
     };
 
@@ -221,6 +233,19 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
               value={analysisEnd}
               onChange={setAnalysisEnd}
               min={analysisStart || undefined}
+            />
+          </FormField>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField id="sample-arrival-date" label={t('samples.arrivalDate', 'Kelgan sana')}>
+            <DatePicker value={arrivalDate} onChange={setArrivalDate} />
+          </FormField>
+          <FormField id="sample-expiry-date" label={t('samples.expiryDate', 'Yaroqlilik muddati')}>
+            <DatePicker
+              value={expiryDate}
+              onChange={setExpiryDate}
+              min={manufacturedAt || undefined}
             />
           </FormField>
         </div>

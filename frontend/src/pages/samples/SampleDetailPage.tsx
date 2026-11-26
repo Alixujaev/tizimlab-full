@@ -146,6 +146,14 @@ export function SampleDetailPage() {
                   value: sample.manufacturedAt ? formatDate(sample.manufacturedAt) : null,
                 },
                 {
+                  label: t('samples.expiryDate', 'Yaroqlilik muddati'),
+                  value: sample.expiryDate ? formatDate(sample.expiryDate) : null,
+                },
+                {
+                  label: t('samples.arrivalDate', 'Kelgan sana'),
+                  value: sample.arrivalDate ? formatDate(sample.arrivalDate) : null,
+                },
+                {
                   label: t('samples.createdAt', 'Kiritilgan vaqt'),
                   value: dateTime(sample.createdAt),
                 },

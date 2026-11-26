@@ -113,6 +113,14 @@ export function createSamplesRouter(deps: SamplesRouterDeps): Router {
    *                 type: string
    *               quantity:
    *                 type: string
+   *               arrivalDate:
+   *                 type: string
+   *                 format: date
+   *                 description: Kelgan sana (D-168)
+   *               expiryDate:
+   *                 type: string
+   *                 format: date
+   *                 description: Yaroqlilik muddati, manufacturedAt dan oldin bo'lmaydi (D-168)
    *     responses:
    *       201:
    *         description: Namuna yaratildi

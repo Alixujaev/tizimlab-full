@@ -558,7 +558,8 @@
       "substanceRequired": "Modda nomi kiritilishi shart",
       "dateFormat": "Sana formati: YYYY-MM-DD",
       "chemistRequired": "Kimyogarni tanlash shart",
-      "stopReasonMinLength": "To'xtatish sababi kamida 5 ta belgidan iborat bo'lishi shart"
+      "stopReasonMinLength": "To'xtatish sababi kamida 5 ta belgidan iborat bo'lishi shart",
+      "expiryBeforeManufacture": "Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas"
     },
     "passport": {
       "approvalFlowNotice": "Reaktiv va standart namunalar uchun pasport — tasdiqlashning yagona yo'li: kimyogar va protokol talab qilinmaydi.",
@@ -593,7 +594,9 @@
         "tooLarge": "Fayl hajmi 20 MB dan oshmasligi kerak",
         "unsupported": "Faqat PDF, DOC, DOCX, JPEG yoki PNG fayl yuklash mumkin"
       }
-    }
+    },
+    "arrivalDate": "Kelgan sana",
+    "expiryDate": "Yaroqlilik muddati"
   },
   "registry": {
     "subtitle": "Tasdiqlangan namunalar arxivi",

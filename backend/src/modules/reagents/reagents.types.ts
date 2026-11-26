@@ -1,3 +1,4 @@
+import { toIsoDay } from '../../utils/dates.js';
 export type ReagentTransactionType = 'in' | 'out' | 'adjustment' | 'disposal';
 export type ReagentDocType = 'passport' | 'analysis';
 
@@ -105,11 +106,7 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
   const qty = Number(row.quantity);
   const threshold = Number(row.low_stock_threshold);
   const isExpired = row.expires_at ? new Date(row.expires_at) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
-  const expiresAt = row.expires_at
-    ? row.expires_at instanceof Date
-      ? row.expires_at.toISOString().slice(0, 10)
-      : String(row.expires_at).slice(0, 10)
-    : null;
+  const expiresAt = toIsoDay(row.expires_at);
   return {
     id: row.id,
     companyId: row.company_id,
@@ -145,11 +142,7 @@ export function toReagentTransactionDto(row: ReagentTransactionRow): ReagentTran
     note: row.note,
     protocolId: row.protocol_id,
     analysisPurpose: row.analysis_purpose,
-    recordedDate: row.recorded_date
-      ? (row.recorded_date instanceof Date
-          ? row.recorded_date.toISOString().slice(0, 10)
-          : String(row.recorded_date).slice(0, 10))
-      : new Date().toISOString().slice(0, 10),
+    recordedDate: toIsoDay(row.recorded_date) ?? (toIsoDay(new Date()) as string),
     createdAt: new Date(row.created_at).toISOString(),
   };
 }
