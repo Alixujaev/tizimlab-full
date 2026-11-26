@@ -52,6 +52,8 @@ export const listReagentsQuerySchema = paginationQuerySchema.extend({
     .optional(),
   /** D-169 */
   approvalStatus: z.enum(['pending', 'approved', 'rejected']).optional(),
+  /** D-170: muddati bugundan N kun ichida tugaydiganlar (muddati o'tganlar kirmaydi). */
+  expiringWithinDays: z.coerce.number().int().min(1).max(365).optional(),
 });
 
 export const listTransactionsQuerySchema = paginationQuerySchema.extend({

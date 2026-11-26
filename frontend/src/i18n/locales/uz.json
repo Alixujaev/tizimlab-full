@@ -843,7 +843,9 @@
       "approvedToast": "Reaktiv tasdiqlandi",
       "rejectedToast": "Reaktiv rad etildi",
       "outBlocked": "Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi. Kirim, tuzatish yoki utilizatsiyani tanlang."
-    }
+    },
+    "filterExpiringSoon": "Muddati yaqin",
+    "expiringSoon": "Muddati yaqin"
   },
   "temperature": {
     "title": "Harorat va namlik monitoringi",

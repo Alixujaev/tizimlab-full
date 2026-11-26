@@ -236,6 +236,13 @@ export async function listReagents(
     params.push(q.isHazardous);
     conditions.push(`is_hazardous = $${params.length}`);
   }
+  if (q.expiringWithinDays !== undefined) {
+    params.push(q.expiringWithinDays);
+    // Laboratoriya kuni (D-161/D-170) bo'yicha: bugun ≤ muddat ≤ bugun + N
+    conditions.push(
+      `expires_at IS NOT NULL AND expires_at >= (now() AT TIME ZONE 'Asia/Tashkent')::date AND expires_at <= (now() AT TIME ZONE 'Asia/Tashkent')::date + $${params.length}::int`,
+    );
+  }
   if (q.approvalStatus) {
     params.push(q.approvalStatus);
     conditions.push(`approval_status = $${params.length}::reagent_approval_status`);

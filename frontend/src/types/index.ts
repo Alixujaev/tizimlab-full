@@ -538,6 +538,8 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-170: muddati 30 kun ichida tugaydi (hali o'tmagan). */
+  isExpiringSoon?: boolean;
   /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
   approvalStatus: ReagentApprovalStatus;
   createdBy: string | null;
@@ -581,6 +583,8 @@ export interface ListReagentsQuery {
   isExpired?: boolean;
   isHazardous?: boolean;
   approvalStatus?: ReagentApprovalStatus;
+  /** D-170 */
+  expiringWithinDays?: number;
 }
 
 export interface ReagentTransactionDto {

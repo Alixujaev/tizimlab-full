@@ -7,7 +7,11 @@ export function ReagentStatusBadges({ reagent }: { reagent: ReagentDto }) {
   const { t } = useTranslation();
   const approval = reagent.approvalStatus ?? 'approved';
   const ok =
-    approval === 'approved' && !reagent.isLowStock && !reagent.isExpired && !reagent.isHazardous;
+    approval === 'approved' &&
+    !reagent.isLowStock &&
+    !reagent.isExpired &&
+    !reagent.isExpiringSoon &&
+    !reagent.isHazardous;
   return (
     <div className="flex flex-wrap gap-1">
       {approval === 'pending' && (
@@ -21,6 +25,9 @@ export function ReagentStatusBadges({ reagent }: { reagent: ReagentDto }) {
       )}
       {reagent.isExpired && (
         <StatusPill tone="danger">{t('reagents.expired', "Muddati o'tgan")}</StatusPill>
+      )}
+      {reagent.isExpiringSoon && (
+        <StatusPill tone="warning">{t('reagents.expiringSoon', 'Muddati yaqin')}</StatusPill>
       )}
       {reagent.isHazardous && (
         <StatusPill tone="accent">{t('reagents.hazardous', 'Xavfli')}</StatusPill>

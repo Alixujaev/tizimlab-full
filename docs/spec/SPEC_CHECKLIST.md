@@ -748,6 +748,10 @@
 | R-P16-06 | `POST /reagents/:id/approve` va `/reject` (sabab ≥5 belgi): holat, audit (`status_change`) va kirituvchiga `reagent_approved`/`reagent_rejected` xabarnomasi bir tranzaksiyada. | TZ §3.2, DECISIONS.md D-169 | P16 | [x] |
 | R-P16-07 | Faqat `chemist` va `lab_head` tasdiqlaydi (boshqa rollar, individual grant bilan ham — 403); o'zi kiritgan reaktivni tasdiqlay olmaydi; faqat `pending` dan, takror/parallel qaror — 409; boshqa kompaniya — 404. | TZ §3.2, DECISIONS.md D-169 | P16 | [x] |
 | R-P16-08 | Tasdiqlanmagan (`pending`/`rejected`) reaktivdan sarf (`out`) — 409 `REAGENT_NOT_APPROVED`; kirim, tuzatish, utilizatsiya mumkin. UI: holat belgisi, "Tasdiq kutayotganlar" filtri, tasdiqlash paneli, sarf modalida ogohlantirish. | TZ §3.2, DECISIONS.md D-169 | P16 | [x] |
+| R-P16-09 | Kunlik `reagent_expiry` job: rad etilmagan, qoldig'i > 0 reaktivlar uchun muddatgacha 8..30 kun → `30`, 1..7 → `7`, ≤ 0 (7 kunlik catch-up) → `0` chegarasi; faqat eng shoshilinch chegara; kun — Asia/Tashkent. | TZ §3.2, DECISIONS.md D-170 | P16 | [x] |
+| R-P16-10 | `reagent_expiring` xabarnomasi kompaniyaning `lab_head` va `admin` rollariga yagona `createNotification` orqali (ekran, Socket.IO, Telegram); boshqa kompaniyaga ketmaydi. | TZ §3.2, §4, DECISIONS.md D-170 | P16 | [x] |
+| R-P16-11 | Dublikat yo'q: `reagent_expiry_notices` UNIQUE(reagent, threshold, expires_at) + `ON CONFLICT DO NOTHING`; `pg_try_advisory_xact_lock` — ko'p instansiyada bir marta; muddat o'zgarsa yangi sana uchun qayta ogohlantirish. | TZ §3.2, DECISIONS.md D-170 | P16 | [x] |
+| R-P16-12 | `GET /reagents?expiringWithinDays=N` (1..365) va DTO `isExpiringSoon` (≤30 kun); UI "Muddati yaqin" tab va belgi. | TZ §3.2, DECISIONS.md D-170 | P16 | [x] |
 
 ## Holat izohlari
 
@@ -838,8 +842,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 8 | 8 | 0 | 0 |
-| **Jami** | 626 | 566 | 42 | 18 |
+| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 12 | 12 | 0 | 0 |
+| **Jami** | 630 | 570 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -860,5 +864,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P13 | 16 | 16 | 0 | 0 |
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
-| P16 | 8 | 8 | 0 | 0 |
-| **Jami** | 626 | 566 | 42 | 18 |
+| P16 | 12 | 12 | 0 | 0 |
+| **Jami** | 630 | 570 | 42 | 18 |

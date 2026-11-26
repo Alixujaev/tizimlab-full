@@ -38,6 +38,8 @@ export interface ReagentDto {
   isHazardous: boolean;
   isLowStock: boolean;
   isExpired: boolean;
+  /** D-170: muddati 30 kun ichida tugaydi (hali o'tmagan). */
+  isExpiringSoon: boolean;
   /** D-169: tasdiqlanmaguncha sarf (`out`) taqiqlanadi. */
   approvalStatus: ReagentApprovalStatus;
   createdBy: string | null;
@@ -114,6 +116,16 @@ export interface ReagentDocumentDto {
   uploadedAt: string;
 }
 
+export const EXPIRING_SOON_DAYS = 30;
+
+function isExpiringSoon(expiresAt: string | Date | null, isExpired: boolean): boolean {
+  if (!expiresAt || isExpired) return false;
+  const limit = new Date();
+  limit.setHours(0, 0, 0, 0);
+  limit.setDate(limit.getDate() + EXPIRING_SOON_DAYS);
+  return new Date(expiresAt) <= limit;
+}
+
 export function toReagentDto(row: ReagentRow): ReagentDto {
   const qty = Number(row.quantity);
   const threshold = Number(row.low_stock_threshold);
@@ -133,6 +145,7 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
     isHazardous: row.is_hazardous,
     isLowStock: qty < threshold,
     isExpired,
+    isExpiringSoon: isExpiringSoon(row.expires_at, isExpired),
     approvalStatus: row.approval_status,
     createdBy: row.created_by ?? null,
     approvedBy: row.approved_by ?? null,

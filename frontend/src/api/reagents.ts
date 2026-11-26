@@ -40,6 +40,7 @@ export async function fetchReagents(
   if (params?.isExpired !== undefined) query.isExpired = params.isExpired;
   if (params?.isHazardous !== undefined) query.isHazardous = params.isHazardous;
   if (params?.approvalStatus) query.approvalStatus = params.approvalStatus;
+  if (params?.expiringWithinDays) query.expiringWithinDays = params.expiringWithinDays;
 
   const { data } = await apiClient.get<Paginated<ReagentDto>>('/reagents', { params: query });
   return data;

@@ -843,7 +843,9 @@
       "approvedToast": "Reagent approved",
       "rejectedToast": "Reagent rejected",
       "outBlocked": "The reagent is not approved yet — consumption cannot be recorded. Choose receipt, adjustment or disposal."
-    }
+    },
+    "filterExpiringSoon": "Expiring soon",
+    "expiringSoon": "Expiring soon"
   },
   "temperature": {
     "title": "Temperature & Humidity Monitoring",
