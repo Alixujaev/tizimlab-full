@@ -25,6 +25,7 @@ import {
 import { ALLOWED_EXTENSIONS } from '@/lib/files';
 import { formatDateTime } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
+import { ProtocolRoomSelect, ProtocolTemperatureInfo } from './ProtocolTemperature';
 import type { ProtocolFileDto, ProtocolStatus, SampleDetailDto } from '@/types';
 import {
   Alert,
@@ -135,6 +136,8 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
   const uploadExtraFileMutation = useUploadProtocolExtraFileMutation(sample.id);
   const deleteExtraFileMutation = useDeleteProtocolExtraFileMutation(sample.id);
   const submitMutation = useSubmitProtocolMutation(sample.id);
+  // D-173: yuborishda tanlanadigan xona (harorat snapshot'i)
+  const [roomId, setRoomId] = useState('');
   const approveMutation = useApproveProtocolMutation(sample.id);
   const rejectMutation = useRejectProtocolMutation(sample.id);
   const finalizeMutation = useFinalizeProtocolMutation(sample.id);
@@ -460,6 +463,8 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
               </Alert>
             )}
 
+            <ProtocolTemperatureInfo protocol={activeProto} />
+
             {/* 1. Asosiy fayl */}
             <FileBlock
               title={t('protocols.mainFile', 'Asosiy tahlil hisoboti (majburiy)')}
@@ -622,7 +627,8 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
             )}
 
             {(canSubmit || canReview || canFinalize) && (
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4">
+              <div className="flex flex-wrap items-end justify-end gap-2 border-t border-line pt-4">
+                {canSubmit && <ProtocolRoomSelect value={roomId} onChange={setRoomId} />}
                 {canSubmit && (
                   <Button
                     leftIcon="send"
@@ -633,7 +639,12 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                         ? t('protocols.uploadRequiredBeforeSubmit', 'Avval fayl yuklang')
                         : undefined
                     }
-                    onClick={() => submitMutation.mutate(activeProto.id)}
+                    onClick={() =>
+                      submitMutation.mutate({
+                        id: activeProto.id,
+                        input: { sensorConfigId: roomId || null },
+                      })
+                    }
                   >
                     {activeProto.status === 'rejected'
                       ? t('protocols.resubmit', 'Qayta yuborish')

@@ -35,6 +35,9 @@ interface TranslationMap {
   expiryDate: string;
   arrivalDate: string;
   analysisEnd: string;
+  roomTemperature: string;
+  tempNoRoom: string;
+  tempNoReading: string;
   colAction: string;
   colUser: string;
   colRole: string;
@@ -70,6 +73,9 @@ const I18N: Record<ExportLang, TranslationMap> = {
     expiryDate: 'Yaroqlilik muddati',
     arrivalDate: 'Kelgan sana',
     analysisEnd: 'Analiz tugash sanasi',
+    roomTemperature: 'Xona harorati',
+    tempNoRoom: 'Xona tanlanmagan — harorat bog‘lanmagan',
+    tempNoReading: 'Tahlil sanasi uchun harorat yozuvi topilmadi',
     colAction: 'Harakat / Bosqich',
     colUser: 'F.I.SH.',
     colRole: 'Rol',
@@ -131,6 +137,9 @@ const I18N: Record<ExportLang, TranslationMap> = {
     expiryDate: 'Срок годности',
     arrivalDate: 'Дата поступления',
     analysisEnd: 'Дата окончания анализа',
+    roomTemperature: 'Температура помещения',
+    tempNoRoom: 'Помещение не выбрано — температура не привязана',
+    tempNoReading: 'Запись температуры на дату анализа не найдена',
     colAction: 'Действие / Этап',
     colUser: 'Ф.И.О.',
     colRole: 'Роль',
@@ -192,6 +201,9 @@ const I18N: Record<ExportLang, TranslationMap> = {
     expiryDate: 'Expiry Date',
     arrivalDate: 'Arrival Date',
     analysisEnd: 'Analysis Due Date',
+    roomTemperature: 'Room Temperature',
+    tempNoRoom: 'No room selected — temperature not linked',
+    tempNoReading: 'No temperature record found for the analysis date',
     colAction: 'Action / Stage',
     colUser: 'Full Name',
     colRole: 'Role',
@@ -253,6 +265,22 @@ export function formatIsoDay(value: string | null | undefined): string {
   if (!value) return '—';
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
   return m ? `${m[3]}.${m[2]}.${m[1]}` : value;
+}
+
+/** D-173: protokoldagi harorat snapshot'i matni (jurnal o'zgarsa ham snapshot'dan). */
+export function temperatureText(
+  protocol: Pick<ProtocolDetailDto, 'temperatureSnapshot' | 'temperatureWarning'>,
+  lang: ExportLang = 'uz',
+): string {
+  const dict = I18N[lang] ?? I18N.uz;
+  const snap = protocol.temperatureSnapshot;
+  if (snap) {
+    const hum = snap.humidity === null ? '' : `, ${snap.humidity}%`;
+    return `${snap.temperature} °C${hum} — ${snap.locationName} (${formatDate(snap.recordedAt)})`;
+  }
+  if (protocol.temperatureWarning === 'no_reading') return dict.tempNoReading;
+  if (protocol.temperatureWarning === 'no_room') return dict.tempNoRoom;
+  return '—';
 }
 
 export interface ProtocolSampleExtra {
@@ -352,6 +380,7 @@ export async function generateProtocolDocx(
                 dict.statuses[protocol.status] ?? protocol.status,
               ),
               createKeyValueRow(dict.createdAt, formatDate(protocol.createdAt)),
+              createKeyValueRow(dict.roomTemperature, temperatureText(protocol, lang)),
               createKeyValueRow(
                 dict.mainFile,
                 protocol.fileName ? `${protocol.fileName} (${protocol.fileSize ? `${Math.round(protocol.fileSize / 1024)} KB` : ''})` : '—',

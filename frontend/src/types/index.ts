@@ -447,8 +447,31 @@ export interface ProtocolDto {
   passportFileMime?: string | null;
   passportUploadedBy?: string | null;
   passportUploadedAt?: string | null;
+  /** D-173: yuborishda olingan xona harorati snapshot'i */
+  sensorConfigId?: string | null;
+  temperatureSnapshot?: ProtocolTemperatureSnapshot | null;
+  temperatureWarning?: 'no_room' | 'no_reading' | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProtocolTemperatureSnapshot {
+  readingId: string;
+  sensorConfigId: string;
+  sensorId: string;
+  locationName: string;
+  temperature: number;
+  humidity: number | null;
+  recordedAt: string;
+  isManual: boolean;
+  alertTriggered: boolean;
+  analysisDate: string;
+  capturedAt: string;
+}
+
+export interface SubmitProtocolInput {
+  sensorConfigId?: string | null;
+  analysisDate?: string | null;
 }
 
 export interface ProtocolFileDto {

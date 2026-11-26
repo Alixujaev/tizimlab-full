@@ -3,7 +3,12 @@ import { UnauthorizedError } from '../../utils/errors.js';
 import { sendCreated, sendOk } from '../../utils/http.js';
 import type { FileStorage } from '../files/files.storage.js';
 import * as protocolsService from './protocols.service.js';
-import type { RejectProtocolInput, RequestMeta, UserContext } from './protocols.types.js';
+import type {
+  RejectProtocolInput,
+  RequestMeta,
+  SubmitProtocolInput,
+  UserContext,
+} from './protocols.types.js';
 
 function getMeta(req: Request): RequestMeta {
   return {
@@ -107,6 +112,7 @@ export function createProtocolsController(storage: FileStorage | null) {
         actor,
         req.params.id as string,
         getMeta(req),
+        (req.validated?.body ?? {}) as SubmitProtocolInput,
       );
       sendOk(res, protocol);
     },

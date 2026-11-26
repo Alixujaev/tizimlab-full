@@ -1,3 +1,4 @@
+import type { TemperatureSnapshot, TemperatureWarning } from './protocols.temperature.js';
 import type { Role } from '../auth/auth.types.js';
 
 export type ProtocolStatus = 'draft' | 'submitted' | 'approved' | 'rejected' | 'finalized';
@@ -26,6 +27,10 @@ export interface ProtocolRow {
   passport_file_mime: string | null;
   passport_uploaded_by: string | null;
   passport_uploaded_at: Date | null;
+  /** D-173: xona (sensor) va harorat snapshot'i */
+  sensor_config_id?: string | null;
+  temperature_snapshot?: TemperatureSnapshot | null;
+  temperature_warning?: TemperatureWarning | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -102,6 +107,10 @@ export interface ProtocolDto {
   approvedAt: string | null;
   finalizedAt: string | null;
   rejectedAt: string | null;
+  /** D-173: yuborishda olingan xona harorati (jurnal o'zgarsa ham o'zgarmaydi). */
+  sensorConfigId: string | null;
+  temperatureSnapshot: TemperatureSnapshot | null;
+  temperatureWarning: TemperatureWarning | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -113,6 +122,11 @@ export interface ProtocolDetailDto extends ProtocolDto {
   sampleAssignedTo: string | null;
   signatures: ProtocolSignatureDto[];
   files: ProtocolFileDto[];
+}
+
+export interface SubmitProtocolInput {
+  sensorConfigId?: string | null;
+  analysisDate?: string | null;
 }
 
 export interface RejectProtocolInput {

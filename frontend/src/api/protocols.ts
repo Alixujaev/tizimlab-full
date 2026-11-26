@@ -6,6 +6,7 @@ import type {
   ProtocolDto,
   ProtocolFileDto,
   RejectProtocolInput,
+  SubmitProtocolInput,
 } from '@/types';
 
 export async function fetchProtocolsBySample(sampleId: string): Promise<ProtocolDto[]> {
@@ -44,8 +45,12 @@ export async function getProtocolFileDownload(id: string): Promise<DownloadLink>
   return data.data;
 }
 
-export async function submitProtocol(id: string): Promise<ProtocolDto> {
-  const { data } = await apiClient.post<ApiResponse<ProtocolDto>>(`/protocols/${id}/submit`);
+/** D-173: ixtiyoriy xona (sensor) — harorat snapshot'i uchun. */
+export async function submitProtocol(
+  id: string,
+  input: SubmitProtocolInput = {},
+): Promise<ProtocolDto> {
+  const { data } = await apiClient.post<ApiResponse<ProtocolDto>>(`/protocols/${id}/submit`, input);
   return data.data;
 }
 

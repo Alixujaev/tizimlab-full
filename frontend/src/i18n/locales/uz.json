@@ -684,6 +684,18 @@
       "standard": "Standart tahlil",
       "final": "Yakuniy tahlil",
       "in_process": "Oraliq tahlil"
+    },
+    "temperature": {
+      "title": "Xona harorati (tahlil vaqtida)",
+      "outOfRange": "Bu o‘qish xona chegarasidan tashqarida bo‘lgan.",
+      "warning": {
+        "no_room": "Xona tanlanmagan — harorat protokolga bog‘lanmadi.",
+        "no_reading": "Tanlangan xona uchun tahlil sanasida (±24 soat) harorat yozuvi topilmadi."
+      },
+      "room": "Tahlil o‘tkazilgan xona",
+      "roomHint": "Tahlil sanasiga eng yaqin harorat yozuvi protokolga bog‘lanadi",
+      "noRoom": "Tanlanmagan",
+      "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
     }
   },
   "notifications": {

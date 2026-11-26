@@ -684,6 +684,18 @@
       "standard": "Standard analysis",
       "final": "Final analysis",
       "in_process": "In-process analysis"
+    },
+    "temperature": {
+      "title": "Room temperature (at analysis time)",
+      "outOfRange": "This reading was outside the room limits.",
+      "warning": {
+        "no_room": "No room selected — temperature is not linked to the protocol.",
+        "no_reading": "No temperature record found for the selected room on the analysis date (±24 h)."
+      },
+      "room": "Room where the analysis was performed",
+      "roomHint": "The temperature record closest to the analysis date will be linked",
+      "noRoom": "Not selected",
+      "value": "{{temp}} °C{{humidity}} — {{room}} ({{at}})"
     }
   },
   "notifications": {

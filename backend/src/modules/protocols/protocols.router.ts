@@ -8,6 +8,7 @@ import { PASSPORT_MAX_BYTES } from '../files/files.validation.js';
 import { createProtocolsController } from './protocols.controller.js';
 import {
   protocolFileIdParamSchema,
+  submitProtocolSchema,
   protocolIdParamSchema,
   rejectProtocolSchema,
   sampleIdParamSchema,
@@ -136,10 +137,11 @@ export function createProtocolsRouter(deps: ProtocolsRouterDeps): Router {
   );
 
   // Protokolni yuborish (faqat biriktirilgan kimyogar)
+  // D-173: ixtiyoriy body { sensorConfigId, analysisDate } — xona harorati snapshot'i
   router.post(
     '/:id/submit',
     ...companyAuth,
-    validate({ params: protocolIdParamSchema }),
+    validate({ params: protocolIdParamSchema, body: submitProtocolSchema }),
     controller.submitProtocol,
   );
 

@@ -16,7 +16,7 @@ import {
   uploadProtocolPassport,
 } from '@/api/protocols';
 import { samplesKeys } from '@/hooks/useSamples';
-import type { RejectProtocolInput } from '@/types';
+import type { RejectProtocolInput, SubmitProtocolInput } from '@/types';
 
 export const protocolsKeys = {
   all: ['protocols'] as const,
@@ -81,8 +81,10 @@ export function useDeleteProtocolFileMutation(sampleId?: string) {
 export function useSubmitProtocolMutation(sampleId?: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => submitProtocol(id),
-    onSuccess: (_data, id) => {
+    mutationFn: (v: string | { id: string; input: SubmitProtocolInput }) =>
+      typeof v === 'string' ? submitProtocol(v) : submitProtocol(v.id, v.input),
+    onSuccess: (_data, v) => {
+      const id = typeof v === 'string' ? v : v.id;
       void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
       if (sampleId) {
         void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });

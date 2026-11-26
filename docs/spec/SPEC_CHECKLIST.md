@@ -761,6 +761,10 @@
 | R-P16-19 | Reyestr (audit qidiruvi) `chemistId` filtri (tahlilni bajargan kimyogar) mavjud nom, seriya, lot, sana oralig'i va tur filtrlari bilan AND, sahifalash; javobda kimyogar ismi; boshqa kompaniya kimyogari — bo'sh natija. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
 | R-P16-20 | `GET /registry/chemists` — kompaniya kimyogarlari (nofaollari belgisi bilan) barcha kompaniya rollariga; super_admin — 403. UI: reyestr filtrida "Kimyogar" tanlovi va ustun. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
 | R-P16-21 | `019_registry_search_indexes.sql`: tasdiqlangan namunalar bo'yicha qisman indekslar (kimyogar, seriya, lot, nom) va `users(company_id, role)`. | TZ §3.5, DECISIONS.md D-172 | P16 | [x] |
+| R-P16-22 | Protokol yuborilganda (`POST /protocols/:id/submit` ixtiyoriy `{ sensorConfigId, analysisDate }`) tanlangan xonaning tahlil sanasi 12:00 (Asia/Tashkent) ga ±24 soat ichidagi eng yaqin harorat o'qishi protokolga snapshot sifatida yoziladi; tahlil sanasi: so'rov → `analysis_end` → bugun. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
+| R-P16-23 | Snapshot JSON nusxa: harorat jurnali o'zgarsa/o'chirilsa va protokol tasdiqlansa ham o'zgarmaydi; faqat (qayta) yuborishda yangilanadi. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
+| R-P16-24 | Yozuv topilmasa `no_reading`, xona tanlanmasa `no_room` ogohlantirishi saqlanadi va UI'da aniq ko'rsatiladi (yuborish bloklanmaydi); boshqa kompaniya sensori — 404, protokol holati o'zgarmaydi. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
+| R-P16-25 | UI: biriktirilgan kimyogar yuborishda faol xonani tanlaydi; protokol kartasida harorat yoki ogohlantirish; `.docx` eksportda "Xona harorati" qatori. | TZ §3.5, DECISIONS.md D-173 | P16 | [x] |
 
 ## Holat izohlari
 
@@ -851,8 +855,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
 | FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
-| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 21 | 21 | 0 | 0 |
-| **Jami** | 639 | 579 | 42 | 18 |
+| P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
+| **Jami** | 643 | 583 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -873,5 +877,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P13 | 16 | 16 | 0 | 0 |
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
-| P16 | 21 | 21 | 0 | 0 |
-| **Jami** | 639 | 579 | 42 | 18 |
+| P16 | 25 | 25 | 0 | 0 |
+| **Jami** | 643 | 583 | 42 | 18 |
