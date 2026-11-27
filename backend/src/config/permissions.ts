@@ -37,6 +37,11 @@ export const PERMISSION_CATALOG = [
   'ai:extract_sample',
   'ai:extract_reagent',
   'ai:extract_nd',
+  // P19 (D-193..D-196)
+  'ai:extract_peaks',
+  'oos:view',
+  'oos:write',
+  'rag:manage',
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_CATALOG)[number];
@@ -74,6 +79,9 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'stability:record',
     'analytics:view',
     'ai:extract_reagent',
+    'ai:extract_peaks',
+    'oos:view',
+    'oos:write',
   ],
   lab_head: [
     'samples:view',
@@ -104,6 +112,10 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'ai:extract_sample',
     'ai:extract_reagent',
     'ai:extract_nd',
+    'ai:extract_peaks',
+    'oos:view',
+    'oos:write',
+    'rag:manage',
   ],
   director: [
     'samples:view',
@@ -122,6 +134,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'analytics:view',
     'analytics:team',
     'analytics:company',
+    'oos:view',
   ],
   admin: [
     'samples:view',
@@ -147,6 +160,10 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'permissions:manage',
     'activity:view',
     'ai:extract_nd',
+    'ai:extract_peaks',
+    'oos:view',
+    'oos:write',
+    'rag:manage',
   ],
 };
 

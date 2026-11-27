@@ -105,6 +105,7 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
                 icon: 'clipboard' as const,
                 labelKey: 'nav.protocols',
               },
+              { key: 'oos', path: '/oos', icon: 'alert-triangle' as const, labelKey: 'nav.oos' },
             ]
           : []),
         { key: 'substances', path: '/substances', icon: 'beaker', labelKey: 'nav.substances' },
@@ -155,6 +156,7 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
         { key: 'equipment', path: '/equipment', icon: 'monitor', labelKey: 'nav.equipment' },
         { key: 'nd', path: '/nd', icon: 'file-text', labelKey: 'nav.nd' },
         { key: 'protocols', path: '/protocols', icon: 'clipboard', labelKey: 'nav.protocols' },
+        { key: 'oos', path: '/oos', icon: 'alert-triangle', labelKey: 'nav.oos' },
         { key: 'temperature', path: '/temperature', icon: 'thermometer', labelKey: 'nav.temperature' },
         { key: 'stability', path: '/stability', icon: 'clock', labelKey: 'nav.stability' },
         { key: 'profile', path: '/profile', icon: 'user', labelKey: 'nav.profile' },
@@ -201,6 +203,7 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
         { key: 'equipment', path: '/equipment', icon: 'monitor', labelKey: 'nav.equipment' },
         { key: 'nd', path: '/nd', icon: 'file-text', labelKey: 'nav.nd' },
       { key: 'protocols', path: '/protocols', icon: 'clipboard', labelKey: 'nav.protocols' },
+      { key: 'oos', path: '/oos', icon: 'alert-triangle', labelKey: 'nav.oos' },
       { key: 'temperature', path: '/temperature', icon: 'thermometer', labelKey: 'nav.temperature' },
       { key: 'stability', path: '/stability', icon: 'clock', labelKey: 'nav.stability' },
       { key: 'profile', path: '/profile', icon: 'user', labelKey: 'nav.profile' },

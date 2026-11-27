@@ -55,6 +55,8 @@ import {
   type Tone,
 } from '@/ui';
 import { ProtocolRejectModal } from './ProtocolRejectModal';
+import { OosOpenButton } from '@/components/oos/OosOpenButton';
+import { PeakResultsModal } from '@/components/peaks/PeakResultsModal';
 
 const PROTOCOL_STATUS_TONE: Record<ProtocolStatus, Tone> = {
   draft: 'neutral',
@@ -136,6 +138,8 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
   const [downloadingPassport, setDownloadingPassport] = useState(false);
   const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
   const [exportingDocx, setExportingDocx] = useState(false);
+  // P19 (D-193): peak natijalari oynasi
+  const [peakResultsFileId, setPeakResultsFileId] = useState<string | null>(null);
 
   const activeProtocolSummary =
     protocols?.find((p) => p.id === selectedProtocolId) ?? protocols?.[0];
@@ -227,6 +231,9 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
   const canManagePeaks =
     (isAssignedChemist || isLabHead || isAdmin) && editableStatus && sample.status !== 'stopped';
   const rejections = activeProtocolDetail?.rejections ?? [];
+  // P19: peak natijalarini kiritish (server ham tekshiradi) va OOS ochish (biriktirilgan kimyogar / lab_head)
+  const canWritePeakResults = isAssignedChemist || isLabHead || isAdmin;
+  const canOpenOos = isAssignedChemist || isLabHead;
 
   const withFlag = async (set: (v: boolean) => void, run: () => Promise<void>) => {
     try {
@@ -448,6 +455,9 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
       }
       actions={
         <>
+          {canOpenOos && activeProtocolId && (
+            <OosOpenButton sampleId={sample.id} protocolId={activeProtocolId} />
+          )}
           {activeProtocolId && (
             <Button
               variant="secondary"
@@ -694,6 +704,14 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                           >
                             {t('common.download', 'Yuklab olish')}
                           </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            leftIcon="layers"
+                            onClick={() => setPeakResultsFileId(f.id)}
+                          >
+                            {t('peaks.open')}
+                          </Button>
                           {canManagePeaks &&
                             (isLabHead || isAdmin || f.uploadedBy === user?.id) && (
                               <Button
@@ -929,6 +947,12 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
           </>
         ) : null}
       </div>
+
+      <PeakResultsModal
+        fileId={peakResultsFileId}
+        canWrite={canWritePeakResults}
+        onClose={() => setPeakResultsFileId(null)}
+      />
 
       <ProtocolRejectModal
         open={isRejectModalOpen}

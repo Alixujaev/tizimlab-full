@@ -44,7 +44,8 @@
     "moreShort": "More",
     "equipment": "Equipment",
     "nd": "Normative documents",
-    "protocols": "Protocols"
+    "protocols": "Protocols",
+    "oos": "OOS log"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -1699,6 +1700,265 @@
       "dateFrom": "Date (from)",
       "dateTo": "Date (to)",
       "hasPeaks": "Only with peak files"
+    }
+  },
+  "oos": {
+    "title": "OOS log",
+    "subtitle": "Out-of-specification investigations and AI copilot (AI only assists, it never decides)",
+    "searchPlaceholder": "Substance, batch or test…",
+    "allStatuses": "All statuses",
+    "empty": "No OOS records found",
+    "humanDecision": "The final OOS decision is a human decision: only the lab head closes a case. AI suggestions are not a conclusion.",
+    "resultVsSpec": "{{result}} (spec: {{spec}})",
+    "status": {
+      "open": "Open",
+      "investigating": "Investigating",
+      "closed": "Closed"
+    },
+    "columns": {
+      "substance": "Substance / batch",
+      "result": "Result and spec",
+      "opened": "Opened"
+    },
+    "fields": {
+      "testName": "Test",
+      "resultValue": "Result",
+      "specLimit": "Specification limit",
+      "unit": "Unit",
+      "description": "Description",
+      "rootCause": "Root cause",
+      "closureNote": "Closure note"
+    },
+    "open": {
+      "button": "Open OOS",
+      "title": "Open OOS",
+      "description": "If the result is out of specification, open an investigation. The sample and protocol are linked automatically.",
+      "submit": "Open OOS",
+      "created": "OOS opened",
+      "required": "Required field"
+    },
+    "case": {
+      "title": "Result",
+      "sample": "Sample",
+      "openSample": "Open sample",
+      "opened": "Opened by",
+      "closure": "Closure",
+      "closedBy": "Closed by"
+    },
+    "journal": {
+      "title": "Investigation log",
+      "description": "Notes and status changes",
+      "empty": "No log entries",
+      "add": "Add a note",
+      "save": "Save note",
+      "statusChanged": "Status: {{status}}"
+    },
+    "actions": {
+      "investigate": "Start investigation",
+      "investigateTitle": "Start investigation",
+      "investigateText": "The OOS status will change to “Investigating”.",
+      "investigated": "Investigation started",
+      "noteOptional": "Note (optional)",
+      "close": "Close OOS",
+      "closeTitle": "Close OOS",
+      "closeText": "Closing is the lab head’s decision. Enter the root cause and a closure note; a closed case cannot be changed.",
+      "closed": "OOS closed",
+      "minChars": "At least {{min}} characters"
+    },
+    "peakFiles": {
+      "title": "Peak files",
+      "description": "Chromatogram files of the protocol",
+      "empty": "No peak files",
+      "confirmed": "Confirmed rows: {{count}}",
+      "open": "Results and comparison"
+    },
+    "chat": {
+      "title": "AI copilot",
+      "description": "Ask about the internal knowledge base (protocols, peaks, NDs, past OOS)",
+      "newSession": "New conversation",
+      "noSessions": "No conversations yet",
+      "session": "Conversation",
+      "sessionFrom": "Conversation — {{date}}",
+      "newQuestion": "New question",
+      "freeSessions": "AI conversations",
+      "freeSessionsHint": "Free questions not linked to an OOS case",
+      "openCase": "Open OOS case",
+      "aiOffTitle": "AI assistant is unavailable",
+      "aiOff": "AI is disabled or not working. The OOS log works fully — keep notes and statuses as usual.",
+      "emptyThread": "Type your question — the answer cites internal sources.",
+      "messages": "Conversation messages",
+      "thinking": "AI is preparing an answer…",
+      "sendFailed": "Question was not sent",
+      "readOnly": "Read-only — you cannot ask questions.",
+      "question": "Question",
+      "questionHint": "Up to {{max}} characters",
+      "tooLong": "The question must not exceed {{max}} characters",
+      "peakFile": "Peak file",
+      "noPeakFile": "No peak file selected",
+      "substanceFilter": "Substance name (filter)",
+      "attachmentsHint": "PDF, DOCX, JPEG, PNG, WEBP; up to {{max}} per message, {{total}} per conversation",
+      "attach": "Attach file",
+      "send": "Send"
+    },
+    "answer": {
+      "failedTitle": "AI could not answer",
+      "failed": "AI could not answer — please try again.",
+      "aiBadge": "AI suggestion",
+      "ftsOnly": "Text search only",
+      "internal": "Found in the internal base",
+      "internalNotFound": "Not found in the internal base",
+      "peaks": "Peak comparison",
+      "noPeaks": "No peak data provided",
+      "causes": "Probable causes",
+      "none": "None",
+      "basisInternal": "Internal base",
+      "basisGeneral": "General knowledge — verify",
+      "checks": "Recommended checks",
+      "general": "General analytical knowledge",
+      "generalWarning": "Not from the internal base — please verify",
+      "sources": "Sources ({{count}})",
+      "cited": "Cited",
+      "disclaimer": "AI does not make decisions: this is investigation support only. The final decision belongs to the lab head."
+    },
+    "sourceType": {
+      "protocol": "Protocol",
+      "peak": "Peaks",
+      "nd": "ND",
+      "oos_case": "OOS"
+    },
+    "errors": {
+      "AI_UNAVAILABLE": "The AI service is unavailable — try again later. The OOS log keeps working.",
+      "AI_DISABLED": "The AI assistant is disabled for your company.",
+      "OOS_CHAT_DAILY_LIMIT": "Today’s AI question limit is reached — try again tomorrow.",
+      "AI_RATE_LIMITED": "Too many AI requests — try again shortly.",
+      "PAYLOAD_TOO_LARGE": "File is too large",
+      "UNSUPPORTED_MEDIA_TYPE": "Unsupported file type — choose PDF, DOCX, JPEG, PNG or WEBP",
+      "EMPTY_FILE": "File is empty",
+      "MAX_FILES_EXCEEDED": "Up to 10 files can be attached to a conversation",
+      "OOS_CLOSED": "OOS is closed — it cannot be changed",
+      "INVALID_OOS_STATUS": "This status change is not allowed",
+      "PEAK_CONFIRMED": "A confirmed peak result cannot be edited"
+    }
+  },
+  "peaks": {
+    "title": "Peak results",
+    "open": "Peak results",
+    "unnamed": "Unnamed peak",
+    "tabs": {
+      "results": "Results",
+      "comparison": "Compare with history"
+    },
+    "columns": {
+      "peak": "Peak",
+      "rt": "RT",
+      "area": "Area",
+      "areaPercent": "Area, %",
+      "height": "Height",
+      "tailing": "Tailing",
+      "plates": "N (plates)",
+      "resolution": "Rs"
+    },
+    "fields": {
+      "retentionTime": "RT (min)",
+      "area": "Area",
+      "areaPercent": "Area, %",
+      "height": "Height",
+      "tailing": "Tailing",
+      "plates": "N",
+      "resolution": "Rs"
+    },
+    "status": {
+      "draft": "Draft",
+      "confirmed": "Confirmed"
+    },
+    "validation": {
+      "number": "Enter a number",
+      "rt": "RT is required and must be greater than 0",
+      "positive": "Must be greater than 0",
+      "percent": "Must be within 0…100",
+      "nonNegative": "Must not be negative"
+    },
+    "confirmHint": "Only CONFIRMED rows are used when comparing with history. Draft (unconfirmed) rows are ignored.",
+    "addRow": "Add row",
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm peak results",
+    "confirmText": "{{count}} draft rows will be confirmed. Confirmed rows cannot be edited.",
+    "confirmed": "{{count}} rows confirmed",
+    "empty": "No peak results entered",
+    "ai": {
+      "extract": "Read table with AI",
+      "reading": "Reading the peak table…",
+      "failed": "AI could not read the table — enter rows manually",
+      "nothing": "No peak table found in the file — enter manually",
+      "created": "AI added {{count}} draft rows ({{skipped}} skipped) — review and confirm"
+    },
+    "compare": {
+      "title": "Compare with history",
+      "mean": "mean",
+      "delta": "Δ",
+      "rsd": "RSD",
+      "criteria": {
+        "substance": "Substance",
+        "equipment": "Equipment",
+        "anyEquipment": "Any equipment",
+        "nd": "ND",
+        "sameNd": "Same ND",
+        "anyNd": "Not limited by ND"
+      },
+      "historyRuns": "Historical runs",
+      "noCurrent": "This file has no confirmed peak results — confirm the results first",
+      "noHistory": "No historical confirmed peaks to compare with",
+      "singleRun": "Only one run in history — RSD is not calculated",
+      "matchedRuns": "in {{count}} runs",
+      "flagsTitle": "Flags",
+      "noPeaks": "No peaks",
+      "missingTitle": "Peaks present in history but missing in the current file",
+      "missingLine": "{{name}} — mean RT {{rt}} (in {{runs}} runs)",
+      "thresholds": "Thresholds: RT ±{{rt}}%, area ±{{area}}%, tailing ≤ {{tailing}}, N drop ≤ {{plates}}%, Rs ≥ {{rs}}.",
+      "flagsNote": "Flags are for attention only — not a conclusion about the result."
+    },
+    "flags": {
+      "rt_shift": "RT shift",
+      "area_deviation": "Area deviation",
+      "tailing_high": "High tailing",
+      "tailing_change": "Tailing changed",
+      "plates_drop": "N dropped",
+      "low_resolution": "Low Rs",
+      "new_peak": "New peak"
+    }
+  },
+  "rag": {
+    "title": "Knowledge base",
+    "subtitle": "Index of internal documents searched by the AI copilot",
+    "reindex": "Reindex",
+    "reindexQueued": "{{count}} documents queued for indexing",
+    "retried": "Retry queued",
+    "mode": {
+      "title": "Search mode",
+      "hybrid": "Hybrid (semantic + text)",
+      "fts_only": "Text search only",
+      "ftsHint": "Embeddings are not configured — search works on text only."
+    },
+    "chunksTitle": "Indexed chunks",
+    "jobsTitle": "Indexing jobs",
+    "failedTitle": "Failed jobs",
+    "emptyChunks": "Index is empty",
+    "emptyJobs": "No jobs",
+    "columns": {
+      "sourceType": "Source type",
+      "chunks": "Chunks",
+      "withEmbedding": "With embedding",
+      "count": "Count",
+      "error": "Error",
+      "attempts": "Attempts",
+      "updatedAt": "Updated"
+    },
+    "jobStatus": {
+      "pending": "Pending",
+      "running": "Running",
+      "done": "Done",
+      "failed": "Failed",
+      "skipped": "Skipped"
     }
   }
 }

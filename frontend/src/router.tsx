@@ -31,6 +31,11 @@ import { NdDetailPage } from '@/pages/nd/NdDetailPage';
 import { NdListPage } from '@/pages/nd/NdListPage';
 import { ProtocolsPage } from '@/pages/protocols/ProtocolsPage';
 import { PROTOCOLS_ROLES } from '@/config/navigation';
+import { OOS_VIEW_ROLES, RAG_ROLES } from '@/config/oos';
+import { KnowledgeBasePage } from '@/pages/oos/KnowledgeBasePage';
+import { OosChatPage } from '@/pages/oos/OosChatPage';
+import { OosDetailPage } from '@/pages/oos/OosDetailPage';
+import { OosListPage } from '@/pages/oos/OosListPage';
 
 /**
  * Barcha yo'llar (spec §3, §6, §10, §11, §16; D-29). Sahifalar hozircha stub —
@@ -78,6 +83,19 @@ export const routes: RouteObject[] = [
           {
             element: <RoleRoute roles={PROTOCOLS_ROLES} />,
             children: [{ path: '/protocols', element: <ProtocolsPage /> }],
+          },
+          // P19: OOS jurnali va AI kopilot — kontrolyor kirmaydi; bilim bazasi faqat lab_head/admin
+          {
+            element: <RoleRoute roles={OOS_VIEW_ROLES} />,
+            children: [
+              { path: '/oos', element: <OosListPage /> },
+              { path: '/oos/chat/:sessionId', element: <OosChatPage /> },
+              { path: '/oos/:id', element: <OosDetailPage /> },
+            ],
+          },
+          {
+            element: <RoleRoute roles={RAG_ROLES} />,
+            children: [{ path: '/knowledge-base', element: <KnowledgeBasePage /> }],
           },
           {
             element: <RoleRoute roles={MANAGER_ROLES} />,

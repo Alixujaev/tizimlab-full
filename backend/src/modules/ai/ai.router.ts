@@ -1,4 +1,8 @@
-import { Router, type RequestHandler } from 'express';
+import { Router, type Request, type RequestHandler, type Response } from 'express';
+import { UnauthorizedError } from '../../utils/errors.js';
+import { sendOk } from '../../utils/http.js';
+import { extractPeaksBodySchema } from '../peaks/peaks.schemas.js';
+import { extractPeaksWithAi } from '../peaks/peaks.service.js';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
 import { requireCompany, requirePermission } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
@@ -68,6 +72,32 @@ export function createAiRouter(deps: {
     deps.userLimiter,
     validate({ body: extractNdBodySchema }),
     c.extractNd,
+  );
+  // P19 (D-193): peak faylidan jadval → qoralama `peak_results` (source='ai'), inson tasdiqlaydi
+  router.post(
+    '/extract/peaks',
+    ...companyAuth,
+    requirePermission('ai', 'extract_peaks'),
+    deps.userLimiter,
+    validate({ body: extractPeaksBodySchema }),
+    async (req: Request, res: Response) => {
+      if (!req.auth?.companyId) throw new UnauthorizedError();
+      const body = req.validated.body as { protocolFileId: string };
+      sendOk(
+        res,
+        await extractPeaksWithAi(
+          deps.runtime,
+          {
+            userId: req.auth.userId,
+            companyId: req.auth.companyId,
+            role: req.auth.role,
+            ip: req.ip ?? undefined,
+            userAgent: req.get('user-agent') ?? undefined,
+          },
+          body.protocolFileId,
+        ),
+      );
+    },
   );
   return router;
 }

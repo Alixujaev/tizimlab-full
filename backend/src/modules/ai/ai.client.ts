@@ -12,11 +12,20 @@ import Anthropic from '@anthropic-ai/sdk';
 
 export type AiMediaType = 'image/jpeg' | 'image/png' | 'image/webp' | 'application/pdf';
 
+/** P19: bir so'rovda bir nechta fayl/matn bo'lagi (chat ilovalari, OCR, retrieval konteksti). */
+export type AiContentPart =
+  | { kind: 'file'; mediaType: AiMediaType; data: Buffer }
+  | { kind: 'text'; text: string };
+
 export interface AiExtractRequest {
   system: string;
   instruction: string;
-  file: { mediaType: AiMediaType; data: Buffer };
+  /** Asosiy fayl (P18 oqimi). */
+  file?: { mediaType: AiMediaType; data: Buffer };
+  /** Qo'shimcha bo'laklar — `instruction` dan oldin, berilgan tartibda. */
+  parts?: AiContentPart[];
   jsonSchema: Record<string, unknown>;
+  maxTokens?: number;
 }
 
 export interface AiExtractResponse {
@@ -96,7 +105,7 @@ function retryDelayMs(err: unknown, attempt: number): number {
   return 500 * 2 ** attempt;
 }
 
-function contentBlock(file: AiExtractRequest['file']): Anthropic.ContentBlockParam {
+function contentBlock(file: { mediaType: AiMediaType; data: Buffer }): Anthropic.ContentBlockParam {
   const data = file.data.toString('base64');
   if (file.mediaType === 'application/pdf') {
     return { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data } };
@@ -135,13 +144,21 @@ export function createAnthropicAiClient(opts: AnthropicClientOptions): AiClient 
     async extract(req) {
       const params: Anthropic.MessageCreateParamsNonStreaming = {
         model: opts.model,
-        max_tokens: MAX_TOKENS,
+        max_tokens: req.maxTokens ?? MAX_TOKENS,
         system: req.system,
         output_config: { format: { type: 'json_schema', schema: req.jsonSchema } },
         messages: [
           {
             role: 'user',
-            content: [contentBlock(req.file), { type: 'text', text: req.instruction }],
+            content: [
+              ...(req.file ? [contentBlock(req.file)] : []),
+              ...(req.parts ?? []).map((p): Anthropic.ContentBlockParam =>
+                p.kind === 'file'
+                  ? contentBlock({ mediaType: p.mediaType, data: p.data })
+                  : { type: 'text', text: p.text },
+              ),
+              { type: 'text', text: req.instruction },
+            ],
           },
         ],
       };
