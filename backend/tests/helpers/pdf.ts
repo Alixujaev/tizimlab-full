@@ -3,8 +3,17 @@
  * Bo'sh matn — matn qatlamisiz "skan" PDF o'rnida ishlatiladi.
  */
 export function textPdf(text: string): Buffer {
-  const esc = text.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
-  const stream = text ? `BT /F1 12 Tf 50 750 Td (${esc}) Tj ET` : '';
+  const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  // Sahifa chegarasidan chiqqan matn ajratishda kesiladi — so'zlar bo'yicha ≤60 belgili qatorlarga bo'linadi
+  const lines: string[] = [];
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    const last = lines[lines.length - 1];
+    if (last !== undefined && last.length + word.length + 1 <= 60) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  const stream = lines.length
+    ? `BT /F1 12 Tf 14 TL 50 750 Td ${lines.map((l, i) => `${i ? 'T* ' : ''}(${esc(l)}) Tj`).join(' ')} ET`
+    : '';
   const objects = [
     '<< /Type /Catalog /Pages 2 0 R >>',
     '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
