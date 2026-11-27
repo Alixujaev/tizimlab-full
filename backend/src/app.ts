@@ -42,6 +42,10 @@ import type { AiClient } from './modules/ai/ai.client.js';
 import { aiRuntime, createAiUserLimiter, type AiUserLimitOptions } from './modules/ai/ai.config.js';
 import { createAiRouter } from './modules/ai/ai.router.js';
 import { createHistoryRouter } from './modules/history/history.router.js';
+import { createOosRouter } from './modules/oos/oos.router.js';
+import { createPeaksRouter } from './modules/peaks/peaks.router.js';
+import type { EmbeddingProvider } from './modules/rag/rag.embedding.js';
+import { createRagRouter } from './modules/rag/rag.router.js';
 import { createActivityRouter } from './modules/audit/activity.router.js';
 import { createTelegramRouter } from './modules/telegram/telegram.router.js';
 import { getTelegramBot } from './modules/telegram/telegram.bot.js';
@@ -89,7 +93,12 @@ export interface AppDeps {
     maxFileMb?: number;
     dailyLimit?: number;
     userLimit?: AiUserLimitOptions;
+    /** P19 (D-195): OOS chat kunlik limiti va foydalanuvchi rate-limiti */
+    chatDailyLimit?: number;
+    chatUserLimit?: AiUserLimitOptions;
   };
+  /** P19 (D-190): embedding provayderi; `null` — faqat FTS. Testlarda mock. */
+  embedding?: EmbeddingProvider | null;
 }
 
 /** Express ilovasini yig'adi. Server ishga tushirish `server.ts` da (D-21). */
@@ -103,6 +112,7 @@ export function createApp({
   bot,
   storage = null,
   ai,
+  embedding = null,
 }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
@@ -183,19 +193,27 @@ export function createApp({
   api.use('/nd', createNdRouter({ auth, storage }));
   api.use('/consumptions', createConsumptionsRouter({ auth }));
   // P18 (D-179..D-187)
+  const aiRt = aiRuntime({
+    client: ai?.client ?? null,
+    storage,
+    maxFileMb: ai?.maxFileMb,
+    dailyLimit: ai?.dailyLimit,
+  });
   api.use(
     '/ai',
-    createAiRouter({
+    createAiRouter({ auth, runtime: aiRt, userLimiter: createAiUserLimiter(ai?.userLimit) }),
+  );
+  // P19 (D-190..D-196)
+  api.use('/peaks', createPeaksRouter({ auth }));
+  api.use(
+    '/oos',
+    createOosRouter({
       auth,
-      runtime: aiRuntime({
-        client: ai?.client ?? null,
-        storage,
-        maxFileMb: ai?.maxFileMb,
-        dailyLimit: ai?.dailyLimit,
-      }),
-      userLimiter: createAiUserLimiter(ai?.userLimit),
+      chat: { ai: aiRt, embedding, chatDailyLimit: ai?.chatDailyLimit ?? 300 },
+      chatLimiter: createAiUserLimiter(ai?.chatUserLimit ?? { max: 6, windowMs: 60_000 }),
     }),
   );
+  api.use('/rag', createRagRouter({ auth, embedding }));
   api.use('/history', createHistoryRouter({ auth }));
   api.use('/audit', createAuditRouter({ auth }));
   api.use('/activity', createActivityRouter({ auth }));

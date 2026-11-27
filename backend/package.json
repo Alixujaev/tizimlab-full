@@ -13,7 +13,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "create-super-admin": "tsx src/cli/createSuperAdmin.ts",
-    "create-super-admin:dist": "node dist/cli/createSuperAdmin.js"
+    "create-super-admin:dist": "node dist/cli/createSuperAdmin.js",
+    "rag:reindex": "tsx src/cli/ragReindex.ts",
+    "rag:reindex:dist": "node dist/cli/ragReindex.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.14.0",
@@ -29,11 +31,13 @@
     "grammy": "^1.46.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "mammoth": "^1.13.0",
     "multer": "^2.4.0",
     "pg": "^8.23.1",
     "socket.io": "^4.8.4",
     "swagger-jsdoc": "^6.3.0",
     "swagger-ui-express": "^5.0.1",
+    "unpdf": "^2.2.3",
     "winston": "^3.19.0",
     "zod": "^4.6.5"
   },

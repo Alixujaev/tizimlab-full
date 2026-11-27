@@ -23,7 +23,8 @@
     "format:check": "prettier --check .",
     "checklist:stats": "node scripts/checklist-stats.mjs",
     "etl": "tsx scripts/etl/cli.ts",
-    "ai:smoke": "tsx scripts/ai-smoke.ts"
+    "ai:smoke": "tsx scripts/ai-smoke.ts",
+    "rag:smoke": "tsx scripts/rag-smoke.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

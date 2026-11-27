@@ -8,7 +8,7 @@ import { writeAudit } from '../audit/audit.service.js';
 import { buildKey } from '../files/files.service.js';
 import { requireStorage, type FileStorage } from '../files/files.storage.js';
 import type { IncomingFile } from '../files/files.validation.js';
-import { AiUpstreamError, type AiClient } from './ai.client.js';
+import { AiUpstreamError, type AiClient, type AiContentPart } from './ai.client.js';
 import { AI_MAX_PDF_PAGES, assertAiFile, type AiValidatedFile } from './ai.files.js';
 import {
   lowerIfInvalid,
@@ -41,7 +41,7 @@ import {
  * - AI ishlamasa (xato, timeout, past sifat) javob 200 + `status`/`errorCode` — forma bloklanmaydi, 5xx yo'q.
  */
 
-export type ExtractionKind = 'sample' | 'reagent' | 'nd';
+export type ExtractionKind = 'sample' | 'reagent' | 'nd' | 'ocr' | 'peaks';
 export type ExtractionStatus = 'ok' | 'failed' | 'rejected';
 
 export interface AiRuntime {
@@ -93,7 +93,7 @@ export class AiUnavailableError extends AppError {
   }
 }
 
-async function companyAiEnabled(companyId: string): Promise<boolean> {
+export async function companyAiEnabled(companyId: string): Promise<boolean> {
   const { rows } = await query<{ ai_enabled: boolean }>(
     `SELECT ai_enabled FROM companies WHERE id = $1`,
     [companyId],
@@ -101,7 +101,7 @@ async function companyAiEnabled(companyId: string): Promise<boolean> {
   return rows[0]?.ai_enabled ?? false;
 }
 
-async function usedToday(companyId: string): Promise<number> {
+export async function usedToday(companyId: string): Promise<number> {
   const { rows } = await query<{ n: string }>(
     `SELECT count(*)::text AS n FROM ai_extractions
       WHERE company_id = $1
@@ -136,7 +136,7 @@ export async function getAiStatus(rt: AiRuntime, companyId: string | null): Prom
 }
 
 /** Tartib: xizmat sozlanmaganmi (503) → kompaniyada o'chiqmi (403) → kunlik limit (429). */
-async function assertAiAvailable(rt: AiRuntime, companyId: string): Promise<AiClient> {
+export async function assertAiAvailable(rt: AiRuntime, companyId: string): Promise<AiClient> {
   if (!rt.client) throw new AiUnavailableError();
   if (!(await companyAiEnabled(companyId))) {
     throw new AppError(403, 'AI_DISABLED', 'Bu kompaniya uchun AI yordamchi yoqilmagan');
@@ -154,7 +154,7 @@ async function assertAiAvailable(rt: AiRuntime, companyId: string): Promise<AiCl
 
 // ---------------------------------------------------------------- AI chaqiruvi (umumiy)
 
-interface CallOutcome<T> {
+export interface CallOutcome<T> {
   status: ExtractionStatus;
   data: T | null;
   errorCode: string | null;
@@ -163,10 +163,20 @@ interface CallOutcome<T> {
   outputTokens: number | null;
 }
 
-async function callModel<T>(
+/**
+ * Model chaqiruvi + qat'iy sxema; hech qachon tashlamaydi (xato → `failed`/`rejected` + kod).
+ * `file` — P18 bitta fayl; `parts` — P19 (chat ilovalari, retrieval matni, OCR).
+ */
+export async function callModel<T>(
   client: AiClient,
-  file: AiValidatedFile,
-  prompt: { system: string; instruction: string; jsonSchema: Record<string, unknown> },
+  file: AiValidatedFile | null,
+  prompt: {
+    system: string;
+    instruction: string;
+    jsonSchema: Record<string, unknown>;
+    parts?: AiContentPart[];
+    maxTokens?: number;
+  },
   parse: (json: unknown) => { success: true; data: T } | { success: false },
 ): Promise<CallOutcome<T>> {
   const base = { model: client.model, inputTokens: null, outputTokens: null };
@@ -174,7 +184,9 @@ async function callModel<T>(
     const res = await client.extract({
       system: prompt.system,
       instruction: prompt.instruction,
-      file: { mediaType: file.mime, data: file.buffer },
+      ...(file ? { file: { mediaType: file.mime, data: file.buffer } } : {}),
+      parts: prompt.parts,
+      maxTokens: prompt.maxTokens,
       jsonSchema: prompt.jsonSchema,
     });
     const usage = {
@@ -222,11 +234,11 @@ async function storeSourceFile(
   }
 }
 
-async function insertExtraction(
+export async function insertExtraction(
   db: pg.PoolClient | null,
   row: {
     companyId: string;
-    userId: string;
+    userId: string | null;
     kind: ExtractionKind;
     fileKey: string | null;
     fileName: string | null;
@@ -264,7 +276,7 @@ async function insertExtraction(
   return res.rows[0]!.id;
 }
 
-function logExtraction(
+export function logExtraction(
   id: string,
   kind: ExtractionKind,
   o: CallOutcome<unknown>,
@@ -499,6 +511,8 @@ const REVIEW_TABLE: Record<ExtractionKind, string> = {
   sample: 'samples',
   reagent: 'reagents',
   nd: 'normative_documents',
+  ocr: 'ai_extractions',
+  peaks: 'peak_results',
 };
 
 /** Solishtirish uchun kanonik satr: probellar siqiladi, sonlar `Number` orqali (25.0 = 25). */

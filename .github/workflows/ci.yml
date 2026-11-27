@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       postgres:
-        image: postgres:16
+        # P19 (D-190): pgvector kerak — rasmiy pgvector rasmi (PostgreSQL 16 + vector kengaytmasi)
+        image: pgvector/pgvector:pg16
         env:
           # Faqat CI uchun vaqtinchalik konteyner paroli — production siri emas
           POSTGRES_USER: tizimlab_ci

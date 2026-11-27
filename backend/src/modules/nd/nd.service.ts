@@ -10,6 +10,7 @@ import {
   type NdAiValue,
 } from '../ai/ai.service.js';
 import { writeAudit } from '../audit/audit.service.js';
+import { enqueueIndex } from '../rag/rag.indexer.js';
 import {
   buildKey,
   getDownloadUrl,
@@ -621,6 +622,8 @@ export async function changeNdStatus(
        WHERE id = $1 AND company_id = $2`,
       [id, companyId, t.to, userId],
     );
+    // P19 (D-191): tasdiqlansa indekslanadi; revise/archive — worker bo'laklarni olib tashlaydi
+    await enqueueIndex(tx, { companyId, sourceType: 'nd', sourceId: id });
     await writeAudit(tx, {
       userId,
       companyId,

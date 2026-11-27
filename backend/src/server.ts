@@ -3,7 +3,9 @@ import { closePool, initDb, pingDb } from './config/database.js';
 import { loadEnv } from './config/env.js';
 import { authConfigFromEnv } from './modules/auth/auth.types.js';
 import { storageFromEnv } from './modules/files/files.storage.js';
-import { aiClientFromEnv } from './modules/ai/ai.config.js';
+import { aiClientFromEnv, aiRuntime } from './modules/ai/ai.config.js';
+import { embeddingFromEnv } from './modules/rag/rag.embedding.js';
+import { startRagWorker, stopRagWorker } from './modules/rag/rag.indexer.js';
 import { closeSocketServer, createSocketServer } from './realtime/socket.js';
 import { startStabilityScheduler, stopStabilityScheduler } from './modules/stability/stability.job.js';
 import {
@@ -30,6 +32,8 @@ initDb(env.DATABASE_URL);
 const storage = storageFromEnv(env);
 if (!storage) logger.warn("R2 sozlanmagan: fayl endpointlari 503 qaytaradi (R2_* ni to'ldiring)");
 const aiClient = aiClientFromEnv(env);
+// P19 (D-190): kalit yo'q — null (faqat FTS)
+const embedding = embeddingFromEnv(env);
 if (!aiClient) logger.info('AI yordamchi o‘chiq (AI_ENABLED/ANTHROPIC_API_KEY/AI_MODEL) — qo‘lda kiritish ishlaydi');
 const app = createApp({
   env,
@@ -39,13 +43,26 @@ const app = createApp({
     client: aiClient,
     maxFileMb: env.AI_MAX_FILE_MB,
     dailyLimit: env.AI_DAILY_LIMIT_PER_COMPANY,
+    chatDailyLimit: env.OOS_CHAT_DAILY_LIMIT_PER_COMPANY,
   },
+  embedding,
 });
 const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
   startStabilityScheduler();
   startReagentExpiryScheduler();
   startCalibrationScheduler();
+  // P19 (D-191): RAG indekslash worker'i (DB navbati)
+  startRagWorker({
+    storage,
+    embedding,
+    ai: aiRuntime({
+      client: aiClient,
+      storage,
+      maxFileMb: env.AI_MAX_FILE_MB,
+      dailyLimit: env.AI_DAILY_LIMIT_PER_COMPANY,
+    }),
+  });
   startTelegramBot(env);
   setNotificationChannel('telegram', (userId, dto, companyId) => {
     void sendTelegramNotification(userId, dto, undefined, companyId);
@@ -70,6 +87,7 @@ async function shutdown(signal: string): Promise<void> {
   stopStabilityScheduler();
   stopReagentExpiryScheduler();
   stopCalibrationScheduler();
+  stopRagWorker();
   stopTelegramBot();
   setNotificationChannel('telegram', null);
   void closeSocketServer(io);

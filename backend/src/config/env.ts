@@ -68,6 +68,14 @@ export const envSchema = z
     AI_MODEL: optionalString,
     AI_MAX_FILE_MB: z.coerce.number().int().min(1).max(30).default(10),
     AI_DAILY_LIMIT_PER_COMPANY: z.coerce.number().int().min(0).default(200),
+    // P19 (D-190): embedding (RAG). Kalit/model yo'q — vektor qidiruv o'chiq, FTS fallback
+    EMBEDDING_PROVIDER: z.enum(['voyage', 'mock', 'none']).default('voyage'),
+    EMBEDDING_API_KEY: optionalString,
+    EMBEDDING_MODEL: optionalString,
+    EMBEDDING_DIM: z.coerce.number().int().positive().default(1024),
+    EMBEDDING_API_URL: optionalUrl,
+    // P19 (D-195): OOS chat — kompaniya bo'yicha kunlik AI javoblar limiti
+    OOS_CHAT_DAILY_LIMIT_PER_COMPANY: z.coerce.number().int().min(0).default(300),
   })
   .superRefine((env, ctx) => {
     const require = (key: keyof typeof env, why: string) => {

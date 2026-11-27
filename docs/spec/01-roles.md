@@ -33,6 +33,11 @@ Tizimda 6 ta rol mavjud:
 | AI: reaktiv hujjatidan to'ldirish (D-179) | ✅ | ✅ | ✅ | — | — |
 | AI: ND dan talablarni aniqlash (D-179) | — | — | ✅ | — | ✅ |
 | Protokollar ro'yxati (D-187) | — | O'ziga biriktirilgan | ✅ Hammasi | ✅ Hammasi | ✅ Hammasi |
+| Peak natijalari kiritish/tasdiqlash, AI peak jadvali (D-193) | — | ✅ (biriktirilgan) | ✅ | — | ✅ |
+| OOS ko'rish (D-194) | — | O'zi ochgan / biriktirilgan | ✅ Hammasi | ✅ Hammasi (faqat o'qish) | ✅ Hammasi |
+| OOS ochish, izoh, tergov, AI chat (D-194, D-195) | — | ✅ (biriktirilgan) | ✅ | — | ✅ |
+| OOS yopish (D-194) | — | — | ✅ | — | — |
+| Bilim bazasi indekslash holati (D-191) | — | — | ✅ | — | ✅ |
 | Harorat | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
 | Stabilizatsiya boshlash | — | — | ✅ | ✅ | ✅ |
 | Stabilizatsiya natija kiritish | — | ✅ (biriktirilgan) | ✅ | ✅ | ✅ |

@@ -803,6 +803,23 @@
 | R-P18-15 | UI: namuna/reaktiv formalarida "Hujjatdan to'ldirish" (AI belgisi, low — ogohlantirish, past sifat xabari), ND da "Hujjatdan talablarni aniqlash", protokol yuborishda apparat/sana/harorat taklifi va peak fayllar, rad etish tarixi, "Protokollar" sahifasi, reyestr apparat filtri, tarix ko'rinishi, kompaniya AI flag'i; uz/ru/en; mobil/Telegram WebApp. | Addendum §2–§3, DECISIONS.md D-179..D-189 | P18 | [x] |
 | R-P18-16 | CI da haqiqiy AI chaqirilmaydi (mock klient, fixture javoblar); `scripts/ai-smoke.ts` — haqiqiy kalit bilan qo'lda sinov (CI ga kirmaydi). | DECISIONS.md D-179 | P18 | [x] |
 
+## P19 — OOS AI Copilot (ichki baza + tashqi bilim, TZ §3.4, Addendum §2 4-bosqich)
+
+| ID | Talab | Manba | Faza | Holat |
+|---|---|---|---|---|
+| R-P19-01 | pgvector: migratsiya kengaytmani talab qiladi (yo'q bo'lsa tushunarli xato), izolyatsiya sxemalarida ishlaydi; CI `pgvector/pgvector:pg16`; deploy checklist'da `postgresql-16-pgvector`. | Addendum §2, DECISIONS.md D-190 | P19 | [x] |
+| R-P19-02 | Embedding abstraksiyasi (Voyage standart, mock testlar uchun); kalit yo'q — FTS fallback, chat ishlaydi, "faqat matn qidiruv" belgisi; model va o'lcham har bo'lakda. | DECISIONS.md D-190 | P19 | [x] |
+| R-P19-03 | Indekslash: DB navbati + worker; faqat tasdiqlangan protokol/peak/ND va yopilgan OOS; PDF matn, DOCX, skan — P18 OCR; idempotent, retry, failed, qayta indekslash buyrug'i va backfill. | TZ §3.4, DECISIONS.md D-191 | P19 | [x] |
+| R-P19-04 | Har retrieval `company_id` bilan cheklangan (vektor va FTS); kompaniyalararo oqib chiqmasligi alohida testlar bilan. | DECISIONS.md D-192 | P19 | [x] |
+| R-P19-05 | `peak_results` (RT, yuza, balandlik, %area, tailing, N, Rs): qo'lda va AI qoralama → inson tasdig'i; tasdiqlanmagan solishtirishga kirmaydi. | TZ §3.4, DECISIONS.md D-193 | P19 | [x] |
+| R-P19-06 | Peak solishtirish kodda: RT siljishi, yuza og'ishi, RSD, simmetriya, N, Rs, yangi/yo'qolgan peaklar; tarix yo'q / bitta yugurish holatlari; natija LLM ga fakt sifatida. | TZ §3.4, Addendum §2, DECISIONS.md D-193 | P19 | [x] |
+| R-P19-07 | OOS holatlari: inson ochadi (avto emas), jurnal (izohlar, holat), yopish faqat lab_head (ildiz sabab bilan); AI o'chiq bo'lsa ham ishlaydi; yopilganlar RAG ga. | TZ §3.4, DECISIONS.md D-194 | P19 | [x] |
+| R-P19-08 | Chat: sessiyalar (OOS ga bog'liq yoki erkin), ilovalar (P18 fayl qoidalari), rol matritsasi (lab_head/chemist/admin yozadi, director o'qiydi, kontrolyor yo'q). | TZ §3.4, DECISIONS.md D-195 | P19 | [x] |
+| R-P19-09 | Javob: ichki topilmalar manba havolalari bilan, peak bahosi, ehtimoliy sabablar, tekshiruv qadamlari, "ichki bazadan emas" belgili umumiy bilim; to'qilgan havola tashlanadi, topilmasa "topilmadi"; AI qaror chiqarmaydi; hujjat matni ma'lumot (injection). | TZ §3.4, Addendum §1, DECISIONS.md D-195 | P19 | [x] |
+| R-P19-10 | Limitlar (kompaniya kunlik, foydalanuvchi rate, hajm), AI o'chiq/xato — aniq xabar, 5xx yo'q (503 faqat AI sozlanmaganda); har javob uchun manbalar, model, tokenlar audit'da. | Addendum §3, DECISIONS.md D-196 | P19 | [x] |
+| R-P19-11 | UI: OOS ro'yxati/detail, chat (fayl, manba havolalari, peak solishtirish jadvali, "ichki baza"/"umumiy bilim" belgilari), peak natijalari va tasdiqlash, indekslash holati (lab_head/admin); mobil/WebApp; uz/ru/en. | TZ §3.4, DECISIONS.md D-193..D-196 | P19 | [x] |
+| R-P19-12 | CI da haqiqiy API yo'q (mock embedding va LLM); `scripts/rag-smoke.ts` qo'lda. | DECISIONS.md D-197 | P19 | [x] |
+
 ## Holat izohlari
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
@@ -895,7 +912,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
 | P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 11 | 11 | 0 | 0 |
 | P18 — AI-OCR yordamchi, metadata, peak fayllar, harorat taklifi, yagona tarix (TZ Addendum) | 16 | 16 | 0 | 0 |
-| **Jami** | 670 | 610 | 42 | 18 |
+| P19 — OOS AI Copilot (ichki baza + tashqi bilim, TZ §3.4, Addendum §2 4-bosqich) | 12 | 12 | 0 | 0 |
+| **Jami** | 682 | 622 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -919,4 +937,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P16 | 25 | 25 | 0 | 0 |
 | P17 | 11 | 11 | 0 | 0 |
 | P18 | 16 | 16 | 0 | 0 |
-| **Jami** | 670 | 610 | 42 | 18 |
+| P19 | 12 | 12 | 0 | 0 |
+| **Jami** | 682 | 622 | 42 | 18 |

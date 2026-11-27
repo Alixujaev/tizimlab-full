@@ -35,7 +35,8 @@ export async function createIsolatedDb(max = 5): Promise<IsolatedDb> {
   const pool = new pg.Pool({
     connectionString: TEST_DATABASE_URL,
     max,
-    options: `-c search_path=${schema}`,
+    // public — pgvector turi va operatorlari shu yerda (028_rag.sql, D-190)
+    options: `-c search_path=${schema},public`,
   });
   return {
     pool,
