@@ -54,6 +54,14 @@ export interface NdDto {
   fileSize: number | null;
   hasFile: boolean;
   requirementCount: number;
+  /** P18 (D-184): metadata */
+  substanceName?: string | null;
+  series?: string | null;
+  docDate?: string | null;
+  chemistId?: string | null;
+  chemistName?: string | null;
+  equipmentId?: string | null;
+  equipmentName?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -70,6 +78,19 @@ export interface NdRequirementDto {
   source: 'manual' | 'ai';
   note: string | null;
   sortOrder: number;
+  /** P18 (D-182): AI taklif qilgan asl qiymat (inson tahrirlagan bo'lsa ham saqlanadi) */
+  aiValue?: NdRequirementAiValue | null;
+}
+
+export interface NdRequirementAiValue {
+  kind: 'equipment' | 'reagent';
+  methodName: string | null;
+  equipmentCategory: string | null;
+  reagentItemId: string | null;
+  reagentName: string | null;
+  quantity: number | null;
+  unit: string | null;
+  confidence: 'high' | 'medium' | 'low';
 }
 
 export interface NdDetailDto extends NdDto {
@@ -80,6 +101,11 @@ export interface NdInput {
   code: string;
   name: string;
   version?: string | null;
+  substanceName?: string | null;
+  series?: string | null;
+  docDate?: string | null;
+  chemistId?: string | null;
+  equipmentId?: string | null;
 }
 
 export type NdRequirementInput =

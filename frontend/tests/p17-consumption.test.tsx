@@ -143,7 +143,9 @@ describe('P17: protokol — ND va avto-sarf', () => {
     await user.clear(n);
     await user.type(n, '2');
     await user.click(screen.getByRole('button', { name: 'Yuborish' }));
-    await waitFor(() => expect(body).toEqual({ sensorConfigId: null, ndId: 'nd1', nAnalyses: 2 }));
+    await waitFor(() =>
+      expect(body).toEqual({ sensorConfigId: null, equipmentId: null, ndId: 'nd1', nAnalyses: 2 }),
+    );
   });
 
   it('sarf paneli: lotlar, yetishmovchilik; kimyogar tasdiqlaydi (POST confirm)', async () => {

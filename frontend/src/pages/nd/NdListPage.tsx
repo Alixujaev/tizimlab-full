@@ -1,20 +1,15 @@
-import { type FormEvent, useId, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
-import { useNdListQuery, useSaveNdMutation } from '@/hooks/useP17';
-import { errorMessage } from '@/lib/queryClient';
+import { Link } from 'react-router';
+import { useNdListQuery } from '@/hooks/useP17';
 import { useAuthStore } from '@/store/authStore';
 import type { NdDto, NdStatus } from '@/types/p17';
 import {
-  Alert,
   Button,
   DataTable,
   type DataTableColumn,
   EmptyState,
   FilterBar,
-  FormField,
-  Input,
-  Modal,
   PageHeader,
   Pagination,
   SearchInput,
@@ -22,6 +17,7 @@ import {
   Tabs,
   type Tone,
 } from '@/ui';
+import { NdFormModal } from './NdFormModal';
 
 export const ND_STATUS_TONE: Record<NdStatus, Tone> = {
   draft: 'warning',
@@ -32,65 +28,6 @@ export const ND_STATUS_TONE: Record<NdStatus, Tone> = {
 export function NdStatusPill({ status }: { status: NdStatus }) {
   const { t } = useTranslation();
   return <StatusPill tone={ND_STATUS_TONE[status]}>{t(`nd.status.${status}`)}</StatusPill>;
-}
-
-function NdCreateModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { t } = useTranslation();
-  const formId = useId();
-  const navigate = useNavigate();
-  const save = useSaveNdMutation();
-  const [code, setCode] = useState('');
-  const [name, setName] = useState('');
-  const [version, setVersion] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!code.trim() || !name.trim()) {
-      setError(t('nd.errors.required'));
-      return;
-    }
-    try {
-      const nd = await save.mutateAsync({
-        input: { code: code.trim(), name: name.trim(), version: version.trim() || null },
-      });
-      onClose();
-      navigate(`/nd/${nd.id}`);
-    } catch (err) {
-      setError(errorMessage(err));
-    }
-  };
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title={t('nd.create')}
-      footer={
-        <>
-          <Button variant="secondary" onClick={onClose}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="submit" form={formId} loading={save.isPending}>
-            {t('common.save')}
-          </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={(e) => void submit(e)} noValidate className="flex flex-col gap-4">
-        {error && <Alert tone="danger">{error}</Alert>}
-        <FormField id="nd-code" label={t('nd.code')} required>
-          <Input value={code} onChange={(e) => setCode(e.target.value)} />
-        </FormField>
-        <FormField id="nd-name" label={t('nd.name')} required>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
-        </FormField>
-        <FormField id="nd-version" label={t('nd.version')}>
-          <Input value={version} onChange={(e) => setVersion(e.target.value)} />
-        </FormField>
-      </form>
-    </Modal>
-  );
 }
 
 /** D-176 (TZ §3.2–§3.3): normativ hujjatlar ro'yxati. */
@@ -124,7 +61,20 @@ export function NdListPage() {
         </Link>
       ),
     },
-    { key: 'name', header: t('nd.name'), render: (r) => r.name },
+    {
+      key: 'name',
+      header: t('nd.name'),
+      render: (r) => (
+        <div className="min-w-0">
+          <span>{r.name}</span>
+          {(r.substanceName || r.series) && (
+            <div className="text-xs text-fg-muted">
+              {[r.substanceName, r.series].filter(Boolean).join(' · ')}
+            </div>
+          )}
+        </div>
+      ),
+    },
     {
       key: 'status',
       header: t('common.status'),
@@ -193,7 +143,7 @@ export function NdListPage() {
           <Pagination meta={data.meta} onPageChange={setPage} showSummary />
         )}
       </div>
-      <NdCreateModal open={createOpen} onClose={() => setCreateOpen(false)} />
+      <NdFormModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   );
 }

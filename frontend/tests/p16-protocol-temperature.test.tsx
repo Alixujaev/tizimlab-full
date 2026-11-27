@@ -122,7 +122,7 @@ describe('P16: protokol harorati (UI)', () => {
     await user.keyboard('{Escape}');
     await selectOption(user, select, 'sens-1');
     await user.click(screen.getByRole('button', { name: 'Yuborish' }));
-    await waitFor(() => expect(body).toEqual({ sensorConfigId: 'sens-1' }));
+    await waitFor(() => expect(body).toEqual({ sensorConfigId: 'sens-1', equipmentId: null }));
   });
 
   it('xona tanlanmasa sensorConfigId: null yuboriladi', async () => {
@@ -136,7 +136,7 @@ describe('P16: protokol harorati (UI)', () => {
     loginAs('chemist');
     renderAt('/samples/s1');
     await user.click(await screen.findByRole('button', { name: 'Yuborish' }));
-    await waitFor(() => expect(body).toEqual({ sensorConfigId: null }));
+    await waitFor(() => expect(body).toEqual({ sensorConfigId: null, equipmentId: null }));
   });
 
   it('yuborilgan protokolda snapshot ko‘rinadi; lab_head uchun xona tanlovi yo‘q', async () => {

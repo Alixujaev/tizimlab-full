@@ -96,6 +96,17 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
         },
       ],
       moreItems: [
+        // P18 (D-187): kontrolyor protokollar ro'yxatini ko'rmaydi
+        ...(role === 'chemist'
+          ? [
+              {
+                key: 'protocols',
+                path: '/protocols',
+                icon: 'clipboard' as const,
+                labelKey: 'nav.protocols',
+              },
+            ]
+          : []),
         { key: 'substances', path: '/substances', icon: 'beaker', labelKey: 'nav.substances' },
         { key: 'temperature', path: '/temperature', icon: 'thermometer', labelKey: 'nav.temperature' },
         { key: 'profile', path: '/profile', icon: 'user', labelKey: 'nav.profile' },
@@ -143,6 +154,7 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
         { key: 'reagents', path: '/reagents', icon: 'package', labelKey: 'nav.reagents' },
         { key: 'equipment', path: '/equipment', icon: 'monitor', labelKey: 'nav.equipment' },
         { key: 'nd', path: '/nd', icon: 'file-text', labelKey: 'nav.nd' },
+        { key: 'protocols', path: '/protocols', icon: 'clipboard', labelKey: 'nav.protocols' },
         { key: 'temperature', path: '/temperature', icon: 'thermometer', labelKey: 'nav.temperature' },
         { key: 'stability', path: '/stability', icon: 'clock', labelKey: 'nav.stability' },
         { key: 'profile', path: '/profile', icon: 'user', labelKey: 'nav.profile' },
@@ -188,6 +200,7 @@ export function getTabsForRole(role: Role): { tabs: BottomTab[]; moreItems: More
       { key: 'reagents', path: '/reagents', icon: 'package', labelKey: 'nav.reagents' },
         { key: 'equipment', path: '/equipment', icon: 'monitor', labelKey: 'nav.equipment' },
         { key: 'nd', path: '/nd', icon: 'file-text', labelKey: 'nav.nd' },
+      { key: 'protocols', path: '/protocols', icon: 'clipboard', labelKey: 'nav.protocols' },
       { key: 'temperature', path: '/temperature', icon: 'thermometer', labelKey: 'nav.temperature' },
       { key: 'stability', path: '/stability', icon: 'clock', labelKey: 'nav.stability' },
       { key: 'profile', path: '/profile', icon: 'user', labelKey: 'nav.profile' },

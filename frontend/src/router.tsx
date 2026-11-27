@@ -29,6 +29,8 @@ import { COMPANY_ROLES } from '@/types';
 import { EquipmentPage } from '@/pages/equipment/EquipmentPage';
 import { NdDetailPage } from '@/pages/nd/NdDetailPage';
 import { NdListPage } from '@/pages/nd/NdListPage';
+import { ProtocolsPage } from '@/pages/protocols/ProtocolsPage';
+import { PROTOCOLS_ROLES } from '@/config/navigation';
 
 /**
  * Barcha yo'llar (spec §3, §6, §10, §11, §16; D-29). Sahifalar hozircha stub —
@@ -54,9 +56,8 @@ export const routes: RouteObject[] = [
               { path: '/samples/:id', element: <SampleDetailPage /> },
               { path: '/registry', element: <RegistryPage /> },
               { path: '/registry/:id', element: <RegistryDetailPage /> },
-              // Eski Protokollar sahifasi o'rniga Reyestr (spec §3)
-              { path: '/protocols', element: <Navigate to="/registry" replace /> },
-              { path: '/protocols/:id', element: <Navigate to="/registry" replace /> },
+              // Eski protokol tafsiloti havolalari — ro'yxatga (P18 D-187)
+              { path: '/protocols/:id', element: <Navigate to="/protocols" replace /> },
               { path: '/substances', element: <SubstancesPage /> },
               { path: '/substances/:id', element: <SubstancesPage /> },
               { path: '/reagents', element: <ReagentsPage /> },
@@ -72,6 +73,11 @@ export const routes: RouteObject[] = [
               { path: '/nd', element: <NdListPage /> },
               { path: '/nd/:id', element: <NdDetailPage /> },
             ],
+          },
+          // P18 (D-187): protokollar ro'yxati
+          {
+            element: <RoleRoute roles={PROTOCOLS_ROLES} />,
+            children: [{ path: '/protocols', element: <ProtocolsPage /> }],
           },
           {
             element: <RoleRoute roles={MANAGER_ROLES} />,

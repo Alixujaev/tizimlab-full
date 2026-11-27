@@ -2,6 +2,10 @@ import { type FormEvent, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { getNdFileUrl } from '@/api/p17';
+import { aiErrorText } from '@/components/ai/AiExtractButton';
+import { HistoryTimeline } from '@/components/history/HistoryTimeline';
+import { canUseAi } from '@/config/ai';
+import { useAiEnabled, useExtractNdMutation } from '@/hooks/useAi';
 import {
   useEquipmentCategoriesQuery,
   useFeasibilityQuery,
@@ -11,11 +15,14 @@ import {
   useNdStatusMutation,
   useReagentItemsQuery,
 } from '@/hooks/useP17';
+import { formatDate } from '@/lib/date';
 import { errorMessage } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/authStore';
+import type { NdExtractionDto } from '@/types';
 import type { FeasibilityReason, NdRequirementDto, NdRequirementInput } from '@/types/p17';
 import {
   Alert,
+  Badge,
   Button,
   ButtonLink,
   Card,
@@ -33,7 +40,88 @@ import {
   Select,
   StatusPill,
 } from '@/ui';
+import { NdFormModal } from './NdFormModal';
 import { NdStatusPill } from './NdListPage';
+
+/** P18 (D-182): talab manbasi — AI, AI → tahrirlangan, past/o'rta ishonch ogohlantirishi. */
+function RequirementSourceBadges({ r }: { r: NdRequirementDto }) {
+  const { t } = useTranslation();
+  const check = r.aiValue && r.aiValue.confidence !== 'high';
+  if (r.source === 'ai') {
+    return (
+      <span className="flex flex-wrap items-center gap-1">
+        <Badge size="sm" tone="primary">
+          {t('ai.badge')}
+        </Badge>
+        {check && (
+          <Badge size="sm" tone="warning" icon="alert-triangle">
+            {t('ai.check')}
+          </Badge>
+        )}
+      </span>
+    );
+  }
+  if (r.aiValue) {
+    return (
+      <Badge size="sm" tone="info">
+        {t('nd.ai.edited')}
+      </Badge>
+    );
+  }
+  return null;
+}
+
+/** P18 (D-182): "Hujjatdan talablarni aniqlash" natijasi — qo'shilgan qoralamalar va o'tkazib yuborilganlar. */
+function NdExtractResult({ result }: { result: NdExtractionDto }) {
+  const { t } = useTranslation();
+  const poor =
+    result.imageQuality === 'poor' ||
+    result.imageQuality === 'unreadable' ||
+    result.errorCode === 'AI_POOR_QUALITY';
+  if (poor) return <Alert tone="warning">{t('ai.poorQuality')}</Alert>;
+  if (result.status !== 'ok') return <Alert tone="warning">{t('ai.failed')}</Alert>;
+  return (
+    <div className="flex flex-col gap-3">
+      <Alert tone={result.createdIds.length > 0 ? 'success' : 'info'}>
+        {result.createdIds.length > 0
+          ? t('nd.ai.summary', { count: result.createdIds.length })
+          : t('nd.ai.noneCreated')}
+      </Alert>
+      {result.skipped.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-fg">
+            {t('nd.ai.skippedTitle', { count: result.skipped.length })}
+          </p>
+          <ul className="flex flex-col gap-2">
+            {result.skipped.map((sk, i) => (
+              <li
+                key={`${sk.kind}-${sk.name ?? ''}-${i}`}
+                className="rounded-lg border border-line bg-surface-muted px-3 py-2 text-sm"
+              >
+                <p className="font-medium text-fg">
+                  {t('nd.ai.skippedLine', {
+                    kind: t(`nd.kind.${sk.kind}`),
+                    name: sk.name ?? t('history.noValue'),
+                    qty: sk.quantity ? ` — ${sk.quantity}${sk.unit ? ` ${sk.unit}` : ''}` : '',
+                    method: sk.methodName ? ` (${sk.methodName})` : '',
+                  })}
+                </p>
+                <p className="text-xs text-warning-fg">{t(`nd.ai.skip.${sk.reason}`, sk.reason)}</p>
+                {sk.suggestions.length > 0 && (
+                  <p className="text-xs text-fg-muted">
+                    {t('nd.ai.suggestions', {
+                      names: sk.suggestions.map((x) => x.name).join(', '),
+                    })}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /** Sabab matni — UI tilida tur va ma'lumot bo'yicha (backend `detail` — o'zbekcha zaxira). */
 export function useReasonText() {
@@ -258,6 +346,11 @@ export function NdDetailPage() {
   const status = useNdStatusMutation(id);
   const reqMutation = useNdRequirementMutation(id);
   const fileMutation = useNdFileMutation(id);
+  const aiEnabled = useAiEnabled();
+  const extract = useExtractNdMutation(id);
+  const [extractResult, setExtractResult] = useState<NdExtractionDto | null>(null);
+  const [extractError, setExtractError] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
   const [modal, setModal] = useState<{ open: boolean; req: NdRequirementDto | null }>({
     open: false,
     req: null,
@@ -281,6 +374,16 @@ export function NdDetailPage() {
   }
 
   const editable = canWrite && nd.status === 'draft';
+  const canExtract =
+    aiEnabled && canWrite && canUseAi('nd', role) && nd.status === 'draft' && nd.hasFile;
+  const runExtract = () => {
+    setExtractError(null);
+    setExtractResult(null);
+    extract.mutate(undefined, {
+      onSuccess: setExtractResult,
+      onError: (err) => setExtractError(aiErrorText(err)),
+    });
+  };
   const act = (action: 'approve' | 'revise' | 'archive') =>
     status.mutate(action, { onError: (err) => notify.error(errorMessage(err)) });
 
@@ -299,14 +402,26 @@ export function NdDetailPage() {
     {
       key: 'what',
       header: t('nd.requirement'),
-      render: (r) =>
-        r.kind === 'equipment'
-          ? r.equipmentCategory
-          : t('nd.reagentLine', {
-              name: r.reagentItemName,
-              qty: r.quantityPerAnalysis,
-              unit: r.unit,
-            }),
+      render: (r) => (
+        <div
+          className={
+            r.source === 'ai' && r.aiValue && r.aiValue.confidence !== 'high'
+              ? 'flex flex-col gap-1 rounded-md border border-warning-line bg-warning-subtle px-2 py-1'
+              : 'flex flex-col gap-1'
+          }
+        >
+          <span>
+            {r.kind === 'equipment'
+              ? r.equipmentCategory
+              : t('nd.reagentLine', {
+                  name: r.reagentItemName,
+                  qty: r.quantityPerAnalysis,
+                  unit: r.unit,
+                })}
+          </span>
+          <RequirementSourceBadges r={r} />
+        </div>
+      ),
     },
     ...(editable
       ? [
@@ -349,6 +464,9 @@ export function NdDetailPage() {
         actions={
           canWrite && (
             <>
+              <Button variant="secondary" leftIcon="edit" onClick={() => setEditOpen(true)}>
+                {t('nd.edit')}
+              </Button>
               {nd.status === 'draft' && (
                 <Button leftIcon="check" loading={status.isPending} onClick={() => act('approve')}>
                   {t('nd.approve')}
@@ -374,6 +492,19 @@ export function NdDetailPage() {
       />
 
       {nd.status === 'draft' && <Alert tone="warning">{t('nd.draftNotice')}</Alert>}
+
+      <Card title={t('nd.meta.title')}>
+        <DescriptionList
+          columns={2}
+          items={[
+            { label: t('nd.meta.substanceName'), value: nd.substanceName },
+            { label: t('nd.meta.series'), value: nd.series, mono: true },
+            { label: t('nd.meta.docDate'), value: nd.docDate ? formatDate(nd.docDate) : null },
+            { label: t('nd.meta.chemist'), value: nd.chemistName },
+            { label: t('nd.meta.equipment'), value: nd.equipmentName },
+          ]}
+        />
+      </Card>
 
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -409,8 +540,29 @@ export function NdDetailPage() {
                 {t('nd.uploadFile')}
               </FileButton>
             )}
+            {canExtract && (
+              <Button
+                size="sm"
+                leftIcon="file-text"
+                loading={extract.isPending}
+                onClick={runExtract}
+              >
+                {t('nd.ai.extract')}
+              </Button>
+            )}
           </div>
         </div>
+        {canExtract && <p className="mt-2 text-xs text-fg-muted">{t('nd.ai.hint')}</p>}
+        {extract.isPending && <p className="mt-2 text-xs text-fg-muted">{t('ai.reading')}</p>}
+        {(extractError || extractResult) && (
+          <div className="mt-3">
+            {extractError ? (
+              <Alert tone="danger">{extractError}</Alert>
+            ) : (
+              extractResult && <NdExtractResult result={extractResult} />
+            )}
+          </div>
+        )}
       </Card>
 
       <Card>
@@ -432,6 +584,12 @@ export function NdDetailPage() {
       </Card>
 
       <FeasibilityPanel ndId={nd.id} />
+
+      <Card title={t('history.title')}>
+        <HistoryTimeline entity="nd" id={nd.id} />
+      </Card>
+
+      <NdFormModal open={editOpen} onClose={() => setEditOpen(false)} nd={nd} />
 
       <RequirementModal
         ndId={nd.id}

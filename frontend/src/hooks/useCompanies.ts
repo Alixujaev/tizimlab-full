@@ -5,6 +5,7 @@ import {
   deactivateCompany,
   fetchCompanies,
   fetchCompany,
+  setCompanyAi,
   updateCompany,
 } from '@/api/companies';
 import type { CompanyListParams, CreateCompanyInput, UpdateCompanyInput } from '@/types';
@@ -70,6 +71,17 @@ export function useDeactivateCompanyMutation() {
   return useMutation({
     mutationFn: (id: string) => deactivateCompany(id),
     onSuccess: (_data, id) => {
+      void queryClient.invalidateQueries({ queryKey: companiesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: companiesKeys.detail(id) });
+    },
+  });
+}
+
+export function useSetCompanyAiMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) => setCompanyAi(id, enabled),
+    onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: companiesKeys.all });
       void queryClient.invalidateQueries({ queryKey: companiesKeys.detail(id) });
     },

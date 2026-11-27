@@ -5,6 +5,14 @@ import type { IconName } from '@/ui';
 /** Foydalanuvchilar va Faoliyat sahifalariga kiruvchi rollar (spec §1 matritsa, §10, §11). */
 export const MANAGER_ROLES = ['lab_head', 'director', 'admin'] as const satisfies readonly Role[];
 
+/** P18 (D-187): "Protokollar" ro'yxati — kontrolyor protokol mazmunini ko'rmaydi (Qoida 5). */
+export const PROTOCOLS_ROLES = [
+  'chemist',
+  'lab_head',
+  'director',
+  'admin',
+] as const satisfies readonly Role[];
+
 export interface NavItem {
   key: string;
   path: string;
@@ -56,6 +64,14 @@ export const NAV_ITEMS: readonly NavItem[] = [
     roles: COMPANY_ROLES,
   },
   { key: 'nd', path: '/nd', labelKey: 'nav.nd', icon: 'file-text', roles: COMPANY_ROLES },
+  // P18 (D-187)
+  {
+    key: 'protocols',
+    path: '/protocols',
+    labelKey: 'nav.protocols',
+    icon: 'clipboard',
+    roles: PROTOCOLS_ROLES,
+  },
   {
     key: 'myResults',
     path: '/me',

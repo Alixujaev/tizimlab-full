@@ -75,6 +75,8 @@ export interface CompanyDto {
   createdAt: string;
   updatedAt: string;
   usersCount?: number;
+  /** P18 (D-179): AI yordamchi kompaniya uchun yoqilganmi */
+  aiEnabled?: boolean;
 }
 
 export interface CreateCompanyInput {
@@ -338,6 +340,8 @@ export interface CreateSampleInput {
   arrivalDate?: string | null;
   expiryDate?: string | null;
   notes?: string | null;
+  /** P18 (D-181): AI taklifidan to'ldirilgan bo'lsa */
+  ai?: AiReviewRef;
 }
 
 export interface SampleListParams {
@@ -399,6 +403,8 @@ export interface RegistryListParams {
   unfinalizedOnly?: boolean;
   /** D-172: tahlilni bajargan kimyogar */
   chemistId?: string;
+  /** P18 (D-187): apparat uuid yoki `unknown` */
+  equipmentId?: string;
 }
 
 /** D-172: reyestr filtri uchun kimyogar (barcha kompaniya rollariga ochiq). */
@@ -454,6 +460,9 @@ export interface ProtocolDto {
   nAnalyses?: number;
   temperatureSnapshot?: ProtocolTemperatureSnapshot | null;
   temperatureWarning?: 'no_room' | 'no_reading' | null;
+  /** P18 (D-184): apparat (null — noma'lum) va tahlil sanasi */
+  equipmentId?: string | null;
+  analysisDate?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -478,6 +487,8 @@ export interface SubmitProtocolInput {
   /** D-177: tasdiqlangan ND va tahlillar soni — avto-sarf */
   ndId?: string | null;
   nAnalyses?: number;
+  /** P18 (D-184): apparat; null — noma'lum */
+  equipmentId?: string | null;
 }
 
 export interface ProtocolFileDto {
@@ -490,6 +501,14 @@ export interface ProtocolFileDto {
   uploadedBy: string;
   uploadedByName?: string | null;
   createdAt: string;
+  /** P18 (D-185) */
+  kind?: 'protocol' | 'peak' | 'extra';
+  substanceName?: string | null;
+  series?: string | null;
+  analysisDate?: string | null;
+  chemistId?: string | null;
+  equipmentId?: string | null;
+  equipmentName?: string | null;
 }
 
 export interface ProtocolDetailDto extends ProtocolDto {
@@ -499,6 +518,10 @@ export interface ProtocolDetailDto extends ProtocolDto {
   sampleAssignedTo: string | null;
   signatures: ProtocolSignatureDto[];
   files?: ProtocolFileDto[];
+  /** P18 (D-185, D-186) */
+  peakFiles?: ProtocolFileDto[];
+  rejections?: ProtocolRejectionDto[];
+  equipmentName?: string | null;
 }
 
 export interface RejectProtocolInput {
@@ -586,6 +609,11 @@ export interface ReagentDto {
   approvalStatus: ReagentApprovalStatus;
   /** D-174: katalog elementi */
   reagentItemId?: string;
+  /** P18 (D-183): lot maydonlari (eski yozuvlarda null) */
+  lotNumber?: string | null;
+  manufacturer?: string | null;
+  manufacturedAt?: string | null;
+  arrivalDate?: string | null;
   createdBy: string | null;
   approvedBy: string | null;
   approvedAt: string | null;
@@ -606,6 +634,14 @@ export interface CreateReagentInput {
   supplier?: string | null;
   storageConditions?: string | null;
   isHazardous?: boolean;
+  /** D-174: katalog elementi */
+  reagentItemId?: string | null;
+  lotNumber?: string | null;
+  manufacturer?: string | null;
+  manufacturedAt?: string | null;
+  arrivalDate?: string | null;
+  /** P18 (D-181) */
+  ai?: AiReviewRef;
 }
 
 export interface UpdateReagentInput {
@@ -617,6 +653,10 @@ export interface UpdateReagentInput {
   supplier?: string | null;
   storageConditions?: string | null;
   isHazardous?: boolean;
+  lotNumber?: string | null;
+  manufacturer?: string | null;
+  manufacturedAt?: string | null;
+  arrivalDate?: string | null;
 }
 
 export interface ListReagentsQuery {
@@ -960,3 +1000,5 @@ export interface ListAuditLogsQuery {
 
 export * from './analytics';
 export * from './p17';
+export * from './p18';
+import type { AiReviewRef, ProtocolRejectionDto } from './p18';

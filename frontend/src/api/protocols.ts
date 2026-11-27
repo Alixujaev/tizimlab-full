@@ -2,11 +2,15 @@ import { apiClient } from '@/api/client';
 import type {
   ApiResponse,
   DownloadLink,
+  Paginated,
   ProtocolDetailDto,
   ProtocolDto,
   ProtocolFileDto,
+  ProtocolListItemDto,
+  ProtocolListParams,
   RejectProtocolInput,
   SubmitProtocolInput,
+  TemperatureSuggestionDto,
 } from '@/types';
 
 export async function fetchProtocolsBySample(sampleId: string): Promise<ProtocolDto[]> {
@@ -119,3 +123,41 @@ export async function exportProtocolDocx(id: string, lang: 'uz' | 'ru' | 'en' = 
   return response.data;
 }
 
+// ---------------------------------------------------------------- P18
+/** D-187: protokollar ro'yxati (filtrlar bilan). */
+export async function fetchProtocols(
+  params?: ProtocolListParams,
+): Promise<Paginated<ProtocolListItemDto>> {
+  const query = Object.fromEntries(
+    Object.entries(params ?? {}).filter(([, v]) => v !== undefined && v !== ''),
+  );
+  const { data } = await apiClient.get<Paginated<ProtocolListItemDto>>('/protocols', {
+    params: query,
+  });
+  return data;
+}
+
+/** D-188: xona va tahlil sanasi bo'yicha harorat taklifi (yuborishdan oldin). */
+export async function fetchTemperatureSuggestion(
+  id: string,
+  params: { sensorConfigId?: string; analysisDate?: string },
+): Promise<TemperatureSuggestionDto> {
+  const query = Object.fromEntries(Object.entries(params).filter(([, v]) => Boolean(v)));
+  const { data } = await apiClient.get<ApiResponse<TemperatureSuggestionDto>>(
+    `/protocols/${id}/temperature-suggestion`,
+    { params: query },
+  );
+  return data.data;
+}
+
+/** D-185: peak fayli (PDF/DOC/DOCX). */
+export async function uploadProtocolPeakFile(id: string, file: File): Promise<ProtocolFileDto> {
+  const form = new FormData();
+  form.append('file', file);
+  const { data } = await apiClient.post<ApiResponse<ProtocolFileDto>>(`/protocols/${id}/peaks`, form);
+  return data.data;
+}
+
+export async function deleteProtocolPeakFile(protocolId: string, fileId: string): Promise<void> {
+  await apiClient.delete(`/protocols/${protocolId}/peaks/${fileId}`);
+}

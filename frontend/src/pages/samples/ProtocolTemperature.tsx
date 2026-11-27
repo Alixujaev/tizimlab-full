@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useSensorsQuery } from '@/hooks/useTemperature';
 import { formatDateTime } from '@/lib/date';
-import type { ProtocolDto } from '@/types';
+import type { ProtocolDto, TemperatureSuggestionDto } from '@/types';
 import { Alert, FormField, Select } from '@/ui';
 
 /**
@@ -73,5 +73,69 @@ export function ProtocolRoomSelect({
         onChange={onChange}
       />
     </FormField>
+  );
+}
+
+/**
+ * P18 (D-188): yuborishdan oldin harorat taklifi — tanlangan xona va tahlil sanasi bo'yicha.
+ * Yuborishda aynan shu xona va sana ketadi (server snapshot mantiqi bir xil).
+ */
+export function ProtocolTemperatureSuggestion({
+  roomId,
+  suggestion,
+  loading,
+}: {
+  /** Ko'rsatilayotgan (samarali) xona; bo'sh — tanlanmagan. */
+  roomId: string;
+  suggestion: TemperatureSuggestionDto | undefined;
+  loading: boolean;
+}) {
+  const { t } = useTranslation();
+  if (!roomId) {
+    return (
+      <Alert tone="warning" title={t('protocols.suggestion.title')}>
+        {t('protocols.suggestion.noRoom')}
+      </Alert>
+    );
+  }
+  if (loading) {
+    return <p className="text-xs text-fg-muted">{t('protocols.suggestion.loading')}</p>;
+  }
+  if (!suggestion) return null;
+  if (suggestion.status === 'no_room') {
+    return (
+      <Alert tone="warning" title={t('protocols.suggestion.title')}>
+        {t('protocols.suggestion.noRoom')}
+      </Alert>
+    );
+  }
+  if (suggestion.status === 'no_reading' || !suggestion.reading) {
+    return (
+      <Alert tone="warning" title={t('protocols.suggestion.title')}>
+        {t('protocols.suggestion.noReading')}
+      </Alert>
+    );
+  }
+  const r = suggestion.reading;
+  return (
+    <Alert tone={suggestion.outOfRange ? 'warning' : 'info'} title={t('protocols.suggestion.title')}>
+      {t('protocols.temperature.value', {
+        temp: r.temperature,
+        humidity: r.humidity !== null ? `, ${r.humidity}%` : '',
+        room: r.locationName ?? suggestion.locationName ?? '',
+        at: formatDateTime(r.recordedAt),
+      })}
+      {suggestion.limits && (
+        <span className="block text-xs">
+          {t('protocols.suggestion.limits', {
+            min: suggestion.limits.tempMin,
+            max: suggestion.limits.tempMax,
+          })}
+        </span>
+      )}
+      {suggestion.outOfRange && (
+        <span className="block text-xs font-medium">{t('protocols.suggestion.outOfRange')}</span>
+      )}
+    </Alert>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { getReagentDocumentDownloadUrl } from '@/api/reagents';
+import { HistoryTimeline } from '@/components/history/HistoryTimeline';
 import {
   useDeleteDocumentMutation,
   useReagentDocumentsQuery,
@@ -51,7 +52,9 @@ export function ReagentDetailPage() {
   const user = useAuthStore((s) => s.user);
   const canWrite = user?.role === 'admin' || user?.role === 'lab_head';
 
-  const [activeTab, setActiveTab] = useState<'transactions' | 'documents'>('transactions');
+  const [activeTab, setActiveTab] = useState<'transactions' | 'documents' | 'history'>(
+    'transactions',
+  );
   const [txPage, setTxPage] = useState(1);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [txModalOpen, setTxModalOpen] = useState(false);
@@ -296,6 +299,17 @@ export function ReagentDetailPage() {
                 ),
               },
               { label: t('reagents.supplier'), value: reagent.supplier },
+              // P18 (D-183): lot maydonlari
+              { label: t('reagents.lot.lotNumber'), value: reagent.lotNumber, mono: true },
+              { label: t('reagents.lot.manufacturer'), value: reagent.manufacturer },
+              {
+                label: t('reagents.lot.manufacturedAt'),
+                value: reagent.manufacturedAt ? formatDate(reagent.manufacturedAt) : null,
+              },
+              {
+                label: t('reagents.lot.arrivalDate'),
+                value: reagent.arrivalDate ? formatDate(reagent.arrivalDate) : null,
+              },
             ]}
           />
         </Card>
@@ -323,6 +337,11 @@ export function ReagentDetailPage() {
             label: t('reagents.documents'),
             badge: docs.length,
             content: documentsPanel,
+          },
+          {
+            id: 'history',
+            label: t('history.title'),
+            content: <HistoryTimeline entity="reagent" id={reagent.id} />,
           },
         ]}
       />

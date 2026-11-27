@@ -31,17 +31,27 @@ const BASE = [
   ['Apparatlar', '/equipment'],
   ['Normativ hujjatlar', '/nd'],
 ];
-const MANAGER = [...BASE, ['Foydalanuvchilar', '/users'], ['Faoliyat', '/activity']];
+// P18 (D-187): Protokollar — chemist, lab_head, director, admin (kontrolyor yo'q)
+const PROTOCOLS = ['Protokollar', '/protocols'];
+const MANAGER = [...BASE, PROTOCOLS, ['Foydalanuvchilar', '/users'], ['Faoliyat', '/activity']];
 // P13 (D-165): "Mening natijalarim" — analitika rollari, "Jamoa" — lab_head/director; admin'da yo'q
 const ME = ['Mening natijalarim', '/me'];
 const TEAM = ['Jamoa', '/team'];
 const ANALYST = [...BASE, ME];
-const LEAD = [...BASE, ME, TEAM, ['Foydalanuvchilar', '/users'], ['Faoliyat', '/activity']];
+const CHEMIST = [...BASE, PROTOCOLS, ME];
+const LEAD = [
+  ...BASE,
+  PROTOCOLS,
+  ME,
+  TEAM,
+  ['Foydalanuvchilar', '/users'],
+  ['Faoliyat', '/activity'],
+];
 
 describe('Sidebar (D-28, D-149)', () => {
   it.each([
     ['kontrolyor', ANALYST],
-    ['chemist', ANALYST],
+    ['chemist', CHEMIST],
     ['lab_head', LEAD],
     ['director', LEAD],
     ['admin', MANAGER],
