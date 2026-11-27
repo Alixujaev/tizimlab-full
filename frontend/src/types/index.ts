@@ -1001,4 +1001,5 @@ export interface ListAuditLogsQuery {
 export * from './analytics';
 export * from './p17';
 export * from './p18';
+export * from './p19';
 import type { AiReviewRef, ProtocolRejectionDto } from './p18';

@@ -1,4 +1,5 @@
 import { ANALYTICS_ROLES, TEAM_ANALYTICS_ROLES } from '@/config/analytics';
+import { OOS_VIEW_ROLES } from '@/config/oos';
 import { COMPANY_ROLES, type Role } from '@/types';
 import type { IconName } from '@/ui';
 
@@ -72,6 +73,8 @@ export const NAV_ITEMS: readonly NavItem[] = [
     icon: 'clipboard',
     roles: PROTOCOLS_ROLES,
   },
+  // P19: OOS jurnali va AI kopilot
+  { key: 'oos', path: '/oos', labelKey: 'nav.oos', icon: 'alert-triangle', roles: OOS_VIEW_ROLES },
   {
     key: 'myResults',
     path: '/me',

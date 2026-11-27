@@ -44,7 +44,8 @@
     "moreShort": "Yana",
     "equipment": "Apparatlar",
     "nd": "Normativ hujjatlar",
-    "protocols": "Protokollar"
+    "protocols": "Protokollar",
+    "oos": "OOS jurnali"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -1699,6 +1700,265 @@
       "dateFrom": "Sana (dan)",
       "dateTo": "Sana (gacha)",
       "hasPeaks": "Faqat peak fayli borlar"
+    }
+  },
+  "oos": {
+    "title": "OOS jurnali",
+    "subtitle": "Me’yordan tashqari natijalar tergovi va AI kopilot (AI faqat yordam beradi, qaror chiqarmaydi)",
+    "searchPlaceholder": "Modda, seriya yoki ko‘rsatkich…",
+    "allStatuses": "Barcha holatlar",
+    "empty": "OOS yozuvlari topilmadi",
+    "humanDecision": "OOS bo‘yicha yakuniy qaror — inson qarori: ishni faqat laboratoriya mudiri yopadi. AI tavsiyalari xulosa emas.",
+    "resultVsSpec": "{{result}} (me’yor: {{spec}})",
+    "status": {
+      "open": "Ochiq",
+      "investigating": "Tergovda",
+      "closed": "Yopilgan"
+    },
+    "columns": {
+      "substance": "Modda / seriya",
+      "result": "Natija va me’yor",
+      "opened": "Ochilgan"
+    },
+    "fields": {
+      "testName": "Ko‘rsatkich",
+      "resultValue": "Natija",
+      "specLimit": "Me’yor (spetsifikatsiya)",
+      "unit": "Birlik",
+      "description": "Tavsif",
+      "rootCause": "Ildiz sabab",
+      "closureNote": "Yopish izohi"
+    },
+    "open": {
+      "button": "OOS ochish",
+      "title": "OOS ochish",
+      "description": "Natija me’yordan tashqarida bo‘lsa tergov ishini oching. Namuna va protokol avtomatik bog‘lanadi.",
+      "submit": "OOS ochish",
+      "created": "OOS ochildi",
+      "required": "Majburiy maydon"
+    },
+    "case": {
+      "title": "Natija",
+      "sample": "Namuna",
+      "openSample": "Namunani ochish",
+      "opened": "Ochgan",
+      "closure": "Yopilish",
+      "closedBy": "Yopgan"
+    },
+    "journal": {
+      "title": "Tergov jurnali",
+      "description": "Izohlar va holat o‘zgarishlari",
+      "empty": "Jurnalda yozuvlar yo‘q",
+      "add": "Izoh qo‘shish",
+      "save": "Izohni saqlash",
+      "statusChanged": "Holat: {{status}}"
+    },
+    "actions": {
+      "investigate": "Tergovni boshlash",
+      "investigateTitle": "Tergovni boshlash",
+      "investigateText": "OOS holati «Tergovda» ga o‘tadi.",
+      "investigated": "Tergov boshlandi",
+      "noteOptional": "Izoh (ixtiyoriy)",
+      "close": "OOS ni yopish",
+      "closeTitle": "OOS ni yopish",
+      "closeText": "Yopish — laboratoriya mudirining qarori. Ildiz sabab va yopish izohini kiriting; yopilgan ishni o‘zgartirib bo‘lmaydi.",
+      "closed": "OOS yopildi",
+      "minChars": "Kamida {{min}} ta belgi"
+    },
+    "peakFiles": {
+      "title": "Peak fayllari",
+      "description": "Protokolning xromatogramma fayllari",
+      "empty": "Peak fayllari yo‘q",
+      "confirmed": "{{count}} ta tasdiqlangan qator",
+      "open": "Natijalar va solishtirish"
+    },
+    "chat": {
+      "title": "AI kopilot",
+      "description": "Ichki baza (protokollar, peaklar, ND, oldingi OOS) bo‘yicha savol bering",
+      "newSession": "Yangi suhbat",
+      "noSessions": "Hali suhbat yo‘q",
+      "session": "Suhbat",
+      "sessionFrom": "Suhbat — {{date}}",
+      "newQuestion": "Yangi savol",
+      "freeSessions": "AI suhbatlar",
+      "freeSessionsHint": "OOS ishiga bog‘lanmagan erkin savollar",
+      "openCase": "OOS ishini ochish",
+      "aiOffTitle": "AI yordamchi hozir mavjud emas",
+      "aiOff": "AI o‘chirilgan yoki ishlamayapti. OOS jurnali to‘liq ishlaydi — izoh va holatlarni odatdagidek yuriting.",
+      "emptyThread": "Savolingizni yozing — javob ichki bazadagi manbalar bilan beriladi.",
+      "messages": "Suhbat xabarlari",
+      "thinking": "AI javob tayyorlamoqda…",
+      "sendFailed": "Savol yuborilmadi",
+      "readOnly": "Faqat ko‘rish rejimi — savol yuborish huquqi yo‘q.",
+      "question": "Savol",
+      "questionHint": "Ko‘pi bilan {{max}} belgi",
+      "tooLong": "Savol {{max}} belgidan oshmasligi kerak",
+      "peakFile": "Peak fayli",
+      "noPeakFile": "Peak fayli tanlanmagan",
+      "substanceFilter": "Modda nomi (filtr)",
+      "attachmentsHint": "PDF, DOCX, JPEG, PNG, WEBP; xabarga ko‘pi bilan {{max}} ta, suhbatga {{total}} ta",
+      "attach": "Fayl biriktirish",
+      "send": "Yuborish"
+    },
+    "answer": {
+      "failedTitle": "AI javob bera olmadi",
+      "failed": "AI javob bera olmadi — qayta urinib ko‘ring.",
+      "aiBadge": "AI tavsiyasi",
+      "ftsOnly": "Faqat matn qidiruv",
+      "internal": "Ichki bazadan topilganlar",
+      "internalNotFound": "Ichki bazada topilmadi",
+      "peaks": "Peak taqqoslash",
+      "noPeaks": "Peak ma’lumoti berilmagan",
+      "causes": "Ehtimoliy sabablar",
+      "none": "Yo‘q",
+      "basisInternal": "Ichki baza",
+      "basisGeneral": "Umumiy bilim — tekshiring",
+      "checks": "Tavsiya etilgan tekshiruvlar",
+      "general": "Umumiy analitik bilim",
+      "generalWarning": "Bu ichki bazadan emas — tekshirib ko‘ring",
+      "sources": "Manbalar ({{count}})",
+      "cited": "Keltirilgan",
+      "disclaimer": "AI qaror chiqarmaydi: bu faqat tergov uchun yordam. Yakuniy qaror laboratoriya mudiriniki."
+    },
+    "sourceType": {
+      "protocol": "Protokol",
+      "peak": "Peak",
+      "nd": "ND",
+      "oos_case": "OOS"
+    },
+    "errors": {
+      "AI_UNAVAILABLE": "AI xizmati hozir mavjud emas — keyinroq urinib ko‘ring. OOS jurnali ishlashda davom etadi.",
+      "AI_DISABLED": "AI yordamchi kompaniyangiz uchun o‘chirilgan.",
+      "OOS_CHAT_DAILY_LIMIT": "Bugungi AI savollar limiti tugadi — ertaga urinib ko‘ring.",
+      "AI_RATE_LIMITED": "AI so‘rovlari juda ko‘p — birozdan so‘ng urinib ko‘ring.",
+      "PAYLOAD_TOO_LARGE": "Fayl juda katta",
+      "UNSUPPORTED_MEDIA_TYPE": "Fayl turi qo‘llab-quvvatlanmaydi — PDF, DOCX, JPEG, PNG yoki WEBP tanlang",
+      "EMPTY_FILE": "Fayl bo‘sh",
+      "MAX_FILES_EXCEEDED": "Suhbatga ko‘pi bilan 10 ta fayl biriktiriladi",
+      "OOS_CLOSED": "OOS yopilgan — o‘zgartirib bo‘lmaydi",
+      "INVALID_OOS_STATUS": "Bu holat o‘zgarishiga ruxsat yo‘q",
+      "PEAK_CONFIRMED": "Tasdiqlangan peak natijasini tahrirlab bo‘lmaydi"
+    }
+  },
+  "peaks": {
+    "title": "Peak natijalari",
+    "open": "Peak natijalari",
+    "unnamed": "Nomsiz peak",
+    "tabs": {
+      "results": "Natijalar",
+      "comparison": "Tarix bilan solishtirish"
+    },
+    "columns": {
+      "peak": "Peak",
+      "rt": "RT",
+      "area": "Maydon",
+      "areaPercent": "Maydon, %",
+      "height": "Balandlik",
+      "tailing": "Tailing",
+      "plates": "N (plastinkalar)",
+      "resolution": "Rs"
+    },
+    "fields": {
+      "retentionTime": "RT (min)",
+      "area": "Maydon",
+      "areaPercent": "Maydon, %",
+      "height": "Balandlik",
+      "tailing": "Tailing",
+      "plates": "N",
+      "resolution": "Rs"
+    },
+    "status": {
+      "draft": "Qoralama",
+      "confirmed": "Tasdiqlangan"
+    },
+    "validation": {
+      "number": "Son kiriting",
+      "rt": "RT majburiy va 0 dan katta",
+      "positive": "0 dan katta bo‘lishi kerak",
+      "percent": "0…100 oralig‘ida",
+      "nonNegative": "Manfiy bo‘lmasligi kerak"
+    },
+    "confirmHint": "Tarix bilan solishtirishda faqat TASDIQLANGAN qatorlar ishlatiladi. Qoralama (tasdiqlanmagan) qatorlar hisobga olinmaydi.",
+    "addRow": "Qator qo‘shish",
+    "confirm": "Tasdiqlash",
+    "confirmTitle": "Peak natijalarini tasdiqlash",
+    "confirmText": "{{count}} ta qoralama qator tasdiqlanadi. Tasdiqlangandan so‘ng ularni tahrirlab bo‘lmaydi.",
+    "confirmed": "{{count}} ta qator tasdiqlandi",
+    "empty": "Peak natijalari kiritilmagan",
+    "ai": {
+      "extract": "AI bilan jadvalni o‘qish",
+      "reading": "Peak jadvali o‘qilmoqda…",
+      "failed": "AI jadvalni o‘qiy olmadi — qatorlarni qo‘lda kiriting",
+      "nothing": "Faylda peak jadvali topilmadi — qo‘lda kiriting",
+      "created": "AI {{count}} ta qoralama qator qo‘shdi ({{skipped}} ta o‘tkazib yuborildi) — tekshirib tasdiqlang"
+    },
+    "compare": {
+      "title": "Tarix bilan solishtirish",
+      "mean": "o‘rt.",
+      "delta": "Δ",
+      "rsd": "RSD",
+      "criteria": {
+        "substance": "Modda",
+        "equipment": "Apparat",
+        "anyEquipment": "Har qanday apparat",
+        "nd": "ND",
+        "sameNd": "Shu ND bo‘yicha",
+        "anyNd": "ND bo‘yicha cheklanmagan"
+      },
+      "historyRuns": "Tarixiy yugurishlar",
+      "noCurrent": "Bu faylda tasdiqlangan peak natijalari yo‘q — avval natijalarni tasdiqlang",
+      "noHistory": "Taqqoslash uchun tarixiy tasdiqlangan peaklar yo‘q",
+      "singleRun": "Tarixda bitta yugurish — RSD hisoblanmaydi",
+      "matchedRuns": "{{count}} ta yugurishda",
+      "flagsTitle": "Belgilar",
+      "noPeaks": "Peaklar yo‘q",
+      "missingTitle": "Tarixda bor, joriy faylda yo‘q peaklar",
+      "missingLine": "{{name}} — o‘rtacha RT {{rt}} ({{runs}} ta yugurishda)",
+      "thresholds": "Chegaralar: RT ±{{rt}}%, maydon ±{{area}}%, tailing ≤ {{tailing}}, N pasayishi ≤ {{plates}}%, Rs ≥ {{rs}}.",
+      "flagsNote": "Belgilar faqat e’tibor uchun — natija bo‘yicha xulosa emas."
+    },
+    "flags": {
+      "rt_shift": "RT siljishi",
+      "area_deviation": "Maydon og‘ishi",
+      "tailing_high": "Tailing yuqori",
+      "tailing_change": "Tailing o‘zgargan",
+      "plates_drop": "N kamaygan",
+      "low_resolution": "Rs past",
+      "new_peak": "Yangi peak"
+    }
+  },
+  "rag": {
+    "title": "Bilim bazasi",
+    "subtitle": "AI kopilot qidiradigan ichki hujjatlar indeksi",
+    "reindex": "Qayta indekslash",
+    "reindexQueued": "{{count}} ta hujjat indekslash navbatiga qo‘yildi",
+    "retried": "Qayta urinish navbatga qo‘yildi",
+    "mode": {
+      "title": "Qidiruv rejimi",
+      "hybrid": "Gibrid (semantik + matn)",
+      "fts_only": "Faqat matn qidiruv",
+      "ftsHint": "Embedding sozlanmagan — qidiruv faqat matn bo‘yicha ishlaydi."
+    },
+    "chunksTitle": "Indekslangan bo‘laklar",
+    "jobsTitle": "Indekslash ishlari",
+    "failedTitle": "Xato bilan tugagan ishlar",
+    "emptyChunks": "Indeks bo‘sh",
+    "emptyJobs": "Ishlar yo‘q",
+    "columns": {
+      "sourceType": "Manba turi",
+      "chunks": "Bo‘laklar",
+      "withEmbedding": "Embedding bilan",
+      "count": "Soni",
+      "error": "Xato",
+      "attempts": "Urinishlar",
+      "updatedAt": "Yangilangan"
+    },
+    "jobStatus": {
+      "pending": "Navbatda",
+      "running": "Bajarilmoqda",
+      "done": "Tayyor",
+      "failed": "Xato",
+      "skipped": "O‘tkazib yuborilgan"
     }
   }
 }
