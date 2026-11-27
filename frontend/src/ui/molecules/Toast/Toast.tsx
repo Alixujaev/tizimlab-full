@@ -19,11 +19,19 @@ export const notify = {
 
 const toneIcon = 'mt-0.5';
 
+/**
+ * Toastlar top bar OSTIDAN boshlanadi: real vaqtli xabarnomalar ketma-ket kelganda ular top bar'dagi
+ * qo'ng'iroq, til va profil tugmalarini to'smasin (P20 E2E da topilgan: lab_head qo'ng'iroqni bosa olmagan).
+ */
+const TOAST_OFFSET = { top: 'calc(var(--tl-topbar-height) + 0.5rem)', right: '1rem' } as const;
+
 export function Toaster() {
   const { t } = useTranslation();
   return (
     <SonnerToaster
       position="top-right"
+      offset={TOAST_OFFSET}
+      mobileOffset={TOAST_OFFSET}
       closeButton
       containerAriaLabel={t('ui.toast.region')}
       className="z-toast"

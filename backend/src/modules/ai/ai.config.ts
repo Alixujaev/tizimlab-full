@@ -4,15 +4,22 @@ import type { Env } from '../../config/env.js';
 import { logger } from '../../utils/logger.js';
 import type { FileStorage } from '../files/files.storage.js';
 import { createAnthropicAiClient, type AiClient } from './ai.client.js';
+import { createMockAiClient } from './ai.mock.js';
 import type { AiRuntime } from './ai.service.js';
 
 export type AiEnv = Pick<
   Env,
   'AI_ENABLED' | 'ANTHROPIC_API_KEY' | 'AI_MODEL' | 'AI_MAX_FILE_MB' | 'AI_DAILY_LIMIT_PER_COMPANY'
->;
+> &
+  Partial<Pick<Env, 'AI_MOCK' | 'NODE_ENV'>>;
 
 /** D-179: uchalasi (AI_ENABLED, kalit, model) bo'lsa — haqiqiy klient; aks holda `null` (AI o'chiq, 503). */
 export function aiClientFromEnv(env: AiEnv): AiClient | null {
+  // D-198: mock faqat test muhitida (env.ts ham tekshiradi — bu ikkinchi himoya qatlami)
+  if (env.AI_MOCK) {
+    if (env.NODE_ENV !== 'test') throw new Error('AI_MOCK faqat NODE_ENV=test da ruxsat etiladi');
+    return createMockAiClient();
+  }
   if (!env.AI_ENABLED) return null;
   if (!env.ANTHROPIC_API_KEY || !env.AI_MODEL) {
     logger.warn('AI_ENABLED=true, lekin ANTHROPIC_API_KEY yoki AI_MODEL berilmagan — AI o‘chiq');

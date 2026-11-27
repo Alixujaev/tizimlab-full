@@ -325,6 +325,55 @@ describe('Samples Module (P4a Frontend)', () => {
     });
   });
 
+  it('P20 (R-FLOW-02): detal sahifasida biriktirgach avtomatik protokol darhol ko‘rinadi (sahifani yangilamasdan)', async () => {
+    const user = userEvent.setup();
+    loginAs('lab_head');
+    let assigned = false;
+    api.onGet('/protocols/sample/sample-1').reply(() => [
+      200,
+      {
+        data: assigned
+          ? [
+              {
+                id: 'p-1',
+                sampleId: 'sample-1',
+                status: 'draft',
+                protocolRole: 'standard',
+                createdAt: '2026-01-01T00:00:00Z',
+              },
+            ]
+          : [],
+      },
+    ]);
+    api.onGet('/protocols/p-1').reply(200, {
+      data: {
+        id: 'p-1',
+        sampleId: 'sample-1',
+        status: 'draft',
+        protocolRole: 'standard',
+        files: [],
+        peakFiles: [],
+        rejections: [],
+      },
+    });
+    api.onGet(/\/protocols\/p-1\//).reply(200, { data: [] });
+    api.onPost('/samples/sample-1/assign').reply(() => {
+      assigned = true;
+      return [200, { data: { ...mockSamples[0]!, status: 'in_progress', assignedTo: 'chem-1' } }];
+    });
+    renderAt('/samples/sample-1');
+    expect(await screen.findByText(/Namuna kimyogarga biriktirilgach/)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Kimyogarga biriktirish' }));
+    const chemistSelect = await screen.findByRole('combobox', { name: /Kimyogarni tanlang/i });
+    await selectOption(user, chemistSelect, 'chem-1');
+    await user.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: /^Biriktirish$/i }),
+    );
+
+    expect(await screen.findByText('Qoralama')).toBeInTheDocument();
+  });
+
   it('assigned chemist sees "To‘xtatish" button and validates min 5 chars reason', async () => {
     const user = userEvent.setup();
     loginAs('chemist');

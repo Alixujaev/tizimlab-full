@@ -38,3 +38,55 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+
+  # P20 (D-199): Playwright E2E — faqat PR va main (bayroqli), alohida job, brauzer keshi bilan
+  e2e:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          # Faqat CI uchun vaqtinchalik konteyner paroli — production siri emas
+          POSTGRES_USER: tizimlab_ci
+          POSTGRES_PASSWORD: ci_e2e_Qw8nL3vR6tZp
+          POSTGRES_DB: tizimlab_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U tizimlab_ci -d tizimlab_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      E2E_DATABASE_URL: postgres://tizimlab_ci:ci_e2e_Qw8nL3vR6tZp@localhost:5432/tizimlab_e2e
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Playwright versiyasi
+        id: pw
+        run: echo "version=$(npx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+      - name: Brauzer keshi
+        id: pw-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+      - if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - run: npm run e2e
+      - if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          retention-days: 7

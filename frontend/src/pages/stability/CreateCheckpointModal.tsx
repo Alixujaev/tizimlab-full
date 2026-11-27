@@ -1,8 +1,9 @@
 import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useUsersQuery } from '@/hooks/useAdminUsers';
 import { useCreateCheckpointMutation } from '@/hooks/useStability';
 import { errorMessage } from '@/lib/queryClient';
-import { Alert, Button, DatePicker, FormField, Input, Modal, Textarea } from '@/ui';
+import { Alert, Button, DatePicker, FormField, Input, Modal, Select, Textarea } from '@/ui';
 
 interface CreateCheckpointModalProps {
   studyId: string;
@@ -22,6 +23,13 @@ export function CreateCheckpointModal({ studyId, isOpen, onClose }: CreateCheckp
   const [intervalTag, setIntervalTag] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [notes, setNotes] = useState('');
+  // D-53 (R-STAB-30): checkpointga mas'ul kimyogar — natijani faqat u kirita oladi (backend majburlaydi)
+  const [assignedTo, setAssignedTo] = useState('');
+  const { data: chemistsData } = useUsersQuery(
+    { role: 'chemist', isActive: true, limit: 100 },
+    { enabled: isOpen },
+  );
+  const chemists = chemistsData?.data ?? [];
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
 
@@ -38,6 +46,7 @@ export function CreateCheckpointModal({ studyId, isOpen, onClose }: CreateCheckp
       await mutation.mutateAsync({
         intervalTag: intervalTag.trim(),
         dueDate,
+        assignedTo: assignedTo || null,
         notes: notes.trim() || null,
       });
       onClose();
@@ -74,6 +83,16 @@ export function CreateCheckpointModal({ studyId, isOpen, onClose }: CreateCheckp
         </FormField>
         <FormField label={t('stability.dueDate')} required error={fieldErrors.dueDate}>
           <DatePicker value={dueDate} onChange={setDueDate} />
+        </FormField>
+        <FormField label={t('stability.assignedTo')}>
+          <Select
+            options={[
+              { value: '', label: t('stability.noAssignee') },
+              ...chemists.map((ch) => ({ value: ch.id, label: ch.fullName })),
+            ]}
+            value={assignedTo}
+            onChange={setAssignedTo}
+          />
         </FormField>
         <FormField label={t('stability.notes')}>
           <Textarea

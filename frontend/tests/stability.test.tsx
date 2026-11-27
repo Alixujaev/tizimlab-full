@@ -1,4 +1,5 @@
-import { cleanup, screen, waitFor } from '@testing-library/react';
+import { cleanup, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { apiClient } from '@/api/client';
@@ -192,6 +193,93 @@ describe('Frontend: Stabilizatsiya sahifalari (P9, spec §8, D-05, D-53..D-58, D
   });
 
   describe('2. Checkpointlar va holat belgilari', () => {
+    it('P20 (D-53): yangi tekshiruvda har boshlang‘ich checkpointga mas‘ul kimyogar tanlanadi', async () => {
+      const user = userEvent.setup();
+      loginAs('lab_head');
+      api.onGet('/admin/users').reply(200, {
+        data: [
+          {
+            id: 'chem-9',
+            fullName: 'Karim Kimyogar',
+            email: 'k@x.uz',
+            role: 'chemist',
+            isActive: true,
+          },
+        ],
+        meta: { page: 1, limit: 100, total: 1 },
+      });
+      api.onGet(/\/samples/).reply(200, {
+        data: [
+          {
+            id: 'sample-9',
+            substanceName: 'Aspirin',
+            serialNumber: 'S-9',
+            lotNumber: null,
+            type: 'raw_material',
+            status: 'approved',
+          },
+        ],
+        meta: { page: 1, limit: 100, total: 1 },
+      });
+      let body: { checkpoints?: Array<{ intervalTag: string; assignedTo: string | null }> } | null =
+        null;
+      api.onPost('/stability').reply((c) => {
+        body = JSON.parse(c.data as string);
+        return [201, { ...mockStudy, id: 'study-9' }];
+      });
+      renderAt('/stability');
+      await user.click(await screen.findByRole('button', { name: /Yangi tekshiruv boshlash/ }));
+      const dialog = screen.getByRole('dialog');
+      await user.click(within(dialog).getByRole('combobox', { name: /^Namuna/ }));
+      await user.click(await screen.findByRole('option', { name: /Aspirin/ }));
+      await user.click(within(dialog).getByRole('combobox', { name: "T3 — Mas'ul kimyogar" }));
+      await user.click(await screen.findByRole('option', { name: 'Karim Kimyogar' }));
+      await user.click(within(dialog).getByRole('button', { name: /Saqlash/ }));
+      await waitFor(() => expect(body).not.toBeNull());
+      expect(body!.checkpoints).toEqual([
+        expect.objectContaining({ intervalTag: 'T3', assignedTo: 'chem-9' }),
+        expect.objectContaining({ intervalTag: 'T6', assignedTo: null }),
+        expect.objectContaining({ intervalTag: 'T12', assignedTo: null }),
+      ]);
+    });
+
+    it('P20 (D-53, R-STAB-30): checkpoint qo‘shishda mas‘ul kimyogar tanlanadi va POST ga assignedTo ketadi', async () => {
+      const user = userEvent.setup();
+      loginAs('lab_head');
+      api.onGet('/admin/users').reply(200, {
+        data: [
+          {
+            id: 'chem-9',
+            fullName: 'Karim Kimyogar',
+            email: 'k@x.uz',
+            role: 'chemist',
+            isActive: true,
+          },
+        ],
+        meta: { page: 1, limit: 100, total: 1 },
+      });
+      let body: unknown = null;
+      api.onPost('/stability/study-1/checkpoints').reply((c) => {
+        body = JSON.parse(c.data as string);
+        return [201, { ...mockStudyDetail.checkpoints[0], id: 'cp-9', intervalTag: 'T12' }];
+      });
+      renderAt('/stability/study-1');
+      await user.click(await screen.findByRole('button', { name: /Checkpoint qo'shish/i }));
+      const dialog = screen.getByRole('dialog');
+      await user.type(within(dialog).getByLabelText(/^Checkpoint nomi/), 'T12');
+      await user.type(within(dialog).getByLabelText(/^Muddat/), '01.12.2027');
+      await user.click(within(dialog).getByLabelText(/^Mas'ul kimyogar/));
+      await user.click(await screen.findByRole('option', { name: 'Karim Kimyogar' }));
+      await user.click(within(dialog).getByRole('button', { name: /Saqlash/ }));
+      await waitFor(() =>
+        expect(body).toMatchObject({
+          intervalTag: 'T12',
+          dueDate: '2027-12-01',
+          assignedTo: 'chem-9',
+        }),
+      );
+    });
+
     it('tadqiqot va checkpoint ma‘lumotlari to‘g‘ri aks etadi', async () => {
       loginAs('lab_head');
       renderAt('/stability/study-1');

@@ -703,17 +703,17 @@
 
 | ID | Talab | Manba | Faza | Holat |
 |---|---|---|---|---|
-| R-FLOW-01 | E2E: kontrolyor namuna kiritadi (tur, lot, seriya) → `pending_assignment`. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-02 | E2E: lab_head kimyogarga biriktiradi → protokol avtomatik yaratiladi → kimyogarga xabar (ekran + real vaqt + Telegram). | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-03 | E2E: kimyogar namuna sahifasida fayl yuklaydi → yuboradi → `submitted`. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-04 | E2E: lab_head tasdiqlaydi → namuna `approved`. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-05 | E2E: director protokolni yakunlaydi → `finalized`. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-06 | E2E: namuna reyestrda qidiriladi va fayli yuklab olinadi. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-07 | E2E: lab_head/director stabilizatsiya boshlaydi va checkpointlarni qo'lda belgilaydi. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-08 | E2E: fon jarayoni muddat yaqinlashganda/o'tganda bildirishnoma yuboradi. | 17-workflow §17 | P12 | [ ] |
-| R-FLOW-09 | E2E: kimyogar har checkpoint uchun natija kiritadi → barcha checkpointlar `completed` → study avtomatik `completed`. | 17-workflow §17, DECISIONS.md D-56 | P12 | [ ] |
-| R-FLOW-10 | E2E: rad etish oqimi — rad → protokol va namuna `rejected` (sabab saqlangan, xabarnomalar) → kimyogar faylni yangilab qayta yuboradi → `submitted` → tasdiq. | DECISIONS.md D-14 | P12 | [ ] |
-| R-FLOW-11 | E2E: `reagent`/`standard_substance` namunasi lab_head pasporti bilan protokolsiz `approved` bo'ladi. | 03-samples §3 | P12 | [ ] |
+| R-FLOW-01 | E2E: kontrolyor namuna kiritadi (tur, lot, seriya) → `pending_assignment`. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-02 | E2E: lab_head kimyogarga biriktiradi → protokol avtomatik yaratiladi → kimyogarga xabar (ekran + real vaqt + Telegram). | 17-workflow §17 | P12 | [x] |
+| R-FLOW-03 | E2E: kimyogar namuna sahifasida fayl yuklaydi → yuboradi → `submitted`. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-04 | E2E: lab_head tasdiqlaydi → namuna `approved`. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-05 | E2E: director protokolni yakunlaydi → `finalized`. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-06 | E2E: namuna reyestrda qidiriladi va fayli yuklab olinadi. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-07 | E2E: lab_head/director stabilizatsiya boshlaydi va checkpointlarni qo'lda belgilaydi. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-08 | E2E: fon jarayoni muddat yaqinlashganda/o'tganda bildirishnoma yuboradi. | 17-workflow §17 | P12 | [x] |
+| R-FLOW-09 | E2E: kimyogar har checkpoint uchun natija kiritadi → barcha checkpointlar `completed` → study avtomatik `completed`. | 17-workflow §17, DECISIONS.md D-56 | P12 | [x] |
+| R-FLOW-10 | E2E: rad etish oqimi — rad → protokol va namuna `rejected` (sabab saqlangan, xabarnomalar) → kimyogar faylni yangilab qayta yuboradi → `submitted` → tasdiq. | DECISIONS.md D-14 | P12 | [x] |
+| R-FLOW-11 | E2E: `reagent`/`standard_substance` namunasi lab_head pasporti bilan protokolsiz `approved` bo'ladi. | 03-samples §3 | P12 | [x] |
 
 ## ANALYTICS — Xodimlar analitikasi (P13)
 
@@ -824,6 +824,14 @@
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
 
+### P20 (E2E — Playwright, `e2e/tests/`)
+R-FLOW qatorlari E2E testlariga (test nomida R-ID) bog'langan; hammasi jonli ilovada (backend test rejimi + production build) o'tgan:
+- R-FLOW-01, 02, 03, 04, 05, 06, 10 `[x]` — `sample-flow.spec.ts` › "R-FLOW-01..06, R-FLOW-10: namuna kiritishdan reyestrgacha (rad etish bilan)": kontrolyor AI (mock) + qo'lda → `pending_assignment`; lab_head xabar (qo'ng'iroq) → biriktirish → protokol avtomatik, kimyogarga real vaqtli toast (Socket.IO); kimyogar fayl + peak + apparat + ND + tahlillar soni → `submitted`; rad (sabab) → kimyogar sababni ko'radi, faylni almashtirib qayta yuboradi; tasdiq + rad tarixi; director yakunlaydi; reyestr qidiruvi va fayl yuklab olish (oxirgi versiya mazmuni tekshiriladi). R-FLOW-02 ning Telegram kanali E2E da o'chiq (tashqi API) — `backend/tests/telegram.test.ts` ("createNotification P6 oqimida Telegram kanali chaqiriladi") qoplaydi.
+- R-FLOW-07, 09 `[x]` — `stability.spec.ts` › "R-FLOW-07, R-FLOW-09: tekshiruv boshlash, checkpoint belgilash, natijalar → study yakunlanadi" (checkpointga mas'ul kimyogar — D-53 UI'si shu fazada qo'shildi).
+- R-FLOW-08 `[x]` — `stability.spec.ts` › "R-FLOW-08: fon job muddat o‘tgan va yaqinlashgan checkpointlar uchun xabar yuboradi" (haqiqiy `runStabilityReminderJob` server startida; xabar va `overdue` holati UI'da).
+- R-FLOW-11 `[x]` — `passport.spec.ts` › "R-FLOW-11: reaktiv namunasi — …" va "R-FLOW-11: standart namuna — …" (protokolsiz `approved`, reyestrda pasport yuklab olinadi).
+- Qo'shimcha E2E (checklist qatori yo'q, TZ bo'yicha): `reagents.spec.ts` (TZ §3.2), `nd-feasibility.spec.ts` (TZ §3.3), `temperature.spec.ts`, `oos.spec.ts`, `roles.spec.ts` (rol/403/izolyatsiya), `mobile.spec.ts` (390×844).
+
 ### P1
 - R-SEC-04 `[~]` — `validate()` middleware va Zod tayyor; har endpoint'da qo'llanishi modullar bilan (P2+).
 - R-ARCH-02 `[~]` — middleware va router ulash bor; Socket.IO (P6) va bot (P11) keyin. D-21: entry point `server.ts`.
@@ -907,13 +915,13 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | SEC — Xavfsizlik choralari | 7 | 4 | 1 | 2 |
 | ARCH — Texnik arxitektura (env, middleware, jadvallar, infratuzilma) | 85 | 75 | 8 | 2 |
 | FE — Frontend sahifalar, yo'llar, Sidebar | 45 | 41 | 4 | 0 |
-| FLOW — Asosiy ish oqimi (E2E) | 11 | 0 | 0 | 11 |
+| FLOW — Asosiy ish oqimi (E2E) | 11 | 11 | 0 | 0 |
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
 | P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
 | P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 11 | 11 | 0 | 0 |
 | P18 — AI-OCR yordamchi, metadata, peak fayllar, harorat taklifi, yagona tarix (TZ Addendum) | 16 | 16 | 0 | 0 |
 | P19 — OOS AI Copilot (ichki baza + tashqi bilim, TZ §3.4, Addendum §2 4-bosqich) | 12 | 12 | 0 | 0 |
-| **Jami** | 682 | 622 | 42 | 18 |
+| **Jami** | 682 | 633 | 42 | 7 |
 
 ### Fazalar bo'yicha
 
@@ -930,7 +938,7 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P9 | 58 | 51 | 7 | 0 |
 | P10 | 25 | 23 | 2 | 0 |
 | P11 | 26 | 26 | 0 | 0 |
-| P12 | 28 | 8 | 2 | 18 |
+| P12 | 28 | 19 | 2 | 7 |
 | P13 | 16 | 16 | 0 | 0 |
 | P14 | 0 | 0 | 0 | 0 |
 | P15 | 0 | 0 | 0 | 0 |
@@ -938,4 +946,4 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P17 | 11 | 11 | 0 | 0 |
 | P18 | 16 | 16 | 0 | 0 |
 | P19 | 12 | 12 | 0 | 0 |
-| **Jami** | 682 | 622 | 42 | 18 |
+| **Jami** | 682 | 633 | 42 | 7 |

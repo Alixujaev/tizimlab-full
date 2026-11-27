@@ -1,0 +1,5 @@
+{
+  "extends": "../backend/tsconfig.json",
+  "compilerOptions": { "types": ["node"], "noEmit": true, "lib": ["ES2023", "DOM"] },
+  "include": ["**/*.ts"]
+}
