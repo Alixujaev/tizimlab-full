@@ -186,8 +186,11 @@ describeDb('OOS va AI Copilot (API)', () => {
       expect(msg.answer.internal_findings.map((f: { source_ref: string }) => f.source_ref)).toEqual(['S1']);
       expect(msg.answer.internalFound).toBe(true);
       expect(msg.retrievalMode).toBe('hybrid');
-      expect(msg.sources[0]).toMatchObject({ ref: 'S1', sourceType: 'protocol', sourceId: pastProtocol, cited: true });
+      // Manba tartibi reytingga bog'liq — o'tgan protokol manbalar orasida, S1 keltirilgan deb belgilangan
+      expect(msg.sources.map((s: { sourceId: string }) => s.sourceId)).toContain(pastProtocol);
+      expect(msg.sources[0]).toMatchObject({ ref: 'S1', sourceType: 'protocol', cited: true });
       expect(msg.sources[0].link).toMatch(/^\/samples\//);
+      expect(msg.sources.filter((s: { cited: boolean }) => s.cited).map((s: { ref: string }) => s.ref)).toEqual(['S1']);
       expect(msg.sources.every((s: { excerpt: string }) => !/MAXFIY/.test(s.excerpt))).toBe(true);
       expect(msg).toMatchObject({ model: 'mock-model', inputTokens: 1200, outputTokens: 300, errorCode: null });
 
@@ -203,7 +206,8 @@ describeDb('OOS va AI Copilot (API)', () => {
         [msg.id],
       );
       expect(audit.rows[0]!.new_values.model).toBe('mock-model');
-      expect(audit.rows[0]!.new_values.sources[0]).toMatchObject({ id: pastProtocol, cited: true });
+      expect(audit.rows[0]!.new_values.sources.map((x) => x.id)).toContain(pastProtocol);
+      expect(audit.rows[0]!.new_values.sources[0]).toMatchObject({ cited: true });
     });
 
     it('prompt-injection: model hukm/ortiqcha maydon qaytarsa — javob qabul qilinmaydi (failed), holat o‘zgarmaydi', async () => {

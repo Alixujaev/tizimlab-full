@@ -49,7 +49,13 @@ export async function protocolFlow(
   await request(app)
     .post(`/api/v1/protocols/${protocolId}/file`)
     .set(auth('chemist'))
-    .attach('file', textPdf(opts.mainText ?? `${opts.substanceName ?? 'Ibuprofen'} assay protocol result conforms`), 'protocol.pdf')
+    .attach(
+      'file',
+      textPdf(
+        opts.mainText ?? `${opts.substanceName ?? 'Ibuprofen'} assay protocol result conforms`,
+      ),
+      'protocol.pdf',
+    )
     .expect(200);
   const peakFileIds: string[] = [];
   for (const p of opts.peaks ?? []) {
@@ -63,10 +69,16 @@ export async function protocolFlow(
   await request(app)
     .post(`/api/v1/protocols/${protocolId}/submit`)
     .set(auth('chemist'))
-    .send({ equipmentId: opts.equipmentId ?? null, analysisDate: opts.analysisDate ?? '2026-03-10' })
+    .send({
+      equipmentId: opts.equipmentId ?? null,
+      analysisDate: opts.analysisDate ?? '2026-03-10',
+    })
     .expect(200);
   if (opts.approve !== false) {
-    await request(app).post(`/api/v1/protocols/${protocolId}/approve`).set(auth('labHead')).expect(200);
+    await request(app)
+      .post(`/api/v1/protocols/${protocolId}/approve`)
+      .set(auth('labHead'))
+      .expect(200);
   }
   return { sampleId, protocolId, peakFileIds };
 }
@@ -76,15 +88,31 @@ export async function seedPeaks(
   company: TestCompany,
   protocolId: string,
   fileId: string,
-  rows: { name?: string | null; rt: number; areaPercent?: number; tailing?: number; plates?: number }[],
+  rows: {
+    name?: string | null;
+    rt: number;
+    areaPercent?: number;
+    tailing?: number;
+    plates?: number;
+  }[],
   status: 'draft' | 'confirmed' = 'confirmed',
 ): Promise<void> {
   for (const r of rows) {
     await query(
       `INSERT INTO peak_results (company_id, protocol_id, protocol_file_id, peak_name, retention_time, area_percent,
                                  tailing, plates, status, confirmed_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CASE WHEN $9 = 'confirmed' THEN now() END)`,
-      [company.id, protocolId, fileId, r.name ?? null, r.rt, r.areaPercent ?? null, r.tailing ?? null, r.plates ?? null, status],
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::varchar, CASE WHEN $9::varchar = 'confirmed' THEN now() END)`,
+      [
+        company.id,
+        protocolId,
+        fileId,
+        r.name ?? null,
+        r.rt,
+        r.areaPercent ?? null,
+        r.tailing ?? null,
+        r.plates ?? null,
+        status,
+      ],
     );
   }
 }

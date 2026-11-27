@@ -67,8 +67,9 @@ export function createRagRouter(deps: { auth: AuthMiddleware; embedding: Embeddi
       userId: req.auth!.userId,
       companyId,
       action: 'rag_reindex',
-      tableName: 'rag_index_jobs',
-      recordId: null,
+      // D-80: record_id faqat auth da NULL — qayta indekslangan kompaniya
+      tableName: 'companies',
+      recordId: companyId,
       newValues: { queued },
     });
     sendOk(res, { queued });

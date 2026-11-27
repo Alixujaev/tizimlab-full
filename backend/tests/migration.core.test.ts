@@ -274,7 +274,11 @@ describeDb('001_core baseline migratsiyasi', () => {
       'trg_equipment_updated_at',
       'trg_nd_requirements_updated_at',
       'trg_nd_updated_at',
+      'trg_oos_cases_updated_at',
+      'trg_oos_chat_sessions_updated_at',
+      'trg_peak_results_updated_at',
       'trg_protocols_updated_at',
+      'trg_rag_index_jobs_updated_at',
       'trg_reagent_consumptions_updated_at',
       // D-174: lotni katalog elementiga bog'lash (audit emas)
       'trg_reagents_assign_item',
