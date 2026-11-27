@@ -70,6 +70,12 @@ export function resolveForbiddenMessage(error: unknown, apiError?: ApiError | nu
       } else if (url.includes('/approve')) {
         resource = 'protocols';
         action = 'approve';
+      } else if (url.includes('/submit')) {
+        resource = 'protocols';
+        action = 'submit';
+      } else if (url.includes('/reject')) {
+        resource = 'protocols';
+        action = 'reject';
       } else {
         resource = 'protocols';
         action = 'upload';

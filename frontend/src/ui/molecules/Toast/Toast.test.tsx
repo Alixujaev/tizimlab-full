@@ -35,4 +35,15 @@ describe('Toast', () => {
     expect(spy).toHaveBeenCalledWith('Xato');
     spy.mockRestore();
   });
+
+  it('P20: toastlar top bar ostidan boshlanadi (qo‘ng‘iroq va top bar tugmalarini to‘smaydi)', async () => {
+    render(<Toaster />);
+    act(() => {
+      notify.info('Yangi xabar');
+    });
+    await screen.findByText('Yangi xabar');
+    const list = document.querySelector<HTMLElement>('[data-sonner-toaster]')!;
+    expect(list.style.getPropertyValue('--offset-top')).toContain('var(--tl-topbar-height)');
+    expect(list.style.getPropertyValue('--mobile-offset-top')).toContain('var(--tl-topbar-height)');
+  });
 });

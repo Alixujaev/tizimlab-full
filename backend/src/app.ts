@@ -99,6 +99,8 @@ export interface AppDeps {
   };
   /** P19 (D-190): embedding provayderi; `null` — faqat FTS. Testlarda mock. */
   embedding?: EmbeddingProvider | null;
+  /** D-198: test rejimidagi disk fayllari (`/api/v1/__test/files`) — faqat NODE_ENV=test */
+  testFilesRouter?: Router | null;
 }
 
 /** Express ilovasini yig'adi. Server ishga tushirish `server.ts` da (D-21). */
@@ -113,6 +115,7 @@ export function createApp({
   storage = null,
   ai,
   embedding = null,
+  testFilesRouter = null,
 }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
@@ -230,6 +233,7 @@ export function createApp({
       webAppAuthLimit: telegramLimits?.webAppAuth,
     }),
   );
+  if (testFilesRouter && env.NODE_ENV === 'test') api.use('/__test', testFilesRouter);
   app.use('/api/v1', api);
 
   if (env.NODE_ENV === 'development' && env.SWAGGER_USER && env.SWAGGER_PASSWORD) {

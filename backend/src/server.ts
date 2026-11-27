@@ -3,6 +3,7 @@ import { closePool, initDb, pingDb } from './config/database.js';
 import { loadEnv } from './config/env.js';
 import { authConfigFromEnv } from './modules/auth/auth.types.js';
 import { storageFromEnv } from './modules/files/files.storage.js';
+import { createDiskFilesRouter, createDiskStorage } from './modules/files/files.disk.js';
 import { aiClientFromEnv, aiRuntime } from './modules/ai/ai.config.js';
 import { embeddingFromEnv } from './modules/rag/rag.embedding.js';
 import { startRagWorker, stopRagWorker } from './modules/rag/rag.indexer.js';
@@ -29,7 +30,9 @@ const SHUTDOWN_TIMEOUT_MS = 10_000;
 const env = loadEnv();
 initDb(env.DATABASE_URL);
 
-const storage = storageFromEnv(env);
+// D-198: E2E — disk xotirasi (faqat test; env.ts majburlaydi)
+const diskDir = env.STORAGE_DRIVER === 'disk' ? env.STORAGE_DISK_DIR! : null;
+const storage = diskDir ? createDiskStorage(diskDir, env.JWT_ACCESS_SECRET) : storageFromEnv(env);
 if (!storage) logger.warn("R2 sozlanmagan: fayl endpointlari 503 qaytaradi (R2_* ni to'ldiring)");
 const aiClient = aiClientFromEnv(env);
 // P19 (D-190): kalit yo'q — null (faqat FTS)
@@ -46,6 +49,7 @@ const app = createApp({
     chatDailyLimit: env.OOS_CHAT_DAILY_LIMIT_PER_COMPANY,
   },
   embedding,
+  testFilesRouter: diskDir ? createDiskFilesRouter(diskDir, env.JWT_ACCESS_SECRET) : null,
 });
 const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);

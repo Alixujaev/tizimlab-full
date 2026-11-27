@@ -1,5 +1,6 @@
 import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useUsersQuery } from '@/hooks/useAdminUsers';
 import { useSamplesQuery } from '@/hooks/useSamples';
 import { useCreateStudyMutation } from '@/hooks/useStability';
 import { errorMessage } from '@/lib/queryClient';
@@ -43,6 +44,8 @@ interface ParamRow {
 interface CheckpointRow {
   intervalTag: string;
   dueDate: string;
+  /** D-53: mas'ul kimyogar ('' — biriktirilmagan); natijani faqat u kiritadi */
+  assignedTo: string;
 }
 
 export function CreateStudyModal({
@@ -66,10 +69,18 @@ export function CreateStudyModal({
     DEFAULT_PARAMS.map((p) => ({ parameter: p, initialValue: '', specification: '' })),
   );
   const [checkpoints, setCheckpoints] = useState<CheckpointRow[]>([
-    { intervalTag: 'T3', dueDate: isoInDays(90) },
-    { intervalTag: 'T6', dueDate: isoInDays(180) },
-    { intervalTag: 'T12', dueDate: isoInDays(365) },
+    { intervalTag: 'T3', dueDate: isoInDays(90), assignedTo: '' },
+    { intervalTag: 'T6', dueDate: isoInDays(180), assignedTo: '' },
+    { intervalTag: 'T12', dueDate: isoInDays(365), assignedTo: '' },
   ]);
+  const { data: chemistsData } = useUsersQuery(
+    { role: 'chemist', isActive: true, limit: 100 },
+    { enabled: isOpen },
+  );
+  const chemistOptions = [
+    { value: '', label: t('stability.noAssignee') },
+    ...(chemistsData?.data ?? []).map((ch) => ({ value: ch.id, label: ch.fullName })),
+  ];
   const [sampleError, setSampleError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -107,6 +118,7 @@ export function CreateStudyModal({
             ? validCheckpoints.map((cp) => ({
                 intervalTag: cp.intervalTag.trim(),
                 dueDate: cp.dueDate,
+                assignedTo: cp.assignedTo || null,
               }))
             : undefined,
       });
@@ -237,7 +249,9 @@ export function CreateStudyModal({
               variant="ghost"
               size="sm"
               leftIcon="plus"
-              onClick={() => setCheckpoints((c) => [...c, { intervalTag: '', dueDate: '' }])}
+              onClick={() =>
+                setCheckpoints((c) => [...c, { intervalTag: '', dueDate: '', assignedTo: '' }])
+              }
             >
               {t('stability.addCheckpoint')}
             </Button>
@@ -250,7 +264,7 @@ export function CreateStudyModal({
               >
                 <Input
                   size="sm"
-                  className="col-span-4"
+                  className="col-span-5 sm:col-span-3"
                   aria-label={t('stability.checkpointNamePlaceholder')}
                   value={cp.intervalTag}
                   onChange={(e) => updateCheckpoint(idx, 'intervalTag', e.target.value)}
@@ -258,10 +272,18 @@ export function CreateStudyModal({
                 />
                 <DatePicker
                   size="sm"
-                  className="col-span-6 sm:col-span-7"
+                  className="col-span-7 sm:col-span-4"
                   aria-label={t('stability.dueDate')}
                   value={cp.dueDate}
                   onChange={(v) => updateCheckpoint(idx, 'dueDate', v)}
+                />
+                <Select
+                  size="sm"
+                  className="col-span-10 sm:col-span-4"
+                  aria-label={`${cp.intervalTag || t('stability.checkpointNamePlaceholder')} — ${t('stability.assignedTo')}`}
+                  options={chemistOptions}
+                  value={cp.assignedTo}
+                  onChange={(v) => updateCheckpoint(idx, 'assignedTo', v)}
                 />
                 <IconButton
                   icon="x"

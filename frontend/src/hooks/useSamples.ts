@@ -60,6 +60,9 @@ export function useAssignSampleMutation() {
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: samplesKeys.all });
       void queryClient.invalidateQueries({ queryKey: samplesKeys.detail(variables.id) });
+      // Biriktirishda protokol avtomatik yaratiladi (R-FLOW-02) — namuna sahifasidagi protokol bloki
+      // yangilanishi shart. `protocolsKeys.all` (useProtocols → useSamples importi aylanmasin deb literal).
+      void queryClient.invalidateQueries({ queryKey: ['protocols'] });
     },
   });
 }

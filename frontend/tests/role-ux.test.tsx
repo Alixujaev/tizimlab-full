@@ -232,6 +232,22 @@ describe('Role-aware requests & 403 UX (Fix role-403-ux)', () => {
       expect(errorMessage(axiosErr)).toBe("Namunani biriktirish uchun ruxsat yo'q");
     });
 
+    it('P20: protokolni yuborish/rad etish 403 — "yuklash" emas, aniq amal nomi', async () => {
+      await i18n.changeLanguage('uz');
+      const err = (url: string) => ({
+        isAxiosError: true,
+        response: { status: 403 },
+        config: { url, method: 'post' },
+      });
+      expect(errorMessage(err('/protocols/p1/submit'))).toBe(
+        "Protokolni yuborish uchun ruxsat yo'q",
+      );
+      expect(errorMessage(err('/protocols/p1/reject'))).toBe(
+        "Protokolni rad etish uchun ruxsat yo'q",
+      );
+      expect(errorMessage(err('/protocols/p1/file'))).toBe("Protokol yuklash uchun ruxsat yo'q");
+    });
+
     it('queryCache da sahifa yuklanishida avtomatik so‘rov xato bersa ham toast chiqmaydi', () => {
       const client = createQueryClient();
       const onError = client.getQueryCache().config.onError;

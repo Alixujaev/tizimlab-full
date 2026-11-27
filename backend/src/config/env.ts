@@ -76,6 +76,13 @@ export const envSchema = z
     EMBEDDING_API_URL: optionalUrl,
     // P19 (D-195): OOS chat — kompaniya bo'yicha kunlik AI javoblar limiti
     OOS_CHAT_DAILY_LIMIT_PER_COMPANY: z.coerce.number().int().min(0).default(300),
+    // P20 (D-198): E2E rejimi — FAQAT NODE_ENV=test (boshqa muhitda ishga tushish xato bilan to'xtaydi)
+    AI_MOCK: z
+      .enum(['true', 'false', '1', '0'])
+      .default('false')
+      .transform((v) => v === 'true' || v === '1'),
+    STORAGE_DRIVER: z.enum(['r2', 'disk']).default('r2'),
+    STORAGE_DISK_DIR: optionalString,
   })
   .superRefine((env, ctx) => {
     const require = (key: keyof typeof env, why: string) => {
@@ -85,6 +92,16 @@ export const envSchema = z
       for (const key of R2_KEYS) require(key, "production'da majburiy");
       require('FRONTEND_URL', "production'da majburiy");
     }
+    // D-198: test-faqat rejimlar production/development'da TAQIQLANGAN
+    const testOnly = (key: keyof typeof env, active: boolean) => {
+      if (active && env.NODE_ENV !== 'test') {
+        ctx.addIssue({ code: 'custom', path: [key], message: 'faqat NODE_ENV=test da ruxsat etiladi' });
+      }
+    };
+    testOnly('AI_MOCK', env.AI_MOCK);
+    testOnly('EMBEDDING_PROVIDER', env.EMBEDDING_PROVIDER === 'mock');
+    testOnly('STORAGE_DRIVER', env.STORAGE_DRIVER === 'disk');
+    if (env.STORAGE_DRIVER === 'disk') require('STORAGE_DISK_DIR', 'STORAGE_DRIVER=disk da majburiy');
     if (env.SWAGGER_USER && !env.SWAGGER_PASSWORD)
       require('SWAGGER_PASSWORD', 'SWAGGER_USER berilganda majburiy');
     if (env.SWAGGER_PASSWORD && !env.SWAGGER_USER)
