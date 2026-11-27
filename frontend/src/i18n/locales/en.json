@@ -43,7 +43,8 @@
     "profileShort": "Profile",
     "moreShort": "More",
     "equipment": "Equipment",
-    "nd": "Normative documents"
+    "nd": "Normative documents",
+    "protocols": "Protocols"
   },
   "pages": {
     "dashboard": "Dashboard",
@@ -237,6 +238,14 @@
       "adminEmailRequired": "Enter administrator email.",
       "adminFullNameRequired": "Enter administrator full name.",
       "adminPasswordRequired": "Enter administrator password."
+    },
+    "ai": {
+      "column": "AI assistant",
+      "toggleLabel": "AI assistant for {{name}}",
+      "enableTitle": "Enable the AI assistant?",
+      "disableTitle": "Disable the AI assistant?",
+      "enableText": "Users of “{{name}}” will be able to fill fields from documents with AI (suggestions only, a person saves).",
+      "disableText": "AI buttons will be hidden for “{{name}}”; forms keep working with manual entry."
     }
   },
   "users": {
@@ -622,7 +631,9 @@
       "invalidRange": "The «from» date cannot be after the «to» date",
       "unfinalizedOnly": "Unfinalized only (awaiting director finalization)",
       "chemist": "Chemist",
-      "inactive": "inactive"
+      "inactive": "inactive",
+      "equipment": "Equipment",
+      "equipmentUnknown": "No equipment specified"
     },
     "columns": {
       "substance": "Substance",
@@ -730,6 +741,28 @@
       "reason": "Correction reason",
       "reasonMin": "The reason must be at least 5 characters long",
       "qtyInvalid": "Quantity must be a number of 0 or more"
+    },
+    "analysisDate": "Analysis date",
+    "rejectionHistory": "Rejection history ({{count}})",
+    "rejectionItemMeta": "#{{n}} · {{at}} · {{by}}",
+    "equipment": {
+      "label": "Equipment",
+      "hint": "If the equipment is unknown, choose “Unknown”",
+      "unknown": "Unknown"
+    },
+    "suggestion": {
+      "title": "Temperature suggestion (by analysis date and room)",
+      "noRoom": "No room selected",
+      "noReading": "No temperature record for the selected date and room",
+      "loading": "Loading temperature suggestion…",
+      "limits": "Range: {{min}}…{{max}} °C",
+      "outOfRange": "Temperature is out of range"
+    },
+    "peaks": {
+      "title": "Peak files",
+      "description": "Chromatogram/spectrum files (PDF, Word), up to 20",
+      "upload": "Upload peak file",
+      "empty": "No peak files uploaded"
     }
   },
   "notifications": {
@@ -897,7 +930,21 @@
       "outBlocked": "The reagent is not approved yet — consumption cannot be recorded. Choose receipt, adjustment or disposal."
     },
     "filterExpiringSoon": "Expiring soon",
-    "expiringSoon": "Expiring soon"
+    "expiringSoon": "Expiring soon",
+    "lot": {
+      "lotNumber": "Lot (batch) number",
+      "manufacturer": "Manufacturer",
+      "manufacturedAt": "Manufacturing date",
+      "arrivalDate": "Arrival date",
+      "expiryBeforeManufacture": "The expiry date cannot be earlier than the manufacturing date",
+      "lotPrefix": "Lot: {{lot}}"
+    },
+    "catalog": {
+      "linked": "Linked to catalog",
+      "unlink": "Unlink",
+      "hint": "A similar reagent exists in the catalog — select it to link (optional):",
+      "suggestion": "Similar name in catalog: {{name}}"
+    }
   },
   "temperature": {
     "title": "Temperature & Humidity Monitoring",
@@ -1542,6 +1589,116 @@
       "reagent_missing": "\"{{reagent}}\" is not in stock",
       "reagent_insufficient": "Not enough \"{{reagent}}\": needed {{required}} {{unit}}, available {{available}} {{unit}}, missing {{missing}} {{unit}}",
       "reagent_all_expired": "All lots of \"{{reagent}}\" have expired"
+    },
+    "edit": "Edit ND",
+    "meta": {
+      "title": "Document details",
+      "substanceName": "Substance name",
+      "series": "Series",
+      "docDate": "Document date",
+      "chemist": "Chemist",
+      "equipment": "Equipment",
+      "notSet": "Not set"
+    },
+    "ai": {
+      "extract": "Detect requirements from document",
+      "hint": "AI adds requirements from the ND file as drafts — review them and approve as usual.",
+      "edited": "AI → edited",
+      "summary": "{{count}} draft requirement(s) added — review and approve",
+      "noneCreated": "No new requirements were added",
+      "skippedTitle": "Skipped ({{count}})",
+      "skippedLine": "{{kind}}: {{name}}{{qty}}{{method}}",
+      "suggestions": "Similar in catalog: {{names}}",
+      "skip": {
+        "not_in_catalog": "Reagent not found in the catalog — add it to the catalog first or enter manually",
+        "unknown_unit": "Unknown unit",
+        "unit_mismatch": "Unit does not match the catalog reagent unit",
+        "invalid_quantity": "Invalid quantity",
+        "empty": "Not enough data",
+        "duplicate": "This requirement already exists"
+      }
+    }
+  },
+  "ai": {
+    "badge": "AI",
+    "check": "Check",
+    "hint": "AI suggests field values from the document — review them before saving.",
+    "fillFromDocument": "Fill from document",
+    "reading": "Reading the document…",
+    "poorQuality": "Image quality is too low — retake the photo or fill in manually",
+    "failed": "AI did not respond — fill in the fields manually",
+    "filled": "AI filled {{count}} field(s) — review and save",
+    "nothingFilled": "No values for the empty fields were found in the document — fill in manually",
+    "errors": {
+      "AI_UNAVAILABLE": "The AI service is currently unavailable — fill in the fields manually",
+      "AI_DISABLED": "The AI assistant is disabled for your company — fill in the fields manually",
+      "AI_DAILY_LIMIT": "The daily AI limit has been reached — fill in the fields manually",
+      "AI_RATE_LIMITED": "Too many AI requests — try again later or fill in manually",
+      "PAYLOAD_TOO_LARGE": "The file is too large — choose a smaller image or PDF",
+      "UNSUPPORTED_MEDIA_TYPE": "Unsupported file type — choose JPEG, PNG, WEBP or PDF",
+      "AI_TOO_MANY_PAGES": "The PDF has too many pages — upload the relevant pages separately",
+      "EMPTY_FILE": "The file is empty",
+      "ND_NOT_DRAFT": "Requirements can only be detected for a draft normative document",
+      "ND_FILE_MISSING": "Upload the normative document file first"
+    }
+  },
+  "history": {
+    "title": "Full history",
+    "empty": "No history records",
+    "noValue": "(empty)",
+    "reason": "Reason",
+    "statusChange": "{{from}} → {{to}}",
+    "protocolSigned": {
+      "submitted": "Protocol submitted",
+      "approved": "Protocol approved",
+      "finalized": "Protocol finalized"
+    },
+    "protocolRejected": "Protocol rejected",
+    "consumption": "Reagent consumption (per ND)",
+    "consumptionLine": "{{name}}: {{consumed}} / {{required}} {{unit}}",
+    "consumptionReagentLine": "{{quantity}} — {{substance}}",
+    "consumptionReviewed": {
+      "confirmed": "Consumption confirmed",
+      "corrected": "Consumption corrected"
+    },
+    "consumptionReviewedLine": "{{name}}: {{consumed}} {{unit}}",
+    "aiReview": "AI suggestion reviewed",
+    "aiAccepted": "{{count}} field(s) accepted unchanged",
+    "transactionLine": "{{quantity}} (balance: {{before}} → {{after}})",
+    "reagentApproval": {
+      "approved": "Reagent approved",
+      "rejected": "Reagent rejected",
+      "pending": "Reagent sent for approval"
+    },
+    "ndStatus": "ND status: {{from}} → {{to}}",
+    "ndAiExtract": "AI detected requirements",
+    "ndAiExtractLine": "{{created}} draft(s) added, {{skipped}} skipped"
+  },
+  "protocolsList": {
+    "title": "Protocols",
+    "subtitle": "All analysis protocols: equipment, analysis date, peak files and rejections",
+    "invalidRange": "The “from” date must not be after the “to” date",
+    "empty": "No protocols found",
+    "open": "Open",
+    "rejections": "Rejected: {{count}}",
+    "columns": {
+      "substance": "Substance",
+      "series": "Series / Lot",
+      "chemist": "Chemist",
+      "equipment": "Equipment",
+      "analysisDate": "Analysis date",
+      "peaks": "Peak files"
+    },
+    "filters": {
+      "substanceName": "Substance name",
+      "series": "Series",
+      "chemist": "Chemist",
+      "equipment": "Equipment",
+      "equipmentUnknown": "No equipment specified",
+      "status": "Status",
+      "dateFrom": "Date (from)",
+      "dateTo": "Date (to)",
+      "hasPeaks": "Only with peak files"
     }
   }
 }

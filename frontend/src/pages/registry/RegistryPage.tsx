@@ -1,6 +1,7 @@
 import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { useEquipmentQuery } from '@/hooks/useP17';
 import { useRegistryChemistsQuery, useRegistryQuery } from '@/hooks/useRegistry';
 import { formatDate, parseDisplayDate } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
@@ -42,6 +43,8 @@ interface FilterForm {
   approvedTo: string;
   unfinalizedOnly: boolean;
   chemistId: string;
+  /** P18 (D-187): uuid yoki `unknown` */
+  equipmentId: string;
 }
 
 const EMPTY: FilterForm = {
@@ -53,6 +56,7 @@ const EMPTY: FilterForm = {
   approvedTo: '',
   unfinalizedOnly: false,
   chemistId: '',
+  equipmentId: '',
 };
 
 export function RegistryPage() {
@@ -66,6 +70,7 @@ export function RegistryPage() {
   const [toDelete, setToDelete] = useState<RegistryItemDto | null>(null);
   const { data, isLoading, isError, refetch } = useRegistryQuery(params);
   const { data: chemists = [] } = useRegistryChemistsQuery();
+  const { data: equipment } = useEquipmentQuery({ limit: 100 });
 
   const setField = <K extends keyof FilterForm>(key: K, value: FilterForm[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -94,6 +99,7 @@ export function RegistryPage() {
       approvedTo: to,
       unfinalizedOnly: form.unfinalizedOnly || undefined,
       chemistId: form.chemistId || undefined,
+      equipmentId: form.equipmentId || undefined,
     });
   };
 
@@ -250,6 +256,20 @@ export function RegistryPage() {
             ]}
             value={form.chemistId}
             onChange={(v) => setField('chemistId', v)}
+          />
+        </FormField>
+        <FormField label={t('registry.filters.equipment')}>
+          <Select
+            options={[
+              { value: '', label: t('common.all') },
+              { value: 'unknown', label: t('registry.filters.equipmentUnknown') },
+              ...(equipment?.data ?? []).map((eq) => ({
+                value: eq.id,
+                label: `${eq.name} (${eq.category})`,
+              })),
+            ]}
+            value={form.equipmentId}
+            onChange={(v) => setField('equipmentId', v)}
           />
         </FormField>
         {approvedFromField}

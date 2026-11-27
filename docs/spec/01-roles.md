@@ -29,6 +29,10 @@ Tizimda 6 ta rol mavjud:
 | Apparatlar (D-175) | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
 | Normativ hujjatlar va moslik (D-176) | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
 | ND sarfini tasdiqlash/tuzatish (D-177) | — | ✅ (biriktirilgan) | ✅ | — | — |
+| AI: namuna hujjatidan to'ldirish (D-179) | ✅ | — | ✅ | — | — |
+| AI: reaktiv hujjatidan to'ldirish (D-179) | ✅ | ✅ | ✅ | — | — |
+| AI: ND dan talablarni aniqlash (D-179) | — | — | ✅ | — | ✅ |
+| Protokollar ro'yxati (D-187) | — | O'ziga biriktirilgan | ✅ Hammasi | ✅ Hammasi | ✅ Hammasi |
 | Harorat | Ko'rish | Ko'rish | ✅ To'liq | Ko'rish | ✅ To'liq |
 | Stabilizatsiya boshlash | — | — | ✅ | ✅ | ✅ |
 | Stabilizatsiya natija kiritish | — | ✅ (biriktirilgan) | ✅ | ✅ | ✅ |

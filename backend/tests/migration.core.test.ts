@@ -33,6 +33,8 @@ describeDb('001_core baseline migratsiyasi', () => {
       [db.schema],
     );
     expect(rows.map((r) => r.table_name)).toEqual([
+      'ai_extractions',
+      'ai_field_reviews',
       'analytics_decisions',
       'analytics_samples',
       'analytics_signatures',
@@ -45,6 +47,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       'normative_documents',
       'notifications',
       'protocol_files',
+      'protocol_rejections',
       'protocol_signatures',
       'protocols',
       'reagent_consumption_lots',
@@ -101,6 +104,9 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 22, name: 'equipment', state: 'applied' }),
       expect.objectContaining({ version: 23, name: 'normative_documents', state: 'applied' }),
       expect.objectContaining({ version: 24, name: 'reagent_consumptions', state: 'applied' }),
+      expect.objectContaining({ version: 25, name: 'ai', state: 'applied' }),
+      expect.objectContaining({ version: 26, name: 'reagent_lot_fields', state: 'applied' }),
+      expect.objectContaining({ version: 27, name: 'protocol_metadata', state: 'applied' }),
     ]);
   });
 

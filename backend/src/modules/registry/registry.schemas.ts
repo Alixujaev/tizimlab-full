@@ -24,6 +24,8 @@ export const registryListQuerySchema = paginationQuerySchema
     unfinalizedOnly: z.coerce.boolean().optional(),
     /** D-172 (TZ §3.5): tahlilni bajargan kimyogar (`samples.assigned_to`). */
     chemistId: z.string().uuid('Kimyogar ID si to‘g‘ri UUID bo‘lishi kerak').optional(),
+    /** P18 (D-187): tahlil bajarilgan apparat; `unknown` — apparati ko'rsatilmagan tahlillar. */
+    equipmentId: z.union([z.literal('unknown'), z.string().uuid('Apparat ID si noto‘g‘ri')]).optional(),
   })
   .refine((q) => !q.approvedFrom || !q.approvedTo || q.approvedFrom <= q.approvedTo, {
     path: ['approvedTo'],

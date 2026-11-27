@@ -47,3 +47,11 @@ export async function deactivateCompany(id: string): Promise<CompanyDto> {
   const { data } = await apiClient.post<ApiResponse<CompanyDto>>(`/companies/${id}/deactivate`);
   return data.data;
 }
+
+/** P18 (D-179): kompaniya uchun AI yordamchini yoqish/o'chirish (faqat super_admin). */
+export async function setCompanyAi(id: string, enabled: boolean): Promise<CompanyDto> {
+  const { data } = await apiClient.patch<ApiResponse<CompanyDto>>(`/companies/${id}/ai`, {
+    enabled,
+  });
+  return data.data;
+}

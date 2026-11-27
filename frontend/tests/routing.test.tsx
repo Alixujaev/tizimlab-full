@@ -60,11 +60,18 @@ describe('RoleRoute', () => {
 });
 
 describe('redirectlar', () => {
-  it.each(['/protocols', '/protocols/42'])('%s → /registry', async (path) => {
+  // P18 (D-187): /protocols — protokollar ro'yxati (avvalgi /registry redirect o'rniga)
+  it.each(['/protocols', '/protocols/42'])('%s → /protocols (Protokollar)', async (path) => {
     loginAs('chemist');
     const { router } = renderAt(path);
-    expect(await screen.findByRole('heading', { name: 'Reyestr' })).toBeInTheDocument();
-    expect(router.state.location.pathname).toBe('/registry');
+    expect(await screen.findByRole('heading', { name: 'Protokollar' })).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/protocols');
+  });
+
+  it('kontrolyor uchun /protocols — ruxsat yo‘q', async () => {
+    loginAs('kontrolyor');
+    renderAt('/protocols');
+    expect(await screen.findByRole('heading', { level: 1 })).not.toHaveTextContent('Protokollar');
   });
 
   it('super_admin uchun / → /companies', async () => {

@@ -94,6 +94,11 @@ export function ReagentsPage() {
               {t('reagents.casPrefix', 'CAS:')} {row.casNumber}
             </div>
           )}
+          {row.lotNumber && (
+            <div className="font-mono text-xs text-fg-muted">
+              {t('reagents.lot.lotPrefix', { lot: row.lotNumber })}
+            </div>
+          )}
         </div>
       ),
     },

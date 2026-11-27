@@ -55,4 +55,11 @@ export const companiesController = {
     const result = await companiesService.deactivateCompany(id, requestMeta(req), req.auth.userId);
     sendOk(res, result);
   },
+
+  async setAi(req: Request, res: Response) {
+    if (!req.auth) throw new UnauthorizedError();
+    const id = req.params.id as string;
+    const { enabled } = req.validated.body as { enabled: boolean };
+    sendOk(res, await companiesService.setCompanyAi(id, enabled, requestMeta(req), req.auth.userId));
+  },
 };

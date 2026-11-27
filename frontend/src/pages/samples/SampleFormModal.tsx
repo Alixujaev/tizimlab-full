@@ -1,10 +1,13 @@
 import { type FormEvent, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toApiError } from '@/api/client';
+import { aiFieldProps } from '@/components/ai/AiFieldBadge';
+import { AiExtractButton } from '@/components/ai/AiExtractButton';
+import { useAiFill } from '@/components/ai/useAiFill';
 import { SubstanceSelect } from '@/components/substances/SubstanceSelect';
 import { useCreateSampleMutation } from '@/hooks/useSamples';
 import { getSubstanceName } from '@/lib/substances';
-import type { CreateSampleInput, SampleType, SubstanceDto } from '@/types';
+import type { AiExtractionDto, CreateSampleInput, SampleType, SubstanceDto } from '@/types';
 import { Alert, Button, DatePicker, FormField, Input, Modal, Select, Textarea } from '@/ui';
 
 interface SampleFormModalProps {
@@ -45,6 +48,24 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
   const [expiryDate, setExpiryDate] = useState('');
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
+  // P18 (D-181): AI taklifi — faqat bo'sh maydonlarga, saqlash odatdagi "Saqlash" bilan
+  const ai = useAiFill();
+  /** Foydalanuvchi tahriri: qiymat + AI belgisini olib tashlash. */
+  const edit = (key: string, set: (v: string) => void) => (v: string) => {
+    ai.onUserEdit(key);
+    set(v);
+  };
+  const applyAi = (x: AiExtractionDto) =>
+    ai.apply(x, {
+      substanceName: [substanceName, setSubstanceName],
+      serialNumber: [serialNumber, setSerialNumber],
+      manufacturer: [manufacturer, setManufacturer],
+      manufacturedAt: [manufacturedAt, setManufacturedAt],
+      expiryDate: [expiryDate, setExpiryDate],
+      quantity: [quantity, setQuantity],
+      arrivalDate: [arrivalDate, setArrivalDate],
+      analysisEnd: [analysisEnd, setAnalysisEnd],
+    });
 
   const resetForm = () => {
     setType('raw_material');
@@ -61,6 +82,7 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
     setExpiryDate('');
     setNotes('');
     setErrors({});
+    ai.reset();
   };
 
   const handleClose = () => {
@@ -113,6 +135,7 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
       arrivalDate: arrivalDate || null,
       expiryDate: expiryDate || null,
       notes: notes.trim() || null,
+      ...(ai.reviewRef ? { ai: ai.reviewRef } : {}),
     };
 
     try {
@@ -149,6 +172,8 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
       <form id={formId} onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         {errors.general && <Alert tone="danger">{errors.general}</Alert>}
 
+        <AiExtractButton kind="sample" onExtracted={applyAi} />
+
         <FormField id="sample-type" label={t('samples.type', 'Namuna turi')} required>
           <Select
             options={SAMPLE_TYPES.map((v) => ({ value: v, label: t(`samples.types.${v}`, v) }))}
@@ -169,11 +194,12 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
           label={t('samples.substanceName', 'Modda nomi')}
           required
           error={errors.substanceName}
+          {...aiFieldProps(ai.marks.substanceName)}
         >
           <Input
             value={substanceName}
             onChange={(e) => {
-              setSubstanceName(e.target.value);
+              edit('substanceName', setSubstanceName)(e.target.value);
               if (errors.substanceName)
                 setErrors((prev) => ({ ...prev, substanceName: undefined }));
             }}
@@ -182,10 +208,14 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
         </FormField>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField id="sample-serial-number" label={t('samples.serialNumber', 'Seriya raqami')}>
+          <FormField
+            id="sample-serial-number"
+            label={t('samples.serialNumber', 'Seriya raqami')}
+            {...aiFieldProps(ai.marks.serialNumber)}
+          >
             <Input
               value={serialNumber}
-              onChange={(e) => setSerialNumber(e.target.value)}
+              onChange={(e) => edit('serialNumber', setSerialNumber)(e.target.value)}
               placeholder={t('samples.serialNumberPlaceholder', 'Masalan: SN-12345')}
             />
           </FormField>
@@ -196,20 +226,25 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
               placeholder={t('samples.lotNumberPlaceholder', 'Masalan: LOT-998')}
             />
           </FormField>
-          <FormField id="sample-quantity" label={t('samples.quantity', 'Miqdori')}>
+          <FormField
+            id="sample-quantity"
+            label={t('samples.quantity', 'Miqdori')}
+            {...aiFieldProps(ai.marks.quantity)}
+          >
             <Input
               value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
+              onChange={(e) => edit('quantity', setQuantity)(e.target.value)}
               placeholder={t('samples.quantityPlaceholder', 'Masalan: 100 g yoki 5 flakon')}
             />
           </FormField>
           <FormField
             id="sample-manufacturer"
             label={t('samples.manufacturer', 'Ishlab chiqaruvchi')}
+            {...aiFieldProps(ai.marks.manufacturer)}
           >
             <Input
               value={manufacturer}
-              onChange={(e) => setManufacturer(e.target.value)}
+              onChange={(e) => edit('manufacturer', setManufacturer)(e.target.value)}
               placeholder={t('samples.manufacturerPlaceholder', 'Kompaniya yoki zavod')}
             />
           </FormField>
@@ -219,8 +254,12 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
           <FormField
             id="sample-manufactured-at"
             label={t('samples.manufacturedAt', 'Ishlab chiqarilgan sana')}
+            {...aiFieldProps(ai.marks.manufacturedAt)}
           >
-            <DatePicker value={manufacturedAt} onChange={setManufacturedAt} />
+            <DatePicker
+              value={manufacturedAt}
+              onChange={edit('manufacturedAt', setManufacturedAt)}
+            />
           </FormField>
           <FormField
             id="sample-analysis-start"
@@ -228,23 +267,35 @@ export function SampleFormModal({ open, onClose }: SampleFormModalProps) {
           >
             <DatePicker value={analysisStart} onChange={setAnalysisStart} />
           </FormField>
-          <FormField id="sample-analysis-end" label={t('samples.analysisEnd', 'Tahlil tugashi')}>
+          <FormField
+            id="sample-analysis-end"
+            label={t('samples.analysisEnd', 'Tahlil tugashi')}
+            {...aiFieldProps(ai.marks.analysisEnd)}
+          >
             <DatePicker
               value={analysisEnd}
-              onChange={setAnalysisEnd}
+              onChange={edit('analysisEnd', setAnalysisEnd)}
               min={analysisStart || undefined}
             />
           </FormField>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField id="sample-arrival-date" label={t('samples.arrivalDate', 'Kelgan sana')}>
-            <DatePicker value={arrivalDate} onChange={setArrivalDate} />
+          <FormField
+            id="sample-arrival-date"
+            label={t('samples.arrivalDate', 'Kelgan sana')}
+            {...aiFieldProps(ai.marks.arrivalDate)}
+          >
+            <DatePicker value={arrivalDate} onChange={edit('arrivalDate', setArrivalDate)} />
           </FormField>
-          <FormField id="sample-expiry-date" label={t('samples.expiryDate', 'Yaroqlilik muddati')}>
+          <FormField
+            id="sample-expiry-date"
+            label={t('samples.expiryDate', 'Yaroqlilik muddati')}
+            {...aiFieldProps(ai.marks.expiryDate)}
+          >
             <DatePicker
               value={expiryDate}
-              onChange={setExpiryDate}
+              onChange={edit('expiryDate', setExpiryDate)}
               min={manufacturedAt || undefined}
             />
           </FormField>

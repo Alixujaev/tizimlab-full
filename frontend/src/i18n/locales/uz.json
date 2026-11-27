@@ -43,7 +43,8 @@
     "profileShort": "Profil",
     "moreShort": "Yana",
     "equipment": "Apparatlar",
-    "nd": "Normativ hujjatlar"
+    "nd": "Normativ hujjatlar",
+    "protocols": "Protokollar"
   },
   "pages": {
     "dashboard": "Bosh sahifa",
@@ -237,6 +238,14 @@
       "adminEmailRequired": "Administrator emailini kiriting.",
       "adminFullNameRequired": "Administrator ismini kiriting.",
       "adminPasswordRequired": "Administrator parolini kiriting."
+    },
+    "ai": {
+      "column": "AI yordamchi",
+      "toggleLabel": "{{name}} uchun AI yordamchi",
+      "enableTitle": "AI yordamchini yoqasizmi?",
+      "disableTitle": "AI yordamchini o‘chirasizmi?",
+      "enableText": "«{{name}}» foydalanuvchilari hujjatdan maydonlarni AI orqali to‘ldira oladi (faqat taklif, saqlash inson tomonidan).",
+      "disableText": "«{{name}}» uchun AI tugmalari yashiriladi; formalar qo‘lda to‘ldirishda avvalgidek ishlaydi."
     }
   },
   "users": {
@@ -622,7 +631,9 @@
       "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo'lmasligi kerak",
       "unfinalizedOnly": "Faqat yakunlanmagan (direktor tasdig‘i kutilayotgan) protokollar",
       "chemist": "Kimyogar",
-      "inactive": "nofaol"
+      "inactive": "nofaol",
+      "equipment": "Apparat",
+      "equipmentUnknown": "Apparat ko‘rsatilmagan"
     },
     "columns": {
       "substance": "Modda",
@@ -730,6 +741,28 @@
       "reason": "Tuzatish sababi",
       "reasonMin": "Sabab kamida 5 ta belgidan iborat bo‘lishi shart",
       "qtyInvalid": "Miqdor 0 yoki undan katta son bo‘lishi shart"
+    },
+    "analysisDate": "Tahlil sanasi",
+    "rejectionHistory": "Rad etish tarixi ({{count}})",
+    "rejectionItemMeta": "#{{n}} · {{at}} · {{by}}",
+    "equipment": {
+      "label": "Apparat",
+      "hint": "Apparat noma’lum bo‘lsa — «Noma’lum» ni tanlang",
+      "unknown": "Noma’lum"
+    },
+    "suggestion": {
+      "title": "Harorat taklifi (tahlil sanasi va xona bo‘yicha)",
+      "noRoom": "Xona tanlanmagan",
+      "noReading": "Tanlangan sana va xona uchun harorat yozuvi yo‘q",
+      "loading": "Harorat taklifi yuklanmoqda…",
+      "limits": "Me’yor: {{min}}…{{max}} °C",
+      "outOfRange": "Harorat me’yordan tashqarida"
+    },
+    "peaks": {
+      "title": "Peak fayllari",
+      "description": "Xromatogramma/spektr fayllari (PDF, Word), ko‘pi bilan 20 ta",
+      "upload": "Peak faylini yuklash",
+      "empty": "Peak fayllari yuklanmagan"
     }
   },
   "notifications": {
@@ -897,7 +930,21 @@
       "outBlocked": "Reaktiv hali tasdiqlanmagan — sarf qayd etib bo‘lmaydi. Kirim, tuzatish yoki utilizatsiyani tanlang."
     },
     "filterExpiringSoon": "Muddati yaqin",
-    "expiringSoon": "Muddati yaqin"
+    "expiringSoon": "Muddati yaqin",
+    "lot": {
+      "lotNumber": "Lot (seriya) raqami",
+      "manufacturer": "Ishlab chiqaruvchi",
+      "manufacturedAt": "Ishlab chiqarilgan sana",
+      "arrivalDate": "Kelgan sana",
+      "expiryBeforeManufacture": "Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas",
+      "lotPrefix": "Lot: {{lot}}"
+    },
+    "catalog": {
+      "linked": "Katalogga bog‘landi",
+      "unlink": "Bog‘lashni bekor qilish",
+      "hint": "Katalogda o‘xshash reaktiv bor — bog‘lash uchun tanlang (ixtiyoriy):",
+      "suggestion": "Katalogdagi o‘xshash nom: {{name}}"
+    }
   },
   "temperature": {
     "title": "Harorat va namlik monitoringi",
@@ -1542,6 +1589,116 @@
       "reagent_missing": "\"{{reagent}}\" reaktivi omborda yo‘q",
       "reagent_insufficient": "\"{{reagent}}\" yetarli emas: kerak {{required}} {{unit}}, mavjud {{available}} {{unit}}, yetishmaydi {{missing}} {{unit}}",
       "reagent_all_expired": "\"{{reagent}}\" reaktivining barcha lotlari muddati o‘tgan"
+    },
+    "edit": "ND ni tahrirlash",
+    "meta": {
+      "title": "Hujjat ma’lumotlari",
+      "substanceName": "Modda nomi",
+      "series": "Seriya",
+      "docDate": "Hujjat sanasi",
+      "chemist": "Kimyogar",
+      "equipment": "Apparat",
+      "notSet": "Ko‘rsatilmagan"
+    },
+    "ai": {
+      "extract": "Hujjatdan talablarni aniqlash",
+      "hint": "AI ND faylidan talablarni qoralama sifatida qo‘shadi — tekshirib, odatdagidek tasdiqlang.",
+      "edited": "AI → tahrirlangan",
+      "summary": "{{count}} ta qoralama talab qo‘shildi — tekshirib tasdiqlang",
+      "noneCreated": "Yangi talab qo‘shilmadi",
+      "skippedTitle": "O‘tkazib yuborilganlar ({{count}})",
+      "skippedLine": "{{kind}}: {{name}}{{qty}}{{method}}",
+      "suggestions": "Katalogdagi o‘xshash: {{names}}",
+      "skip": {
+        "not_in_catalog": "Reaktiv katalogda topilmadi — avval katalogga qo‘shing yoki qo‘lda kiriting",
+        "unknown_unit": "O‘lchov birligi noma’lum",
+        "unit_mismatch": "Birlik katalogdagi reaktiv birligiga mos emas",
+        "invalid_quantity": "Miqdor noto‘g‘ri",
+        "empty": "Ma’lumot yetarli emas",
+        "duplicate": "Bunday talab allaqachon bor"
+      }
+    }
+  },
+  "ai": {
+    "badge": "AI",
+    "check": "Tekshiring",
+    "hint": "AI hujjatdan maydonlarni taklif qiladi — saqlashdan oldin tekshiring.",
+    "fillFromDocument": "Hujjatdan to‘ldirish",
+    "reading": "Hujjat o‘qilmoqda…",
+    "poorQuality": "Rasm sifati past — qayta suratga oling yoki qo'lda to'ldiring",
+    "failed": "AI javob bermadi — maydonlarni qo'lda to'ldiring",
+    "filled": "AI {{count}} ta maydonni to‘ldirdi — tekshirib saqlang",
+    "nothingFilled": "Hujjatdan bo‘sh maydonlar uchun qiymat topilmadi — qo‘lda to‘ldiring",
+    "errors": {
+      "AI_UNAVAILABLE": "AI xizmati hozir mavjud emas — maydonlarni qo‘lda to‘ldiring",
+      "AI_DISABLED": "AI yordamchi kompaniyangiz uchun o‘chirilgan — maydonlarni qo‘lda to‘ldiring",
+      "AI_DAILY_LIMIT": "AI kunlik limiti tugagan — maydonlarni qo‘lda to‘ldiring",
+      "AI_RATE_LIMITED": "AI so‘rovlari juda ko‘p — birozdan so‘ng urinib ko‘ring yoki qo‘lda to‘ldiring",
+      "PAYLOAD_TOO_LARGE": "Fayl juda katta — kichikroq rasm yoki PDF tanlang",
+      "UNSUPPORTED_MEDIA_TYPE": "Fayl turi qo‘llab-quvvatlanmaydi — JPEG, PNG, WEBP yoki PDF tanlang",
+      "AI_TOO_MANY_PAGES": "PDF sahifalari juda ko‘p — kerakli sahifalarni alohida yuklang",
+      "EMPTY_FILE": "Fayl bo‘sh",
+      "ND_NOT_DRAFT": "Talablarni faqat qoralama ND uchun aniqlash mumkin",
+      "ND_FILE_MISSING": "Avval ND faylini yuklang"
+    }
+  },
+  "history": {
+    "title": "Umumiy tarix",
+    "empty": "Tarixda yozuvlar yo‘q",
+    "noValue": "(bo‘sh)",
+    "reason": "Sabab",
+    "statusChange": "{{from}} → {{to}}",
+    "protocolSigned": {
+      "submitted": "Protokol yuborildi",
+      "approved": "Protokol tasdiqlandi",
+      "finalized": "Protokol yakunlandi"
+    },
+    "protocolRejected": "Protokol rad etildi",
+    "consumption": "Reaktiv sarfi (ND bo‘yicha)",
+    "consumptionLine": "{{name}}: {{consumed}} / {{required}} {{unit}}",
+    "consumptionReagentLine": "{{quantity}} — {{substance}}",
+    "consumptionReviewed": {
+      "confirmed": "Sarf tasdiqlandi",
+      "corrected": "Sarf tuzatildi"
+    },
+    "consumptionReviewedLine": "{{name}}: {{consumed}} {{unit}}",
+    "aiReview": "AI taklifi ko‘rib chiqildi",
+    "aiAccepted": "{{count}} ta maydon o‘zgarishsiz qabul qilindi",
+    "transactionLine": "{{quantity}} (qoldiq: {{before}} → {{after}})",
+    "reagentApproval": {
+      "approved": "Reaktiv tasdiqlandi",
+      "rejected": "Reaktiv rad etildi",
+      "pending": "Reaktiv tasdiqqa yuborildi"
+    },
+    "ndStatus": "ND holati: {{from}} → {{to}}",
+    "ndAiExtract": "AI talablarni aniqladi",
+    "ndAiExtractLine": "{{created}} ta qoralama qo‘shildi, {{skipped}} ta o‘tkazib yuborildi"
+  },
+  "protocolsList": {
+    "title": "Protokollar",
+    "subtitle": "Barcha tahlil protokollari: apparat, tahlil sanasi, peak fayllar va rad etishlar",
+    "invalidRange": "«dan» sanasi «gacha» sanasidan keyin bo‘lmasligi kerak",
+    "empty": "Protokollar topilmadi",
+    "open": "Ochish",
+    "rejections": "Rad: {{count}}",
+    "columns": {
+      "substance": "Modda",
+      "series": "Seriya / Lot",
+      "chemist": "Kimyogar",
+      "equipment": "Apparat",
+      "analysisDate": "Tahlil sanasi",
+      "peaks": "Peak fayllar"
+    },
+    "filters": {
+      "substanceName": "Modda nomi",
+      "series": "Seriya",
+      "chemist": "Kimyogar",
+      "equipment": "Apparat",
+      "equipmentUnknown": "Apparat ko‘rsatilmagan",
+      "status": "Holati",
+      "dateFrom": "Sana (dan)",
+      "dateTo": "Sana (gacha)",
+      "hasPeaks": "Faqat peak fayli borlar"
     }
   }
 }

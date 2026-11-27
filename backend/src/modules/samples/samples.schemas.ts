@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { aiReviewRefSchema } from '../ai/ai.schemas.js';
 
 export const sampleTypeEnum = z.enum([
   'raw_material',
@@ -58,6 +59,8 @@ export const createSampleSchema = z
   arrivalDate: isoDay.optional().nullable(),
   expiryDate: isoDay.optional().nullable(),
   notes: z.string().trim().max(2000).optional().nullable(),
+  /** P18 (D-181): forma AI taklifidan to'ldirilgan bo'lsa — AI qiymati → yakuniy qiymat audit'i uchun. */
+  ai: aiReviewRefSchema.optional(),
   })
   .superRefine((v, ctx) => {
     if (v.expiryDate && v.manufacturedAt && v.expiryDate < v.manufacturedAt) {

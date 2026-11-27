@@ -3,6 +3,8 @@ export interface CompanyDto {
   name: string;
   slug: string;
   isActive: boolean;
+  /** D-179: AI yordamchi yoqilganmi */
+  aiEnabled: boolean;
   createdAt: string;
   updatedAt: string;
   usersCount?: number;

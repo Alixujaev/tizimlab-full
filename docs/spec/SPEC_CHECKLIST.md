@@ -782,6 +782,27 @@
 | R-P17-10 | Kontrolyor reaktiv yaratadi (`reagents:create`); tasdiqlash chemist/lab_head da, o'zinikini emas. | TZ §2, §3.2, DECISIONS.md D-178 | P17 | [x] |
 | R-P17-11 | UI: `/equipment` (ro'yxat, filtrlar, forma; `/equipment/:id`), `/nd` va `/nd/:id` (talablar draft da, holat, fayl, moslik paneli "bajarish mumkin/emas" + sabablar), protokolda ND va tahlillar soni, sarf paneli (tasdiqlash/tuzatish); sidebar va Telegram "Yana" menyusi, `equipment_<id>` deep link; uz/ru/en. | TZ §3.2, §3.3, §4, DECISIONS.md D-175..D-177 | P17 | [x] |
 
+## P18 — AI-OCR yordamchi, metadata, peak fayllar, harorat taklifi, yagona tarix (TZ Addendum)
+
+| ID | Talab | Manba | Faza | Holat |
+|---|---|---|---|---|
+| R-P18-01 | AI infratuzilmasi: Claude API o'rami (timeout, retry faqat 429/5xx, o'z xato kodlari), model `AI_MODEL` env'dan; env yo'q — `GET /ai/status` `{enabled:false}`, endpointlar 503; kompaniya `ai_enabled` faqat super_admin (o'chiq — 403); `ai_extractions` jurnali (mazmun logga yozilmaydi). | Addendum §1, §3, DECISIONS.md D-179 | P18 | [x] |
+| R-P18-02 | `POST /ai/extract/sample` (kontrolyor, lab_head) va `/reagent` (+chemist): nomi, seriya (majburiy kalit), ishlab chiqaruvchi, sanalar, miqdor+birlik, kelgan sana (+analiz tugash sanasi); har maydon qiymat + confidence, topilmasa null; reaktivda katalog nomi faqat taklif. | TZ §3.1, §3.2, Addendum A, DECISIONS.md D-180 | P18 | [x] |
+| R-P18-03 | Xavfsizlik: JPEG/PNG/WEBP/PDF magic-byte, hajm va PDF sahifa limiti; hujjat matni ma'lumot (prompt), javob qat'iy sxemadan (ortiqcha maydon — failed); kompaniya kunlik va foydalanuvchi limiti — 429; rol 403. | Addendum §3, DECISIONS.md D-179, D-180 | P18 | [x] |
+| R-P18-04 | Sana (dd.mm.yyyy, mm/yyyy → oy oxiri, yyyy-mm, oy nomi) va birlik (D-174) deterministik normallashtiriladi; sana-satr, UTC+5 siljishsiz; noma'lum birlik — null + low. | Addendum A, DECISIONS.md D-180 | P18 | [x] |
+| R-P18-05 | Sifat fallback: `image_quality` poor/unreadable — maydonlar null, "Rasm sifati past — qayta suratga oling yoki qo'lda to'ldiring"; AI xatosi/timeout — 200 `failed`, 5xx va bloklangan forma yo'q; AI o'chiq bo'lsa qo'lda kiritish o'zgarishsiz. | Addendum B, §3, DECISIONS.md D-180 | P18 | [x] |
+| R-P18-06 | Tasdiqlamaguncha DB o'zgarmaydi; saqlashda AI qiymati → yakuniy qiymat har maydon uchun (`ai_field_reviews`) va o'zgarganlar audit'ga (kim, qachon, maydon); ekstraksiya bir marta, shu kompaniya/foydalanuvchi/tur. | Addendum C, DECISIONS.md D-181 | P18 | [x] |
+| R-P18-07 | ND dan AI: apparat va reaktiv normalari draft ND ga `source='ai'` qoralama sifatida; mos kelmaganlari sababi bilan; tasdiqlash insonda va tasdiqlashda AI → yakuniy diff; o'chirilgan AI talabi ham iz qoldiradi. | TZ §3.3, Addendum 3-bosqich, DECISIONS.md D-182 | P18 | [x] |
+| R-P18-08 | Reaktiv lotiga seriya/lot, ishlab chiqaruvchi, ishlab chiqarilgan va kelgan sana (mavjudlari NULL). | Addendum A, DECISIONS.md D-183 | P18 | [x] |
+| R-P18-09 | Protokolga apparat (P17 FK, "noma'lum" = null, oqim bloklanmaydi) va tahlil sanasi; protokol/peak fayllari va ND ga xomashyo nomi, seriya, sana, kimyogar, apparat metadata'si; backfill taxminsiz. | Addendum E, §3, DECISIONS.md D-184 | P18 | [x] |
+| R-P18-10 | Peak fayllari (PDF/Word) — yuklash, ro'yxat, yuklab olish, o'chirish (draft/rejected); asosiy protokol fayllari `protocol_files` ga bog'landi (backfill, hech narsa yo'qolmaydi). | TZ §3.1, Addendum E, DECISIONS.md D-185 | P18 | [x] |
+| R-P18-11 | Rad etish sabablari tarixi (`protocol_rejections`) qayta yuborishda saqlanadi; audit/tracking/joriy ustundan backfill. | Addendum §3, F, DECISIONS.md D-186 | P18 | [x] |
+| R-P18-12 | Protokollar ro'yxati (xomashyo nomi, seriya, sana oralig'i, kimyogar, apparat/noma'lum, holat, peak), sahifalash, indekslar; reyestrda apparat filtri; kimyogar faqat o'zinikini, kompaniya izolyatsiyasi. | TZ §3.5, Addendum E, DECISIONS.md D-187 | P18 | [x] |
+| R-P18-13 | Harorat: protokol tuzishda xona + tahlil sanasi bo'yicha harorat avtomatik taklif (D-173 mantiqi), me'yordan chiqqan va yozuv yo'q holatlari aniq; kimyogar xona/sanani o'zgartiradi; jurnalda me'yordan chiqqan belgi va filtr (P8). | Addendum D, 2-bosqich, DECISIONS.md D-188 | P18 | [x] |
+| R-P18-14 | Yagona tarix `GET /history/{sample,reagent,nd}/:id`: reaktiv sarfi, AI maydon o'zgarishlari, rad etish sabablari, tasdiqlashlar — vaqt tartibida, ko'rish ruxsati bilan. | Addendum F, §3, DECISIONS.md D-189 | P18 | [x] |
+| R-P18-15 | UI: namuna/reaktiv formalarida "Hujjatdan to'ldirish" (AI belgisi, low — ogohlantirish, past sifat xabari), ND da "Hujjatdan talablarni aniqlash", protokol yuborishda apparat/sana/harorat taklifi va peak fayllar, rad etish tarixi, "Protokollar" sahifasi, reyestr apparat filtri, tarix ko'rinishi, kompaniya AI flag'i; uz/ru/en; mobil/Telegram WebApp. | Addendum §2–§3, DECISIONS.md D-179..D-189 | P18 | [x] |
+| R-P18-16 | CI da haqiqiy AI chaqirilmaydi (mock klient, fixture javoblar); `scripts/ai-smoke.ts` — haqiqiy kalit bilan qo'lda sinov (CI ga kirmaydi). | DECISIONS.md D-179 | P18 | [x] |
+
 ## Holat izohlari
 
 `[x]` bo'lmagan qatorlar sababi (faqat ishlov berilgan fazalar uchun). Faza yopilganda yangilanadi.
@@ -873,7 +894,8 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | ANALYTICS — Xodimlar analitikasi (P13) | 16 | 16 | 0 | 0 |
 | P16 — TZ bo'shliqlari (namuna sanalari, reaktiv tasdiqlash va muddati, Telegram tugmalari, audit qidiruv, harorat snapshot) | 25 | 25 | 0 | 0 |
 | P17 — Apparatlar, ND, moslik va ND bo'yicha avto-sarf (AI-siz) | 11 | 11 | 0 | 0 |
-| **Jami** | 654 | 594 | 42 | 18 |
+| P18 — AI-OCR yordamchi, metadata, peak fayllar, harorat taklifi, yagona tarix (TZ Addendum) | 16 | 16 | 0 | 0 |
+| **Jami** | 670 | 610 | 42 | 18 |
 
 ### Fazalar bo'yicha
 
@@ -896,4 +918,5 @@ _`npm run checklist:stats` bilan hisoblanadi — qo'lda tahrirlamang._
 | P15 | 0 | 0 | 0 | 0 |
 | P16 | 25 | 25 | 0 | 0 |
 | P17 | 11 | 11 | 0 | 0 |
-| **Jami** | 654 | 594 | 42 | 18 |
+| P18 | 16 | 16 | 0 | 0 |
+| **Jami** | 670 | 610 | 42 | 18 |

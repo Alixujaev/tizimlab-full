@@ -22,7 +22,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "checklist:stats": "node scripts/checklist-stats.mjs",
-    "etl": "tsx scripts/etl/cli.ts"
+    "etl": "tsx scripts/etl/cli.ts",
+    "ai:smoke": "tsx scripts/ai-smoke.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

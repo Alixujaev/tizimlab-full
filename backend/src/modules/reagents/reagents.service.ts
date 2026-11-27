@@ -1,8 +1,10 @@
 import type pg from 'pg';
 import { query, withTransaction } from '../../config/database.js';
 import { normalizeUnit } from '../../utils/units.js';
-import { AppError, ConflictError, NotFoundError } from '../../utils/errors.js';
+import { AppError, ConflictError, NotFoundError, ValidationError } from '../../utils/errors.js';
+import { toIsoDay } from '../../utils/dates.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
+import { recordAiReview } from '../ai/ai.service.js';
 import { writeAudit } from '../audit/audit.service.js';
 import {
   buildKey,
@@ -53,8 +55,9 @@ export async function createReagent(
     const { rows } = await tx.query<ReagentRow>(
       `INSERT INTO reagents (
          company_id, name, cas_number, unit, quantity, low_stock_threshold,
-         expires_at, supplier, storage_conditions, is_hazardous, created_by, approval_status, reagent_item_id
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending', $12)
+         expires_at, supplier, storage_conditions, is_hazardous, created_by, approval_status, reagent_item_id,
+         lot_number, manufacturer, manufactured_at, arrival_date
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending', $12, $13, $14, $15, $16)
        RETURNING *`,
       [
         companyId,
@@ -69,6 +72,10 @@ export async function createReagent(
         input.isHazardous ?? false,
         userId,
         itemId,
+        input.lotNumber ?? null,
+        input.manufacturer ?? null,
+        input.manufacturedAt ?? null,
+        input.arrivalDate ?? null,
       ],
     );
     const row = rows[0]!;
@@ -95,10 +102,34 @@ export async function createReagent(
         unit: row.unit,
         quantity: Number(row.quantity),
         approval_status: row.approval_status,
+        lot_number: row.lot_number ?? null,
       },
       ip: meta?.ip,
       userAgent: meta?.userAgent,
     });
+
+    // P18 (D-181): AI taklifi → inson saqlagan yakuniy qiymat
+    if (input.ai) {
+      await recordAiReview(
+        tx,
+        { userId, companyId, ip: meta?.ip, userAgent: meta?.userAgent },
+        {
+          extractionId: input.ai.extractionId,
+          kind: 'reagent',
+          entityId: row.id,
+          finalValues: {
+            name: input.name,
+            lotNumber: input.lotNumber ?? null,
+            manufacturer: input.manufacturer ?? null,
+            manufacturedAt: input.manufacturedAt ?? null,
+            expiresAt: input.expiresAt ?? null,
+            quantity: input.quantity,
+            unit: input.unit,
+            arrivalDate: input.arrivalDate ?? null,
+          },
+        },
+      );
+    }
 
     // D-169: tasdiqlash huquqi bor rollarga (kiritgan o'zi chiqariladi).
     await createNotification(tx, {
@@ -215,6 +246,17 @@ export async function updateReagent(
     if (!existing.rows[0]) throw new NotFoundError('Reaktiv topilmadi');
     const prev = existing.rows[0];
 
+    // D-183: muddat ishlab chiqarilgan sanadan oldin bo'lmasin (bittasi o'zgarsa ham, saqlangani bilan)
+    const mfg =
+      input.manufacturedAt !== undefined ? input.manufacturedAt : toIsoDay(prev.manufactured_at ?? null);
+    const exp = input.expiresAt !== undefined ? input.expiresAt : toIsoDay(prev.expires_at);
+    if (mfg && exp && exp < mfg) {
+      throw new ValidationError(
+        'Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas',
+        [{ path: 'body.expiresAt', message: 'expiresAt < manufacturedAt' }],
+      );
+    }
+
     const { rows } = await tx.query<ReagentRow>(
       `UPDATE reagents SET
          name = COALESCE($3, name),
@@ -225,6 +267,10 @@ export async function updateReagent(
          supplier = CASE WHEN $8::text IS NOT NULL THEN $8 ELSE supplier END,
          storage_conditions = CASE WHEN $9::text IS NOT NULL THEN $9 ELSE storage_conditions END,
          is_hazardous = COALESCE($10, is_hazardous),
+         lot_number = CASE WHEN $11::boolean THEN $12 ELSE lot_number END,
+         manufacturer = CASE WHEN $13::boolean THEN $14 ELSE manufacturer END,
+         manufactured_at = CASE WHEN $15::boolean THEN $16::date ELSE manufactured_at END,
+         arrival_date = CASE WHEN $17::boolean THEN $18::date ELSE arrival_date END,
          updated_at = now()
        WHERE id = $1 AND company_id = $2
        RETURNING *`,
@@ -239,6 +285,14 @@ export async function updateReagent(
         input.supplier !== undefined ? input.supplier : null,
         input.storageConditions !== undefined ? input.storageConditions : null,
         input.isHazardous ?? null,
+        input.lotNumber !== undefined,
+        input.lotNumber ?? null,
+        input.manufacturer !== undefined,
+        input.manufacturer ?? null,
+        input.manufacturedAt !== undefined,
+        input.manufacturedAt ?? null,
+        input.arrivalDate !== undefined,
+        input.arrivalDate ?? null,
       ],
     );
     const updated = rows[0]!;

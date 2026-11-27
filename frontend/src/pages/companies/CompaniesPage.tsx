@@ -4,12 +4,14 @@ import {
   useActivateCompanyMutation,
   useCompaniesQuery,
   useDeactivateCompanyMutation,
+  useSetCompanyAiMutation,
 } from '@/hooks/useCompanies';
 import { formatDate } from '@/lib/date';
 import type { CompanyDto } from '@/types';
 import {
   Badge,
   Button,
+  ConfirmDialog,
   DataTable,
   type DataTableColumn,
   EmptyState,
@@ -20,6 +22,7 @@ import {
   Select,
   StatCard,
   StatusPill,
+  Switch,
 } from '@/ui';
 import { CompanyConfirmModal } from './CompanyConfirmModal';
 import { CompanyFormModal } from './CompanyFormModal';
@@ -48,6 +51,11 @@ export function CompaniesPage() {
   const activateMutation = useActivateCompanyMutation();
   const deactivateMutation = useDeactivateCompanyMutation();
   const companies = useMemo(() => data?.data ?? [], [data?.data]);
+  // P18 (D-179): AI yordamchi flag'i — tasdiqlash oynasi orqali
+  const aiMutation = useSetCompanyAiMutation();
+  const [aiTarget, setAiTarget] = useState<{ company: CompanyDto; enabled: boolean } | null>(
+    null,
+  );
 
   const stats = useMemo(
     () => ({
@@ -100,6 +108,18 @@ export function CompaniesPage() {
         <StatusPill tone={row.isActive ? 'success' : 'danger'}>
           {row.isActive ? t('companies.active') : t('companies.inactive')}
         </StatusPill>
+      ),
+    },
+    {
+      key: 'ai',
+      header: t('companies.ai.column'),
+      render: (row) => (
+        <Switch
+          size="sm"
+          checked={Boolean(row.aiEnabled)}
+          aria-label={t('companies.ai.toggleLabel', { name: row.name })}
+          onChange={(enabled) => setAiTarget({ company: row, enabled })}
+        />
       ),
     },
     {
@@ -228,6 +248,27 @@ export function CompaniesPage() {
         open={formOpen}
         onClose={() => setFormOpen(false)}
         company={selectedCompany}
+      />
+      <ConfirmDialog
+        open={!!aiTarget}
+        tone={aiTarget?.enabled ? 'primary' : 'danger'}
+        title={aiTarget?.enabled ? t('companies.ai.enableTitle') : t('companies.ai.disableTitle')}
+        description={
+          aiTarget?.enabled
+            ? t('companies.ai.enableText', { name: aiTarget.company.name })
+            : t('companies.ai.disableText', { name: aiTarget?.company.name ?? '' })
+        }
+        confirmLabel={t('companies.confirm')}
+        cancelLabel={t('companies.cancel')}
+        loading={aiMutation.isPending}
+        onConfirm={() =>
+          aiTarget &&
+          aiMutation.mutate(
+            { id: aiTarget.company.id, enabled: aiTarget.enabled },
+            { onSuccess: () => setAiTarget(null) },
+          )
+        }
+        onCancel={() => setAiTarget(null)}
       />
       <CompanyConfirmModal
         open={!!confirmAction}

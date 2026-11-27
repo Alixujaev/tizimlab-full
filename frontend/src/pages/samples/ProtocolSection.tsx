@@ -12,31 +12,43 @@ import {
   useDeleteProtocolExtraFileMutation,
   useDeleteProtocolFileMutation,
   useDeleteProtocolPassportMutation,
+  useDeleteProtocolPeakMutation,
   useFinalizeProtocolMutation,
   useProtocolFilesQuery,
   useProtocolQuery,
   useProtocolsBySampleQuery,
   useRejectProtocolMutation,
   useSubmitProtocolMutation,
+  useTemperatureSuggestionQuery,
   useUploadProtocolExtraFileMutation,
   useUploadProtocolFileMutation,
   useUploadProtocolPassportMutation,
+  useUploadProtocolPeakMutation,
 } from '@/hooks/useProtocols';
 import { ALLOWED_EXTENSIONS } from '@/lib/files';
-import { formatDateTime } from '@/lib/date';
+import { formatDate, formatDateTime } from '@/lib/date';
+import { errorMessage } from '@/lib/queryClient';
 import { useAuthStore } from '@/store/authStore';
 import { ProtocolConsumptions, ProtocolNdSelect } from './ProtocolNd';
-import { ProtocolRoomSelect, ProtocolTemperatureInfo } from './ProtocolTemperature';
+import { ProtocolEquipmentSelect, UNKNOWN_EQUIPMENT } from './ProtocolEquipment';
+import {
+  ProtocolRoomSelect,
+  ProtocolTemperatureInfo,
+  ProtocolTemperatureSuggestion,
+} from './ProtocolTemperature';
 import type { ProtocolFileDto, ProtocolStatus, SampleDetailDto } from '@/types';
 import {
   Alert,
   Badge,
   Button,
   Card,
+  DatePicker,
   EmptyState,
+  FormField,
   FileButton,
   formatBytes,
   Icon,
+  notify,
   Skeleton,
   StatusPill,
   Tabs,
@@ -105,6 +117,10 @@ function FileRow({ name, meta, actions }: { name: string; meta?: ReactNode; acti
   );
 }
 
+/** P18 (D-185): peak fayllari — PDF/Word, protokolga ko'pi bilan 20 ta. */
+const PEAK_EXTENSIONS = ['pdf', 'doc', 'docx'] as const;
+const PEAK_MAX_FILES = 20;
+
 function openInNewTab(url: string) {
   window.open(url, '_blank');
 }
@@ -137,8 +153,13 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
   const uploadExtraFileMutation = useUploadProtocolExtraFileMutation(sample.id);
   const deleteExtraFileMutation = useDeleteProtocolExtraFileMutation(sample.id);
   const submitMutation = useSubmitProtocolMutation(sample.id);
-  // D-173: yuborishda tanlanadigan xona (harorat snapshot'i)
-  const [roomId, setRoomId] = useState('');
+  // D-173 / P18 (D-188): xona va tahlil sanasi; null — server taklifiga ergashadi
+  const [roomId, setRoomId] = useState<string | null>(null);
+  const [analysisDate, setAnalysisDate] = useState<string | null>(null);
+  // P18 (D-184): apparat; null — protokoldagi (yoki "Noma'lum")
+  const [equipmentChoice, setEquipmentChoice] = useState<string | null>(null);
+  const uploadPeakMutation = useUploadProtocolPeakMutation(sample.id);
+  const deletePeakMutation = useDeleteProtocolPeakMutation(sample.id);
   // D-177: tahlil bajarilgan ND va tahlillar soni (avto-sarf)
   const [ndChoice, setNdChoice] = useState({ ndId: '', nAnalyses: '1' });
   const approveMutation = useApproveProtocolMutation(sample.id);
@@ -189,6 +210,23 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
     extraFiles.length < 10;
 
   const roleLabel = (role: string) => t(`protocols.roles.${role}`, role);
+
+  // P18 (D-188): harorat taklifi — xona yoki sana o'zgarsa qayta so'raladi
+  const suggestionQuery = useTemperatureSuggestionQuery(
+    activeProtocolId,
+    { sensorConfigId: roomId || undefined, analysisDate: analysisDate || undefined },
+    canSubmit,
+  );
+  const suggestion = suggestionQuery.data;
+  const effectiveRoom = roomId ?? suggestion?.sensorConfigId ?? '';
+  const effectiveDate = analysisDate ?? suggestion?.analysisDate ?? '';
+  const effectiveEquipment = equipmentChoice ?? activeProto?.equipmentId ?? UNKNOWN_EQUIPMENT;
+
+  // P18 (D-185): peak fayllari
+  const peakFiles: ProtocolFileDto[] = activeProtocolDetail?.peakFiles ?? [];
+  const canManagePeaks =
+    (isAssignedChemist || isLabHead || isAdmin) && editableStatus && sample.status !== 'stopped';
+  const rejections = activeProtocolDetail?.rejections ?? [];
 
   const withFlag = async (set: (v: boolean) => void, run: () => Promise<void>) => {
     try {
@@ -282,7 +320,13 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
       <Tabs
         label={title}
         value={activeProtocolId ?? ''}
-        onChange={setSelectedProtocolId}
+        onChange={(id) => {
+          // Har protokolning o'z yuborish tanlovlari (xona, sana, apparat)
+          setSelectedProtocolId(id);
+          setRoomId(null);
+          setAnalysisDate(null);
+          setEquipmentChoice(null);
+        }}
         items={protocols.map((p) => ({
           id: p.id,
           label: roleLabel(p.protocolRole),
@@ -466,6 +510,45 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
               </Alert>
             )}
 
+            {(activeProto.analysisDate || activeProto.status !== 'draft') && (
+              <dl className="grid grid-cols-1 gap-2 rounded-lg border border-line px-4 py-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="text-xs text-fg-muted">{t('protocols.equipment.label')}</dt>
+                  <dd className="text-fg">
+                    {activeProtocolDetail?.equipmentName ?? t('protocols.equipment.unknown')}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-fg-muted">{t('protocols.analysisDate')}</dt>
+                  <dd className="tabular-nums text-fg">
+                    {activeProto.analysisDate ? formatDate(activeProto.analysisDate) : '—'}
+                  </dd>
+                </div>
+              </dl>
+            )}
+
+            {rejections.length > 0 && (
+              <div className="flex flex-col gap-2 rounded-lg border border-danger-line p-4">
+                <h3 className="text-sm font-semibold text-fg">
+                  {t('protocols.rejectionHistory', { count: rejections.length })}
+                </h3>
+                <ol className="flex flex-col gap-2">
+                  {rejections.map((r, i) => (
+                    <li key={r.id} className="rounded-md bg-danger-subtle px-3 py-2 text-sm">
+                      <p className="text-xs text-fg-muted">
+                        {t('protocols.rejectionItemMeta', {
+                          n: i + 1,
+                          at: formatDateTime(r.rejectedAt),
+                          by: r.rejectedByName ?? '—',
+                        })}
+                      </p>
+                      <p className="font-medium text-danger-fg">{r.reason}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
             <ProtocolTemperatureInfo protocol={activeProto} />
 
             {activeProto.status !== 'draft' && (
@@ -560,6 +643,82 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
             {/* 2. Protokol pasporti */}
             {passportBlock}
 
+            {/* P18 (D-185): peak fayllari */}
+            <FileBlock
+              title={
+                <span className="flex items-center gap-2">
+                  {t('protocols.peaks.title')}
+                  <Badge size="sm">
+                    {peakFiles.length}/{PEAK_MAX_FILES}
+                  </Badge>
+                </span>
+              }
+              description={t('protocols.peaks.description')}
+              status={
+                canManagePeaks &&
+                peakFiles.length < PEAK_MAX_FILES && (
+                  <FileButton
+                    accept={PEAK_EXTENSIONS}
+                    leftIcon="plus"
+                    loading={uploadPeakMutation.isPending}
+                    onSelect={(file) =>
+                      activeProtocolId &&
+                      uploadPeakMutation.mutate(
+                        { id: activeProtocolId, file },
+                        { onError: (err) => notify.error(errorMessage(err)) },
+                      )
+                    }
+                  >
+                    {t('protocols.peaks.upload')}
+                  </FileButton>
+                )
+              }
+            >
+              {peakFiles.length === 0 ? (
+                <p className="text-sm text-fg-muted">{t('protocols.peaks.empty')}</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {peakFiles.map((f) => (
+                    <FileRow
+                      key={f.id}
+                      name={f.fileName}
+                      meta={`${formatBytes(f.fileSize)} · ${f.uploadedByName ?? f.uploadedBy} · ${formatDateTime(f.createdAt)}`}
+                      actions={
+                        <>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            leftIcon="download"
+                            loading={downloadingFileId === f.id}
+                            onClick={() => void handleExtraFileDownload(f.id)}
+                          >
+                            {t('common.download', 'Yuklab olish')}
+                          </Button>
+                          {canManagePeaks &&
+                            (isLabHead || isAdmin || f.uploadedBy === user?.id) && (
+                              <Button
+                                variant="danger-ghost"
+                                size="sm"
+                                leftIcon="trash"
+                                loading={deletePeakMutation.isPending}
+                                onClick={() =>
+                                  deletePeakMutation.mutate({
+                                    protocolId: activeProto.id,
+                                    fileId: f.id,
+                                  })
+                                }
+                              >
+                                {t('common.delete', 'O‘chirish')}
+                              </Button>
+                            )}
+                        </>
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+            </FileBlock>
+
             {/* 3. Qo'shimcha fayllar (faqat tayyor mahsulot) */}
             {sample.type === 'finished_product' && (
               <FileBlock
@@ -638,7 +797,29 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
 
             {(canSubmit || canReview || canFinalize) && (
               <div className="flex flex-wrap items-end justify-end gap-2 border-t border-line pt-4">
-                {canSubmit && <ProtocolRoomSelect value={roomId} onChange={setRoomId} />}
+                {canSubmit && (
+                  <div className="flex w-full flex-col gap-3">
+                    <div className="flex flex-wrap items-end justify-end gap-2">
+                      <ProtocolEquipmentSelect
+                        value={effectiveEquipment}
+                        onChange={setEquipmentChoice}
+                      />
+                      <FormField
+                        id="protocol-analysis-date"
+                        label={t('protocols.analysisDate')}
+                        className="w-full sm:w-48"
+                      >
+                        <DatePicker value={effectiveDate} onChange={setAnalysisDate} />
+                      </FormField>
+                      <ProtocolRoomSelect value={effectiveRoom} onChange={setRoomId} />
+                    </div>
+                    <ProtocolTemperatureSuggestion
+                      roomId={effectiveRoom}
+                      suggestion={suggestionQuery.isError ? undefined : suggestion}
+                      loading={suggestionQuery.isLoading}
+                    />
+                  </div>
+                )}
                 {canSubmit && (
                   <ProtocolNdSelect
                     ndId={ndChoice.ndId || activeProto.ndId || ''}
@@ -660,7 +841,10 @@ export function ProtocolSection({ sample }: { sample: SampleDetailDto }) {
                       submitMutation.mutate({
                         id: activeProto.id,
                         input: {
-                          sensorConfigId: roomId || null,
+                          sensorConfigId: effectiveRoom || null,
+                          equipmentId:
+                            effectiveEquipment === UNKNOWN_EQUIPMENT ? null : effectiveEquipment,
+                          ...(effectiveDate ? { analysisDate: effectiveDate } : {}),
                           ...((ndChoice.ndId || activeProto.ndId)
                             ? {
                                 ndId: ndChoice.ndId || activeProto.ndId,

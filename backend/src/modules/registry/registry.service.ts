@@ -84,6 +84,16 @@ export async function listRegistry(
   if (params.approvedFrom) add((i) => `r.approved_at >= $${i}::date`, params.approvedFrom);
   if (params.approvedTo) add((i) => `r.approved_at < ($${i}::date + 1)`, params.approvedTo);
   if (params.chemistId) add((i) => `r.assigned_to = $${i}`, params.chemistId);
+  if (params.equipmentId === 'unknown') {
+    where.push(
+      `NOT EXISTS (SELECT 1 FROM protocols p WHERE p.sample_id = r.id AND p.equipment_id IS NOT NULL)`,
+    );
+  } else if (params.equipmentId) {
+    add(
+      (i) => `EXISTS (SELECT 1 FROM protocols p WHERE p.sample_id = r.id AND p.equipment_id = $${i})`,
+      params.equipmentId,
+    );
+  }
   if (params.unfinalizedOnly) {
     where.push(`EXISTS (SELECT 1 FROM protocols p WHERE p.sample_id = r.id AND p.status = 'approved')`);
   }

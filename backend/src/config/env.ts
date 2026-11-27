@@ -59,6 +59,15 @@ export const envSchema = z
     // Swagger HTTP Basic (D-93) — spec'da yo'q, biz qo'shdik; ikkalasi berilmasa /docs o'chiq
     SWAGGER_USER: optionalString,
     SWAGGER_PASSWORD: optionalString,
+    // P18 AI yordamchi (D-179): kalit yoki model berilmasa AI o'chiq — qo'lda kiritish o'zgarishsiz ishlaydi
+    AI_ENABLED: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((v) => v === 'true'),
+    ANTHROPIC_API_KEY: optionalString,
+    AI_MODEL: optionalString,
+    AI_MAX_FILE_MB: z.coerce.number().int().min(1).max(30).default(10),
+    AI_DAILY_LIMIT_PER_COMPANY: z.coerce.number().int().min(0).default(200),
   })
   .superRefine((env, ctx) => {
     const require = (key: keyof typeof env, why: string) => {

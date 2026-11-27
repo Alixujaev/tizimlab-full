@@ -8,6 +8,7 @@ import {
   listCompaniesQuerySchema,
   updateCompanySchema,
 } from './companies.schemas.js';
+import { companyAiToggleSchema } from '../ai/ai.schemas.js';
 
 export interface CompaniesRouterDeps {
   auth: AuthMiddleware;
@@ -43,6 +44,14 @@ export function createCompaniesRouter(deps: CompaniesRouterDeps): Router {
   router.post('/:id/activate', ...superAdminOnly, companiesController.activate);
 
   router.post('/:id/deactivate', ...superAdminOnly, companiesController.deactivate);
+
+  // D-179: AI yordamchi flag'i (faqat super_admin)
+  router.patch(
+    '/:id/ai',
+    ...superAdminOnly,
+    validate({ body: companyAiToggleSchema }),
+    companiesController.setAi,
+  );
 
   return router;
 }

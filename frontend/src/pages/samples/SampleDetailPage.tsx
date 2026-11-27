@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
+import { HistoryTimeline } from '@/components/history/HistoryTimeline';
 import { useSampleQuery } from '@/hooks/useSamples';
 import { formatDate, formatDateTime } from '@/lib/date';
 import { useAuthStore } from '@/store/authStore';
@@ -112,9 +113,14 @@ export function SampleDetailPage() {
 
       <DetailLayout
         aside={
-          <Card title={t('samples.timelineTitle', 'Harakatlar tarixi')}>
-            <SampleTrackingTimeline tracking={sample.tracking} />
-          </Card>
+          <>
+            <Card title={t('samples.timelineTitle', 'Harakatlar tarixi')}>
+              <SampleTrackingTimeline tracking={sample.tracking} />
+            </Card>
+            <Card title={t('history.title')}>
+              <HistoryTimeline entity="sample" id={sample.id} />
+            </Card>
+          </>
         }
       >
         <Card title={t('samples.generalInfo', 'Asosiy ko‘rsatkichlar')}>

@@ -5,7 +5,10 @@ import {
   deleteProtocolExtraFile,
   deleteProtocolFile,
   deleteProtocolPassport,
+  deleteProtocolPeakFile,
   fetchProtocol,
+  fetchProtocols,
+  fetchTemperatureSuggestion,
   fetchProtocolFiles,
   fetchProtocolsBySample,
   finalizeProtocol,
@@ -14,15 +17,19 @@ import {
   uploadProtocolExtraFile,
   uploadProtocolFile,
   uploadProtocolPassport,
+  uploadProtocolPeakFile,
 } from '@/api/protocols';
 import { samplesKeys } from '@/hooks/useSamples';
-import type { RejectProtocolInput, SubmitProtocolInput } from '@/types';
+import type { ProtocolListParams, RejectProtocolInput, SubmitProtocolInput } from '@/types';
 
 export const protocolsKeys = {
   all: ['protocols'] as const,
   bySample: (sampleId: string) => [...protocolsKeys.all, 'sample', sampleId] as const,
   detail: (id: string) => [...protocolsKeys.all, 'detail', id] as const,
   files: (id: string) => [...protocolsKeys.all, 'files', id] as const,
+  list: (params?: ProtocolListParams) => [...protocolsKeys.all, 'list', params] as const,
+  suggestion: (id: string, sensorConfigId: string, analysisDate: string) =>
+    [...protocolsKeys.all, 'temperature-suggestion', id, sensorConfigId, analysisDate] as const,
 };
 
 export function useProtocolsBySampleQuery(sampleId: string) {
@@ -84,6 +91,7 @@ export function useSubmitProtocolMutation(sampleId?: string) {
     mutationFn: (v: string | { id: string; input: SubmitProtocolInput }) =>
       typeof v === 'string' ? submitProtocol(v) : submitProtocol(v.id, v.input),
     onSuccess: (_data, v) => {
+      void queryClient.invalidateQueries({ queryKey: ['history'] });
       const id = typeof v === 'string' ? v : v.id;
       void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
       if (sampleId) {
@@ -100,6 +108,7 @@ export function useApproveProtocolMutation(sampleId?: string) {
   return useMutation({
     mutationFn: (id: string) => approveProtocol(id),
     onSuccess: (_data, id) => {
+      void queryClient.invalidateQueries({ queryKey: ['history'] });
       void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
       if (sampleId) {
         void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
@@ -117,6 +126,7 @@ export function useRejectProtocolMutation(sampleId?: string) {
     mutationFn: ({ id, input }: { id: string; input: RejectProtocolInput }) =>
       rejectProtocol(id, input),
     onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: ['history'] });
       void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(variables.id) });
       if (sampleId) {
         void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
@@ -132,6 +142,7 @@ export function useFinalizeProtocolMutation(sampleId?: string) {
   return useMutation({
     mutationFn: (id: string) => finalizeProtocol(id),
     onSuccess: (_data, id) => {
+      void queryClient.invalidateQueries({ queryKey: ['history'] });
       void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
       if (sampleId) {
         void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
@@ -205,3 +216,56 @@ export function useDeleteProtocolExtraFileMutation(sampleId?: string) {
   });
 }
 
+
+// ---------------------------------------------------------------- P18
+/** D-187: protokollar ro'yxati. */
+export function useProtocolsListQuery(params?: ProtocolListParams) {
+  return useQuery({ queryKey: protocolsKeys.list(params), queryFn: () => fetchProtocols(params) });
+}
+
+/** D-188: harorat taklifi — xona yoki sana o'zgarsa qayta so'raladi. */
+export function useTemperatureSuggestionQuery(
+  protocolId: string | null | undefined,
+  params: { sensorConfigId?: string; analysisDate?: string },
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: protocolsKeys.suggestion(
+      protocolId ?? '',
+      params.sensorConfigId ?? '',
+      params.analysisDate ?? '',
+    ),
+    queryFn: () => fetchTemperatureSuggestion(protocolId!, params),
+    enabled: enabled && Boolean(protocolId),
+    retry: false,
+  });
+}
+
+export function useUploadProtocolPeakMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) => uploadProtocolPeakFile(id, file),
+    onSuccess: (_data, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(id) });
+      void queryClient.invalidateQueries({ queryKey: [...protocolsKeys.all, 'list'] });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
+
+export function useDeleteProtocolPeakMutation(sampleId?: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ protocolId, fileId }: { protocolId: string; fileId: string }) =>
+      deleteProtocolPeakFile(protocolId, fileId),
+    onSuccess: (_data, { protocolId }) => {
+      void queryClient.invalidateQueries({ queryKey: protocolsKeys.detail(protocolId) });
+      void queryClient.invalidateQueries({ queryKey: [...protocolsKeys.all, 'list'] });
+      if (sampleId) {
+        void queryClient.invalidateQueries({ queryKey: protocolsKeys.bySample(sampleId) });
+      }
+    },
+  });
+}
