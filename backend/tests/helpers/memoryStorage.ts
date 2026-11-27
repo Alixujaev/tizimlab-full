@@ -16,6 +16,12 @@ export class MemoryStorage implements FileStorage {
     this.objects.set(key, { body, contentType });
   }
 
+  async get(key: string): Promise<Buffer> {
+    const obj = this.objects.get(key);
+    if (!obj) throw new Error('memory storage: not found');
+    return obj.body;
+  }
+
   async getSignedUrl(key: string, opts: SignedUrlOptions): Promise<string> {
     this.signed.push({ key, opts });
     return `memory://${key}?expires=${opts.expiresIn}`;

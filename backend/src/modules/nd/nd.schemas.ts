@@ -7,6 +7,20 @@ export const createNdSchema = z.object({
   code: z.string().trim().min(1, 'ND kodi kiritilishi shart').max(100),
   name: z.string().trim().min(1, 'ND nomi kiritilishi shart').max(500),
   version: z.string().trim().max(50).nullable().optional(),
+  // P18 (D-184, Addendum §3): metadata — hammasi ixtiyoriy
+  substanceName: z.string().trim().max(500).nullable().optional(),
+  series: z.string().trim().max(100).nullable().optional(),
+  docDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana formati: YYYY-MM-DD')
+    .refine((v) => {
+      const d = new Date(`${v}T00:00:00Z`);
+      return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+    }, 'Sana mavjud emas')
+    .nullable()
+    .optional(),
+  chemistId: z.string().uuid('Kimyogar ID si noto‘g‘ri').nullable().optional(),
+  equipmentId: z.string().uuid('Apparat ID si noto‘g‘ri').nullable().optional(),
 });
 
 export const updateNdSchema = createNdSchema

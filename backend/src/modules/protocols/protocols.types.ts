@@ -33,6 +33,9 @@ export interface ProtocolRow {
   n_analyses?: number;
   temperature_snapshot?: TemperatureSnapshot | null;
   temperature_warning?: TemperatureWarning | null;
+  /** P18 (D-184): apparat (NULL — noma'lum) va tahlil sanasi */
+  equipment_id?: string | null;
+  analysis_date?: Date | string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -49,7 +52,18 @@ export interface ProtocolFileRow {
   mime_type?: string;
   r2_key?: string;
   uploaded_by_name?: string | null;
+  /** P18 (D-185): tur va metadata */
+  kind?: ProtocolFileKind;
+  substance_name?: string | null;
+  series?: string | null;
+  analysis_date?: Date | string | null;
+  chemist_id?: string | null;
+  equipment_id?: string | null;
+  equipment_name?: string | null;
 }
+
+/** 'extra' — D-49 qo'shimcha fayllari, 'protocol' — asosiy fayl bog'i, 'peak' — HPLC/UV peak fayllari. */
+export type ProtocolFileKind = 'protocol' | 'peak' | 'extra';
 
 export interface ProtocolFileDto {
   id: string;
@@ -61,6 +75,13 @@ export interface ProtocolFileDto {
   uploadedBy: string;
   uploadedByName: string | null;
   createdAt: string;
+  kind: ProtocolFileKind;
+  substanceName: string | null;
+  series: string | null;
+  analysisDate: string | null;
+  chemistId: string | null;
+  equipmentId: string | null;
+  equipmentName: string | null;
 }
 
 export interface ProtocolSignatureRow {
@@ -116,8 +137,19 @@ export interface ProtocolDto {
   nAnalyses: number;
   temperatureSnapshot: TemperatureSnapshot | null;
   temperatureWarning: TemperatureWarning | null;
+  /** P18 (D-184): apparat (null — noma'lum) va tahlil sanasi (YYYY-MM-DD) */
+  equipmentId: string | null;
+  analysisDate: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProtocolRejectionDto {
+  id: string;
+  reason: string;
+  rejectedBy: string | null;
+  rejectedByName: string | null;
+  rejectedAt: string;
 }
 
 export interface ProtocolDetailDto extends ProtocolDto {
@@ -127,6 +159,11 @@ export interface ProtocolDetailDto extends ProtocolDto {
   sampleAssignedTo: string | null;
   signatures: ProtocolSignatureDto[];
   files: ProtocolFileDto[];
+  /** P18 (D-185): peak fayllari */
+  peakFiles: ProtocolFileDto[];
+  /** P18 (D-186): barcha rad etish sabablari (eng eskisi birinchi) */
+  rejections: ProtocolRejectionDto[];
+  equipmentName: string | null;
 }
 
 export interface SubmitProtocolInput {
@@ -135,6 +172,8 @@ export interface SubmitProtocolInput {
   /** D-177 */
   ndId?: string | null;
   nAnalyses?: number;
+  /** P18 (D-184): apparat; `null` — noma'lum, berilmasa avvalgisi saqlanadi */
+  equipmentId?: string | null;
 }
 
 export interface RejectProtocolInput {

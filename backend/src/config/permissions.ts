@@ -33,6 +33,10 @@ export const PERMISSION_CATALOG = [
   'analytics:view',
   'analytics:team',
   'analytics:company',
+  // P18 (D-179): AI yordamchi — natija faqat taklif, inson tasdiqlaydi
+  'ai:extract_sample',
+  'ai:extract_reagent',
+  'ai:extract_nd',
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_CATALOG)[number];
@@ -53,6 +57,8 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'temperature:view',
     'stability:view',
     'analytics:view',
+    'ai:extract_sample',
+    'ai:extract_reagent',
   ],
   chemist: [
     'samples:view',
@@ -67,6 +73,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'stability:view',
     'stability:record',
     'analytics:view',
+    'ai:extract_reagent',
   ],
   lab_head: [
     'samples:view',
@@ -94,6 +101,9 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'activity:view',
     'analytics:view',
     'analytics:team',
+    'ai:extract_sample',
+    'ai:extract_reagent',
+    'ai:extract_nd',
   ],
   director: [
     'samples:view',
@@ -136,6 +146,7 @@ export const ROLE_PERMISSIONS: RolePermissionCatalog = {
     'users:manage',
     'permissions:manage',
     'activity:view',
+    'ai:extract_nd',
   ],
 };
 

@@ -1,5 +1,35 @@
 import { z } from 'zod';
 import { paginationQuerySchema } from '../../utils/pagination.js';
+import { aiReviewRefSchema } from '../ai/ai.schemas.js';
+
+const isoDay = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Sana formati: YYYY-MM-DD')
+  .refine((v) => {
+    const d = new Date(`${v}T00:00:00Z`);
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v;
+  }, 'Sana mavjud emas');
+
+/** P18 (D-183): lot maydonlari — yaratish va tahrirlashda bir xil. */
+const lotFields = {
+  lotNumber: z.string().trim().max(100).nullable().optional(),
+  manufacturer: z.string().trim().max(255).nullable().optional(),
+  manufacturedAt: isoDay.nullable().optional(),
+  arrivalDate: isoDay.nullable().optional(),
+};
+
+const expiryAfterManufacture = (
+  v: { expiresAt?: string | null; manufacturedAt?: string | null },
+  ctx: z.RefinementCtx,
+) => {
+  if (v.expiresAt && v.manufacturedAt && v.expiresAt < v.manufacturedAt) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['expiresAt'],
+      message: 'Yaroqlilik muddati ishlab chiqarilgan sanadan oldin bo‘lishi mumkin emas',
+    });
+  }
+};
 
 export const reagentTransactionTypeEnum = z.enum(['in', 'out', 'adjustment', 'disposal']);
 export const reagentDocTypeEnum = z.enum(['passport', 'analysis']);
@@ -16,7 +46,10 @@ export const createReagentSchema = z.object({
   isHazardous: z.boolean().default(false),
   /** D-174: katalog elementi (berilmasa nom bo'yicha topiladi yoki yaratiladi) */
   reagentItemId: z.string().uuid().nullable().optional(),
-});
+  ...lotFields,
+  /** P18 (D-181): AI taklifidan to'ldirilgan bo'lsa */
+  ai: aiReviewRefSchema.optional(),
+}).superRefine(expiryAfterManufacture);
 
 export const updateReagentSchema = z.object({
   name: z.string().trim().min(1, 'Reaktiv nomi kiritilishi shart').max(255).optional(),
@@ -27,7 +60,8 @@ export const updateReagentSchema = z.object({
   supplier: z.string().trim().max(255).nullable().optional(),
   storageConditions: z.string().trim().max(255).nullable().optional(),
   isHazardous: z.boolean().optional(),
-});
+  ...lotFields,
+}).superRefine(expiryAfterManufacture);
 
 export const createTransactionSchema = z.object({
   type: reagentTransactionTypeEnum,

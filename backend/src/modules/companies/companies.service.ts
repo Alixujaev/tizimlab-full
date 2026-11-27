@@ -16,6 +16,7 @@ interface CompanyRow {
   name: string;
   slug: string;
   is_active: boolean;
+  ai_enabled?: boolean;
   created_at: Date;
   updated_at: Date;
   users_count?: string | number;
@@ -27,6 +28,7 @@ function toDto(row: CompanyRow): CompanyDto {
     name: row.name,
     slug: row.slug,
     isActive: row.is_active,
+    aiEnabled: row.ai_enabled ?? false,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
     ...(row.users_count !== undefined ? { usersCount: Number(row.users_count) } : {}),
@@ -61,7 +63,7 @@ export async function listCompanies(
   const listValues = [...values, params.limit, offset];
 
   const { rows } = await query<CompanyRow>(
-    `SELECT c.id, c.name, c.slug, c.is_active, c.created_at, c.updated_at,
+    `SELECT c.id, c.name, c.slug, c.is_active, c.ai_enabled, c.created_at, c.updated_at,
             count(u.id)::int AS users_count
      FROM companies c
      LEFT JOIN users u ON u.company_id = c.id
@@ -84,7 +86,7 @@ export async function listCompanies(
 
 export async function getCompany(id: string): Promise<CompanyDto> {
   const { rows } = await query<CompanyRow>(
-    `SELECT c.id, c.name, c.slug, c.is_active, c.created_at, c.updated_at,
+    `SELECT c.id, c.name, c.slug, c.is_active, c.ai_enabled, c.created_at, c.updated_at,
             count(u.id)::int AS users_count
      FROM companies c
      LEFT JOIN users u ON u.company_id = c.id
@@ -112,7 +114,7 @@ export async function createCompany(
       const compRes = await client.query<CompanyRow>(
         `INSERT INTO companies (name, slug, is_active)
          VALUES ($1, $2, true)
-         RETURNING id, name, slug, is_active, created_at, updated_at`,
+         RETURNING id, name, slug, is_active, ai_enabled, created_at, updated_at`,
         [input.name, input.slug],
       );
       const companyRow = compRes.rows[0]!;
@@ -200,7 +202,7 @@ export async function updateCompany(
   values.push(id);
   const sql = `UPDATE companies SET ${updates.join(', ')}, updated_at = now()
                WHERE id = $${values.length}
-               RETURNING id, name, slug, is_active, created_at, updated_at`;
+               RETURNING id, name, slug, is_active, ai_enabled, created_at, updated_at`;
 
   try {
     return await withTransaction(async (client) => {
@@ -247,7 +249,7 @@ export async function activateCompany(
     const { rows } = await client.query<CompanyRow>(
       `UPDATE companies SET is_active = true, updated_at = now()
        WHERE id = $1
-       RETURNING id, name, slug, is_active, created_at, updated_at`,
+       RETURNING id, name, slug, is_active, ai_enabled, created_at, updated_at`,
       [id],
     );
 
@@ -282,7 +284,7 @@ export async function deactivateCompany(
     const { rows } = await client.query<CompanyRow>(
       `UPDATE companies SET is_active = false, updated_at = now()
        WHERE id = $1
-       RETURNING id, name, slug, is_active, created_at, updated_at`,
+       RETURNING id, name, slug, is_active, ai_enabled, created_at, updated_at`,
       [id],
     );
 
@@ -304,5 +306,34 @@ export async function deactivateCompany(
     });
 
     return toDto(rows[0]!);
+  });
+}
+
+/** D-179: kompaniya uchun AI yordamchini yoqish/o'chirish — faqat super_admin (router'da requireRole). */
+export async function setCompanyAi(
+  id: string,
+  enabled: boolean,
+  meta: RequestMeta,
+  superAdminUserId: string,
+): Promise<CompanyDto> {
+  const current = await getCompany(id);
+  if (current.aiEnabled === enabled) return current;
+  return await withTransaction(async (client) => {
+    await client.query(`UPDATE companies SET ai_enabled = $2, updated_at = now() WHERE id = $1`, [
+      id,
+      enabled,
+    ]);
+    await writeAudit(client, {
+      tableName: 'companies',
+      recordId: id,
+      action: enabled ? 'company_ai_enable' : 'company_ai_disable',
+      userId: superAdminUserId,
+      companyId: null,
+      oldValues: { aiEnabled: current.aiEnabled },
+      newValues: { aiEnabled: enabled },
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
+    return { ...current, aiEnabled: enabled };
   });
 }

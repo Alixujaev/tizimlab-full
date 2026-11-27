@@ -1,5 +1,6 @@
 import { query, withTransaction } from '../../config/database.js';
 import { ForbiddenError, NotFoundError, ValidationError } from '../../utils/errors.js';
+import { recordAiReview } from '../ai/ai.service.js';
 import { writeAudit } from '../audit/audit.service.js';
 import type { Role } from '../auth/auth.types.js';
 import { notifySampleCreated } from '../notifications/notifications.events.js';
@@ -264,6 +265,29 @@ export async function createSample(
       ip: meta.ip,
       userAgent: meta.userAgent,
     });
+
+    // P18 (D-181): AI taklif qilgan maydonlar — AI qiymati → inson saqlagan yakuniy qiymat
+    if (input.ai) {
+      await recordAiReview(
+        client,
+        { userId, companyId, ip: meta.ip, userAgent: meta.userAgent },
+        {
+          extractionId: input.ai.extractionId,
+          kind: 'sample',
+          entityId: createdSample.id,
+          finalValues: {
+            substanceName: input.substanceName,
+            serialNumber: input.serialNumber ?? null,
+            manufacturer: input.manufacturer ?? null,
+            manufacturedAt: input.manufacturedAt ?? null,
+            expiryDate: input.expiryDate ?? null,
+            quantity: input.quantity ?? null,
+            arrivalDate: input.arrivalDate ?? null,
+            analysisEnd: input.analysisEnd ?? null,
+          },
+        },
+      );
+    }
 
     return toSampleDto(createdSample);
   });

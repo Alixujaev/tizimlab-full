@@ -16,6 +16,7 @@
     "create-super-admin:dist": "node dist/cli/createSuperAdmin.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
     "@aws-sdk/client-s3": "^3.1148.0",
     "@aws-sdk/s3-request-presigner": "^3.1148.0",
     "bcryptjs": "^3.0.3",

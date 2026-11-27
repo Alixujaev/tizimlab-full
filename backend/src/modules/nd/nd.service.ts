@@ -3,6 +3,12 @@ import { query, withTransaction } from '../../config/database.js';
 import { AppError, NotFoundError } from '../../utils/errors.js';
 import { toOffset, type PaginatedResult } from '../../utils/pagination.js';
 import { normalizeUnit } from '../../utils/units.js';
+import { toIsoDay } from '../../utils/dates.js';
+import {
+  recordNdApprovalReview,
+  recordNdRequirementRemoval,
+  type NdAiValue,
+} from '../ai/ai.service.js';
 import { writeAudit } from '../audit/audit.service.js';
 import {
   buildKey,
@@ -48,6 +54,14 @@ interface NdRow {
   created_at: Date;
   updated_at: Date;
   requirement_count?: string;
+  // P18 (D-184) metadata
+  substance_name?: string | null;
+  series?: string | null;
+  doc_date?: Date | string | null;
+  chemist_id?: string | null;
+  chemist_name?: string | null;
+  equipment_id?: string | null;
+  equipment_name?: string | null;
 }
 
 export interface NdRequirementRow {
@@ -66,6 +80,8 @@ export interface NdRequirementRow {
   source: 'manual' | 'ai';
   note: string | null;
   sort_order: number;
+  ai_value?: NdAiValue | null;
+  ai_reviewed_at?: Date | null;
 }
 
 export interface NdRequirementDto {
@@ -80,6 +96,8 @@ export interface NdRequirementDto {
   source: 'manual' | 'ai';
   note: string | null;
   sortOrder: number;
+  /** P18 (D-182): AI taklif qilgan asl qiymat (inson tahrirlagan bo'lsa ham saqlanadi) */
+  aiValue: NdAiValue | null;
 }
 
 export interface NdDto {
@@ -94,6 +112,13 @@ export interface NdDto {
   fileSize: number | null;
   hasFile: boolean;
   requirementCount: number;
+  substanceName: string | null;
+  series: string | null;
+  docDate: string | null;
+  chemistId: string | null;
+  chemistName: string | null;
+  equipmentId: string | null;
+  equipmentName: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -115,6 +140,13 @@ function toNdDto(row: NdRow): NdDto {
     fileSize: row.file_size,
     hasFile: Boolean(row.file_path),
     requirementCount: Number(row.requirement_count ?? 0),
+    substanceName: row.substance_name ?? null,
+    series: row.series ?? null,
+    docDate: toIsoDay(row.doc_date ?? null),
+    chemistId: row.chemist_id ?? null,
+    chemistName: row.chemist_name ?? null,
+    equipmentId: row.equipment_id ?? null,
+    equipmentName: row.equipment_name ?? null,
     createdAt: new Date(row.created_at).toISOString(),
     updatedAt: new Date(row.updated_at).toISOString(),
   };
@@ -133,11 +165,37 @@ export function toRequirementDto(r: NdRequirementRow): NdRequirementDto {
     source: r.source,
     note: r.note,
     sortOrder: r.sort_order,
+    aiValue: r.ai_value ?? null,
   };
 }
 
-const ND_SELECT = `SELECT n.*, (SELECT count(*) FROM nd_requirements q WHERE q.nd_id = n.id) AS requirement_count
-  FROM normative_documents n`;
+const ND_SELECT = `SELECT n.*, (SELECT count(*) FROM nd_requirements q WHERE q.nd_id = n.id) AS requirement_count,
+       cu.full_name AS chemist_name, eq.name AS equipment_name
+  FROM normative_documents n
+  LEFT JOIN users cu ON cu.id = n.chemist_id
+  LEFT JOIN equipment eq ON eq.id = n.equipment_id`;
+
+/** Metadata havolalari shu kompaniyaniki bo'lishi shart (boshqasi — 404). */
+async function assertNdRefs(
+  tx: pg.PoolClient,
+  companyId: string,
+  input: { chemistId?: string | null; equipmentId?: string | null },
+): Promise<void> {
+  if (input.chemistId) {
+    const r = await tx.query(`SELECT 1 FROM users WHERE id = $1 AND company_id = $2`, [
+      input.chemistId,
+      companyId,
+    ]);
+    if (!r.rows.length) throw new NotFoundError('Kimyogar topilmadi');
+  }
+  if (input.equipmentId) {
+    const r = await tx.query(`SELECT 1 FROM equipment WHERE id = $1 AND company_id = $2`, [
+      input.equipmentId,
+      companyId,
+    ]);
+    if (!r.rows.length) throw new NotFoundError('Apparat topilmadi');
+  }
+}
 
 async function loadNd(
   db: pg.PoolClient | null,
@@ -215,10 +273,23 @@ export async function createNd(
   meta: Meta = {},
 ): Promise<NdDetailDto> {
   const id = await withTransaction(async (tx) => {
+    await assertNdRefs(tx, companyId, input);
     const { rows } = await tx.query<{ id: string }>(
-      `INSERT INTO normative_documents (company_id, code, name, version, created_by)
-       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-      [companyId, input.code, input.name, input.version ?? null, userId],
+      `INSERT INTO normative_documents (company_id, code, name, version, created_by,
+                                        substance_name, series, doc_date, chemist_id, equipment_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+      [
+        companyId,
+        input.code,
+        input.name,
+        input.version ?? null,
+        userId,
+        input.substanceName ?? null,
+        input.series ?? null,
+        input.docDate ?? null,
+        input.chemistId ?? null,
+        input.equipmentId ?? null,
+      ],
     );
     await writeAudit(tx, {
       userId,
@@ -244,18 +315,35 @@ export async function updateNd(
 ): Promise<NdDetailDto> {
   await withTransaction(async (tx) => {
     const prev = await loadNd(tx, companyId, id, true);
+    await assertNdRefs(tx, companyId, input);
+    const has = (k: keyof UpdateNdInput) => input[k] !== undefined;
     await tx.query(
       `UPDATE normative_documents
          SET code = COALESCE($3, code), name = COALESCE($4, name),
-             version = CASE WHEN $5::boolean THEN $6 ELSE version END
+             version = CASE WHEN $5::boolean THEN $6 ELSE version END,
+             substance_name = CASE WHEN $7::boolean THEN $8 ELSE substance_name END,
+             series = CASE WHEN $9::boolean THEN $10 ELSE series END,
+             doc_date = CASE WHEN $11::boolean THEN $12::date ELSE doc_date END,
+             chemist_id = CASE WHEN $13::boolean THEN $14::uuid ELSE chemist_id END,
+             equipment_id = CASE WHEN $15::boolean THEN $16::uuid ELSE equipment_id END
        WHERE id = $1 AND company_id = $2`,
       [
         id,
         companyId,
         input.code ?? null,
         input.name ?? null,
-        input.version !== undefined,
+        has('version'),
         input.version ?? null,
+        has('substanceName'),
+        input.substanceName ?? null,
+        has('series'),
+        input.series ?? null,
+        has('docDate'),
+        input.docDate ?? null,
+        has('chemistId'),
+        input.chemistId ?? null,
+        has('equipmentId'),
+        input.equipmentId ?? null,
       ],
     );
     await writeAudit(tx, {
@@ -453,11 +541,21 @@ export async function deleteRequirement(
 ): Promise<NdDetailDto> {
   await withTransaction(async (tx) => {
     assertDraft(await loadNd(tx, companyId, ndId, true));
-    const { rows } = await tx.query(
-      `DELETE FROM nd_requirements WHERE id = $1 AND nd_id = $2 AND company_id = $3 RETURNING id`,
+    const { rows } = await tx.query<{ id: string; ai_value: NdAiValue | null; ai_reviewed_at: Date | null }>(
+      `DELETE FROM nd_requirements WHERE id = $1 AND nd_id = $2 AND company_id = $3
+       RETURNING id, ai_value, ai_reviewed_at`,
       [reqId, ndId, companyId],
     );
     if (!rows[0]) throw new NotFoundError('Talab topilmadi');
+    // P18 (D-182): AI taklif qilgan talabni inson olib tashladi — "AI qiymati → (yo'q)" izi
+    if (rows[0].ai_value && !rows[0].ai_reviewed_at) {
+      await recordNdRequirementRemoval(
+        tx,
+        { userId, companyId, ip: meta.ip, userAgent: meta.userAgent },
+        ndId,
+        rows[0].ai_value,
+      );
+    }
     await writeAudit(tx, {
       userId,
       companyId,
@@ -510,6 +608,10 @@ export async function changeNdStatus(
           'ND_NO_REQUIREMENTS',
           'Tasdiqlash uchun kamida bitta talab kiriting',
         );
+    }
+    if (action === 'approve') {
+      // P18 (D-182): AI taklif qilgan talablar bo'yicha AI qiymati → yakuniy qiymat
+      await recordNdApprovalReview(tx, { userId, companyId, ip: meta.ip, userAgent: meta.userAgent }, id);
     }
     await tx.query(
       `UPDATE normative_documents

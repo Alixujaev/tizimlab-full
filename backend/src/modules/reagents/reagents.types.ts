@@ -21,6 +21,11 @@ export interface ReagentRow {
   approved_by: string | null;
   approved_at: string | Date | null;
   rejection_reason: string | null;
+  // P18 (D-183): CoA/etiketka maydonlari
+  lot_number?: string | null;
+  manufacturer?: string | null;
+  manufactured_at?: string | Date | null;
+  arrival_date?: string | Date | null;
   created_at: string | Date;
   updated_at: string | Date;
 }
@@ -49,6 +54,11 @@ export interface ReagentDto {
   approvedBy: string | null;
   approvedAt: string | null;
   rejectionReason: string | null;
+  /** D-183: seriya/lot, ishlab chiqaruvchi, ishlab chiqarilgan va kelgan sana (eski lotlarda null). */
+  lotNumber: string | null;
+  manufacturer: string | null;
+  manufacturedAt: string | null;
+  arrivalDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -155,6 +165,10 @@ export function toReagentDto(row: ReagentRow): ReagentDto {
     approvedBy: row.approved_by ?? null,
     approvedAt: row.approved_at ? new Date(row.approved_at).toISOString() : null,
     rejectionReason: row.rejection_reason ?? null,
+    lotNumber: row.lot_number ?? null,
+    manufacturer: row.manufacturer ?? null,
+    manufacturedAt: toIsoDay(row.manufactured_at ?? null),
+    arrivalDate: toIsoDay(row.arrival_date ?? null),
     createdAt: new Date(row.created_at).toISOString(),
     updatedAt: new Date(row.updated_at).toISOString(),
   };

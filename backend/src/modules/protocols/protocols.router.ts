@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { AuthMiddleware } from '../../middleware/authenticate.js';
-import { requireCompany, requirePermission } from '../../middleware/authenticate.js';
+import { requireCompany, requirePermission, requireRole } from '../../middleware/authenticate.js';
 import { validate } from '../../middleware/validate.js';
 import type { FileStorage } from '../files/files.storage.js';
 import { uploadSingle } from '../files/files.upload.js';
@@ -8,6 +8,8 @@ import { PASSPORT_MAX_BYTES } from '../files/files.validation.js';
 import { createProtocolsController } from './protocols.controller.js';
 import {
   protocolFileIdParamSchema,
+  protocolListQuerySchema,
+  temperatureSuggestionQuerySchema,
   submitProtocolSchema,
   protocolIdParamSchema,
   rejectProtocolSchema,
@@ -23,6 +25,58 @@ export function createProtocolsRouter(deps: ProtocolsRouterDeps): Router {
   const router = Router();
   const companyAuth = [...deps.auth.requireAuth, requireCompany];
   const controller = createProtocolsController(deps.storage ?? null);
+
+  /**
+   * @openapi
+   * /protocols:
+   *   get:
+   *     tags: [Protocols]
+   *     summary: "P18: protokollar ro'yxati — substanceName, series, dateFrom/dateTo, chemistId, equipmentId (uuid|unknown), status, hasPeaks"
+   *     security: [{ bearerAuth: [] }]
+   *     responses: { 200: { description: "{ data: [...], meta }" } }
+   * /protocols/{id}/temperature-suggestion:
+   *   get: { tags: [Protocols], summary: "P18: xona + tahlil sanasi bo'yicha harorat taklifi (D-173 mantiqi)", security: [{ bearerAuth: [] }], responses: { 200: { description: "{ status: ok|no_room|no_reading, reading, limits, outOfRange }" } } }
+   * /protocols/{id}/peaks:
+   *   get: { tags: [Protocols], summary: "Peak fayllari", security: [{ bearerAuth: [] }], responses: { 200: { description: OK } } }
+   *   post: { tags: [Protocols], summary: "Peak fayli yuklash (PDF/Word)", security: [{ bearerAuth: [] }], responses: { 201: { description: OK } } }
+   * /protocols/{id}/peaks/{fileId}:
+   *   delete: { tags: [Protocols], summary: "Peak faylini o'chirish (draft/rejected)", security: [{ bearerAuth: [] }], responses: { 200: { description: OK } } }
+   */
+  router.get(
+    '/',
+    ...companyAuth,
+    requireRole('chemist', 'lab_head', 'director', 'admin'),
+    validate({ query: protocolListQuerySchema }),
+    controller.list,
+  );
+  router.get(
+    '/:id/temperature-suggestion',
+    ...companyAuth,
+    requirePermission('temperature', 'view'),
+    validate({ params: protocolIdParamSchema, query: temperatureSuggestionQuerySchema }),
+    controller.temperatureSuggestion,
+  );
+  router.get(
+    '/:id/peaks',
+    ...companyAuth,
+    validate({ params: protocolIdParamSchema }),
+    controller.listPeakFiles,
+  );
+  router.post(
+    '/:id/peaks',
+    ...companyAuth,
+    requirePermission('protocols', 'upload'),
+    validate({ params: protocolIdParamSchema }),
+    uploadSingle('file', PASSPORT_MAX_BYTES),
+    controller.uploadPeakFile,
+  );
+  router.delete(
+    '/:id/peaks/:fileId',
+    ...companyAuth,
+    requirePermission('protocols', 'upload'),
+    validate({ params: protocolFileIdParamSchema }),
+    controller.deleteProtocolFile,
+  );
 
   // Namuna bo'yicha protokollar ro'yxati
   router.get(

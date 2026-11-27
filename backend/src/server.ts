@@ -3,6 +3,7 @@ import { closePool, initDb, pingDb } from './config/database.js';
 import { loadEnv } from './config/env.js';
 import { authConfigFromEnv } from './modules/auth/auth.types.js';
 import { storageFromEnv } from './modules/files/files.storage.js';
+import { aiClientFromEnv } from './modules/ai/ai.config.js';
 import { closeSocketServer, createSocketServer } from './realtime/socket.js';
 import { startStabilityScheduler, stopStabilityScheduler } from './modules/stability/stability.job.js';
 import {
@@ -28,7 +29,18 @@ initDb(env.DATABASE_URL);
 
 const storage = storageFromEnv(env);
 if (!storage) logger.warn("R2 sozlanmagan: fayl endpointlari 503 qaytaradi (R2_* ni to'ldiring)");
-const app = createApp({ env, pingDb: () => pingDb(), storage });
+const aiClient = aiClientFromEnv(env);
+if (!aiClient) logger.info('AI yordamchi o‘chiq (AI_ENABLED/ANTHROPIC_API_KEY/AI_MODEL) — qo‘lda kiritish ishlaydi');
+const app = createApp({
+  env,
+  pingDb: () => pingDb(),
+  storage,
+  ai: {
+    client: aiClient,
+    maxFileMb: env.AI_MAX_FILE_MB,
+    dailyLimit: env.AI_DAILY_LIMIT_PER_COMPANY,
+  },
+});
 const server = app.listen(env.PORT, () => {
   logger.info(`Server ishga tushdi: http://localhost:${env.PORT} (${env.NODE_ENV})`);
   startStabilityScheduler();

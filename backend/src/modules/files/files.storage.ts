@@ -24,6 +24,8 @@ export interface SignedUrlOptions {
  */
 export interface FileStorage {
   put(key: string, body: Buffer, contentType: string): Promise<void>;
+  /** Obyekt mazmuni (P18: AI saqlangan ND faylini o'qiydi). Yo'q bo'lsa xato. */
+  get(key: string): Promise<Buffer>;
   getSignedUrl(key: string, opts: SignedUrlOptions): Promise<string>;
   delete(key: string): Promise<void>;
 }
@@ -63,6 +65,11 @@ export function createR2Storage(
       await client.send(
         new PutObjectCommand({ Bucket, Key: key, Body: body, ContentType: contentType }),
       );
+    },
+    async get(key) {
+      const res = await client.send(new GetObjectCommand({ Bucket, Key: key }));
+      if (!res.Body) throw new Error('R2: bo‘sh obyekt');
+      return Buffer.from(await res.Body.transformToByteArray());
     },
     async getSignedUrl(key, opts) {
       const cmd = new GetObjectCommand({

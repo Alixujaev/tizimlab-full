@@ -38,6 +38,10 @@ import { createEquipmentRouter } from './modules/equipment/equipment.router.js';
 import { createNdRouter } from './modules/nd/nd.router.js';
 import { createConsumptionsRouter } from './modules/consumptions/consumptions.router.js';
 import { createAuditRouter } from './modules/audit/audit.router.js';
+import type { AiClient } from './modules/ai/ai.client.js';
+import { aiRuntime, createAiUserLimiter, type AiUserLimitOptions } from './modules/ai/ai.config.js';
+import { createAiRouter } from './modules/ai/ai.router.js';
+import { createHistoryRouter } from './modules/history/history.router.js';
 import { createActivityRouter } from './modules/audit/activity.router.js';
 import { createTelegramRouter } from './modules/telegram/telegram.router.js';
 import { getTelegramBot } from './modules/telegram/telegram.bot.js';
@@ -79,6 +83,13 @@ export interface AppDeps {
   bot?: Bot | null;
   /** Fayl xotirasi (R2); `null`/berilmagan — fayl endpointlari 503 (D-121). Testlarda xotiradagi adapter. */
   storage?: FileStorage | null;
+  /** P18 AI (D-179): klient (`null` — AI o'chiq, 503) va limitlar. Testlarda mock klient. */
+  ai?: {
+    client: AiClient | null;
+    maxFileMb?: number;
+    dailyLimit?: number;
+    userLimit?: AiUserLimitOptions;
+  };
 }
 
 /** Express ilovasini yig'adi. Server ishga tushirish `server.ts` da (D-21). */
@@ -91,6 +102,7 @@ export function createApp({
   telegramLimits,
   bot,
   storage = null,
+  ai,
 }: AppDeps): Express {
   const app = express();
   app.disable('x-powered-by');
@@ -170,6 +182,21 @@ export function createApp({
   api.use('/equipment', createEquipmentRouter({ auth }));
   api.use('/nd', createNdRouter({ auth, storage }));
   api.use('/consumptions', createConsumptionsRouter({ auth }));
+  // P18 (D-179..D-187)
+  api.use(
+    '/ai',
+    createAiRouter({
+      auth,
+      runtime: aiRuntime({
+        client: ai?.client ?? null,
+        storage,
+        maxFileMb: ai?.maxFileMb,
+        dailyLimit: ai?.dailyLimit,
+      }),
+      userLimiter: createAiUserLimiter(ai?.userLimit),
+    }),
+  );
+  api.use('/history', createHistoryRouter({ auth }));
   api.use('/audit', createAuditRouter({ auth }));
   api.use('/activity', createActivityRouter({ auth }));
   api.use(

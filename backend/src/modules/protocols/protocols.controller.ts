@@ -1,7 +1,9 @@
 import type { Request, Response } from 'express';
 import { UnauthorizedError } from '../../utils/errors.js';
-import { sendCreated, sendOk } from '../../utils/http.js';
+import { sendCreated, sendOk, sendPaginated } from '../../utils/http.js';
 import type { FileStorage } from '../files/files.storage.js';
+import { listProtocols } from './protocols.list.js';
+import type { ProtocolListQuery, TemperatureSuggestionQuery } from './protocols.schemas.js';
 import * as protocolsService from './protocols.service.js';
 import type {
   RejectProtocolInput,
@@ -252,6 +254,54 @@ export function createProtocolsController(storage: FileStorage | null) {
         getMeta(req),
       );
       sendOk(res, result);
+    },
+
+    // P18 (D-185): peak fayllari
+    async uploadPeakFile(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      const file = req.file
+        ? { originalname: req.file.originalname, buffer: req.file.buffer, size: req.file.size }
+        : undefined;
+      sendCreated(
+        res,
+        await protocolsService.uploadPeakFile(
+          storage,
+          actor.companyId,
+          actor,
+          req.params.id as string,
+          file,
+          getMeta(req),
+        ),
+      );
+    },
+
+    async listPeakFiles(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      sendOk(
+        res,
+        await protocolsService.listProtocolFiles(actor.companyId, actor, req.params.id as string, 'peak'),
+      );
+    },
+
+    // P18 (D-187): global ro'yxat
+    async list(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      const r = await listProtocols(actor.companyId, actor, req.validated.query as ProtocolListQuery);
+      sendPaginated(res, r.data, r.meta);
+    },
+
+    // P18 (D-188): harorat taklifi
+    async temperatureSuggestion(req: Request, res: Response): Promise<void> {
+      const actor = getActor(req);
+      sendOk(
+        res,
+        await protocolsService.suggestProtocolTemperature(
+          actor.companyId,
+          actor,
+          req.params.id as string,
+          req.validated.query as TemperatureSuggestionQuery,
+        ),
+      );
     },
 
     // DOCX Export
