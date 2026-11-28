@@ -548,7 +548,7 @@ export async function sendMessage(
       jsonSchema: CHAT_ANSWER_JSON_SCHEMA,
       maxTokens: 8000,
     },
-    (json) => chatAnswerSchema.safeParse(json),
+    chatAnswerSchema,
   );
 
   const validRefs = new Set(sources.map((s) => s.ref));

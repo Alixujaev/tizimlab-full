@@ -1,13 +1,36 @@
 import {
   AiUpstreamError,
-  type AiClient,
+  type AiChatRequest,
   type AiExtractRequest,
 } from '../../src/modules/ai/ai.client.js';
+import {
+  createLlmProvider,
+  type ExtractStructuredRequest,
+  type LlmProvider,
+} from '../../src/modules/ai/ai.provider.js';
 import type { DocumentResult } from '../../src/modules/ai/ai.schemas.js';
 
-/** CI da haqiqiy Claude API chaqirilmaydi: mock klient navbatdagi javobni (yoki xatoni) qaytaradi. */
-export class MockAiClient implements AiClient {
+/**
+ * CI da haqiqiy AI API chaqirilmaydi: mock transport navbatdagi javobni (yoki xatoni) qaytaradi.
+ * D-201: `LlmProvider` sifatida — Zod tekshiruvi haqiqiy provayderlardagi bilan bir xil yo'ldan o'tadi.
+ */
+export class MockAiClient implements LlmProvider {
+  readonly name = 'mock' as const;
   readonly model = 'mock-model';
+  private readonly provider = createLlmProvider({
+    name: 'mock',
+    model: this.model,
+    extract: (req) => this.extract(req),
+    chat: (req) => this.transportChat(req),
+  });
+
+  extractStructured<T>(req: ExtractStructuredRequest<T>) {
+    return this.provider.extractStructured(req);
+  }
+
+  async chat(req: AiChatRequest) {
+    return this.provider.chat(req);
+  }
   readonly calls: AiExtractRequest[] = [];
   private queue: (unknown | AiUpstreamError)[] = [];
 
@@ -27,6 +50,13 @@ export class MockAiClient implements AiClient {
     if (next instanceof AiUpstreamError) throw next;
     if (next === undefined) throw new AiUpstreamError('AI_UPSTREAM_ERROR');
     return { json: next, model: this.model, inputTokens: 1200, outputTokens: 300 };
+  }
+
+  /** Transport darajasidagi chat (navbatdagi qiymat — matn). */
+  private async transportChat(_req: AiChatRequest) {
+    const next = this.queue.shift();
+    if (next instanceof AiUpstreamError) throw next;
+    return { text: String(next ?? ''), model: this.model, inputTokens: 10, outputTokens: 5 };
   }
 }
 

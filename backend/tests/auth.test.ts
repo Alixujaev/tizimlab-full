@@ -3,6 +3,7 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { query } from '../src/config/database.js';
 import { sha256 } from '../src/modules/auth/tokens.js';
+import { MAX_GRACE_HASHES } from '../src/modules/auth/auth.service.js';
 import { TEST_ENV, testApp } from './helpers/app.js';
 import {
   createCompany,
@@ -265,6 +266,27 @@ describeDb('auth (TEST_DATABASE_URL)', () => {
         expect(await auditOf('refresh_grace_reuse', user.id)).toHaveLength(0);
         const after = await request(app).post(REFRESH).set('Cookie', refreshCookieOf(r1));
         expect(after.status).toBe(401);
+      });
+
+      it("D-202: eski xeshlar ro'yxati chegaralangan — chegaradan keyin oila bekor", async () => {
+        const { app } = testApp();
+        const user = await createUser({ role: 'chemist' });
+        const { refreshCookie, accessToken } = await loginAs(app, user);
+        expect((await request(app).post(REFRESH).set('Cookie', refreshCookie)).status).toBe(200);
+        // Har grace chaqiruvi ro'yxatga bittadan qo'shadi: 1 → MAX_GRACE_HASHES
+        for (let i = 1; i < MAX_GRACE_HASHES; i++) {
+          const r = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+          expect(r.status).toBe(200);
+        }
+        const { rows } = await query<{ n: number }>(
+          'SELECT cardinality(prev_token_hashes) AS n FROM sessions WHERE id = $1',
+          [sidOf(accessToken)],
+        );
+        expect(rows[0]!.n).toBe(MAX_GRACE_HASHES);
+        const over = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(over.status).toBe(401);
+        expect(over.body.error.code).toBe('TOKEN_REUSED');
+        expect(await sessionsOf(user.id)).toHaveLength(0);
       });
 
       it('grace 0 (env) — darhol reuse, avvalgi xatti-harakat', async () => {

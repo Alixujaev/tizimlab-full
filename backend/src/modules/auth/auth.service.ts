@@ -21,6 +21,12 @@ import { assertPasswordPolicy, getDummyHash, hashPassword, verifyPassword } from
 import { sha256, signAccessToken, signRefreshToken, verifyRefreshToken } from './tokens.js';
 
 const SESSIONS_TABLE = 'sessions';
+/**
+ * D-202: grace oynasidagi eski xeshlar ro'yxati chegarasi. Oddiy rotatsiya ro'yxatni 1 ta elementga tushiradi;
+ * grace qayta ishlatish uni o'stiradi (oyna vaqt bilan chegaralangan, lekin so'rovlar soni emas). Chegaraga
+ * yetgach keyingi eski token — oddiy reuse (butun sessiya bekor): bir necha soniyada shuncha takror — shubhali.
+ */
+export const MAX_GRACE_HASHES = 8;
 
 interface UserRow {
   id: string;
@@ -385,8 +391,16 @@ export async function refresh(
       `UPDATE sessions SET token_hash = $1, expires_at = $2, last_activity = now(),
               prev_token_hashes = prev_token_hashes || token_hash::text
        WHERE id = $3 AND $4 = ANY(prev_token_hashes)
-         AND rotated_at > now() - make_interval(secs => $5::int)`,
-      [nextHash, refreshExpiry(cfg), row.id, presentedHash, cfg.refreshReuseGraceSeconds],
+         AND rotated_at > now() - make_interval(secs => $5::int)
+         AND cardinality(prev_token_hashes) < $6`,
+      [
+        nextHash,
+        refreshExpiry(cfg),
+        row.id,
+        presentedHash,
+        cfg.refreshReuseGraceSeconds,
+        MAX_GRACE_HASHES,
+      ],
     );
     if (!updated.rowCount) {
       await revokeForReuse(row, meta);

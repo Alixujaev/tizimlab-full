@@ -1,6 +1,7 @@
 import { CHAT_ANSWER_JSON_SCHEMA } from '../oos/oos.schemas.js';
 import { AI_PEAKS_JSON_SCHEMA } from '../peaks/peaks.schemas.js';
-import type { AiClient, AiExtractRequest } from './ai.client.js';
+import type { AiExtractRequest } from './ai.client.js';
+import { createLlmProvider, type LlmProvider } from './ai.provider.js';
 import { DOCUMENT_JSON_SCHEMA, ND_JSON_SCHEMA } from './ai.schemas.js';
 
 /**
@@ -70,7 +71,9 @@ export function mockResponse(req: AiExtractRequest): unknown {
   if (schema === CHAT_ANSWER_JSON_SCHEMA) {
     const hasSource = /\[S1\]/.test(textOf(req));
     return {
-      internal_findings: hasSource ? [{ source_ref: 'S1', summary: 'E2E: ichki bazada o‘xshash holat topildi' }] : [],
+      internal_findings: hasSource
+        ? [{ source_ref: 'S1', summary: 'E2E: ichki bazada o‘xshash holat topildi' }]
+        : [],
       peak_assessment: null,
       probable_causes: [
         hasSource
@@ -87,11 +90,16 @@ export function mockResponse(req: AiExtractRequest): unknown {
   return {};
 }
 
-export function createMockAiClient(): AiClient {
-  return {
+/** D-201: mock ham `LlmProvider` ostida — Zod tekshiruvi haqiqiy provayderlardagi kabi ishlaydi. */
+export function createMockAiClient(): LlmProvider {
+  return createLlmProvider({
+    name: 'mock',
     model: 'e2e-mock',
     async extract(req) {
       return { json: mockResponse(req), model: 'e2e-mock', inputTokens: 10, outputTokens: 5 };
     },
-  };
+    async chat() {
+      return { text: 'E2E mock javob', model: 'e2e-mock', inputTokens: 10, outputTokens: 5 };
+    },
+  });
 }

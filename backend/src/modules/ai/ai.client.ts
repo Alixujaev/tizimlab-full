@@ -1,8 +1,9 @@
 import Anthropic from '@anthropic-ai/sdk';
+import type { ProviderTransport } from './ai.provider.js';
 
 /**
- * D-179: Claude API ustidagi YUPQA o'ram. Servis faqat `AiClient` interfeysini biladi — testlarda mock beriladi,
- * CI haqiqiy API'ga hech qachon murojaat qilmaydi. Model nomi env'dan (`AI_MODEL`), kodda qattiq yozilmagan.
+ * D-179/D-201: umumiy AI turlari va Anthropic (Claude) transporti. Servis faqat `LlmProvider` (ai.provider.ts)
+ * ni biladi; Anthropic — adapterlardan biri (default EMAS). CI haqiqiy API'ga hech qachon murojaat qilmaydi.
  *
  * - Fayl: rasm (`image` bloki) yoki PDF (`document` bloki), base64.
  * - Javob shakli: structured output (`output_config.format` = JSON schema) → keyin servisda Zod bilan qat'iy tekshiruv.
@@ -14,18 +15,37 @@ export type AiMediaType = 'image/jpeg' | 'image/png' | 'image/webp' | 'applicati
 
 /** P19: bir so'rovda bir nechta fayl/matn bo'lagi (chat ilovalari, OCR, retrieval konteksti). */
 export type AiContentPart =
-  | { kind: 'file'; mediaType: AiMediaType; data: Buffer }
-  | { kind: 'text'; text: string };
+  { kind: 'file'; mediaType: AiMediaType; data: Buffer } | { kind: 'text'; text: string };
 
+export interface AiFileInput {
+  mediaType: AiMediaType;
+  data: Buffer;
+}
+
+/** Transport darajasidagi so'rov: fayllar → qo'shimcha bo'laklar → instruction (shu tartibda). */
 export interface AiExtractRequest {
   system: string;
   instruction: string;
-  /** Asosiy fayl (P18 oqimi). */
-  file?: { mediaType: AiMediaType; data: Buffer };
+  files: AiFileInput[];
   /** Qo'shimcha bo'laklar — `instruction` dan oldin, berilgan tartibda. */
   parts?: AiContentPart[];
   jsonSchema: Record<string, unknown>;
   maxTokens?: number;
+}
+
+export interface AiChatRequest {
+  system: string;
+  messages: { role: 'user' | 'assistant'; content: string }[];
+  /** Kontekst (retrieval matni, ilova fayllari) — suhbatdan oldin. */
+  context?: AiContentPart[];
+  maxTokens?: number;
+}
+
+export interface AiChatResponse {
+  text: string;
+  model: string;
+  inputTokens: number | null;
+  outputTokens: number | null;
 }
 
 export interface AiExtractResponse {
@@ -33,11 +53,6 @@ export interface AiExtractResponse {
   model: string;
   inputTokens: number | null;
   outputTokens: number | null;
-}
-
-export interface AiClient {
-  readonly model: string;
-  extract(req: AiExtractRequest): Promise<AiExtractResponse>;
 }
 
 export type AiUpstreamCode =
@@ -48,13 +63,22 @@ export type AiUpstreamCode =
   | 'AI_BAD_REQUEST'
   | 'AI_REFUSED'
   | 'AI_TRUNCATED'
-  | 'AI_INVALID_JSON';
+  | 'AI_INVALID_JSON'
+  | 'AI_SCHEMA_MISMATCH';
 
 /** AI xizmati javob bermadi/yaroqsiz javob — servis buni `status=failed|rejected` ga aylantiradi (5xx emas). */
 export class AiUpstreamError extends Error {
+  /** false — qayta urinish foydasiz (masalan, kvota tugagan 429). */
+  retryable?: boolean;
   constructor(
     public readonly code: AiUpstreamCode,
     public readonly httpStatus?: number,
+    /** Javob kelgan, lekin yaroqsiz bo'lsa — sarflangan tokenlar (jurnal uchun). */
+    public readonly usage?: {
+      model: string;
+      inputTokens: number | null;
+      outputTokens: number | null;
+    },
   ) {
     super(code);
     this.name = 'AiUpstreamError';
@@ -128,7 +152,23 @@ export function parseMessageJson(message: Anthropic.Message): unknown {
   }
 }
 
-export function createAnthropicAiClient(opts: AnthropicClientOptions): AiClient {
+function userContent(
+  files: AiFileInput[],
+  parts: AiContentPart[] | undefined,
+  text: string,
+): Anthropic.ContentBlockParam[] {
+  return [
+    ...files.map(contentBlock),
+    ...(parts ?? []).map((p): Anthropic.ContentBlockParam =>
+      p.kind === 'file'
+        ? contentBlock({ mediaType: p.mediaType, data: p.data })
+        : { type: 'text', text: p.text },
+    ),
+    { type: 'text', text },
+  ];
+}
+
+export function createAnthropicTransport(opts: AnthropicClientOptions): ProviderTransport {
   const timeout = opts.timeoutMs ?? AI_DEFAULT_TIMEOUT_MS;
   const maxRetries = Math.max(0, Math.min(2, opts.maxRetries ?? 2));
   const sleep = opts.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
@@ -139,7 +179,24 @@ export function createAnthropicAiClient(opts: AnthropicClientOptions): AiClient 
   }
   const send = create;
 
+  async function call(
+    params: Anthropic.MessageCreateParamsNonStreaming,
+  ): Promise<Anthropic.Message> {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await send(params);
+      } catch (err) {
+        if (attempt < maxRetries && isRetryable(err)) {
+          await sleep(retryDelayMs(err, attempt));
+          continue;
+        }
+        throw mapAnthropicError(err);
+      }
+    }
+  }
+
   return {
+    name: 'anthropic',
     model: opts.model,
     async extract(req) {
       const params: Anthropic.MessageCreateParamsNonStreaming = {
@@ -147,38 +204,41 @@ export function createAnthropicAiClient(opts: AnthropicClientOptions): AiClient 
         max_tokens: req.maxTokens ?? MAX_TOKENS,
         system: req.system,
         output_config: { format: { type: 'json_schema', schema: req.jsonSchema } },
-        messages: [
-          {
-            role: 'user',
-            content: [
-              ...(req.file ? [contentBlock(req.file)] : []),
-              ...(req.parts ?? []).map((p): Anthropic.ContentBlockParam =>
-                p.kind === 'file'
-                  ? contentBlock({ mediaType: p.mediaType, data: p.data })
-                  : { type: 'text', text: p.text },
-              ),
-              { type: 'text', text: req.instruction },
-            ],
-          },
-        ],
+        messages: [{ role: 'user', content: userContent(req.files, req.parts, req.instruction) }],
       };
-      for (let attempt = 0; ; attempt++) {
-        try {
-          const message = await send(params);
-          return {
-            json: parseMessageJson(message),
-            model: message.model ?? opts.model,
-            inputTokens: message.usage?.input_tokens ?? null,
-            outputTokens: message.usage?.output_tokens ?? null,
-          };
-        } catch (err) {
-          if (attempt < maxRetries && isRetryable(err)) {
-            await sleep(retryDelayMs(err, attempt));
-            continue;
-          }
-          throw mapAnthropicError(err);
-        }
-      }
+      const message = await call(params);
+      return {
+        json: parseMessageJson(message),
+        model: message.model ?? opts.model,
+        inputTokens: message.usage?.input_tokens ?? null,
+        outputTokens: message.usage?.output_tokens ?? null,
+      };
+    },
+    async chat(req) {
+      const [first, ...rest] = req.messages;
+      const messages: Anthropic.MessageParam[] = first
+        ? [
+            { role: first.role, content: userContent([], req.context, first.content) },
+            ...rest.map((m): Anthropic.MessageParam => ({ role: m.role, content: m.content })),
+          ]
+        : [];
+      const message = await call({
+        model: opts.model,
+        max_tokens: req.maxTokens ?? MAX_TOKENS,
+        system: req.system,
+        messages,
+      });
+      if (message.stop_reason === 'refusal') throw new AiUpstreamError('AI_REFUSED');
+      if (message.stop_reason === 'max_tokens') throw new AiUpstreamError('AI_TRUNCATED');
+      return {
+        text: message.content
+          .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+          .map((b) => b.text)
+          .join(''),
+        model: message.model ?? opts.model,
+        inputTokens: message.usage?.input_tokens ?? null,
+        outputTokens: message.usage?.output_tokens ?? null,
+      };
     },
   };
 }

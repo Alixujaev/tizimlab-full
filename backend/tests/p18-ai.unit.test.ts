@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it, vi } from 'vitest';
 import {
   AiUpstreamError,
-  createAnthropicAiClient,
+  createAnthropicTransport,
   mapAnthropicError,
   parseMessageJson,
 } from '../src/modules/ai/ai.client.js';
@@ -237,7 +237,7 @@ function message(over: Partial<Anthropic.Message>): Anthropic.Message {
   } as unknown as Anthropic.Message;
 }
 
-describe('Claude klient o‘rami (haqiqiy API chaqirilmaydi)', () => {
+describe('Anthropic transporti (haqiqiy API chaqirilmaydi)', () => {
   const headers = new Headers();
   const rateLimit = () => new Anthropic.RateLimitError(429, undefined, 'rate', headers);
   const server = () => new Anthropic.InternalServerError(500, undefined, 'boom', headers);
@@ -246,11 +246,11 @@ describe('Claude klient o‘rami (haqiqiy API chaqirilmaydi)', () => {
 
   it('so‘rov: model env’dan, structured output JSON schema, PDF document bloki', async () => {
     const create = vi.fn(async (_params: Anthropic.MessageCreateParamsNonStreaming) => message({}));
-    const c = createAnthropicAiClient({ apiKey: 'k', model: 'env-model', create, sleep });
+    const c = createAnthropicTransport({ apiKey: 'k', model: 'env-model', create, sleep });
     const res = await c.extract({
       system: 'sys',
       instruction: 'go',
-      file: { mediaType: 'application/pdf', data: Buffer.from('%PDF-1.7') },
+      files: [{ mediaType: 'application/pdf', data: Buffer.from('%PDF-1.7') }],
       jsonSchema: DOCUMENT_JSON_SCHEMA,
     });
     const params = create.mock.calls[0]![0] as unknown as Anthropic.MessageCreateParamsNonStreaming;
@@ -269,11 +269,11 @@ describe('Claude klient o‘rami (haqiqiy API chaqirilmaydi)', () => {
 
   it('rasm — image bloki (webp)', async () => {
     const create = vi.fn(async (_params: Anthropic.MessageCreateParamsNonStreaming) => message({}));
-    const c = createAnthropicAiClient({ apiKey: 'k', model: 'm', create, sleep });
+    const c = createAnthropicTransport({ apiKey: 'k', model: 'm', create, sleep });
     await c.extract({
       system: 's',
       instruction: 'i',
-      file: { mediaType: 'image/webp', data: Buffer.from('x') },
+      files: [{ mediaType: 'image/webp', data: Buffer.from('x') }],
       jsonSchema: {},
     });
     const content = (
@@ -291,12 +291,12 @@ describe('Claude klient o‘rami (haqiqiy API chaqirilmaydi)', () => {
       .mockRejectedValueOnce(rateLimit())
       .mockRejectedValueOnce(server())
       .mockResolvedValueOnce(message({}));
-    const c = createAnthropicAiClient({ apiKey: 'k', model: 'm', create, sleep });
+    const c = createAnthropicTransport({ apiKey: 'k', model: 'm', create, sleep });
     await expect(
       c.extract({
         system: '',
         instruction: '',
-        file: { mediaType: 'image/png', data: Buffer.alloc(1) },
+        files: [{ mediaType: 'image/png', data: Buffer.alloc(1) }],
         jsonSchema: {},
       }),
     ).resolves.toBeTruthy();
@@ -305,30 +305,30 @@ describe('Claude klient o‘rami (haqiqiy API chaqirilmaydi)', () => {
 
   it('urinishlar tugasa — o‘z kodimiz; 400 qayta urinilmaydi', async () => {
     const create = vi.fn().mockRejectedValue(server());
-    const c = createAnthropicAiClient({ apiKey: 'k', model: 'm', create, sleep });
+    const c = createAnthropicTransport({ apiKey: 'k', model: 'm', create, sleep });
     const req = {
       system: '',
       instruction: '',
-      file: { mediaType: 'image/png' as const, data: Buffer.alloc(1) },
+      files: [{ mediaType: 'image/png' as const, data: Buffer.alloc(1) }],
       jsonSchema: {},
     };
     await expect(c.extract(req)).rejects.toMatchObject({ code: 'AI_UPSTREAM_ERROR' });
     expect(create).toHaveBeenCalledTimes(3);
     const create400 = vi.fn().mockRejectedValue(bad());
     await expect(
-      createAnthropicAiClient({ apiKey: 'k', model: 'm', create: create400, sleep }).extract(req),
+      createAnthropicTransport({ apiKey: 'k', model: 'm', create: create400, sleep }).extract(req),
     ).rejects.toMatchObject({ code: 'AI_BAD_REQUEST' });
     expect(create400).toHaveBeenCalledTimes(1);
   });
 
   it('timeout qayta urinilmaydi → AI_TIMEOUT', async () => {
     const create = vi.fn().mockRejectedValue(new Anthropic.APIConnectionTimeoutError());
-    const c = createAnthropicAiClient({ apiKey: 'k', model: 'm', create, sleep });
+    const c = createAnthropicTransport({ apiKey: 'k', model: 'm', create, sleep });
     await expect(
       c.extract({
         system: '',
         instruction: '',
-        file: { mediaType: 'image/png', data: Buffer.alloc(1) },
+        files: [{ mediaType: 'image/png', data: Buffer.alloc(1) }],
         jsonSchema: {},
       }),
     ).rejects.toMatchObject({ code: 'AI_TIMEOUT' });
@@ -424,12 +424,20 @@ describe('env va konfiguratsiya (D-179)', () => {
   it('AI_ENABLED=true, lekin kalit yoki model yo‘q — klient yo‘q (ishga tushish yiqilmaydi)', () => {
     expect(aiClientFromEnv(parseEnv({ ...base, AI_ENABLED: 'true', AI_MODEL: 'm' }))).toBeNull();
     expect(
-      aiClientFromEnv(parseEnv({ ...base, AI_ENABLED: 'true', ANTHROPIC_API_KEY: 'k' })),
+      aiClientFromEnv(
+        parseEnv({ ...base, AI_ENABLED: 'true', AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: 'k' }),
+      ),
     ).toBeNull();
   });
   it('uchalasi bo‘lsa — klient, model env’dan', () => {
     const c = aiClientFromEnv(
-      parseEnv({ ...base, AI_ENABLED: 'true', ANTHROPIC_API_KEY: 'k', AI_MODEL: 'some-model' }),
+      parseEnv({
+        ...base,
+        AI_ENABLED: 'true',
+        AI_PROVIDER: 'anthropic',
+        ANTHROPIC_API_KEY: 'k',
+        AI_MODEL: 'some-model',
+      }),
     );
     expect(c?.model).toBe('some-model');
   });

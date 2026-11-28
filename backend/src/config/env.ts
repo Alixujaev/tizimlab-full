@@ -66,6 +66,10 @@ export const envSchema = z
       .enum(['true', 'false'])
       .default('false')
       .transform((v) => v === 'true'),
+    // D-201: provayder tanlovi; kalit faqat tanlangan provayder uchun kerak
+    AI_PROVIDER: z.enum(['openai', 'gemini', 'anthropic', 'mock']).default('openai'),
+    OPENAI_API_KEY: optionalString,
+    GEMINI_API_KEY: optionalString,
     ANTHROPIC_API_KEY: optionalString,
     AI_MODEL: optionalString,
     AI_MAX_FILE_MB: z.coerce.number().int().min(1).max(30).default(10),
@@ -105,6 +109,7 @@ export const envSchema = z
       }
     };
     testOnly('AI_MOCK', env.AI_MOCK);
+    testOnly('AI_PROVIDER', env.AI_PROVIDER === 'mock');
     testOnly('EMBEDDING_PROVIDER', env.EMBEDDING_PROVIDER === 'mock');
     testOnly('STORAGE_DRIVER', env.STORAGE_DRIVER === 'disk');
     if (env.STORAGE_DRIVER === 'disk')

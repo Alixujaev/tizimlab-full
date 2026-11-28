@@ -342,7 +342,7 @@ export async function extractPeaksWithAi(
       parts,
       jsonSchema: AI_PEAKS_JSON_SCHEMA,
     },
-    (json) => aiPeaksResultSchema.safeParse(json),
+    aiPeaksResultSchema,
   );
   const quality = outcome.data?.image_quality ?? null;
   let status = outcome.status;
