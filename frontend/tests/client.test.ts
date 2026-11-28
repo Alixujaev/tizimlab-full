@@ -1,6 +1,12 @@
 import MockAdapter from 'axios-mock-adapter';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { apiClient, refreshClient, setAuthFailureHandler, toApiError } from '@/api/client';
+import {
+  apiClient,
+  refreshAccessToken,
+  refreshClient,
+  setAuthFailureHandler,
+  toApiError,
+} from '@/api/client';
 import { useAuthStore } from '@/store/authStore';
 import type { User } from '@/types';
 
@@ -119,5 +125,83 @@ describe('apiClient', () => {
     expect(toApiError(new Error('oddiy xato'))).toBeNull();
     expect(toApiError(null)).toBeNull();
     expect(toApiError({ response: { data: {} } })).toBeNull();
+  });
+});
+
+describe('refreshAccessToken (D-200)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    window.sessionStorage.clear();
+  });
+
+  it("parallel ikki refreshAccessToken() — bitta so'rov, navigator.locks orqali", async () => {
+    const lockNames: string[] = [];
+    vi.stubGlobal('navigator', {
+      ...navigator,
+      locks: {
+        request: (name: string, cb: () => Promise<unknown>) => {
+          lockNames.push(name);
+          return cb();
+        },
+      },
+    });
+    let calls = 0;
+    refresh.onPost('/auth/refresh').reply(async () => {
+      calls++;
+      await new Promise((r) => setTimeout(r, 20));
+      return [200, { data: { accessToken: 'new' } }];
+    });
+    const [a, b] = await Promise.all([refreshAccessToken(), refreshAccessToken()]);
+    expect([a, b]).toEqual(['new', 'new']);
+    expect(calls).toBe(1);
+    expect(lockNames).toEqual(['tizimlab-auth-refresh']);
+    // Yakunlangach "yo'lda" belgisi qolmaydi
+    expect(window.sessionStorage.getItem('auth.refreshPending')).toBeNull();
+  });
+
+  it("navigator.locks yo'q brauzerda (fallback) ham bitta so'rov", async () => {
+    vi.stubGlobal('navigator', { ...navigator, locks: undefined });
+    let calls = 0;
+    refresh.onPost('/auth/refresh').reply(() => {
+      calls++;
+      return [200, { data: { accessToken: 'new' } }];
+    });
+    await Promise.all([refreshAccessToken(), refreshAccessToken()]);
+    expect(calls).toBe(1);
+  });
+
+  it("oldingi yuklanishda refresh yo'lda qolgan — xato bo'lsa bir marta qayta urinadi", async () => {
+    window.sessionStorage.setItem('auth.refreshPending', String(Date.now()));
+    vi.resetModules();
+    const fresh = await import('@/api/client');
+    const store = (await import('@/store/authStore')).useAuthStore;
+    const mock = new MockAdapter(fresh.refreshClient);
+    let calls = 0;
+    mock.onPost('/auth/refresh').reply(() => {
+      calls++;
+      return calls === 1 ? [503, {}] : [200, { data: { accessToken: 'retried' } }];
+    });
+    expect(await fresh.refreshAccessToken()).toBe('retried');
+    expect(store.getState().accessToken).toBe('retried');
+    expect(calls).toBe(2);
+
+    // Qayta urinish faqat bir marta
+    mock.onPost('/auth/refresh').reply(() => {
+      calls++;
+      return [503, {}];
+    });
+    await expect(fresh.refreshAccessToken()).rejects.toBeTruthy();
+    expect(calls).toBe(3);
+    mock.restore();
+  });
+
+  it("belgisiz yuklanishda xato — qayta urinish yo'q", async () => {
+    let calls = 0;
+    refresh.onPost('/auth/refresh').reply(() => {
+      calls++;
+      return [503, {}];
+    });
+    await expect(refreshAccessToken()).rejects.toBeTruthy();
+    expect(calls).toBe(1);
   });
 });

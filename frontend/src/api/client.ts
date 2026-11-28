@@ -31,20 +31,74 @@ export const apiClient: AxiosInstance = axios.create({
 
 let refreshPromise: Promise<string> | null = null;
 
+const REFRESH_LOCK = 'tizimlab-auth-refresh';
+// D-200: "refresh yo'lda" belgisi — faqat vaqt (sir emas). Reload paytida javob yo'qolgan bo'lsa,
+// keyingi yuklanishda bir marta qayta urinish uchun. sessionStorage — tabga xos, reload'dan omon qoladi.
+const PENDING_KEY = 'auth.refreshPending';
+const PENDING_TTL_MS = 30_000;
+
+function readPendingMarker(): boolean {
+  try {
+    const at = Number(window.sessionStorage.getItem(PENDING_KEY));
+    return Number.isFinite(at) && at > 0 && Date.now() - at < PENDING_TTL_MS;
+  } catch {
+    return false;
+  }
+}
+
+function setPendingMarker(on: boolean): void {
+  try {
+    if (on) window.sessionStorage.setItem(PENDING_KEY, String(Date.now()));
+    else window.sessionStorage.removeItem(PENDING_KEY);
+  } catch {
+    // storage yo'q/yopiq — belgisiz ishlaymiz
+  }
+}
+
+// Oldingi yuklanishda boshlangan refresh natijasi yo'qolganmi (modul bir marta, sahifa yuklanganda o'qiladi)
+let lostRefreshRetryAvailable = readPendingMarker();
+
+/** Tablar orasida bitta refresh: `navigator.locks` bo'lsa — eksklyuziv lock, yo'q bo'lsa — to'g'ridan-to'g'ri. */
+function withRefreshLock<T>(fn: () => Promise<T>): Promise<T> {
+  const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined;
+  if (locks && typeof locks.request === 'function') {
+    return locks.request(REFRESH_LOCK, () => fn());
+  }
+  return fn();
+}
+
+async function postRefresh(): Promise<string> {
+  setPendingMarker(true);
+  try {
+    const { data } = await refreshClient.post<ApiResponse<RefreshPayload>>(REFRESH_PATH);
+    return data.data.accessToken;
+  } finally {
+    setPendingMarker(false);
+  }
+}
+
+async function doRefresh(): Promise<string> {
+  let token: string;
+  try {
+    token = await withRefreshLock(postRefresh);
+  } catch (err) {
+    if (!lostRefreshRetryAvailable) throw err;
+    lostRefreshRetryAvailable = false;
+    token = await withRefreshLock(postRefresh);
+  }
+  lostRefreshRetryAvailable = false;
+  useAuthStore.getState().setAccessToken(token);
+  return token;
+}
+
 /**
- * Single-flight refresh: bir vaqtda faqat BITTA `POST /auth/refresh`;
- * parallel 401'lar shu promise'ni kutadi.
+ * Single-flight refresh (D-200): tab ichida bir vaqtda faqat BITTA `POST /auth/refresh`
+ * (parallel 401'lar shu promise'ni kutadi), tablar orasida — `navigator.locks` bilan navbat.
  */
 export function refreshAccessToken(): Promise<string> {
-  refreshPromise ??= refreshClient
-    .post<ApiResponse<RefreshPayload>>(REFRESH_PATH)
-    .then(({ data }) => {
-      useAuthStore.getState().setAccessToken(data.data.accessToken);
-      return data.data.accessToken;
-    })
-    .finally(() => {
-      refreshPromise = null;
-    });
+  refreshPromise ??= doRefresh().finally(() => {
+    refreshPromise = null;
+  });
   return refreshPromise;
 }
 

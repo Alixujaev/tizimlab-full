@@ -16,6 +16,7 @@ export type AuthAuditAction =
   | 'login_failed'
   | 'logout'
   | 'token_refresh_reuse'
+  | 'refresh_grace_reuse'
   | 'session_revoked';
 
 export interface AuditEntry {

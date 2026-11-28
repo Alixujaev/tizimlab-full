@@ -1111,6 +1111,7 @@
       "logout": "Выход",
       "session_revoked": "Сессия отозвана",
       "token_refresh_reuse": "Повторное использование токена",
+      "refresh_grace_reuse": "Повторный refresh в льготном окне",
       "status_change": "Смена статуса",
       "assign": "Назначение",
       "sign": "Подпись",

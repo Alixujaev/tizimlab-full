@@ -17,12 +17,7 @@ import {
   type RequestMeta,
   type Role,
 } from './auth.types.js';
-import {
-  assertPasswordPolicy,
-  getDummyHash,
-  hashPassword,
-  verifyPassword,
-} from './password.js';
+import { assertPasswordPolicy, getDummyHash, hashPassword, verifyPassword } from './password.js';
 import { sha256, signAccessToken, signRefreshToken, verifyRefreshToken } from './tokens.js';
 
 const SESSIONS_TABLE = 'sessions';
@@ -236,6 +231,18 @@ const SESSION_STATE_SELECT = `
   LEFT JOIN companies c ON c.id = u.company_id
   WHERE s.id = $1 AND s.user_id = $2`;
 
+interface RefreshStateRow extends SessionStateRow {
+  prev_token_hashes: string[];
+  grace_open: boolean;
+}
+
+// D-200: refresh uchun qo'shimcha — oxirgi rotatsiya grace oynasi ochiqmi (DB soati bilan)
+const REFRESH_STATE_SELECT = SESSION_STATE_SELECT.replace(
+  'SELECT s.id, s.user_id, s.token_hash,',
+  `SELECT s.id, s.user_id, s.token_hash, s.prev_token_hashes,
+         (s.rotated_at > now() - make_interval(secs => $5::int)) IS TRUE AS grace_open,`,
+);
+
 type RevokeReason = 'idle' | 'expired' | 'inactive' | 'session_limit';
 
 function revokeReason(row: SessionStateRow): RevokeReason | null {
@@ -308,35 +315,47 @@ export async function touchSession(
   }
 }
 
-/** D-88: rotatsiya; almashtirilgan (eski) token qayta kelsa — sessiya bekor, TOKEN_REUSED. */
+/** Reuse aniqlandi — butun oila (sessiya) bekor qilinadi (D-88). */
+async function revokeForReuse(row: RefreshStateRow, meta: RequestMeta): Promise<void> {
+  await withTransaction(async (client) => {
+    await client.query('DELETE FROM sessions WHERE id = $1', [row.id]);
+    await writeAudit(client, {
+      tableName: SESSIONS_TABLE,
+      recordId: row.id,
+      action: 'token_refresh_reuse',
+      userId: row.user_id,
+      companyId: row.company_id,
+      ...auditMeta(meta),
+    });
+  });
+}
+
+/**
+ * D-88: rotatsiya; almashtirilgan (eski) token qayta kelsa — sessiya bekor, TOKEN_REUSED.
+ * D-200: istisno — oxirgi rotatsiyadan `refreshReuseGraceSeconds` ichida o'sha oiladagi eski token
+ * (javobi yo'qolgan refresh, sahifa reload) — sessiya saqlanadi, shu sessiyada yangi juftlik beriladi.
+ */
 export async function refresh(
   cfg: AuthConfig,
   refreshToken: string,
   meta: RequestMeta,
 ): Promise<IssuedTokens> {
   const claims = verifyRefreshToken(refreshToken, cfg.refreshSecret);
-  const { rows } = await query<SessionStateRow>(SESSION_STATE_SELECT, [
+  const { rows } = await query<RefreshStateRow>(REFRESH_STATE_SELECT, [
     claims.sid,
     claims.sub,
     cfg.idleMinutes,
     ACTIVITY_WRITE_INTERVAL_SECONDS,
+    cfg.refreshReuseGraceSeconds,
   ]);
   const row = rows[0];
   if (!row) throw new SessionExpiredError();
 
   const presentedHash = sha256(refreshToken);
-  if (row.token_hash !== presentedHash) {
-    await withTransaction(async (client) => {
-      await client.query('DELETE FROM sessions WHERE id = $1', [row.id]);
-      await writeAudit(client, {
-        tableName: SESSIONS_TABLE,
-        recordId: row.id,
-        action: 'token_refresh_reuse',
-        userId: row.user_id,
-        companyId: row.company_id,
-        ...auditMeta(meta),
-      });
-    });
+  const isCurrent = row.token_hash === presentedHash;
+  const inGrace = !isCurrent && row.grace_open && row.prev_token_hashes.includes(presentedHash);
+  if (!isCurrent && !inGrace) {
+    await revokeForReuse(row, meta);
     throw new TokenReusedError();
   }
   const reason = revokeReason(row);
@@ -346,13 +365,42 @@ export async function refresh(
   }
 
   const nextRefresh = signRefreshToken({ sub: row.user_id, sid: row.id }, cfg);
-  // Optimistik tekshiruv: parallel refresh token'ni allaqachon almashtirgan bo'lsa — qayta ishlatish deb qaraladi
-  const updated = await query(
-    `UPDATE sessions SET token_hash = $1, expires_at = $2, last_activity = now()
-     WHERE id = $3 AND token_hash = $4`,
-    [sha256(nextRefresh), refreshExpiry(cfg), row.id, presentedHash],
-  );
-  if (!updated.rowCount) throw new TokenReusedError();
+  const nextHash = sha256(nextRefresh);
+  let rotated = false;
+  if (isCurrent) {
+    // Optimistik tekshiruv: parallel refresh token'ni allaqachon almashtirgan bo'lsa — grace yo'liga o'tiladi
+    const updated = await query(
+      `UPDATE sessions SET token_hash = $1, expires_at = $2, last_activity = now(),
+              rotated_at = now(), prev_token_hashes = ARRAY[token_hash]::text[]
+       WHERE id = $3 AND token_hash = $4`,
+      [nextHash, refreshExpiry(cfg), row.id, presentedHash],
+    );
+    rotated = Boolean(updated.rowCount);
+  }
+  if (!rotated) {
+    // D-200: grace — o'sha sessiya (oila) ichida yangi juftlik; yangi sessiya yaratilmaydi (D-89).
+    // `rotated_at` o'zgarmaydi: oyna qayta ishlatish bilan uzaymaydi. Joriy token ham "eski"lar ro'yxatiga
+    // qo'shiladi — uning javobi ham yo'lda bo'lishi mumkin (parallel so'rovlar).
+    const updated = await query(
+      `UPDATE sessions SET token_hash = $1, expires_at = $2, last_activity = now(),
+              prev_token_hashes = prev_token_hashes || token_hash::text
+       WHERE id = $3 AND $4 = ANY(prev_token_hashes)
+         AND rotated_at > now() - make_interval(secs => $5::int)`,
+      [nextHash, refreshExpiry(cfg), row.id, presentedHash, cfg.refreshReuseGraceSeconds],
+    );
+    if (!updated.rowCount) {
+      await revokeForReuse(row, meta);
+      throw new TokenReusedError();
+    }
+    await writeAudit(undefined, {
+      tableName: SESSIONS_TABLE,
+      recordId: row.id,
+      action: 'refresh_grace_reuse',
+      userId: row.user_id,
+      companyId: row.company_id,
+      ...auditMeta(meta),
+    });
+  }
 
   return {
     accessToken: issueAccessToken(
@@ -474,10 +522,9 @@ export async function updateProfile(
       ...auditMeta(meta),
     });
 
-    const { rows: updatedRows } = await client.query<UserRow>(
-      `${USER_SELECT} WHERE u.id = $1`,
-      [userId],
-    );
+    const { rows: updatedRows } = await client.query<UserRow>(`${USER_SELECT} WHERE u.id = $1`, [
+      userId,
+    ]);
     return toMe(updatedRows[0]!);
   });
 
