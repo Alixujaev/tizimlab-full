@@ -17,6 +17,8 @@ export interface AuthConfig {
   accessTtlMinutes: number;
   refreshTtlDays: number;
   idleMinutes: number;
+  /** D-200: almashtirilgan refresh token shu soniya ichida qayta kelsa — reuse emas, grace. */
+  refreshReuseGraceSeconds: number;
   /** Refresh cookie `Secure` atributi — faqat production'da (D-88). */
   secureCookies: boolean;
 }
@@ -29,7 +31,10 @@ export type AuthEnv = Pick<
   | 'JWT_ACCESS_TTL_MINUTES'
   | 'JWT_REFRESH_TTL_DAYS'
   | 'SESSION_IDLE_TIMEOUT_MINUTES'
->;
+> &
+  Partial<Pick<Env, 'AUTH_REFRESH_REUSE_GRACE_SECONDS'>>;
+
+export const DEFAULT_REFRESH_REUSE_GRACE_SECONDS = 10;
 
 export function authConfigFromEnv(env: AuthEnv): AuthConfig {
   return {
@@ -38,6 +43,8 @@ export function authConfigFromEnv(env: AuthEnv): AuthConfig {
     accessTtlMinutes: env.JWT_ACCESS_TTL_MINUTES,
     refreshTtlDays: env.JWT_REFRESH_TTL_DAYS,
     idleMinutes: env.SESSION_IDLE_TIMEOUT_MINUTES,
+    refreshReuseGraceSeconds:
+      env.AUTH_REFRESH_REUSE_GRACE_SECONDS ?? DEFAULT_REFRESH_REUSE_GRACE_SECONDS,
     secureCookies: env.NODE_ENV === 'production',
   };
 }

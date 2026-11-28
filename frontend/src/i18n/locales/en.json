@@ -1111,6 +1111,7 @@
       "logout": "Logout",
       "session_revoked": "Session Revoked",
       "token_refresh_reuse": "Token Refresh Reuse",
+      "refresh_grace_reuse": "Refresh Grace Reuse",
       "status_change": "Status Change",
       "assign": "Assign",
       "sign": "Sign",

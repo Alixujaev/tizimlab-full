@@ -118,6 +118,7 @@ describeDb('001_core baseline migratsiyasi', () => {
       expect.objectContaining({ version: 28, name: 'rag', state: 'applied' }),
       expect.objectContaining({ version: 29, name: 'peak_results', state: 'applied' }),
       expect.objectContaining({ version: 30, name: 'oos', state: 'applied' }),
+      expect.objectContaining({ version: 31, name: 'session_refresh_grace', state: 'applied' }),
     ]);
   });
 

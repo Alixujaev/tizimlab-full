@@ -1111,6 +1111,7 @@
       "logout": "Chiqish",
       "session_revoked": "Sessiya bekor qilindi",
       "token_refresh_reuse": "Token qayta ishlatildi",
+      "refresh_grace_reuse": "Refresh token grace ichida qayta ishlatildi",
       "status_change": "Holat o'zgardi",
       "assign": "Biriktirish",
       "sign": "Imzolash",

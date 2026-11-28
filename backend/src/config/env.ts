@@ -56,6 +56,8 @@ export const envSchema = z
     // Token muddatlari (spec §15: access 30 daqiqa, refresh 7 kun) — env nomi spec'da yo'q, biz qo'shdik
     JWT_ACCESS_TTL_MINUTES: z.coerce.number().int().positive().default(30),
     JWT_REFRESH_TTL_DAYS: z.coerce.number().int().positive().default(7),
+    // D-200: almashtirilgan refresh token shu soniya ichida qayta kelsa — sessiya bekor qilinmaydi
+    AUTH_REFRESH_REUSE_GRACE_SECONDS: z.coerce.number().int().min(0).max(120).default(10),
     // Swagger HTTP Basic (D-93) — spec'da yo'q, biz qo'shdik; ikkalasi berilmasa /docs o'chiq
     SWAGGER_USER: optionalString,
     SWAGGER_PASSWORD: optionalString,
@@ -95,13 +97,18 @@ export const envSchema = z
     // D-198: test-faqat rejimlar production/development'da TAQIQLANGAN
     const testOnly = (key: keyof typeof env, active: boolean) => {
       if (active && env.NODE_ENV !== 'test') {
-        ctx.addIssue({ code: 'custom', path: [key], message: 'faqat NODE_ENV=test da ruxsat etiladi' });
+        ctx.addIssue({
+          code: 'custom',
+          path: [key],
+          message: 'faqat NODE_ENV=test da ruxsat etiladi',
+        });
       }
     };
     testOnly('AI_MOCK', env.AI_MOCK);
     testOnly('EMBEDDING_PROVIDER', env.EMBEDDING_PROVIDER === 'mock');
     testOnly('STORAGE_DRIVER', env.STORAGE_DRIVER === 'disk');
-    if (env.STORAGE_DRIVER === 'disk') require('STORAGE_DISK_DIR', 'STORAGE_DRIVER=disk da majburiy');
+    if (env.STORAGE_DRIVER === 'disk')
+      require('STORAGE_DISK_DIR', 'STORAGE_DRIVER=disk da majburiy');
     if (env.SWAGGER_USER && !env.SWAGGER_PASSWORD)
       require('SWAGGER_PASSWORD', 'SWAGGER_USER berilganda majburiy');
     if (env.SWAGGER_PASSWORD && !env.SWAGGER_USER)

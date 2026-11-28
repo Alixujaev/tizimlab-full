@@ -209,6 +209,75 @@ describeDb('auth (TEST_DATABASE_URL)', () => {
       expect(after.body.error.code).toBe('SESSION_EXPIRED');
     });
 
+    describe('D-200: grace oynasi', () => {
+      const sidOf = (t: string) => (jwt.decode(t) as jwt.JwtPayload).sid as string;
+
+      it("grace ichida eski token: sessiya tirik, yangi juftlik, sessiya soni oshmaydi, audit 'refresh_grace_reuse'", async () => {
+        const { app } = testApp();
+        const user = await createUser({ role: 'chemist' });
+        const { refreshCookie, accessToken } = await loginAs(app, user);
+        await loginAs(app, user); // ikkinchi sessiya — soni o'zgarmasligini tekshirish uchun
+        const before = (await sessionsOf(user.id)).length;
+
+        const r1 = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(r1.status).toBe(200);
+        // r1 javobi "yo'qoldi" (reload) — brauzer eski cookie bilan qayta so'raydi
+        const again = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(again.status).toBe(200);
+        expect(sidOf(again.body.data.accessToken)).toBe(sidOf(accessToken));
+        const graceCookie = refreshCookieOf(again);
+        expect(graceCookie).not.toBe(refreshCookieOf(r1));
+
+        expect(await sessionsOf(user.id)).toHaveLength(before);
+        expect(await auditOf('token_refresh_reuse', user.id)).toHaveLength(0);
+        const grace = await auditOf('refresh_grace_reuse', user.id);
+        expect(grace).toHaveLength(1);
+        expect(grace[0]).toMatchObject({ record_id: sidOf(accessToken) });
+
+        // Grace'dan olingan token oddiy rotatsiyada ishlaydi; parallel javob (r1) tokeni ham grace ichida
+        const late = await request(app).post(REFRESH).set('Cookie', refreshCookieOf(r1));
+        expect(late.status).toBe(200);
+        const next = await request(app).post(REFRESH).set('Cookie', refreshCookieOf(late));
+        expect(next.status).toBe(200);
+        expect(await sessionsOf(user.id)).toHaveLength(before);
+        const me = await request(app)
+          .get(ME)
+          .set('Authorization', `Bearer ${next.body.data.accessToken}`);
+        expect(me.status).toBe(200);
+      });
+
+      it("grace'dan keyin eski token — butun oila bekor, TOKEN_REUSED", async () => {
+        const { app } = testApp();
+        const user = await createUser({ role: 'chemist' });
+        const { refreshCookie, accessToken } = await loginAs(app, user);
+        const r1 = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(r1.status).toBe(200);
+        await query(
+          `UPDATE sessions SET rotated_at = now() - interval '11 seconds' WHERE id = $1`,
+          [sidOf(accessToken)],
+        );
+
+        const reuse = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(reuse.status).toBe(401);
+        expect(reuse.body.error.code).toBe('TOKEN_REUSED');
+        expect(await sessionsOf(user.id)).toHaveLength(0);
+        expect(await auditOf('token_refresh_reuse', user.id)).toHaveLength(1);
+        expect(await auditOf('refresh_grace_reuse', user.id)).toHaveLength(0);
+        const after = await request(app).post(REFRESH).set('Cookie', refreshCookieOf(r1));
+        expect(after.status).toBe(401);
+      });
+
+      it('grace 0 (env) — darhol reuse, avvalgi xatti-harakat', async () => {
+        const { app } = testApp({ env: { AUTH_REFRESH_REUSE_GRACE_SECONDS: 0 } });
+        const user = await createUser({ role: 'chemist' });
+        const { refreshCookie } = await loginAs(app, user);
+        expect((await request(app).post(REFRESH).set('Cookie', refreshCookie)).status).toBe(200);
+        const reuse = await request(app).post(REFRESH).set('Cookie', refreshCookie);
+        expect(reuse.body.error.code).toBe('TOKEN_REUSED');
+        expect(await sessionsOf(user.id)).toHaveLength(0);
+      });
+    });
+
     it("cookie yo'q yoki soxta — 401", async () => {
       const { app } = testApp();
       expect((await request(app).post(REFRESH)).status).toBe(401);
