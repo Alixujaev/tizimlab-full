@@ -213,7 +213,7 @@ describeDb('AI yordamchi (API)', () => {
           quantity: { value: '25 kg', confidence: 'high' },
         },
       });
-      expect(ai.calls[0]!.file?.mediaType).toBe('application/pdf');
+      expect(ai.calls[0]!.files[0]?.mediaType).toBe('application/pdf');
       const after = await query<{ n: string }>(
         `SELECT count(*)::text AS n FROM samples WHERE company_id = $1`,
         [a.id],

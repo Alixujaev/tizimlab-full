@@ -412,7 +412,7 @@ async function ocrText(
       jsonSchema: OCR_SCHEMA as unknown as Record<string, unknown>,
       maxTokens: 16_000,
     },
-    (json) => ocrResultSchema.safeParse(json),
+    ocrResultSchema,
   );
   await insertExtraction(null, {
     companyId,

@@ -8,7 +8,9 @@ import { writeAudit } from '../audit/audit.service.js';
 import { buildKey } from '../files/files.service.js';
 import { requireStorage, type FileStorage } from '../files/files.storage.js';
 import type { IncomingFile } from '../files/files.validation.js';
-import { AiUpstreamError, type AiClient, type AiContentPart } from './ai.client.js';
+import type { ZodType } from 'zod';
+import { AiUpstreamError, type AiContentPart } from './ai.client.js';
+import type { LlmProvider } from './ai.provider.js';
 import { AI_MAX_PDF_PAGES, assertAiFile, type AiValidatedFile } from './ai.files.js';
 import {
   lowerIfInvalid,
@@ -45,7 +47,7 @@ export type ExtractionKind = 'sample' | 'reagent' | 'nd' | 'ocr' | 'peaks';
 export type ExtractionStatus = 'ok' | 'failed' | 'rejected';
 
 export interface AiRuntime {
-  client: AiClient | null;
+  client: LlmProvider | null;
   storage: FileStorage | null;
   maxFileBytes: number;
   dailyLimit: number;
@@ -136,7 +138,7 @@ export async function getAiStatus(rt: AiRuntime, companyId: string | null): Prom
 }
 
 /** Tartib: xizmat sozlanmaganmi (503) → kompaniyada o'chiqmi (403) → kunlik limit (429). */
-export async function assertAiAvailable(rt: AiRuntime, companyId: string): Promise<AiClient> {
+export async function assertAiAvailable(rt: AiRuntime, companyId: string): Promise<LlmProvider> {
   if (!rt.client) throw new AiUnavailableError();
   if (!(await companyAiEnabled(companyId))) {
     throw new AppError(403, 'AI_DISABLED', 'Bu kompaniya uchun AI yordamchi yoqilmagan');
@@ -166,9 +168,10 @@ export interface CallOutcome<T> {
 /**
  * Model chaqiruvi + qat'iy sxema; hech qachon tashlamaydi (xato → `failed`/`rejected` + kod).
  * `file` — P18 bitta fayl; `parts` — P19 (chat ilovalari, retrieval matni, OCR).
+ * D-201: provayderdan mustaqil — `LlmProvider.extractStructured` (Zod tekshiruvi provayder qatlamida).
  */
 export async function callModel<T>(
-  client: AiClient,
+  client: LlmProvider,
   file: AiValidatedFile | null,
   prompt: {
     system: string;
@@ -177,32 +180,24 @@ export async function callModel<T>(
     parts?: AiContentPart[];
     maxTokens?: number;
   },
-  parse: (json: unknown) => { success: true; data: T } | { success: false },
+  zodSchema: ZodType<T>,
 ): Promise<CallOutcome<T>> {
   const base = { model: client.model, inputTokens: null, outputTokens: null };
   try {
-    const res = await client.extract({
-      system: prompt.system,
+    const { data, usage } = await client.extractStructured({
+      systemPrompt: prompt.system,
       instruction: prompt.instruction,
-      ...(file ? { file: { mediaType: file.mime, data: file.buffer } } : {}),
+      files: file ? [{ mediaType: file.mime, data: file.buffer }] : [],
       parts: prompt.parts,
       maxTokens: prompt.maxTokens,
       jsonSchema: prompt.jsonSchema,
+      zodSchema,
     });
-    const usage = {
-      model: res.model,
-      inputTokens: res.inputTokens,
-      outputTokens: res.outputTokens,
-    };
-    const parsed = parse(res.json);
-    if (!parsed.success) {
-      return { ...usage, status: 'failed', data: null, errorCode: 'AI_SCHEMA_MISMATCH' };
-    }
-    return { ...usage, status: 'ok', data: parsed.data, errorCode: null };
+    return { ...usage, status: 'ok', data, errorCode: null };
   } catch (err) {
     if (err instanceof AiUpstreamError) {
       return {
-        ...base,
+        ...(err.usage ?? base),
         status: err.code === 'AI_REFUSED' ? 'rejected' : 'failed',
         data: null,
         errorCode: err.code,
@@ -457,7 +452,7 @@ export async function extractDocument(
       instruction: DOCUMENT_INSTRUCTION,
       jsonSchema: DOCUMENT_JSON_SCHEMA,
     },
-    (json) => documentResultSchema.safeParse(json),
+    documentResultSchema,
   );
 
   let fields: Record<string, AiFieldValue> = {};
@@ -707,7 +702,7 @@ export async function extractNd(
     client,
     file,
     { system: ND_SYSTEM_PROMPT, instruction: ND_INSTRUCTION, jsonSchema: ND_JSON_SCHEMA },
-    (json) => ndResultSchema.safeParse(json),
+    ndResultSchema,
   );
   const imageQuality = outcome.data?.image_quality ?? null;
   let status = outcome.status;

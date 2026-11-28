@@ -68,6 +68,7 @@ describe('test-faqat rejimlar (D-198)', () => {
     const req = (jsonSchema: Record<string, unknown>, text = '') => ({
       system: '',
       instruction: '',
+      files: [],
       jsonSchema,
       parts: [{ kind: 'text' as const, text }],
     });

@@ -38,7 +38,7 @@ import { createEquipmentRouter } from './modules/equipment/equipment.router.js';
 import { createNdRouter } from './modules/nd/nd.router.js';
 import { createConsumptionsRouter } from './modules/consumptions/consumptions.router.js';
 import { createAuditRouter } from './modules/audit/audit.router.js';
-import type { AiClient } from './modules/ai/ai.client.js';
+import type { LlmProvider } from './modules/ai/ai.provider.js';
 import { aiRuntime, createAiUserLimiter, type AiUserLimitOptions } from './modules/ai/ai.config.js';
 import { createAiRouter } from './modules/ai/ai.router.js';
 import { createHistoryRouter } from './modules/history/history.router.js';
@@ -89,7 +89,7 @@ export interface AppDeps {
   storage?: FileStorage | null;
   /** P18 AI (D-179): klient (`null` — AI o'chiq, 503) va limitlar. Testlarda mock klient. */
   ai?: {
-    client: AiClient | null;
+    client: LlmProvider | null;
     maxFileMb?: number;
     dailyLimit?: number;
     userLimit?: AiUserLimitOptions;
